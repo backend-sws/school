@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 
 class TimetableController extends BaseController
 {
+    use \App\Traits\OptimizesHeavyTasks;
+
     protected SchedulingService $schedulingService;
     protected InstitutionBrandingService $brandingService;
 
@@ -93,6 +95,8 @@ class TimetableController extends BaseController
      */
     public function download(Timetable $timetable)
     {
+        $this->optimizeForExport('1024M', 600); // 1GB memory, 10 minutes timeout for reports
+
         $timetable->load([
             'session',
             'template.periodSlots',

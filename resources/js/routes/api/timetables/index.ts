@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::index
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:23
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:25
  * @route '/api/v1/timetable/timetables'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::store
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:39
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:41
  * @route '/api/v1/timetable/timetables'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::store
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:39
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:41
  * @route '/api/v1/timetable/timetables'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::store
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:39
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:41
  * @route '/api/v1/timetable/timetables'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::store
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:39
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:41
  * @route '/api/v1/timetable/timetables'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::store
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:39
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:41
  * @route '/api/v1/timetable/timetables'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
 export const show = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
 show.url = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { timetable: number | { id: number } } | [timetable: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
 show.get = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { timetable: number | { id: number } } | [timetable: number | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
 show.head = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { timetable: number | { id: number } } | [timetable: number |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
     const showForm = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { timetable: number | { id: number } } | [timetable: number |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
         showForm.get = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { timetable: number | { id: number } } | [timetable: number |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Timetable\TimetableController::show
- * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:54
+ * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
         showForm.head = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

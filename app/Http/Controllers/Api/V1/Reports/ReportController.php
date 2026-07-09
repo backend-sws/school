@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class ReportController extends BaseController
 {
+    use \App\Traits\OptimizesHeavyTasks;
+
     protected ReportService $reportService;
     protected \App\Services\InstitutionBrandingService $brandingService;
 
@@ -47,6 +49,8 @@ class ReportController extends BaseController
     public function export(Request $request, string $type)
     {
         try {
+            $this->optimizeForExport('1024M', 600); // 1GB memory, 10 minutes timeout for reports
+
             $format = $request->input('format', 'excel');
             $filters = $request->all();
             $report = $this->reportService->generateReport($type, $filters);

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
 export const show = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
 show.url = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ show.url = (args: { type: string | number } | [type: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
 show.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ show.get = (args: { type: string | number } | [type: string | number ] | string 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
 show.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ show.head = (args: { type: string | number } | [type: string | number ] | string
 
     /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
     const showForm = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ show.head = (args: { type: string | number } | [type: string | number ] | string
 
             /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
         showForm.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ show.head = (args: { type: string | number } | [type: string | number ] | string
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::show
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:28
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:30
  * @route '/api/v1/reports/{type}'
  */
         showForm.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -98,7 +98,7 @@ show.head = (args: { type: string | number } | [type: string | number ] | string
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
 export const exportMethod = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -113,7 +113,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
 exportMethod.url = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -141,7 +141,7 @@ exportMethod.url = (args: { type: string | number } | [type: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
 exportMethod.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -150,7 +150,7 @@ exportMethod.get = (args: { type: string | number } | [type: string | number ] |
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
 exportMethod.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -160,7 +160,7 @@ exportMethod.head = (args: { type: string | number } | [type: string | number ] 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
     const exportMethodForm = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -170,7 +170,7 @@ exportMethod.head = (args: { type: string | number } | [type: string | number ] 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
         exportMethodForm.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -179,7 +179,7 @@ exportMethod.head = (args: { type: string | number } | [type: string | number ] 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Reports\ReportController::exportMethod
- * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:47
+ * @see app/Http/Controllers/Api/V1/Reports/ReportController.php:49
  * @route '/api/v1/reports/{type}/export'
  */
         exportMethodForm.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

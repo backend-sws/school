@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class PayrollController extends BaseController
 {
+    use \App\Traits\OptimizesHeavyTasks;
+
     protected $payrollService;
 
     public function __construct(PayrollService $payrollService)
@@ -89,6 +91,8 @@ class PayrollController extends BaseController
             return $this->forbidden();
         }
 
+        $this->optimizeForExport('512M', 300); // Dynamic limits for PDF generation
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip'));
         
         $monthStr = \Carbon\Carbon::createFromDate($payslip->payroll->year, $payslip->payroll->month, 1)->format('M_Y');
@@ -106,6 +110,8 @@ class PayrollController extends BaseController
         if (!$payslip->user->email) {
             return $this->error('Staff member does not have an email address', 400);
         }
+
+        $this->optimizeForExport('512M', 300); // Dynamic limits for PDF generation
 
         try {
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip'));

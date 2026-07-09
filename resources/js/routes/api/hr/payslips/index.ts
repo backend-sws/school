@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
 export const history = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
 history.url = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ history.url = (args: { userId: string | number } | [userId: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
 history.get = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ history.get = (args: { userId: string | number } | [userId: string | number ] | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
 history.head = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ history.head = (args: { userId: string | number } | [userId: string | number ] |
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
     const historyForm = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ history.head = (args: { userId: string | number } | [userId: string | number ] |
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
         historyForm.get = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ history.head = (args: { userId: string | number } | [userId: string | number ] |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::history
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:73
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:75
  * @route '/api/v1/hr/payslips/staff/{userId}'
  */
         historyForm.head = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -98,7 +98,7 @@ history.head = (args: { userId: string | number } | [userId: string | number ] |
     history.form = historyForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
 export const download = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -113,7 +113,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
 download.url = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -146,7 +146,7 @@ download.url = (args: { payslip: number | { id: number } } | [payslip: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
 download.get = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -155,7 +155,7 @@ download.get = (args: { payslip: number | { id: number } } | [payslip: number | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
 download.head = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -165,7 +165,7 @@ download.head = (args: { payslip: number | { id: number } } | [payslip: number |
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
     const downloadForm = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -175,7 +175,7 @@ download.head = (args: { payslip: number | { id: number } } | [payslip: number |
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
         downloadForm.get = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -184,7 +184,7 @@ download.head = (args: { payslip: number | { id: number } } | [payslip: number |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::download
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:86
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:88
  * @route '/api/v1/hr/payslips/{payslip}/download'
  */
         downloadForm.head = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -200,7 +200,7 @@ download.head = (args: { payslip: number | { id: number } } | [payslip: number |
     download.form = downloadForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::email
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:100
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:104
  * @route '/api/v1/hr/payslips/{payslip}/email'
  */
 export const email = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -215,7 +215,7 @@ email.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::email
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:100
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:104
  * @route '/api/v1/hr/payslips/{payslip}/email'
  */
 email.url = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -248,7 +248,7 @@ email.url = (args: { payslip: number | { id: number } } | [payslip: number | { i
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::email
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:100
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:104
  * @route '/api/v1/hr/payslips/{payslip}/email'
  */
 email.post = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -258,7 +258,7 @@ email.post = (args: { payslip: number | { id: number } } | [payslip: number | { 
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::email
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:100
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:104
  * @route '/api/v1/hr/payslips/{payslip}/email'
  */
     const emailForm = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -268,7 +268,7 @@ email.post = (args: { payslip: number | { id: number } } | [payslip: number | { 
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::email
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:100
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:104
  * @route '/api/v1/hr/payslips/{payslip}/email'
  */
         emailForm.post = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -279,7 +279,7 @@ email.post = (args: { payslip: number | { id: number } } | [payslip: number | { 
     email.form = emailForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::update
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:155
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:161
  * @route '/api/v1/hr/payslips/{payslip}'
  */
 export const update = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -294,7 +294,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::update
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:155
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:161
  * @route '/api/v1/hr/payslips/{payslip}'
  */
 update.url = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -327,7 +327,7 @@ update.url = (args: { payslip: number | { id: number } } | [payslip: number | { 
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::update
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:155
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:161
  * @route '/api/v1/hr/payslips/{payslip}'
  */
 update.put = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -337,7 +337,7 @@ update.put = (args: { payslip: number | { id: number } } | [payslip: number | { 
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::update
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:155
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:161
  * @route '/api/v1/hr/payslips/{payslip}'
  */
     const updateForm = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -352,7 +352,7 @@ update.put = (args: { payslip: number | { id: number } } | [payslip: number | { 
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\PayrollController::update
- * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:155
+ * @see app/Http/Controllers/Api/V1/HR/PayrollController.php:161
  * @route '/api/v1/hr/payslips/{payslip}'
  */
         updateForm.put = (args: { payslip: number | { id: number } } | [payslip: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
