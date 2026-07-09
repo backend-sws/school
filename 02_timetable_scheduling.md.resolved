@@ -1,0 +1,152 @@
+# Phase 2 — Timetable & Scheduling
+
+> **Priority:** 🔴 Critical | **Effort:** ~5–6 weeks | **Dependencies:** Academics (subjects, streams, sessions), Staff module
+
+## Why This Is #2
+
+Timetable is a **daily operational dependency** — teachers, students, and parents check it every day. Building it unlocks substitution management, room utilization, and workload balancing.
+
+---
+
+## Scope
+
+### 2.1 Timetable Structure
+- **Periods configuration** — Define period slots (start time, end time, type: class/break/assembly)
+- **Per-institution** — Each institution defines its own period structure
+- **Multiple timetable templates** — Regular day, exam day, Saturday (if applicable)
+- **Session-scoped** — Timetables belong to a session
+
+### 2.2 Class Timetable Builder
+- Drag-and-drop weekly timetable grid (periods × days)
+- Assign subject + teacher to each slot
+- Auto-validation:
+  - No teacher double-booked at the same time
+  - No room double-booked
+  - Subject weekly-hour limits respected
+- Bulk fill (e.g., "Math every Mon/Wed/Fri period 1")
+- Copy timetable from another class or previous session
+- Publish / unpublish timetable
+
+### 2.3 Teacher Timetable View
+- Derived automatically from class timetables
+- Weekly view showing all assigned periods across classes
+- Free period identification
+- Workload summary (total periods per week)
+
+### 2.4 Room Allocation
+- Room master — name, capacity, type (classroom/lab/auditorium), building, floor
+- Assign rooms to timetable slots
+- Room availability view (which rooms free at a given period)
+- Room utilization reports
+
+### 2.5 Substitution Management
+- Mark teacher as absent (with reason/leave link)
+- System suggests available substitutes (teachers free in that period)
+- Admin assigns substitute teacher
+- Notify substitute teacher and students
+- Substitution log for reporting
+
+### 2.6 Calendar Integration
+- Export timetable as iCal (.ics) feed
+- Google Calendar integration (subscribe URL)
+- Student portal: view my class timetable
+- Teacher portal: view my teaching schedule
+
+---
+
+## Data Models
+
+| Model | Key Fields | Relationships |
+|---|---|---|
+| `PeriodSlot` | institution_id, name, start_time, end_time, type (class/break/assembly), day_order, template_id | belongsTo Institution, TimetableTemplate |
+| `TimetableTemplate` | institution_id, name, is_default, is_active | hasMany PeriodSlots |
+| `Timetable` | session_id, stream_id, course_section_id, template_id, status (draft/published), effective_from | belongsTo Session, Stream, CourseSection, TimetableTemplate |
+| `TimetableEntry` | timetable_id, period_slot_id, day_of_week (1-7), subject_id, teacher_id (user_id), room_id | belongsTo Timetable, PeriodSlot, Subject, User, Room |
+| `Room` | institution_id, name, code, building, floor, capacity, type, is_active | belongsTo Institution |
+| `Substitution` | timetable_entry_id, date, original_teacher_id, substitute_teacher_id, reason, status (pending/confirmed/completed) | belongsTo TimetableEntry, User (×2) |
+
+---
+
+## API Endpoints
+
+```
+# Period Slots & Templates
+GET/POST       /api/v1/timetable/templates
+PUT/DELETE      /api/v1/timetable/templates/{id}
+GET/POST       /api/v1/timetable/templates/{id}/periods
+PUT/DELETE      /api/v1/timetable/periods/{id}
+
+# Rooms
+GET/POST       /api/v1/rooms
+PUT/DELETE      /api/v1/rooms/{id}
+GET            /api/v1/rooms/availability?date=&period_slot_id=
+
+# Timetables
+GET/POST       /api/v1/timetables
+GET/PUT/DELETE /api/v1/timetables/{id}
+POST           /api/v1/timetables/{id}/publish
+POST           /api/v1/timetables/{id}/clone
+GET            /api/v1/timetables/{id}/entries
+POST           /api/v1/timetables/{id}/entries       (bulk save)
+DELETE         /api/v1/timetables/{id}/entries/{entryId}
+
+# Teacher View
+GET            /api/v1/timetables/teacher/{userId}    (derived schedule)
+GET            /api/v1/timetables/teacher/{userId}/free-periods?date=
+
+# Substitutions
+GET/POST       /api/v1/substitutions
+PUT            /api/v1/substitutions/{id}
+GET            /api/v1/substitutions/candidates?timetable_entry_id=&date=
+
+# Calendar
+GET            /api/v1/timetables/{id}/ical           (iCal export)
+GET            /api/v1/timetables/my-schedule/ical    (student/teacher)
+```
+
+---
+
+## UI Pages
+
+| Page | Route | Description |
+|---|---|---|
+| Period Setup | `/settings/timetable-periods` | Configure period slots and templates |
+| Room Manager | `/settings/rooms` | CRUD rooms with capacity/type |
+| Timetable List | `/timetables` | List timetables by session/class |
+| Timetable Builder | `/timetables/{id}/edit` | Drag-and-drop grid builder |
+| Teacher Schedule | `/timetables/teacher-view` | Teacher's derived weekly schedule |
+| Room Availability | `/timetables/room-availability` | Room utilization grid |
+| Substitutions | `/timetables/substitutions` | Manage substitutions, assign substitutes |
+| Student Portal | `/student-portal/timetable` | Student sees their class timetable |
+
+---
+
+## Constraint Engine
+
+The timetable builder needs a **real-time constraint checker**:
+
+```
+Constraints (hard — block save):
+├── Teacher cannot be in two places at the same time
+├── Room cannot be double-booked
+├── Subject must exist in class-subject allocation
+└── Teacher must be assigned to teach that subject
+
+Constraints (soft — show warning):
+├── Subject exceeds recommended weekly hours
+├── Teacher exceeds max periods per day
+├── Same subject on consecutive periods (optional preference)
+└── Lab subjects should be in lab rooms
+```
+
+---
+
+## Integration Points
+
+- **Academics** → Subjects, Streams, Course Sections, Class-Subject Allocation
+- **Staff** → Teacher assignments, workload tracking
+- **Attendance** → Period-wise attendance linked to timetable slots
+- **LMS** → Live sessions can auto-populate from timetable
+- **Substitutions** → Links to HR/leave management (future Phase 5)
+- **Notifications** → Timetable published, substitution assigned
+- **Permissions** → New permission group: `timetable_management`

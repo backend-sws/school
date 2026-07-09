@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDS Education Developer Docs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0b1120;--bg2:#111827;--bg3:#1e293b;
+      --border:#1e293b;--border-h:rgba(59,130,246,.3);
+      --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+      --accent:#3b82f6;--accent2:#60a5fa;
+      --sidebar-w:280px;
+    }
+    html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    a{color:var(--accent2);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Layout */
+    .app{display:flex;height:100vh}
+    .sidebar{
+      width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;
+      background:var(--bg2);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;overflow:hidden;
+      position:fixed;left:0;top:0;z-index:100;
+    }
+    .sidebar-header{padding:1.2rem 1rem .8rem;border-bottom:1px solid var(--border)}
+    .sidebar-header h2{font-size:1.1rem;font-weight:800;letter-spacing:-.02em}
+    .sidebar-header small{color:var(--text3);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+    .sidebar-search{padding:.6rem .8rem}
+    .sidebar-search input{
+      width:100%;padding:.5rem .7rem;border-radius:8px;border:1px solid var(--border);
+      background:var(--bg);color:var(--text);font-size:.82rem;outline:none;
+      transition:border-color .2s;
+    }
+    .sidebar-search input:focus{border-color:var(--accent)}
+    .sidebar-search input::placeholder{color:var(--text3)}
+    .sidebar-nav{flex:1;overflow-y:auto;padding:.4rem 0}
+    .sidebar-nav::-webkit-scrollbar{width:4px}
+    .sidebar-nav::-webkit-scrollbar-track{background:transparent}
+    .sidebar-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    .nav-group{margin-bottom:.2rem}
+    .nav-group-title{
+      padding:.5rem 1rem;font-size:.65rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:.1em;color:var(--accent);
+    }
+    .nav-item{
+      display:flex;align-items:center;gap:.5rem;
+      padding:.45rem 1rem .45rem 1.2rem;font-size:.82rem;color:var(--text2);
+      cursor:pointer;transition:all .15s;border-left:3px solid transparent;
+    }
+    .nav-item:hover{background:rgba(59,130,246,.06);color:var(--text)}
+    .nav-item.active{
+      background:rgba(59,130,246,.1);color:var(--accent2);
+      border-left-color:var(--accent);font-weight:600;
+    }
+    .nav-item .ico{font-size:.9rem;width:20px;text-align:center}
+    .nav-item.hidden{display:none}
+
+    /* Main Content */
+    .main{margin-left:var(--sidebar-w);flex:1;overflow-y:auto;min-height:100vh}
+    .content{max-width:900px;margin:0 auto;padding:2rem 2.5rem 4rem}
+
+    /* Welcome */
+    .welcome{text-align:center;padding:3rem 0}
+    .welcome .badge{
+      display:inline-block;padding:.3rem .8rem;border-radius:50px;
+      background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);
+      color:var(--accent);font-size:.7rem;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;margin-bottom:1rem;
+    }
+    .welcome h1{font-size:2.2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.5rem}
+    .welcome p{color:var(--text2);margin-bottom:2rem}
+    .featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;text-align:left}
+    .featured-card{
+      padding:1.2rem;background:var(--bg2);border:1px solid var(--border);
+      border-radius:12px;cursor:pointer;transition:all .2s;
+    }
+    .featured-card:hover{border-color:var(--border-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    .featured-card h3{font-size:.95rem;font-weight:700;margin-bottom:.3rem}
+    .featured-card p{font-size:.78rem;color:var(--text2);line-height:1.4}
+    .featured-card .ico{font-size:1.4rem;margin-bottom:.5rem}
+
+    /* Markdown Prose */
+    .prose{line-height:1.7;font-size:.95rem}
+    .prose h1{font-size:2rem;font-weight:800;margin:2rem 0 1rem;letter-spacing:-.03em;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+    .prose h2{font-size:1.5rem;font-weight:700;margin:2.5rem 0 .8rem;color:var(--accent2);border-bottom:1px solid var(--border);padding-bottom:.4rem}
+    .prose h3{font-size:1.15rem;font-weight:700;margin:1.8rem 0 .5rem}
+    .prose h4{font-size:1rem;font-weight:600;margin:1.2rem 0 .4rem;color:var(--text2)}
+    .prose p{margin:.8rem 0}
+    .prose ul,.prose ol{margin:.6rem 0 .6rem 1.5rem}
+    .prose li{margin:.3rem 0}
+    .prose blockquote{
+      border-left:3px solid var(--accent);padding:.6rem 1rem;margin:1rem 0;
+      background:rgba(59,130,246,.06);border-radius:0 8px 8px 0;color:var(--text2);
+    }
+    .prose code{
+      background:rgba(59,130,246,.1);padding:.15rem .4rem;border-radius:4px;
+      font-size:.85em;color:var(--accent2);font-family:'Fira Code',monospace;
+    }
+    .prose pre{
+      background:var(--bg)!important;border:1px solid var(--border);border-radius:10px;
+      padding:1rem;margin:1rem 0;overflow-x:auto;
+    }
+    .prose pre code{background:transparent;padding:0;color:var(--text);font-size:.82rem}
+    .prose table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+    .prose th{text-align:left;padding:.6rem .8rem;background:var(--bg3);border:1px solid var(--border);font-weight:600;color:var(--accent2)}
+    .prose td{padding:.5rem .8rem;border:1px solid var(--border)}
+    .prose tr:hover td{background:rgba(59,130,246,.04)}
+    .prose img{max-width:100%;border-radius:8px;margin:1rem 0}
+    .prose hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+    .prose strong{color:#f1f5f9;font-weight:700}
+    .prose .mermaid{background:var(--bg)!important;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1rem 0;text-align:center}
+
+    /* Loading */
+    .loading{text-align:center;padding:4rem;color:var(--text3)}
+    .loading .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Mobile */
+    .mobile-toggle{
+      display:none;position:fixed;top:12px;left:12px;z-index:200;
+      background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+      padding:.5rem .6rem;cursor:pointer;color:var(--text);font-size:1.2rem;
+    }
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%);transition:transform .3s}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0}
+      .mobile-toggle{display:block}
+      .content{padding:1.5rem 1rem 3rem}
+    }
+
+    /* Back to top */
+    .back-top{
+      position:fixed;bottom:2rem;right:2rem;width:40px;height:40px;
+      background:var(--accent);border:none;border-radius:50%;color:#fff;
+      font-size:1.1rem;cursor:pointer;opacity:0;transition:opacity .3s;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 12px rgba(59,130,246,.4);z-index:50;
+    }
+    .back-top.show{opacity:1}
+  </style>
+</head>
+<body>
+  <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2><img src="/screenshots/logo.png" alt="PDS Education" style="height:32px;width:32px;vertical-align:middle;margin-right:8px;border-radius:6px">PDS Education</h2>
+        <small>Developer Manual</small>
+      </div>
+      <div class="sidebar-search">
+        <input type="text" id="search" placeholder="Search docs..." oninput="filterNav(this.value)">
+      </div>
+      <nav class="sidebar-nav" id="nav"></nav>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="content" id="content"></div>
+    </main>
+  </div>
+
+  <button class="back-top" id="backTop" onclick="document.getElementById('main').scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ─── Document Manifest ──────────────────────────────────────────────
+const DOCS = [
+  { group: 'Core', items: [
+    { slug: 'developer-guide',  title: 'Developer Guide',  icon: '🛠️', desc: 'Architecture, multitenancy, routes, API inventory' },
+    { slug: 'school-workflows', title: 'School Workflows', icon: '🎓', desc: 'Screen-by-screen with screenshots & Mermaid' },
+    { slug: 'college-workflows', title: 'College Workflows', icon: '🏫', desc: 'Semester-wise, department-heavy, placement-focused' },
+    { slug: 'university-workflows', title: 'University Workflows', icon: '🏛️', desc: 'Multi-faculty, research/PhD, entrance + counselling' },
+    { slug: 'coaching-workflows', title: 'Coaching Workflows', icon: '🎯', desc: 'Coaching org workflows and scope setup' },
+    { slug: 'auth-rbac-overview', title: 'Auth & RBAC', icon: '🔐', desc: 'Roles, permissions, middleware' },
+  ]},
+  { group: 'Architecture', items: [
+    { slug: 'multi-institute-organization-structure', title: 'Multi-Institute Org', icon: '🏛️', desc: 'Organization → multi-institution model' },
+    { slug: 'plan-session-locked-college-context', title: 'Session & College Context', icon: '🎯', desc: 'Session-locked scoping' },
+    { slug: 'plan-routes-permissions-ui', title: 'Routes & Permissions UI', icon: '🗺️', desc: 'Route-permission mapping' },
+  ]},
+  { group: 'Roles & Auth', items: [
+    { slug: 'school-workflow-sidebar-permissions', title: 'Sidebar Permissions', icon: '📋', desc: 'Workflow-based sidebar gating' },
+    { slug: 'plan-teacher-principal-class-teacher-non-teaching-roles-permissions', title: 'Staff Role Permissions', icon: '👥', desc: 'Teacher, principal, class teacher roles' },
+    { slug: 'student-verification-set-password-flow', title: 'Student Verification', icon: '✅', desc: 'Set-password & verification flow' },
+    { slug: 'multi-user-parent-multiple-students-plan', title: 'Parent Multi-Student', icon: '👨‍👩‍👧‍👦', desc: 'Parent linked to multiple students' },
+    { slug: 'student-parent-portal-flow-school', title: 'Student Portal Flow', icon: '🎒', desc: 'Student & parent portal workflow' },
+  ]},
+  { group: 'Fees & Payments', items: [
+    { slug: 'FEE_COLLECTION_WORKFLOW_PLAN', title: 'Fee Collection Workflow', icon: '💰', desc: 'Complete fee collection plan' },
+    { slug: 'ux-payment-desk-plan', title: 'Payment Desk UX', icon: '🏧', desc: 'Payment desk UI/UX plan' },
+  ]},
+  { group: 'LMS & Academics', items: [
+    { slug: 'plan-lms-from-scratch-with-gaps', title: 'LMS Full Plan', icon: '📚', desc: 'LMS architecture from scratch' },
+    { slug: 'plan-lms-class-setup-and-subjects', title: 'LMS Class & Subjects', icon: '📖', desc: 'Class setup and subject allocation' },
+    { slug: 'lms-class-subjects-flow-diagram', title: 'LMS Flow Diagrams', icon: '📊', desc: 'Mermaid diagrams for LMS flows' },
+  ]},
+  { group: 'Video Engine', items: [
+    { slug: 'video-engine', title: 'Video Streaming Engine', icon: '🎬', desc: 'Upload, HLS transcoding, signed URL playback' },
+  ]},
+  { group: 'Coaching Platform', items: [
+    { slug: 'test-series', title: 'Test Series', icon: '📝', desc: 'Curated test bundles, analytics, leaderboards' },
+    { slug: 'doubt-forum', title: 'Doubt Forum', icon: '💬', desc: 'Q&A forum with voting, accept answer, pinning' },
+    { slug: 'question-bank', title: 'Question Bank', icon: '📚', desc: 'Multi-type questions, hierarchical categories, practice' },
+  ]},
+  { group: 'Communications & Growth', items: [
+    { slug: 'communications', title: 'SMS & Alerts', icon: '📡', desc: 'SMS service, auto alert rules, delivery tracking' },
+    { slug: 'growth-features', title: 'Growth Features', icon: '🚀', desc: 'Entrance tests, PYQ, demo classes, feedback, installments' },
+  ]},
+  { group: 'Modules', items: [
+    { slug: 'plan-inventory-module', title: 'Inventory Module', icon: '📦', desc: 'Inventory management plan' },
+    { slug: 'plan-inventory-selling', title: 'Inventory Selling', icon: '🛒', desc: 'POS / selling workflow' },
+    { slug: 'plan-transport-management', title: 'Transport Management', icon: '🚌', desc: 'Routes, vehicles, assignments' },
+    { slug: 'id-card-module', title: 'ID Card Module', icon: '🪪', desc: 'Template designer, bulk generation, QR verification' },
+    { slug: 'notifications-local-testing', title: 'Notifications Testing', icon: '🔔', desc: 'Local push notification testing' },
+  ]},
+  { group: 'Infrastructure', items: [
+    { slug: 'horizon-redis', title: 'Horizon + Redis', icon: '⚡', desc: 'Queue workers, Redis, Docker images, CI/CD' },
+    { slug: 'deployment-guide', title: 'Deployment Guide', icon: '🚀', desc: 'VPS management, ems.sh CLI, container ops' },
+  ]},
+];
+
+// ─── State ───────────────────────────────────────────────────────────
+let currentSlug = null;
+
+// ─── Render Sidebar ──────────────────────────────────────────────────
+function renderNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = DOCS.map(g => `
+    <div class="nav-group">
+      <div class="nav-group-title">${g.group}</div>
+      ${g.items.map(d => `
+        <div class="nav-item" data-slug="${d.slug}" data-title="${d.title.toLowerCase()}" onclick="navigate('${d.slug}')">
+          <span class="ico">${d.icon}</span> ${d.title}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ─── Search ──────────────────────────────────────────────────────────
+function filterNav(q) {
+  const items = document.querySelectorAll('.nav-item');
+  q = q.toLowerCase();
+  items.forEach(el => {
+    const match = !q || el.dataset.title.includes(q) || el.dataset.slug.includes(q);
+    el.classList.toggle('hidden', !match);
+  });
+}
+
+// ─── Navigation ──────────────────────────────────────────────────────
+function navigate(slug, pushState = true) {
+  currentSlug = slug;
+  if (pushState) history.pushState({ slug }, '', '/' + getBasePath() + slug);
+  loadDoc(slug);
+  // Update active state
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.slug === slug);
+  });
+  // Close mobile sidebar
+  document.querySelector('.sidebar').classList.remove('open');
+  // Scroll to top
+  document.getElementById('main').scrollTo({ top: 0 });
+}
+
+function getBasePath() {
+  // Works for both /dev-docs/ proxy and standalone
+  const path = location.pathname;
+  if (path.startsWith('/dev-docs/')) return 'dev-docs/';
+  return '';
+}
+
+// ─── Load Document ───────────────────────────────────────────────────
+async function loadDoc(slug) {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div>Loading document...</div>';
+  document.title = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) + ' — PDS Education Docs';
+
+  try {
+    const base = getBasePath();
+    const res = await fetch('/' + base + slug + '.md', {
+      headers: { 'Accept': 'text/plain' }
+    });
+    if (!res.ok) throw new Error('Not found');
+    const md = await res.text();
+
+    // Check if response is HTML (redirect response)
+    if (md.trim().startsWith('<!DOCTYPE') || md.trim().startsWith('<html')) {
+      throw new Error('Got HTML instead of markdown');
+    }
+
+    // Configure marked
+    marked.setOptions({
+      highlight: (code, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      },
+      breaks: false,
+      gfm: true,
+    });
+
+    const html = marked.parse(md);
+    content.innerHTML = '<article class="prose">' + html + '</article>';
+
+    // Render Mermaid diagrams
+    renderMermaid();
+
+  } catch(e) {
+    content.innerHTML = `
+      <div class="welcome">
+        <h1>Document not found</h1>
+        <p>Could not load <code>${slug}.md</code>. ${e.message}</p>
+        <p><a href="javascript:showWelcome()">← Back to Home</a></p>
+      </div>
+    `;
+  }
+}
+
+// ─── Mermaid ─────────────────────────────────────────────────────────
+async function renderMermaid() {
+  const codeBlocks = document.querySelectorAll('pre code.language-mermaid, code.language-mermaid');
+  for (let i = 0; i < codeBlocks.length; i++) {
+    const code = codeBlocks[i].textContent;
+    const pre = codeBlocks[i].closest('pre') || codeBlocks[i].parentElement;
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = code;
+    pre.replaceWith(div);
+  }
+  if (document.querySelectorAll('.mermaid').length > 0) {
+    mermaid.initialize({ theme: 'dark', startOnLoad: false, securityLevel: 'loose' });
+    try { await mermaid.run(); } catch(e) { console.warn('Mermaid:', e); }
+  }
+}
+
+// ─── Welcome Screen ──────────────────────────────────────────────────
+function showWelcome() {
+  currentSlug = null;
+  const base = getBasePath();
+  history.pushState({}, '', '/' + base);
+  document.title = 'PDS Education Developer Docs';
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  const sections = DOCS.map(g => `
+    <div style="margin-bottom:1.5rem">
+      <h3 style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:.6rem;padding-left:.2rem">${g.group}</h3>
+      <div class="featured">
+        ${g.items.map(d => `
+          <div class="featured-card" onclick="navigate('${d.slug}')">
+            <div class="ico">${d.icon}</div>
+            <h3>${d.title}</h3>
+            <p>${d.desc}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="welcome">
+      <div class="badge">Internal Documentation</div>
+      <h1>PDS Education Docs</h1>
+      <p>Technical guides, workflow documentation, and architecture references.</p>
+      <div style="text-align:left;margin-top:1.5rem">
+        ${sections}
+      </div>
+    </div>
+  `;
+}
+
+// ─── Router ──────────────────────────────────────────────────────────
+function handleRoute() {
+  const path = location.pathname;
+  const base = getBasePath();
+  const stripped = path.replace('/' + base, '').replace(/^\//, '').replace(/\/$/, '');
+  if (stripped && stripped !== 'index.html') {
+    // Remove .md extension if present
+    const slug = stripped.replace(/\.md$/, '');
+    navigate(slug, false);
+  } else {
+    showWelcome();
+  }
+}
+
+window.addEventListener('popstate', handleRoute);
+
+// ─── Back to Top ─────────────────────────────────────────────────────
+document.getElementById('main').addEventListener('scroll', function() {
+  document.getElementById('backTop').classList.toggle('show', this.scrollTop > 300);
+});
+
+// ─── Init ────────────────────────────────────────────────────────────
+renderNav();
+handleRoute();
+</script>
+</body>
+</html>

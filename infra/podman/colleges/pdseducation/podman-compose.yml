@@ -1,0 +1,120 @@
+# =============================================================================
+# PDS Education - Production Podman Compose
+# Domain: pdseducation.tech | Type: School
+#
+# DB + Redis are SHARED (postgres-ems, pgbouncer-ems, redis-ems)
+# This file only defines per-institute app services.
+#
+# Secrets: .env.secret (encrypted on VPS, auto-generated DB passwords)
+# App config: .env (pushed from local, no secrets)
+# Run: podman-compose up -d
+#
+# Ports: App=8082 | Reverb=8182
+# =============================================================================
+
+services:
+  # ── Init Job (migrate + seed, self-terminates) ──────────────────────────────
+  ems-init-pdseducation:
+    image: ghcr.io/sutracodehq-ui/education-system-management:${CMS_IMAGE_TAG}
+    container_name: ems-init-pdseducation
+    restart: "no"
+    env_file:
+      - ./.env
+      - ./.env.secret
+    command: >
+      sh -c "
+        echo '⏳ Waiting for PgBouncer...' &&
+        for i in $$(seq 1 30); do
+          pg_isready -h pgbouncer-ems -p 6432 -U pdseducation_user 2>/dev/null && break;
+          echo \"  attempt $$i/30...\";
+          sleep 2;
+        done &&
+        echo '✅ DB ready — running migrations...' &&
+        php artisan migrate --force &&
+        echo '✅ Migrations done — running seeders...' &&
+        php artisan db:seed --force &&
+        echo '✅ Init complete — exiting.'
+      "
+    networks:
+      - ems-network
+    labels:
+      - "college.id=pdseducation"
+      - "college.service=init"
+
+  # ── App ─────────────────────────────────────────────────────────────────────
+  ems-app-pdseducation:
+    image: ghcr.io/sutracodehq-ui/education-system-management:${CMS_IMAGE_TAG}
+    container_name: ems-app-pdseducation
+    restart: always
+    ports:
+      - "0.0.0.0:8082:80"
+    env_file:
+      - ./.env
+      - ./.env.secret
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ems-network
+    labels:
+      - "college.id=pdseducation"
+      - "college.domain=pdseducation.tech"
+      - "college.service=app"
+      - "college.port=8082"
+
+  # ── Reverb (WebSocket) ─────────────────────────────────────────────────────
+  ems-reverb-pdseducation:
+    image: ghcr.io/sutracodehq-ui/education-system-management:${CMS_IMAGE_TAG}
+    container_name: ems-reverb-pdseducation
+    restart: always
+    ports:
+      - "0.0.0.0:8182:8080"
+    env_file:
+      - ./.env
+      - ./.env.secret
+    environment:
+      - REVERB_SERVER_HOST=0.0.0.0
+      - REVERB_SERVER_PORT=8080
+    command: php artisan reverb:start
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"exit(@fsockopen('127.0.0.1', 8080) ? 0 : 1);\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ems-network
+    labels:
+      - "college.id=pdseducation"
+      - "college.service=reverb"
+
+  # ── Horizon (Queue Worker) ────────────────────────────────────────────────
+  ems-horizon-pdseducation:
+    image: ghcr.io/sutracodehq-ui/education-system-management-horizon:${HORIZON_IMAGE_TAG}
+    container_name: ems-horizon-pdseducation
+    restart: unless-stopped
+    env_file:
+      - ./.env
+      - ./.env.secret
+    environment:
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis-ems
+      - REDIS_PORT=6379
+    healthcheck:
+      test: ["CMD-SHELL", "php artisan horizon:status | grep -q running || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - ems-network
+    labels:
+      - "college.id=pdseducation"
+      - "college.service=horizon"
+
+networks:
+  ems-network:
+    external: true

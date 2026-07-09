@@ -1,0 +1,17 @@
+export const LmsClassesQueryKeys = {
+  all: ["lms-classes"] as const,
+  streams: (filters?: Record<string, unknown>) => ["lms-streams", filters] as const,
+  sessions: () => ["sessions-list"] as const,
+  detail: (id: number | string) => ["lms-class", id] as const,
+  streamDetail: (streamId: number | string) => ["stream-detail", streamId] as const,
+  streamClasses: (filters?: Record<string, unknown>) => ["lms-classes", filters] as const,
+  allocations: (classId: number | string) => ["lms-class-allocations", classId] as const,
+  enrollments: (classId: number | string) => ["lms-class-enrollments", classId] as const,
+  assignments: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-assignments", classId, filters] as const,
+  tests: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-tests", classId, filters] as const,
+  liveSessions: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-live-sessions", classId, filters] as const,
+  recordings: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-recordings", classId, filters] as const,
+  announcements: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-announcements", classId, filters] as const,
+  materials: (classId: number | string, filters?: Record<string, unknown>) => ["lms-class-materials", classId, filters] as const,
+  attendanceSummary: (classId: number | string, allocationId?: number) => ["lms-class-attendance-summary", classId, allocationId] as const,
+};

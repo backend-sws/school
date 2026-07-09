@@ -1,0 +1,141 @@
+import { GuideDefinition } from "@/types/guide";
+
+export const ANALYTICS_OVERVIEW_GUIDE: GuideDefinition = {
+    id: "analytics_overview_guide",
+    pageTitle: "Analytics Overview",
+    pageSubtitle: "Comprehensive performance metrics and trend analysis.",
+    pageGuidance: [
+        "Gain a bird's-eye view of your institution's health across all departments.",
+        "Monitor student enrollment trends and financial performance over time.",
+        "Use data-driven insights to inform strategic decisions and planning."
+    ],
+    settingsTip: "Analytics are most powerful when data is entered consistently. Encourage all departments to keep their records up to date for the most accurate insights.",
+    steps: [
+        {
+            element: "#analytics-header",
+            title: "Performance Command Center",
+            description: "A centralized view of all key performance indicators.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#analytics-charts",
+            title: "Trend Visualization",
+            description: "Interactive charts showing growth, revenue, and academic progress.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const FEE_ANALYTICS_GUIDE: GuideDefinition = {
+    id: "fee_analytics_guide",
+    pageTitle: "Financial Analytics",
+    pageSubtitle: "Deep dive into fee collection, outstanding dues, and revenue forecasting.",
+    pageGuidance: [
+        "Track collection efficiency and pinpoint revenue leakages.",
+        "Analyze fee status by profile, category, and session.",
+        "Forecast future cash flows based on enrollment and regulation data."
+    ],
+    settingsTip: "Financial analytics help you identify students who regularly pay late. Use this data to adjust your collection strategy or reach out for early reconciliation.",
+    steps: [
+        {
+            element: "#fee-analytics-header",
+            title: "Revenue Insights",
+            description: "Detailed analysis of your institution's financial health.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#fee-stats-grid",
+            title: "Financial KPIs",
+            description: "Total collection, pending dues, and scholarship impacts at a glance.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const AUDIT_LOGS_GUIDE: GuideDefinition = {
+    id: "audit_logs_guide",
+    pageTitle: "System Audit Logs",
+    pageSubtitle: "Transparent tracking of all administrative actions and system changes.",
+    pageGuidance: [
+        "Ensure accountability by monitoring who made what changes and when.",
+        "Investigate system discrepancies by reviewing chronological activity logs.",
+        "Filter logs by user, action type, or date to find specific events."
+    ],
+    settingsTip: "Audit logs are your definitive source of truth for administrative changes. Regularly review them to maintain high institutional security standards.",
+    steps: [
+        {
+            element: "#audit-logs-header",
+            title: "Transparency Log",
+            description: "A complete history of all user activities within the system.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#audit-logs-table",
+            title: "Activity Records",
+            description: "Deep dive into timestamps, user IDs, and changed data values.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const STUDENT_ANALYTICS_GUIDE: GuideDefinition = {
+    id: "student_analytics_guide",
+    pageTitle: "Student Demographics",
+    pageSubtitle: "Analyze enrollment trends and student distribution.",
+    pageGuidance: [
+        "Visualize student registration across different courses and sessions.",
+        "Identify demographic patterns to better allocate institutional resources.",
+        "Track student growth and retention rates through historical data."
+    ],
+    settingsTip: "Demographic data helps you understand your student base better. Use course-wise registration trends to plan for new faculty hires or facility upgrades.",
+    steps: [
+        {
+            element: "#student-analytics-header",
+            title: "Demographic Insights",
+            description: "A comprehensive look at your student body distribution.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#student-stats-charts",
+            title: "Growth Metrics",
+            description: "Visual analysis of enrollment and student diversity.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const IMPORT_LOGS_GUIDE: GuideDefinition = {
+    id: "import_logs_guide",
+    pageTitle: "Data Import Logs",
+    pageSubtitle: "Monitor the status and history of bulk data imports.",
+    pageGuidance: [
+        "Verify if your data imports were successful or encountered errors.",
+        "Review detailed logs for each import batch to find skipped or invalid records.",
+        "Track who initiated data imports and when they were completed."
+    ],
+    settingsTip: "If an import fails, download the error report immediately. It provides specific row and column details to help you fix the data before retrying.",
+    steps: [
+        {
+            element: "#import-logs-header",
+            title: "Import History",
+            description: "Complete tracking of all bulk data operations.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#import-logs-table",
+            title: "Batch Records",
+            description: "Monitor success rates and download error reports for failed rows.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};

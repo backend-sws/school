@@ -1,0 +1,92 @@
+import { GuideDefinition } from "@/types/guide";
+
+export const TIMETABLE_OVERVIEW_GUIDE: GuideDefinition = {
+    id: "timetable_overview_guide",
+    pageTitle: "Overview",
+    pageSubtitle: "Central command for institutional scheduling, room allocations, and daily coverage.",
+    pageGuidance: [
+        "View real-time schedule progress and identify potential conflicts at a glance.",
+        "Quickly access templates to define the structure of your school day.",
+        "Manage substitutions for teacher absences and track overall coverage metrics."
+    ],
+    settingsTip: "Keep your timetable coverage above 90% for optimal academic stability. Use the Timeline Preview to stay ahead of the daily bell schedule.",
+    steps: [
+        {
+            element: "#timetable-overview-header",
+            title: "Timetable Command Center",
+            description: "Manage and monitor all active schedules and resource allocations from this central hub.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#schedules-list",
+            title: "Active Schedules",
+            description: "View and edit your published timetables. You can jump directly into the builder from here.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const TIMETABLE_TEMPLATES_GUIDE: GuideDefinition = {
+    id: "timetable_templates_guide",
+    pageTitle: "Schedule Templates",
+    pageSubtitle: "Define the skeletal structure of your school day across different streams.",
+    pageGuidance: [
+        "Templates define the start/end times and periods for each class level.",
+        "Add breaks (Recess, Lunch) to ensure teachers and students have designated downtime.",
+        "Templates are reusable — once defined, they can be applied to multiple classes."
+    ],
+    settingsTip: "Standardize your period durations across related streams to avoid room allocation conflicts during the scheduling phase.",
+    steps: [
+        {
+            element: "#templates-header",
+            title: "Manage Templates",
+            description: "Define the timing structure for your classes. This is the first step in creating a new timetable.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const TIMETABLE_ROOMS_GUIDE: GuideDefinition = {
+    id: "timetable_rooms_guide",
+    pageTitle: "Room Management",
+    pageSubtitle: "Allocate and manage physical spaces for academic and extracurricular activities.",
+    pageGuidance: [
+        "Register all classrooms, laboratories, and halls to enable conflict-free scheduling.",
+        "Assign capacities to rooms to ensure they meet the intake requirements for each class.",
+        "Track room availability in real-time to optimize space utilization across the campus."
+    ],
+    settingsTip: "Accurate room capacities prevent overcrowding. Always verify the equipment available in labs before assigning them to a specialized subject.",
+    steps: [
+        {
+            element: "#rooms-header",
+            title: "Room Directory",
+            description: "Keep track of all available physical spaces in your institution.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const TIMETABLE_SUBSTITUTIONS_GUIDE: GuideDefinition = {
+    id: "timetable_substitutions_guide",
+    pageTitle: "Daily Substitutions",
+    pageSubtitle: "Manage teacher absences and ensure gapless instructional coverage.",
+    pageGuidance: [
+        "Log teacher absences and quickly find free staff to cover the affected periods.",
+        "Maintain a historical record of substitutions for payroll and performance tracking.",
+        "Communicate changes to students and staff instantly via the digital notices."
+    ],
+    settingsTip: "Assign substitutions early in the morning to minimize classroom disruption. The system suggests free teachers based on their existing schedule.",
+    steps: [
+        {
+            element: "#substitutions-header",
+            title: "Coverage Log",
+            description: "Track and manage all daily class adjustments in one centralized log.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};

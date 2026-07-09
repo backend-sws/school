@@ -1,0 +1,31 @@
+# =============================================================================
+# CI/CD: On push to pds → build app + horizon images → push to GHCR.
+# Deployments (K8s) are done manually via kubectl.
+# =============================================================================
+name: CI/CD
+
+on:
+  push:
+    branches: ['clent/pds-tecg']
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  build-app:
+    name: Build App Image
+    uses: ./.github/workflows/build-image.yml
+    with:
+      tag_type: latest
+      push: true
+      force_build: true
+    secrets: inherit
+
+  build-horizon:
+    name: Build Horizon Image
+    uses: ./.github/workflows/build-horizon-image.yml
+    with:
+      push: true
+    secrets: inherit

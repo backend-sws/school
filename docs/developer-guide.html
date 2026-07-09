@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Guide — PDS Education Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #0f172a;
+            --bg2: #1e293b;
+            --bg3: #334155;
+            --bg4: #020617;
+            --surface: rgba(30, 41, 59, .6);
+            --surface2: rgba(51, 65, 85, .4);
+            --border: rgba(148, 163, 184, .15);
+            --border-glow: rgba(59, 130, 246, .4);
+            --text: #f8fafc;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --blue: #3b82f6;
+            --purple: #a855f7;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --sidebar-w: 280px;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(59, 130, 246, .1);
+            color: var(--blue);
+            padding: .2rem .4rem;
+            border-radius: 4px;
+            font-size: .85rem
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit
+        }
+
+        /* ── SIDEBAR ───────────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--bg4);
+            border-right: 1px solid var(--border);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto
+        }
+
+        .sidebar-brand {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .sidebar-brand h2 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        .sidebar-brand .sub {
+            font-size: .7rem;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin-top: .3rem;
+            font-weight: 700
+        }
+
+        .sidebar-section {
+            padding: 1rem 0
+        }
+
+        .sidebar-section-title {
+            font-size: .65rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--text3);
+            padding: .5rem 1.5rem
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .6rem 1.5rem;
+            color: var(--text2);
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 500;
+            transition: all .2s;
+            border-left: 3px solid transparent
+        }
+
+        .sidebar a:hover {
+            color: var(--text);
+            background: rgba(59, 130, 246, .08)
+        }
+
+        .sidebar a.active {
+            color: var(--blue);
+            background: rgba(59, 130, 246, .12);
+            border-left-color: var(--blue)
+        }
+
+        .sidebar a .emoji {
+            width: 20px;
+            font-size: 1rem
+        }
+
+        /* ── MAIN ──────────────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            padding-bottom: 5rem
+        }
+
+        /* ── HERO ──────────────────────────────── */
+        .hero {
+            padding: 6rem 3rem 4rem;
+            background: radial-gradient(circle at 10% 10%, rgba(59, 130, 246, .05) 0%, transparent 50%), radial-gradient(circle at 90% 90%, rgba(168, 85, 247, .05) 0%, transparent 50%);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: .4rem 1rem;
+            background: rgba(59, 130, 246, .1);
+            border: 1px solid rgba(59, 130, 246, .3);
+            border-radius: 50px;
+            color: var(--blue);
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 950;
+            letter-spacing: -.04em;
+            line-height: 1;
+            margin-bottom: 1.2rem
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text2);
+            max-width: 700px
+        }
+
+        /* ── SECTIONS ──────────────────────────── */
+        .section {
+            padding: 5rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto
+        }
+
+        .section h2 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -.03em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .8rem
+        }
+
+        .section .lead {
+            font-size: 1.1rem;
+            color: var(--text2);
+            margin-bottom: 3rem
+        }
+
+        /* ── CARDS ─────────────────────────────── */
+        .dev-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 3rem
+        }
+
+        .card-hdr {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, .4)
+        }
+
+        .card-hdr h3 {
+            font-size: 1.2rem;
+            font-weight: 800
+        }
+
+        .card-body {
+            padding: 2rem
+        }
+
+        /* ── MERMAID ───────────────────────────── */
+        .mermaid-box {
+            background: var(--bg4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center
+        }
+
+        /* ── CODE ──────────────────────────────── */
+        .code-block {
+            background: var(--bg4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            position: relative;
+            margin-bottom: 2rem
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 1.5rem;
+            background: var(--bg2);
+            padding: .2rem .8rem;
+            border-radius: 0 0 8px 8px;
+            font-size: .65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text3)
+        }
+
+        .code-block pre {
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: .85rem
+        }
+
+        /* ── GRID ──────────────────────────────── */
+        .pro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem
+        }
+
+        .pro-item {
+            background: rgba(15, 23, 42, .3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem
+        }
+
+        .pro-item h4 {
+            font-size: .95rem;
+            font-weight: 800;
+            margin-bottom: .5rem;
+            color: var(--blue)
+        }
+
+        .pro-item p {
+            font-size: .85rem;
+            color: var(--text2)
+        }
+
+        /* ── TABLES ────────────────────────────── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem;
+            font-size: .7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text3);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, .1);
+            font-size: .9rem
+        }
+
+        /* ── RESPONSIVE ────────────────────────── */
+        @media(max-width:1000px) {
+            .sidebar {
+                display: none
+            }
+
+            .main {
+                margin-left: 0
+            }
+
+            .section {
+                padding: 3rem 1.5rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>🛠️ PDS Education</h2>
+            <div class="sub">Developer Manual</div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Architecture</div>
+            <a href="#hero"><span class="emoji">🚀</span> Overview</a>
+            <a href="#lifecycle"><span class="emoji">🔄</span> Lifecycle & Context</a>
+            <a href="#middleware"><span class="emoji">🌍</span> Core Middleware</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Flows</div>
+            <a href="#onboarding"><span class="emoji">⚙️</span> Onboarding Logic</a>
+            <a href="#academic"><span class="emoji">🎓</span> Academic Hierarchy</a>
+            <a href="#financial"><span class="emoji">💰</span> Financial Engine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Frontend</div>
+            <a href="#navigation"><span class="emoji">🗺️</span> Dynamic Navigation</a>
+            <a href="#best-practices"><span class="emoji">✅</span> Best Practices</a>
+        </div>
+    </aside>
+
+    <div class="main">
+
+        <!-- ═══════════ HERO ═══════════ -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-badge">Revision 1.0</div>
+                <h1>Developer Guide</h1>
+                <p>Comprehensive guide to PDS Education’s architectural flow, multitenancy logic, and engine patterns for
+                    technical implementation.</p>
+            </div>
+        </section>
+
+        <!-- ═══════════ ARCHITECTURE ═══════════ -->
+        <section class="section" id="lifecycle">
+            <div class="section-header">
+                <h2>Architecture & Multitenancy</h2>
+                <p class="lead">PDS Education utilizes a <strong>Domain-Based Context Resolution</strong> system to power a
+                    multi-institution ecosystem from a single codebase.</p>
+            </div>
+
+            <div class="dev-card">
+                <div class="card-hdr">
+                    <h3>🔄 Request Lifecycle Sequence</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mermaid-box">
+                        <pre class="mermaid">
+sequenceDiagram
+    participant U as User Browser
+    participant N as Nginx/Ingress
+    participant RM as ResolveInstitutionFromDomain (Middleware)
+    participant IC as InstitutionContext
+    participant P as Policy/Middleware
+    participant C as Controller
+
+    U->>N: GET school.lvh.me/dashboard
+    N->>RM: Forward request
+    RM->>RM: Extract 'school' from host
+    RM->>DB: Query Institution where domain = 'school'
+    DB-->>RM: Institution (ID: 10, Type: school)
+    RM->>RM: Config::set('ems.default_institution_id', 10)
+    RM->>RM: Config::set('ems.default_institution_type', 'school')
+    RM->>P: EnsurePermission ('dashboard_view')
+    P->>DB: Check roles_assigned (user_id, scope_id=10, perm)
+    DB-->>P: Authorized
+    P->>C: Handle Request
+      </pre>
+                    </div>
+                    <p style="color:var(--text2); font-size: .9rem">The <code>ResolveInstitutionFromDomain</code>
+                        middleware is the single point of entry. It overrides <code>app.url</code> and sets the
+                        <code>ems.default_institution_id</code> context for all downstream Eloquent queries.</p>
+                </div>
+            </div>
+
+            <div class="section-header" id="middleware">
+                <h3>Core Middleware Layers</h3>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Middleware</th>
+                        <th>Responsibility</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>ResolveInstitutionFromDomain</code></td>
+                        <td>Detects tenant context from subdomain, sets global config for scoping.</td>
+                    </tr>
+                    <tr>
+                        <td><code>EnsurePermissionGroup</code></td>
+                        <td>Maps route groups (e.g., <code>academic_setup</code>) to permission sets in
+                            <code>config/route_permissions.php</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>CheckSubscription</code></td>
+                        <td>Validates if the tenant's <code>SubscriptionTier</code> includes the module requested.</td>
+                    </tr>
+                    <tr>
+                        <td><code>HandleInertiaRequests</code></td>
+                        <td>Shares global context (auth, flash, institution data) to the React frontend.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════ ONBOARDING ═══════════ -->
+        <section class="section" id="onboarding">
+            <div class="section-header">
+                <h2>Onboarding Workflow</h2>
+                <p class="lead">From initial registration to functional tenant bootstrapping.</p>
+            </div>
+
+            <div class="dev-card">
+                <div class="card-hdr">
+                    <h3>⚙️ Registration Flow</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mermaid-box">
+                        <pre class="mermaid">
+flowchart TD
+    Start([/register]) --> S1[Step 1: Account Info]
+    S1 --> S2[Step 2: Org & Inst Setup]
+    S2 --> S3[Step 3: Verification Email]
+    S3 --> V{Email Verified?}
+    V -- Yes --> S4[Step 4: Plan Selection]
+    S4 --> B[Step 5: Transactional Setup]
+    B --> BS["Platform Bootstrap (AJAX)"]
+    BS --> D([/dashboard])
+
+    subgraph "Bootstrap Phase (OnboardingController)"
+    BS1[Seed Default Roles]
+    BS2[Map Institutional Workflows]
+    BS3[Seed Default Fee Types]
+    end
+      </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-label">App/Http/Controllers/Web/OnboardingController.php</div>
+                <pre><code>/**
+ * Technical Highlight: mapModulesToWorkflows
+ * Dynamically selects workflow keys with '_school' suffixes
+ * if instType === 'school'. This swaps sidebars and permissions.
+ */
+private function mapModulesToWorkflows(array $modules, string $instType): array {
+    $isSchool = $instType === 'school';
+    return [
+       'core' => [$isSchool ? 'system_console_school' : 'system_console', ...],
+       ...
+    ];
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════ ENTITY RELATIONSHIPS ═══════════ -->
+        <section class="section" id="academic">
+            <div class="section-header">
+                <h2>Data Models & ERD</h2>
+                <p class="lead">Entity relationships for both academic and financial engines.</p>
+            </div>
+
+            <div class="dev-card">
+                <div class="card-hdr">
+                    <h3>🎓 Academic Hierarchy (School Scope)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mermaid-box">
+                        <pre class="mermaid">
+erDiagram
+    INSTITUTION ||--o{ ACADEMIC_SESSION : owns
+    ACADEMIC_SESSION ||--o{ DEPARTMENT : contains
+    DEPARTMENT ||--o{ MAIN_STREAM : groups
+    MAIN_STREAM ||--o{ STREAM : defines
+    STREAM ||--o{ CLASSROOM : maps_to
+    CLASSROOM ||--o{ SUBJECT_ALLOCATION : teaches
+    STUDENT }|--|| STREAM : enrolled_in
+    STREAM ||--o{ FEE_REGULATION : active_fees
+      </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-card" id="financial">
+                <div class="card-hdr">
+                    <h3>💰 Financial Engine Logic</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mermaid-box">
+                        <pre class="mermaid">
+flowchart LR
+    FT[Fee Type] -->|Assigned| FP[Fee Profile]
+    FP -->|Session Map| FR[Fee Regulation]
+    FR -->|Trigger| SL[Student Ledger]
+    
+    subgraph "Ledger Generation"
+    SL -->|Monthly| D[Due Record]
+    D -->|Late| O[Overdue Status]
+    end
+
+    TX[Transaction] -->|Offset| SL
+      </pre>
+                    </div>
+                    <p style="color:var(--text2); font-size: .9rem"><strong>Student Ledger</strong>: A transaction-aware
+                        table that tracks <code>expected</code>, <code>paid</code>, and <code>arrears</code> per month.
+                        It is auto-projected when a <code>FeeRegulation</code> is activated for a class.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ FRONTEND ═══════════ -->
+        <section class="section" id="navigation">
+            <div class="section-header">
+                <h2>Frontend & Navigation Patterns</h2>
+                <p class="lead">Dynamic UI construction using React, Inertia, and shared constants.</p>
+            </div>
+
+            <div class="dev-card">
+                <div class="card-hdr">
+                    <h3>🗺️ Navigation Resolution</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mermaid-box">
+                        <pre class="mermaid">
+sequenceDiagram
+    participant APP as useNavigation (Hook)
+    participant CFG as unifiedSidebarConfig (Constant)
+    participant USR as Auth User (Inertia Props)
+    
+    APP->>CFG: Get raw config
+    APP->>USR: Get roles + permissions
+    APP->>APP: Filter items by .permission
+    APP->>APP: Filter items by .feature
+    APP->>APP: Resolve target URL based on scope_id
+    APP-->>UI: Render Sidebar
+      </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header" id="best-practices">
+                <h3>Developer Best Practices</h3>
+            </div>
+            <div class="pro-grid">
+                <div class="pro-item">
+                    <h4>Global Scoping</h4>
+                    <p>Never query models without scoping. Use
+                        <code>InstitutionContext::getActiveInstitutionId($user)</code> to fetch the current tenant ID.
+                    </p>
+                </div>
+                <div class="pro-item">
+                    <h4>Form Pattern</h4>
+                    <p>All forms MUST use <code>ControlledFormComponent</code> with <code>zod</code>. This ensures
+                        consistent field layout and validation UX.</p>
+                </div>
+                <div class="pro-item">
+                    <h4>API Modules</h4>
+                    <p>Keep API calls out of React components. Centralize them in
+                        <code>lib/api/&lt;feature&gt;Api.ts</code> and export a CRUD object.</p>
+                </div>
+                <div class="pro-item">
+                    <h4>Error Mapping</h4>
+                    <p>Don't hardcode error strings. Use <code>ApiErrorMap::respond()</code> to pull user-facing
+                        messages from <code>config/api_error_maps.php</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ FOOTER ═══════════ -->
+        <footer
+            style="padding: 4rem 0; border-top: 1px solid var(--border); text-align: center; color: var(--text3); font-size: .8rem">
+            <div class="container">
+                <p>PDS Education Development Manual &bull; Confidential Internal Doc</p>
+                <p style="margin-top: .5rem"><a href="school-workflows.html"
+                        style="color: var(--blue); text-decoration: none">View Switch to School Workflows &rarr;</a></p>
+            </div>
+        </footer>
+
+    </div><!-- /main -->
+
+    <script>
+        mermaid.initialize({ theme: 'dark', themeVariables: { primaryColor: '#1e293b', primaryTextColor: '#f8fafc', lineColor: '#3b82f6', fontSize: '14px' }, flowchart: { curve: 'basis' } });
+
+        // Sidebar Active Spy
+        const sections = document.querySelectorAll('.section[id]');
+        const navLinks = document.querySelectorAll('.sidebar a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => { if (scrollY >= s.offsetTop - 250) current = s.id });
+            navLinks.forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+            });
+        });
+    </script>
+</body>
+
+</html>

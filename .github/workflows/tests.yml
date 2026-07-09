@@ -1,0 +1,17 @@
+# =============================================================================
+# CI: run unit tests on PR only. On push to main, use "Build & Push" (test → build → deploy → load test).
+# =============================================================================
+name: Run Tests
+
+on:
+  pull_request:
+    # branches: [main, develop]
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Tests are currently disabled."
+  # unit-test:
+  #   name: Unit Test
+  #   uses: ./.github/workflows/unit-test.yml

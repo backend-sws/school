@@ -1,0 +1,69 @@
+# PDS Education
+
+> The Operating System for Modern Education
+
+PDS Education is a high-performance, AI-native Institutional Operating System designed for the entire education ecosystem — EdTech startups, coaching institutes, test prep centers, skill development providers, K-12 schools, colleges, and universities. It automates administrative workflows, scales institutional governance, and provides 360° operational visibility through a unified multi-tenant platform.
+
+## Who Is It For
+
+- **Schools (K-12)**: Comprehensive management for CBSE, ICSE, and state boards with strict academic compliance.
+- **Colleges & Universities**: Scalable infrastructure for higher education, from autonomous colleges to large university systems.
+- **Coaching Institutes & Test Prep**: High-performance tools for competitive exam coaching centers and skill-development workshops.
+- **Multi-Campus Groups**: Centralized governance for educational chains and multi-state institutional networks.
+- **EdTech Startups**: Foundational stack for launching and scaling online learning platforms.
+- **Skill Development & Vocational Training**: Powering vocational training and professional certification centers.
+
+## Core Capabilities
+
+- **Multi-Tenant Architecture**: Manage multiple branches, sub-brands, or independent entities from a single unified core.
+- **API-First Delivery**: Robust backend services that can power custom frontends or integrate with existing stacks.
+- **White-Labeling**: Complete brand ownership — deploy under your own domain, logo, colors, and email templates.
+- **AI Intelligence (Guru)**: Built-in AI engine for role-based automation and real-time operational insights.
+- **Revenue & Monetization**: Automated fee engines integrated with PayU and SabPaisa for INR transactions.
+- **Bank-Grade Security**: Dedicated storage per organization, regular security audits, and full data isolation.
+- **UDISE+ Compliance**: Automated compliance dashboard with government reporting.
+
+## Platform Modules
+
+- Academic Intelligence: AI-powered scheduling, timetable generation, attendance tracking, grade-book analytics
+- Digital Treasury: Fee ledgers, multi-gateway payments (UPI, cards, net banking), real-time reconciliation
+- Learning Management (LMS): Course builder, video engine with transcoding, question bank, AI quiz generation, test series
+- Operational Wing: GPS transport tracking, barcode inventory, library catalog, facility management
+- Enterprise Governance: Multi-campus RBAC, cross-institution analytics, audit trails, policy enforcement
+- Growth & Admissions: Online applications, candidate management, website CMS, lead tracking via AI
+- Student & Provider Profiles: Academic history, document vault, ID cards with QR, certificate workflows
+- Compliance & Reporting: UDISE+ dashboard, AI compliance advisor, custom report builder
+- Communications Hub: WhatsApp, SMS (MSG91), Email, Push notifications, broadcast engine
+- AI Assistant (Guru): Context-aware help for students, teachers, admins, and parents
+
+## Portals
+
+- Admin/Operator Dashboard: Centralized operations cockpit
+- Teacher/Provider Portal: LMS content management, attendance, assessments
+- Student/Learner Portal: Mobile-first experience for timetable, assignments, tests, fees, certificates
+- Parent/Guardian Portal: Fee payments, attendance tracking, communication
+
+## Pricing
+
+- **Starter** — ₹1,499/month (₹1,249 annual): 1 institution, 200 users, core platform
+- **Professional** — ₹3,999/month (₹3,332 annual): 3 institutions, 1,000 users, full LMS + admissions
+- **Enterprise** — ₹7,999/month (₹6,666 annual): 10 institutions, 5,000 users, transport + inventory
+- **Plus** — ₹14,999/month (₹12,499 annual): Unlimited everything, white-label, API access, 24/7 support
+
+All plans include a 14-day free trial. No credit card required.
+
+## Self-Service Onboarding
+
+Any institution can go live in under 48 hours without team intervention:
+1. Create account at rishividya.tech/register
+2. Verify email
+3. Choose a plan (14-day free trial)
+4. Add payment details (optional, skippable)
+5. Setup organization (name, type, location, theme)
+6. Import data (auto-seed or upload Excel)
+7. Go live with custom subdomain
+
+## Contact
+
+- Website: https://rishividya.tech
+- Built by: SutraCode Technologies

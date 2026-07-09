@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Workflow Guide — PDS Education</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #0a0e1a;
+            --bg2: #111827;
+            --bg3: #1e293b;
+            --bg4: #0f172a;
+            --surface: rgba(30, 41, 59, .6);
+            --surface2: rgba(51, 65, 85, .4);
+            --border: rgba(100, 116, 139, .25);
+            --border-glow: rgba(59, 130, 246, .3);
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --cyan: #06b6d4;
+            --indigo: #6366f1;
+            --sidebar-w: 270px;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg2)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg3);
+            border-radius: 3px
+        }
+
+        /* ── SIDEBAR ───────────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1.2rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .sidebar-brand h2 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .sidebar-brand .sub {
+            font-size: .7rem;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-top: .15rem
+        }
+
+        .sidebar-section {
+            padding: .6rem 0
+        }
+
+        .sidebar-section-title {
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--text3);
+            padding: .5rem 1.2rem
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .5rem 1.2rem;
+            color: var(--text2);
+            text-decoration: none;
+            font-size: .82rem;
+            font-weight: 500;
+            transition: all .15s;
+            border-left: 3px solid transparent
+        }
+
+        .sidebar a:hover {
+            color: var(--text);
+            background: rgba(59, 130, 246, .06)
+        }
+
+        .sidebar a.active {
+            color: var(--blue);
+            background: rgba(59, 130, 246, .1);
+            border-left-color: var(--blue)
+        }
+
+        .sidebar a .emoji {
+            width: 20px;
+            text-align: center;
+            font-size: .9rem
+        }
+
+        /* ── MAIN ──────────────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh
+        }
+
+        /* ── Hero ──────────────────────────────── */
+        .hero {
+            position: relative;
+            padding: 5rem 3rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--bg) 0%, #0d1525 40%, #111d35 100%);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(59, 130, 246, .08) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(139, 92, 246, .06) 0%, transparent 60%)
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .4rem 1.2rem;
+            border-radius: 50px;
+            background: rgba(59, 130, 246, .12);
+            border: 1px solid rgba(59, 130, 246, .25);
+            color: var(--blue);
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 900;
+            letter-spacing: -.03em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, var(--blue) 70%, var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: .8rem
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text2);
+            max-width: 600px;
+            margin: 0 auto 2rem
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 700px;
+            margin: 0 auto
+        }
+
+        .hero-stat {
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border)
+        }
+
+        .hero-stat .num {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .hero-stat .label {
+            font-size: .7rem;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-top: .15rem
+        }
+
+        /* ── Container ─────────────────────────── */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem
+        }
+
+        /* ── Section ───────────────────────────── */
+        .section {
+            padding: 4rem 2rem
+        }
+
+        .section-header {
+            margin-bottom: 3rem
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .3rem .9rem;
+            border-radius: 50px;
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: .8rem
+        }
+
+        .section-badge.blue {
+            background: rgba(59, 130, 246, .12);
+            border: 1px solid rgba(59, 130, 246, .2);
+            color: var(--blue)
+        }
+
+        .section-badge.purple {
+            background: rgba(139, 92, 246, .12);
+            border: 1px solid rgba(139, 92, 246, .2);
+            color: var(--purple)
+        }
+
+        .section-badge.emerald {
+            background: rgba(16, 185, 129, .12);
+            border: 1px solid rgba(16, 185, 129, .2);
+            color: var(--emerald)
+        }
+
+        .section-badge.amber {
+            background: rgba(245, 158, 11, .12);
+            border: 1px solid rgba(245, 158, 11, .2);
+            color: var(--amber)
+        }
+
+        .section-badge.rose {
+            background: rgba(244, 63, 94, .12);
+            border: 1px solid rgba(244, 63, 94, .2);
+            color: var(--rose)
+        }
+
+        .section-badge.cyan {
+            background: rgba(6, 182, 212, .12);
+            border: 1px solid rgba(6, 182, 212, .2);
+            color: var(--cyan)
+        }
+
+        .section-badge.indigo {
+            background: rgba(99, 102, 241, .12);
+            border: 1px solid rgba(99, 102, 241, .2);
+            color: var(--indigo)
+        }
+
+        .section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin-bottom: .4rem
+        }
+
+        .section .subtitle {
+            color: var(--text2);
+            font-size: .95rem
+        }
+
+        /* ── Cards ─────────────────────────────── */
+        .wf-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: border-color .3s
+        }
+
+        .wf-card:hover {
+            border-color: var(--border-glow)
+        }
+
+        .card-hdr {
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .card-ico {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0
+        }
+
+        .card-ico.blue {
+            background: rgba(59, 130, 246, .15)
+        }
+
+        .card-ico.purple {
+            background: rgba(139, 92, 246, .15)
+        }
+
+        .card-ico.emerald {
+            background: rgba(16, 185, 129, .15)
+        }
+
+        .card-ico.amber {
+            background: rgba(245, 158, 11, .15)
+        }
+
+        .card-ico.rose {
+            background: rgba(244, 63, 94, .15)
+        }
+
+        .card-ico.cyan {
+            background: rgba(6, 182, 212, .15)
+        }
+
+        .card-ico.indigo {
+            background: rgba(99, 102, 241, .15)
+        }
+
+        .card-hdr h3 {
+            font-size: 1.1rem;
+            font-weight: 700
+        }
+
+        .card-hdr .perm {
+            margin-left: auto;
+            font-size: .68rem;
+            padding: .25rem .65rem;
+            border-radius: 50px;
+            background: var(--surface2);
+            color: var(--text3);
+            letter-spacing: .02em
+        }
+
+        .card-body {
+            padding: 1.5rem
+        }
+
+        .card-ss {
+            width: 100%;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 1.2rem;
+            transition: transform .3s;
+            cursor: zoom-in
+        }
+
+        .card-ss:hover {
+            transform: scale(1.005)
+        }
+
+        .card-ss.zoomed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            z-index: 9999;
+            background: rgba(0, 0, 0, .92);
+            border: none;
+            border-radius: 0;
+            cursor: zoom-out;
+            padding: 2rem
+        }
+
+        /* ── Route Table ───────────────────────── */
+        .rt {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+            margin-top: 1rem
+        }
+
+        .rt th {
+            text-align: left;
+            padding: .6rem .8rem;
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text3);
+            background: var(--bg4);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .rt td {
+            padding: .6rem .8rem;
+            border-bottom: 1px solid rgba(100, 116, 139, .12)
+        }
+
+        .rt tr:hover td {
+            background: rgba(59, 130, 246, .04)
+        }
+
+        .rt code {
+            font-size: .75rem;
+            padding: .12rem .4rem;
+            border-radius: 4px;
+            background: rgba(59, 130, 246, .1);
+            color: var(--blue)
+        }
+
+        /* ── Flow ──────────────────────────────── */
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            padding: 1.2rem;
+            background: var(--bg4);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            overflow-x: auto
+        }
+
+        .flow-s {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .5rem 1rem;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1px solid var(--border)
+        }
+
+        .flow-s.a {
+            background: rgba(59, 130, 246, .15);
+            border-color: rgba(59, 130, 246, .3);
+            color: var(--blue)
+        }
+
+        .flow-arr {
+            color: var(--text3);
+            font-size: 1.1rem
+        }
+
+        /* ── Mermaid ───────────────────────────── */
+        .mermaid-wrap {
+            background: var(--bg4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center
+        }
+
+        /* ── Module Grid ───────────────────────── */
+        .mod-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem
+        }
+
+        .mod-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            transition: all .3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit
+        }
+
+        .mod-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .3)
+        }
+
+        .mod-card .ic {
+            font-size: 1.8rem;
+            margin-bottom: .6rem
+        }
+
+        .mod-card h4 {
+            font-size: .92rem;
+            font-weight: 700;
+            margin-bottom: .2rem
+        }
+
+        .mod-card p {
+            font-size: .78rem;
+            color: var(--text2)
+        }
+
+        /* ── Divider ───────────────────────────── */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 0
+        }
+
+        /* ── Footer ────────────────────────────── */
+        .footer {
+            text-align: center;
+            padding: 2.5rem 0;
+            border-top: 1px solid var(--border);
+            color: var(--text3);
+            font-size: .82rem
+        }
+
+        /* ── Responsive ────────────────────────── */
+        @media(max-width:900px) {
+            .sidebar {
+                display: none
+            }
+
+            .main {
+                margin-left: 0
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .mod-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════ SIDEBAR NAV ═══════════ -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>PDS Education</h2>
+            <div class="sub">School Workflow Guide</div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Getting Started</div>
+            <a href="#hero"><span class="emoji">🏠</span> Overview</a>
+            <a href="#onboarding"><span class="emoji">🚀</span> Onboarding</a>
+            <a href="#dashboard"><span class="emoji">📊</span> Dashboard</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Core Modules</div>
+            <a href="#academic"><span class="emoji">🎓</span> Academic Setup</a>
+            <a href="#admission"><span class="emoji">📋</span> Admission & Registry</a>
+            <a href="#fees"><span class="emoji">💰</span> Treasury & Fees</a>
+            <a href="#attendance"><span class="emoji">✅</span> Attendance</a>
+            <a href="#timetable"><span class="emoji">📅</span> Timetable</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Services</div>
+            <a href="#certificates"><span class="emoji">📜</span> Certificates</a>
+            <a href="#library"><span class="emoji">📚</span> Library</a>
+            <a href="#inventory"><span class="emoji">📦</span> Inventory</a>
+            <a href="#transport"><span class="emoji">🚌</span> Transport</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Engagement</div>
+            <a href="#website"><span class="emoji">🌐</span> Website & PR</a>
+            <a href="#grievances"><span class="emoji">🛡️</span> Redressal</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">System</div>
+            <a href="#settings"><span class="emoji">⚙️</span> Settings</a>
+            <a href="#portal"><span class="emoji">🎒</span> Student Portal</a>
+            <a href="#setup-order"><span class="emoji">🗺️</span> Setup Order</a>
+        </div>
+    </aside>
+
+    <div class="main">
+
+        <!-- ═══════════ HERO ═══════════ -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-badge">📘 Scope: School</div>
+                <h1>School Workflow Guide</h1>
+                <p>Screen-by-screen documentation of every admin and student workflow in the PDS Education Education
+                    Management System.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="num">16</div>
+                        <div class="label">Modules</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="num">50+</div>
+                        <div class="label">Screens</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="num">17</div>
+                        <div class="label">Perm Groups</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="num">9</div>
+                        <div class="label">Roles</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ MODULE OVERVIEW ═══════════ -->
+        <section class="section" id="overview">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge blue">Overview</div>
+                    <h2>All School Modules</h2>
+                    <p class="subtitle">Click any module to jump to its documentation</p>
+                </div>
+                <div class="mod-grid">
+                    <a href="#onboarding" class="mod-card">
+                        <div class="ic">🚀</div>
+                        <h4>Onboarding</h4>
+                        <p>Registration, org setup, plan, bootstrap</p>
+                    </a>
+                    <a href="#academic" class="mod-card">
+                        <div class="ic">🎓</div>
+                        <h4>Academic Setup</h4>
+                        <p>Sessions, departments, streams, subjects</p>
+                    </a>
+                    <a href="#admission" class="mod-card">
+                        <div class="ic">📋</div>
+                        <h4>Admission & Registry</h4>
+                        <p>Applications, students, promotions</p>
+                    </a>
+                    <a href="#fees" class="mod-card">
+                        <div class="ic">💰</div>
+                        <h4>Treasury & Fees</h4>
+                        <p>Fee types, regulations, ledgers, dues</p>
+                    </a>
+                    <a href="#attendance" class="mod-card">
+                        <div class="ic">✅</div>
+                        <h4>Attendance</h4>
+                        <p>Mark attendance, reports</p>
+                    </a>
+                    <a href="#timetable" class="mod-card">
+                        <div class="ic">📅</div>
+                        <h4>Timetable</h4>
+                        <p>Templates, builder, substitutions</p>
+                    </a>
+                    <a href="#certificates" class="mod-card">
+                        <div class="ic">📜</div>
+                        <h4>Certificates</h4>
+                        <p>Certificate heads, applications, ID cards</p>
+                    </a>
+                    <a href="#library" class="mod-card">
+                        <div class="ic">📚</div>
+                        <h4>Library</h4>
+                        <p>Books, issues, overdue reports</p>
+                    </a>
+                    <a href="#inventory" class="mod-card">
+                        <div class="ic">📦</div>
+                        <h4>Inventory</h4>
+                        <p>Items, movements, sales</p>
+                    </a>
+                    <a href="#transport" class="mod-card">
+                        <div class="ic">🚌</div>
+                        <h4>Transport</h4>
+                        <p>Routes, vehicles, drivers</p>
+                    </a>
+                    <a href="#website" class="mod-card">
+                        <div class="ic">🌐</div>
+                        <h4>Website & PR</h4>
+                        <p>Notices, sliders, news</p>
+                    </a>
+                    <a href="#grievances" class="mod-card">
+                        <div class="ic">🛡️</div>
+                        <h4>Redressal</h4>
+                        <p>Grievances, tickets, feedback</p>
+                    </a>
+                    <a href="#settings" class="mod-card">
+                        <div class="ic">⚙️</div>
+                        <h4>Settings</h4>
+                        <p>Institution, branding, rules</p>
+                    </a>
+                    <a href="#portal" class="mod-card">
+                        <div class="ic">🎒</div>
+                        <h4>Student Portal</h4>
+                        <p>Self-service for students</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ ONBOARDING ═══════════ -->
+        <section class="section" id="onboarding">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge blue">Module 1</div>
+                    <h2>Onboarding & Initial Setup</h2>
+                    <p class="subtitle">Create your school on the platform in 5 steps</p>
+                </div>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart LR
+  A["1. Register Account"] --> B["2. Setup Organization"]
+  B --> C["3. Verify Email"]
+  C --> D["4. Select Plan"]
+  D --> E["5. Platform Bootstrap"]
+  style A fill:#1e3a5f,stroke:#3b82f6,color:#e0f2fe
+  style B fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style C fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style D fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style E fill:#1e293b,stroke:#64748b,color:#e2e8f0
+    </pre>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico blue">📝</div>
+                        <h3>Account Registration</h3><span class="perm">/register</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/01-registration.png" alt="Registration" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Field</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>Full Name</td>
+                                <td>Admin's name (super-admin)</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>Primary login, must be unique</td>
+                            </tr>
+                            <tr>
+                                <td>Password</td>
+                                <td>Min 8 chars, confirmed</td>
+                            </tr>
+                            <tr>
+                                <td>Mobile</td>
+                                <td>Optional — SMS features</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico blue">🔐</div>
+                        <h3>Login</h3><span class="perm">/login</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/02-login.png" alt="Login" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ DASHBOARD ═══════════ -->
+        <section class="section" id="dashboard">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge purple">Central Hub</div>
+                    <h2>Admin Dashboard</h2>
+                    <p class="subtitle">At-a-glance academic and operational vitals</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico purple">📊</div>
+                        <h3>Dashboard Overview</h3><span class="perm">/dashboard</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/03-dashboard.png" alt="Dashboard" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>KPI</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>Total Students</td>
+                                <td>Active enrollments</td>
+                            </tr>
+                            <tr>
+                                <td>Admissions</td>
+                                <td>This period</td>
+                            </tr>
+                            <tr>
+                                <td>Fee Collection</td>
+                                <td>Revenue this period</td>
+                            </tr>
+                            <tr>
+                                <td>Pending Tasks</td>
+                                <td>Requiring action</td>
+                            </tr>
+                            <tr>
+                                <td>Charts</td>
+                                <td>Monthly admissions, fee trends, attendance averages</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ ACADEMIC ═══════════ -->
+        <section class="section" id="academic">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge purple">Module 2</div>
+                    <h2>Academic Setup</h2>
+                    <p class="subtitle">Foundation data — sessions, departments, streams, subjects</p>
+                </div>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart TD
+  S["Academic Session"] --> D["Department"]
+  D --> ST["Stream / Program"]
+  ST --> MC["Main Class"]
+  MC --> SEC["Section"]
+  ST --> SUB["Subject"]
+  MC --> CR["Classroom"]
+  style S fill:#1e3a5f,stroke:#3b82f6,color:#e0f2fe
+  style D fill:#2d1b4e,stroke:#8b5cf6,color:#ede9fe
+  style ST fill:#2d1b4e,stroke:#8b5cf6,color:#ede9fe
+  style MC fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style SEC fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style SUB fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style CR fill:#1e293b,stroke:#64748b,color:#e2e8f0
+    </pre>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico purple">📅</div>
+                        <h3>Academic Sessions</h3><span class="perm">/organization/sessions</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/04-sessions.png" alt="Sessions" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Action</th>
+                                <th>Route</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>List</td>
+                                <td><code>/organization/sessions</code></td>
+                                <td>View sessions with status toggle</td>
+                            </tr>
+                            <tr>
+                                <td>Create</td>
+                                <td><code>/organization/sessions/create</code></td>
+                                <td>Name, start/end year, mark current</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico purple">🏛️</div>
+                        <h3>Departments</h3><span class="perm">/organization/departments</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/05-departments.png" alt="Departments" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico purple">🏫</div>
+                        <h3>Streams & Programs</h3><span class="perm">/organization/streams</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/06-streams.png" alt="Streams" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ ADMISSION ═══════════ -->
+        <section class="section" id="admission">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge emerald">Module 3</div>
+                    <h2>Admission & Student Registry</h2>
+                    <p class="subtitle">Full student lifecycle — application to enrollment</p>
+                </div>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart LR
+  A["New Application"] --> R["Review & Verify"]
+  R --> AP["Approve"]
+  AP --> E["Enrolled Student"]
+  E --> P["Promotion"]
+  P --> E
+  E --> RA["Re-Admission"]
+  RA --> E
+  R --> RJ["Reject"]
+  style A fill:#064e3b,stroke:#10b981,color:#d1fae5
+  style R fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style AP fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style E fill:#064e3b,stroke:#10b981,color:#d1fae5
+  style P fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style RA fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style RJ fill:#4c1d2e,stroke:#f43f5e,color:#ffe4e6
+    </pre>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico emerald">📋</div>
+                        <h3>Admission Applications</h3><span class="perm">admission_cell</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/08-admission-applications.png" alt="Admissions" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <div class="flow" style="margin-top:1rem">
+                            <div class="flow-s">Identity</div><span class="flow-arr">→</span>
+                            <div class="flow-s">Guardian</div><span class="flow-arr">→</span>
+                            <div class="flow-s">Medical</div><span class="flow-arr">→</span>
+                            <div class="flow-s">Academic</div><span class="flow-arr">→</span>
+                            <div class="flow-s">Services</div><span class="flow-arr">→</span>
+                            <div class="flow-s">Payment</div><span class="flow-arr">→</span>
+                            <div class="flow-s a">Review</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico emerald">👥</div>
+                        <h3>Student Management</h3><span class="perm">office_registry</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/07-students.png" alt="Students" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Action</th>
+                                <th>Route</th>
+                            </tr>
+                            <tr>
+                                <td>Student List</td>
+                                <td><code>/students/manage</code></td>
+                            </tr>
+                            <tr>
+                                <td>Profile</td>
+                                <td><code>/students/manage/{id}</code></td>
+                            </tr>
+                            <tr>
+                                <td>Promotions</td>
+                                <td><code>/admission/promotions</code></td>
+                            </tr>
+                            <tr>
+                                <td>Re-Admissions</td>
+                                <td><code>/admission/readmissions</code></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ FEES ═══════════ -->
+        <section class="section" id="fees">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge amber">Module 4</div>
+                    <h2>Treasury & Fee Management</h2>
+                    <p class="subtitle">Configure fee structures, assign to classes, track payments & dues</p>
+                </div>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart LR
+  FT["Fee Types"] --> FP["Fee Profiles"]
+  FP --> FR["Fee Regulations"]
+  FR --> SL["Student Ledger"]
+  SL --> TX["Collect Payment"]
+  SL --> DU["Dues & Overdue"]
+  DU --> RM["Send Reminder"]
+  style FT fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style FP fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style FR fill:#1e293b,stroke:#64748b,color:#e2e8f0
+  style SL fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style TX fill:#064e3b,stroke:#10b981,color:#d1fae5
+  style DU fill:#4c1d2e,stroke:#f43f5e,color:#ffe4e6
+  style RM fill:#1e293b,stroke:#64748b,color:#e2e8f0
+    </pre>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico amber">₹</div>
+                        <h3>Fee Types</h3><span class="perm">/accounts/fee-hub/fee-types</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/09-fee-types.png" alt="Fee Types" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico amber">📐</div>
+                        <h3>Fee Regulations</h3><span class="perm">/accounts/fee-hub/regulations</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/10-fee-regulations.png" alt="Fee Regulations"
+                            class="card-ss" onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico amber">📒</div>
+                        <h3>Student Fee Ledger</h3><span class="perm">/accounts/fee-hub/students/{id}</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/11-fee-ledger.png" alt="Fee Ledger" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Column</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>Month</td>
+                                <td>Billing period with due date</td>
+                            </tr>
+                            <tr>
+                                <td>Prev. Dues</td>
+                                <td>Carried over from prior months (red = overdue)</td>
+                            </tr>
+                            <tr>
+                                <td>Annual + Activity</td>
+                                <td>Recurring fee type amounts</td>
+                            </tr>
+                            <tr>
+                                <td>Total Dues</td>
+                                <td>Sum for the month</td>
+                            </tr>
+                            <tr>
+                                <td>Paid / Arrears</td>
+                                <td>Payment status and running balance</td>
+                            </tr>
+                            <tr>
+                                <td>Actions</td>
+                                <td>Pay, receipt, reminder, WhatsApp</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico rose">⚠️</div>
+                        <h3>Dues & Overdue</h3><span class="perm">/accounts/fee-hub/dues</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/12-dues-overdue.png" alt="Dues" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Feature</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>Period Filters</td>
+                                <td>Filter by month, class, status</td>
+                            </tr>
+                            <tr>
+                                <td>Student Table</td>
+                                <td>Expected vs paid with overdue/paid badges</td>
+                            </tr>
+                            <tr>
+                                <td>Send Reminder</td>
+                                <td>Bulk SMS/email reminders to guardians</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ ATTENDANCE ═══════════ -->
+        <section class="section" id="attendance">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge cyan">Module 5</div>
+                    <h2>Attendance</h2>
+                    <p class="subtitle">Class-level daily attendance with reports</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico cyan">✅</div>
+                        <h3>Attendance Overview</h3><span class="perm">/attendance</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/12-attendance.png" alt="Attendance" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Action</th>
+                                <th>Route</th>
+                            </tr>
+                            <tr>
+                                <td>Mark</td>
+                                <td><code>/attendance/mark</code></td>
+                            </tr>
+                            <tr>
+                                <td>Daily Report</td>
+                                <td><code>/attendance/reports/daily</code></td>
+                            </tr>
+                            <tr>
+                                <td>Summary</td>
+                                <td><code>/attendance/reports/summary</code></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ TIMETABLE ═══════════ -->
+        <section class="section" id="timetable">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge indigo">Module 6</div>
+                    <h2>Timetable & Scheduling</h2>
+                    <p class="subtitle">Period templates, drag-and-drop builder, substitutions</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico indigo">📅</div>
+                        <h3>Timetable Overview</h3><span class="perm">/timetable</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/13-timetable.png" alt="Timetable" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Action</th>
+                                <th>Route</th>
+                            </tr>
+                            <tr>
+                                <td>Templates</td>
+                                <td><code>/timetable/templates</code></td>
+                            </tr>
+                            <tr>
+                                <td>Daily View</td>
+                                <td><code>/timetable/daily</code></td>
+                            </tr>
+                            <tr>
+                                <td>Rooms</td>
+                                <td><code>/timetable/rooms</code></td>
+                            </tr>
+                            <tr>
+                                <td>Substitutions</td>
+                                <td><code>/timetable/substitutions</code></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ CERTIFICATES ═══════════ -->
+        <section class="section" id="certificates">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge rose">Module 7</div>
+                    <h2>Certificate Management</h2>
+                    <p class="subtitle">Define certificate types, process applications, generate ID cards</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico rose">📜</div>
+                        <h3>Certificate Heads</h3><span class="perm">/certificates/manage-certificate-head</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/14-certificate-heads.png" alt="Certificates"
+                            class="card-ss" onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ LIBRARY ═══════════ -->
+        <section class="section" id="library">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge purple">Module 8</div>
+                    <h2>Library</h2>
+                    <p class="subtitle">Book catalogue, issue tracking, overdue management</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico purple">📚</div>
+                        <h3>Library Books</h3><span class="perm">/library/books</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/15-library-books.png" alt="Library" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ INVENTORY ═══════════ -->
+        <section class="section" id="inventory">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge amber">Module 9</div>
+                    <h2>Inventory</h2>
+                    <p class="subtitle">Track stock levels, movements, and sales</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico amber">📦</div>
+                        <h3>Inventory Items</h3><span class="perm">/inventory/items</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/16-inventory.png" alt="Inventory" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ TRANSPORT ═══════════ -->
+        <section class="section" id="transport">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge emerald">Module 10</div>
+                    <h2>Transport</h2>
+                    <p class="subtitle">Bus routes, vehicles, drivers, assignments</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico emerald">🚌</div>
+                        <h3>Transport Routes</h3><span class="perm">/transport/routes</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/17-transport.png" alt="Transport" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ WEBSITE ═══════════ -->
+        <section class="section" id="website">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge blue">Module 11</div>
+                    <h2>Website & Public Relations</h2>
+                    <p class="subtitle">Notices, sliders, galleries, news, tickers</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico blue">📢</div>
+                        <h3>Notice Management</h3><span class="perm">/notice-management</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/18-notices.png" alt="Notices" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ GRIEVANCES ═══════════ -->
+        <section class="section" id="grievances">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge rose">Module 12</div>
+                    <h2>Redressal & Grievances</h2>
+                    <p class="subtitle">Complaint tracking, support tickets, feedback</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico rose">🛡️</div>
+                        <h3>Grievance Board</h3><span class="perm">/grievances</span>
+                    </div>
+                    <div class="card-body"><img src="screenshots/19-grievances.png" alt="Grievances" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')"></div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ SETTINGS ═══════════ -->
+        <section class="section" id="settings">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge cyan">Module 13</div>
+                    <h2>Settings & Configuration</h2>
+                    <p class="subtitle">Institution profile, branding, operational rules</p>
+                </div>
+                <div class="wf-card">
+                    <div class="card-hdr">
+                        <div class="card-ico cyan">⚙️</div>
+                        <h3>Institution Settings</h3><span class="perm">/settings/institution</span>
+                    </div>
+                    <div class="card-body">
+                        <img src="screenshots/20-settings.png" alt="Settings" class="card-ss"
+                            onclick="this.classList.toggle('zoomed')">
+                        <table class="rt">
+                            <tr>
+                                <th>Page</th>
+                                <th>Route</th>
+                            </tr>
+                            <tr>
+                                <td>Digital Branding</td>
+                                <td><code>/settings/digital-presence</code></td>
+                            </tr>
+                            <tr>
+                                <td>SEO & Favicon</td>
+                                <td><code>/settings/seo</code></td>
+                            </tr>
+                            <tr>
+                                <td>Landing Content</td>
+                                <td><code>/settings/landing-page-content</code></td>
+                            </tr>
+                            <tr>
+                                <td>Admission Policy</td>
+                                <td><code>/settings/admission</code></td>
+                            </tr>
+                            <tr>
+                                <td>Academic Hierarchy</td>
+                                <td><code>/settings/stream-form</code></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ STUDENT PORTAL ═══════════ -->
+        <section class="section" id="portal">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge emerald">Student Portal</div>
+                    <h2>Student Portal</h2>
+                    <p class="subtitle">Self-service for students, candidates, guardians</p>
+                </div>
+                <div class="mod-grid">
+                    <div class="mod-card">
+                        <div class="ic">🏠</div>
+                        <h4>Dashboard</h4>
+                        <p>/student-portal/dashboard</p>
+                    </div>
+                    <div class="mod-card">
+                        <div class="ic">📖</div>
+                        <h4>My Classes</h4>
+                        <p>/student-portal/my-classes</p>
+                    </div>
+                    <div class="mod-card">
+                        <div class="ic">💳</div>
+                        <h4>Fees & Payments</h4>
+                        <p>/student-portal/fees</p>
+                    </div>
+                    <div class="mod-card">
+                        <div class="ic">📜</div>
+                        <h4>Certificates</h4>
+                        <p>/student-portal/my-certificates</p>
+                    </div>
+                    <div class="mod-card">
+                        <div class="ic">📋</div>
+                        <h4>Applications</h4>
+                        <p>/student-portal/my-applications</p>
+                    </div>
+                    <div class="mod-card">
+                        <div class="ic">🎫</div>
+                        <h4>Support Tickets</h4>
+                        <p>/student-portal/tickets</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr class="divider">
+
+        <!-- ═══════════ SETUP ORDER ═══════════ -->
+        <section class="section" id="setup-order">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge blue">Recommended</div>
+                    <h2>Setup Dependency Map</h2>
+                    <p class="subtitle">Follow this sequence for first-time school setup</p>
+                </div>
+                <div class="mermaid-wrap">
+                    <pre class="mermaid">
+flowchart TD
+  OB["Onboarding"] --> SS["Academic Sessions"]
+  SS --> DEP["Departments"]
+  DEP --> STR["Streams"]
+  STR --> SUB["Subjects"]
+  STR --> CLS["Classrooms"]
+  STR --> AH["Admission Heads"]
+  AH --> APP["Applications"]
+  APP --> ENR["Enrolled Students"]
+  STR --> FT["Fee Types"]
+  FT --> FP["Fee Profiles"]
+  FP --> FR["Fee Regulations"]
+  FR --> SL["Student Ledger"]
+  ENR --> ATT["Attendance"]
+  ENR --> CRT["Certificates"]
+  ENR --> SL
+  style OB fill:#1e3a5f,stroke:#3b82f6,color:#e0f2fe
+  style SS fill:#2d1b4e,stroke:#8b5cf6,color:#ede9fe
+  style DEP fill:#2d1b4e,stroke:#8b5cf6,color:#ede9fe
+  style STR fill:#2d1b4e,stroke:#8b5cf6,color:#ede9fe
+  style FT fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style FP fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style FR fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style SL fill:#78350f,stroke:#f59e0b,color:#fef3c7
+  style AH fill:#064e3b,stroke:#10b981,color:#d1fae5
+  style APP fill:#064e3b,stroke:#10b981,color:#d1fae5
+  style ENR fill:#064e3b,stroke:#10b981,color:#d1fae5
+    </pre>
+                </div>
+                <div
+                    style="background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-top:1rem">
+                    <p style="color:var(--text2);font-size:.88rem">💡 <strong style="color:var(--text)">Independent
+                            modules</strong> — Library, Inventory, Transport, Website, and Redressal can be configured
+                        in any order.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ FOOTER ═══════════ -->
+        <footer class="footer">
+            <div class="container">
+                <p>PDS Education — School Workflow Guide &bull; Generated from live platform screenshots</p>
+                <p style="margin-top:.4rem">Scope: <code
+                        style="color:var(--blue);font-size:.78rem;background:rgba(59,130,246,.1);padding:.12rem .4rem;border-radius:4px">school</code>
+                </p>
+                <p style="margin-top: 1rem; font-size: .75rem"><a href="developer-guide.html"
+                        style="color: var(--blue); text-decoration: none">View Developer Documentation &rarr;</a></p>
+            </div>
+        </footer>
+
+    </div><!-- /main -->
+
+    <script>
+        mermaid.initialize({ theme: 'dark', themeVariables: { primaryColor: '#1e293b', primaryTextColor: '#e2e8f0', lineColor: '#64748b', fontSize: '14px' }, flowchart: { curve: 'basis' } });
+        // Scroll spy
+        const sidebar = document.querySelector('.sidebar');
+        const sections = document.querySelectorAll('.section[id]');
+        const links = sidebar.querySelectorAll('a[href^="#"]');
+        window.addEventListener('scroll', () => {
+            let cur = '';
+            sections.forEach(s => { if (scrollY >= s.offsetTop - 200) cur = s.id });
+            links.forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+            });
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.zoomed').forEach(el => el.classList.remove('zoomed')) });
+    </script>
+</body>
+
+</html>

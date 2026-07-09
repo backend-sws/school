@@ -1,0 +1,250 @@
+import { GuideDefinition } from "@/types/guide";
+import { getInstitutionContent } from "@/constants/content";
+import { resolveScopeType } from "@/constants/scopeTypeDisplay";
+
+export const SESSIONS_GUIDE: GuideDefinition = {
+    id: "sessions_guide",
+    pageTitle: "Academic Sessions",
+    pageSubtitle: "Manage your institution's academic timeline and session lifecycle.",
+    pageGuidance: [
+        "Define and activate academic sessions (e.g., 2024–25) to scope all data to the correct year.",
+        "Only one session can be active at a time — switching sessions re-scopes fees, classes, and reports.",
+        "Archive past sessions to keep your data clean while retaining historical records."
+    ],
+    settingsTip: "Academic sessions are the heartbeat of the system. Ensure your timeline is accurately defined before starting any enrollment or fee collections.",
+    steps: [
+        {
+            element: "#sessions-header",
+            title: "Sessions Overview",
+            description: "Manage academic sessions. Each session typically spans one academic year.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#sessions-table",
+            title: "Session Directory",
+            description: "View, edit, or toggle sessions. The active session determines the current academic context.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const DEPARTMENTS_GUIDE: GuideDefinition = {
+    id: "departments_guide",
+    pageTitle: "Departments",
+    pageSubtitle: "Organize your institution's academic departments and faculties.",
+    pageGuidance: [
+        "Departments group related streams (e.g., Science, Arts, Commerce) for institutional structure.",
+        "Each stream must belong to a department — create departments before adding streams.",
+        "Use department codes for quick reference in reports and timetable scheduling."
+    ],
+    settingsTip: "Well-organized departments make administrative reporting much simpler. Use clear names and codes for each academic wing.",
+    steps: [
+        {
+            element: "#departments-header",
+            title: "Departments",
+            description: "Create and manage academic departments that organize your institution's streams.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#departments-table",
+            title: "Department List",
+            description: "View all departments, their codes, and associated streams count.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const MAIN_STREAMS_GUIDE: GuideDefinition = {
+    id: "main_streams_guide",
+    pageTitle: "Levels",
+    pageSubtitle: "Define the primary level structure of your institution.",
+    pageGuidance: [
+        "Levels represent the top-level grouping (e.g., Pre-Primary, Primary, Secondary for schools, B.Tech/MBA for colleges).",
+        "Each level can contain multiple classes or sections underneath it.",
+        "Set the duration and display order to organize your academic hierarchy."
+    ],
+    settingsTip: "Think of Levels as the primary foundation of your school or college structure. They help in grouping standard curricula.",
+    steps: [
+        {
+            element: "#main-streams-header",
+            title: "Levels",
+            description: "Define the primary academic levels of your institution.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#main-streams-table",
+            title: "Level Directory",
+            description: "View and manage all levels, their durations, and linked departments.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export function getStreamsGuide(scopeType?: string | null): GuideDefinition {
+    const c = getInstitutionContent(resolveScopeType(scopeType));
+    return {
+        id: "streams_guide",
+        pageTitle: c.streams_and_programs_title,
+        pageSubtitle: c.streams_page_subtitle,
+        pageGuidance: c.streams_guidance,
+        settingsTip: `Accurate ${c.stream.toLowerCase()} definitions are crucial for fee automation. Double-check intake capacities to manage your enrollment pipeline effectively.`,
+        steps: [
+            {
+                element: "#streams-header",
+                title: `${c.stream}s & Sections`,
+                description: `Create and manage academic ${c.stream.toLowerCase()}s that map to specific sections.`,
+                type: "standard",
+                position: "bottom"
+            },
+            {
+                element: "#streams-table",
+                title: `${c.stream} Directory`,
+                description: `View all ${c.stream.toLowerCase()}s with their parent ${c.main_stream.toLowerCase()}, department, and intake capacity.`,
+                type: "standard",
+                position: "top"
+            }
+        ]
+    };
+}
+
+export function getSubjectsGuide(scopeType?: string | null): GuideDefinition {
+    const c = getInstitutionContent(resolveScopeType(scopeType));
+    return {
+        id: "subjects_guide",
+        pageTitle: c.subjects_page_title,
+        pageSubtitle: c.subjects_page_subtitle,
+        pageGuidance: c.subjects_guidance,
+        settingsTip: "Use subject codes consistently. This helps in generating clear report cards and academic transcripts later in the session.",
+        steps: [
+            {
+                element: "#subjects-header",
+                title: c.subjects_page_title,
+                description: `Define all the subjects taught at your institution.`,
+                type: "standard",
+                position: "bottom"
+            },
+            {
+                element: "#subjects-table",
+                title: "Subject Catalog",
+                description: `Browse, filter, and manage your institution's complete subject catalog.`,
+                type: "standard",
+                position: "top"
+            }
+        ]
+    };
+}
+
+export const SUBJECT_GROUPS_GUIDE: GuideDefinition = {
+    id: "subject_groups_guide",
+    pageTitle: "Subject Groups",
+    pageSubtitle: "Bundle subjects into logical groups for easier curriculum assignment.",
+    pageGuidance: [
+        "Subject groups let you assign multiple subjects at once (e.g., 'Science Electives').",
+        "Assign groups to classrooms instead of individual subjects for faster setup.",
+        "Use groups to model elective combinations and mandatory subject bundles."
+    ],
+    settingsTip: "Grouping subjects by stream (e.g., 'Grade 10 Mandatory') saves hours of configuration when setting up new classrooms.",
+    steps: [
+        {
+            element: "#subject-groups-header",
+            title: "Subject Groups",
+            description: "Organize subjects into reusable groups for easy classroom assignment.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#subject-groups-table",
+            title: "Groups List",
+            description: "View all subject groups, their member subjects, and assignment status.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export function getClassroomsGuide(scopeType?: string | null): GuideDefinition {
+    const c = getInstitutionContent(resolveScopeType(scopeType));
+    return {
+        id: "classrooms_guide",
+        pageTitle: c.lms_classes_page_title,
+        pageSubtitle: c.lms_classes_page_subtitle as string,
+        pageGuidance: c.lms_classes_guidance as string[],
+        settingsTip: "Classrooms are active entities. Ensure students and teachers are correctly mapped to enable accurate attendance and LMS features.",
+        steps: [
+            {
+                element: "#classrooms-header",
+                title: c.lms_classes_page_title as string,
+                description: "Browse and manage your institution's active classrooms for the current session.",
+                type: "standard",
+                position: "bottom"
+            },
+            {
+                element: "#classrooms-grid",
+                title: "Classroom Grid",
+                description: "Select a classroom to manage its students, subjects, and timetable.",
+                type: "standard",
+                position: "top"
+            }
+        ]
+    };
+}
+
+export function getStreamSectionsGuide(scopeType?: string | null): GuideDefinition {
+    const c = getInstitutionContent(resolveScopeType(scopeType));
+    return {
+        id: "stream_sections_guide",
+        pageTitle: c.lms_sections_guide_title,
+        pageSubtitle: c.lms_sections_guide_subtitle as string,
+        pageGuidance: c.lms_sections_guide_guidance as string[],
+        settingsTip: c.lms_sections_guide_tip as string,
+        steps: [
+            {
+                element: "#sections-header",
+                title: c.lms_sections_guide_title as string,
+                description: "View the sections under this class and manage students, subjects, and schedules.",
+                type: "standard",
+                position: "bottom"
+            },
+            {
+                element: "#sections-grid",
+                title: "Sections Grid",
+                description: "Select a section to manage its students, timetable, and classroom activities.",
+                type: "standard",
+                position: "top"
+            }
+        ]
+    };
+}
+
+export function getClassDetailGuide(scopeType?: string | null): GuideDefinition {
+    const c = getInstitutionContent(resolveScopeType(scopeType));
+    return {
+        id: "class_detail_guide",
+        pageTitle: c.lms_class_detail_subjects_title,
+        pageSubtitle: c.lms_class_detail_subjects_desc as string,
+        pageGuidance: c.lms_class_detail_guidance as string[],
+        settingsTip: "Ensure each subject has an instructor assigned for content management and grading.",
+        steps: [
+            {
+                element: "#class-stats",
+                title: "Class Overview",
+                description: "View class teacher, enrollment, academic context, and attendance at a glance.",
+                type: "standard",
+                position: "bottom"
+            },
+            {
+                element: "#class-subjects",
+                title: c.lms_class_detail_subjects_title as string,
+                description: "Manage subjects allocated to this class. Click a subject to access its content.",
+                type: "standard",
+                position: "top"
+            }
+        ]
+    };
+}

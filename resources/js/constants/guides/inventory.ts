@@ -1,0 +1,211 @@
+import { GuideDefinition } from "@/types/guide";
+
+export const INVENTORY_OVERVIEW_GUIDE: GuideDefinition = {
+    id: "inventory_overview_guide",
+    pageTitle: "Inventory Overview",
+    pageSubtitle: "Real-time summary of stock levels, movement, and value.",
+    pageGuidance: [
+        "Monitor your total inventory value and asset counts at a glance.",
+        "Identify fast-moving versus stagnant stock items to optimize procurement.",
+        "Get alerts for items reaching critical low-stock thresholds."
+    ],
+    settingsTip: "Manage your institutional assets. Track stock levels, organize items into categories, and monitor all stock movements from this central dashboard.",
+    steps: [
+        {
+            element: "#inventory-header",
+            title: "Inventory Dashboard",
+            description: "High-level metrics for your institution's stock and assets.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#inventory-stats",
+            title: "Stock Stats",
+            description: "Real-time indicators of total items, categories, and stock value.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const INVENTORY_CATEGORIES_GUIDE: GuideDefinition = {
+    id: "inventory_categories_guide",
+    pageTitle: "Inventory Categories",
+    pageSubtitle: "Organize items into logical groups for better tracking.",
+    pageGuidance: [
+        "Create categories like Stationery, Lab Equipment, or IT Assets.",
+        "Assign descriptive codes to categories for standardized reporting.",
+        "Group related items to simplify stock audits and movement tracking."
+    ],
+    settingsTip: "Organize your institutional assets into logical groups. Categories like 'Office Supplies', 'Lab Equipment', or 'Furniture' help in structured tracking and reporting.",
+    steps: [
+        {
+            element: "#inventory-categories-header",
+            title: "Category Manager",
+            description: "Define the types of items your institution manages.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-category-btn",
+            title: "Add Category",
+            description: "Click here to add a new asset group to your repository.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const INVENTORY_ITEMS_GUIDE: GuideDefinition = {
+    id: "inventory_items_guide",
+    pageTitle: "Stock Items",
+    pageSubtitle: "Detailed catalog of all inventory items and assets.",
+    pageGuidance: [
+        "Maintain detailed records of every item including SKU, unit, and cost.",
+        "Set reorder levels for each item to trigger low-stock notifications.",
+        "Track item location and category to ensure assets are easily locatable."
+    ],
+    settingsTip: "Monitor and manage all institutional stock items. Track quantity on hand, minimum stock levels, and item details to ensure essential resources are always available.",
+    steps: [
+        {
+            element: "#inventory-items-header",
+            title: "Item Catalog",
+            description: "The central repository for all physical assets and supplies.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-item-btn",
+            title: "Register Item",
+            description: "Add a new product or asset to your inventory system.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#inventory-items-table",
+            title: "Manage Stock",
+            description: "Search, edit, and monitor stock levels for individual items.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const INVENTORY_MOVEMENTS_GUIDE: GuideDefinition = {
+    id: "inventory_movements_guide",
+    pageTitle: "Stock Movements",
+    pageSubtitle: "Track the history of stock adjustments, issues, and returns.",
+    pageGuidance: [
+        "Audit how stock enters or leaves the repository (Stock In / Stock Out).",
+        "Record internal transfers between different locations or departments.",
+        "Verify movement history to investigate discrepancies or stock shrinkage."
+    ],
+    settingsTip: "Track the lifecycle of your institutional assets. Monitor when items are issued to staff, received into stock, or adjusted due to audits or damage.",
+    steps: [
+        {
+            element: "#inventory-movements-header",
+            title: "Movement Log",
+            description: "A chronological record of all stock additions and deductions.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#inventory-movements-table",
+            title: "Audit History",
+            description: "Review detailed movement logs to reconcile physical stock with records.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const INVENTORY_LOCATIONS_GUIDE: GuideDefinition = {
+    id: "inventory_locations_guide",
+    pageTitle: "Storage Locations",
+    pageSubtitle: "Manage warehouses, store rooms, and department cupboards.",
+    pageGuidance: [
+        "Define all physical areas where inventory is stored.",
+        "Track stock levels specifically for each location.",
+        "Ensure assets are assigned to the correct room or building for easy retrieval."
+    ],
+    settingsTip: "Manage physical storage areas for your inventory. Define warehouses, shelves, or rooms to precisely track the location of every institutional asset.",
+    steps: [
+        {
+            element: "#inventory-locations-header",
+            title: "Location Manager",
+            description: "Manage the list of physical storage points across the institution.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-location-btn",
+            title: "Add Location",
+            description: "Create a new storage area, room, or warehouse.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const INVENTORY_SALES_GUIDE: GuideDefinition = {
+    id: "inventory_sales_guide",
+    pageTitle: "Inventory Sales",
+    pageSubtitle: "Record and manage sales of items to students or staff.",
+    pageGuidance: [
+        "Track revenue generated from book sales, uniforms, or stationery.",
+        "Identify your best-selling items to plan future procurement.",
+        "Ensure sales are correctly linked to student accounts for billing."
+    ],
+    settingsTip: "Facilitate the sale of institutional inventory. Issue invoices, track payments, and manage sales records for students, staff, or external buyers.",
+    steps: [
+        {
+            element: "#inventory-sales-header",
+            title: "Sales Register",
+            description: "Track all outgoing stock transactions and sales revenue.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-sale-btn",
+            title: "Record Sale",
+            description: "Process a new transaction for issuing paid items.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#inventory-sales-table",
+            title: "Transaction History",
+            description: "Review past sales and track payment statuses.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const INVENTORY_LOW_STOCK_GUIDE: GuideDefinition = {
+    id: "inventory_low_stock_guide",
+    pageTitle: "Low Stock Reports",
+    pageSubtitle: "Identify items that need immediate restocking.",
+    pageGuidance: [
+        "Avoid stock-outs by monitoring items below their minimum threshold.",
+        "Generate procurement lists based on shortage reports.",
+        "Ensure critical supplies are always available for students and staff."
+    ],
+    settingsTip: "Identify and address stock shortages. This report highlights items reaching critical levels, allowing you to proactively reorder and prevent service disruptions.",
+    steps: [
+        {
+            element: "#inventory-low-stock-header",
+            title: "Stock Alerts",
+            description: "Automated list of items that have reached their reorder levels.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#inventory-low-stock-table",
+            title: "Shortage List",
+            description: "Prioritize items that need urgent purchasing or replenishment.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};

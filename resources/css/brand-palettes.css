@@ -1,0 +1,1890 @@
+/* ============================================
+   BRAND & FESTIVAL PALETTES (Unified)
+   ============================================
+   Single source of truth for all color palettes including
+   Admin area, Brand pages, and Landing pages.
+
+   Usage: Set `data-theme="{key}"` on the <html> tag.
+
+   Includes:
+   - 1. Core Admin Themes
+   - 2. Brand Identity Palettes
+   - 3. Festival & Occasion Themes
+   - 4. Landing Page Utility Tokens & Motifs
+   ============================================ */
+
+/* ── Tailwind 4 Runtime Rebind ──
+   Ensures local --primary/--accent overrides propagate to TW utilities. */
+[data-theme] {
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-ring: var(--ring);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-border: var(--border);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-tooltip-bg: var(--tooltip-bg);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 1: CORE ADMIN THEMES
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Theme: Royal (Indigo & Violet - Trust) — Default Legacy */
+[data-theme='royal'],
+:root:not([data-theme]) {
+    --primary: oklch(0.45 0.18 264);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 264);
+    --accent: oklch(0.93 0.04 264);
+    --accent-foreground: oklch(0.20 0.05 264);
+    --ring: oklch(0.45 0.18 264);
+    --footer-bg: oklch(0.98 0.01 264);
+    --muted: oklch(0.96 0.01 264);
+    --muted-foreground: oklch(0.40 0.02 264);
+    --l-banner-bg: #0F172A;
+    --l-banner-fg: #FFFFFF;
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.55 0.20 280), var(--primary));
+}
+
+.dark[data-theme='royal'],
+.dark:not([data-theme]) {
+    --primary: oklch(0.85 0.18 264);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 264);
+    --accent: oklch(0.20 0.02 264);
+    --accent-foreground: oklch(0.95 0.01 264);
+    --footer-bg: oklch(0.12 0.02 264);
+
+    --background: oklch(0.12 0.015 264);
+    --sidebar: oklch(0.10 0.012 264);
+    --sidebar-border: oklch(0.16 0.015 264);
+    --card: oklch(0.14 0.015 264);
+    --popover: oklch(0.15 0.015 264);
+    --border: oklch(0.18 0.015 264);
+    --muted: oklch(0.15 0.01 264);
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.85 0.15 285), oklch(0.98 0.02 264));
+}
+
+/* Theme: Nature (Emerald & Sage - Growth) — Main PDS Education Theme */
+[data-theme='nature'] {
+    --primary: oklch(0.32 0.08 160);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 160);
+    --muted: oklch(0.96 0.01 160);
+    --muted-foreground: oklch(0.40 0.02 160);
+    --accent: oklch(0.94 0.03 160);
+    --accent-foreground: oklch(0.15 0.04 160);
+    --ring: oklch(0.32 0.08 160);
+    --footer-bg: oklch(0.98 0.01 160);
+    --l-banner-bg: #064E3B;
+    /* Emerald 900 */
+    --l-banner-fg: #ECFDF5;
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.60 0.25 140), var(--primary));
+}
+
+.dark[data-theme='nature'] {
+    --primary: oklch(0.88 0.15 160);
+    --primary-foreground: oklch(0.12 0.02 160);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 160);
+    --accent: oklch(0.25 0.05 160);
+    --accent-foreground: oklch(0.99 0 0);
+    --footer-bg: oklch(0.12 0.02 160);
+
+    --background: oklch(0.12 0.015 160);
+    --sidebar: oklch(0.10 0.012 160);
+    --sidebar-border: oklch(0.16 0.015 160);
+    --card: oklch(0.14 0.015 160);
+    --popover: oklch(0.15 0.015 160);
+    --border: oklch(0.18 0.015 160);
+    --muted: oklch(0.15 0.01 160);
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.88 0.20 130), oklch(0.98 0.02 160));
+}
+
+/* Theme: Vibrant (Amethyst & Orchid - Creativity) */
+[data-theme='vibrant'] {
+    --primary: oklch(0.38 0.14 285);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 285);
+    --muted: oklch(0.96 0.01 285);
+    --muted-foreground: oklch(0.40 0.02 285);
+    --accent: oklch(0.93 0.04 285);
+    --accent-foreground: oklch(0.18 0.05 285);
+    --ring: oklch(0.38 0.14 285);
+    --footer-bg: oklch(0.98 0.01 285);
+    --l-banner-bg: #4A148C;
+    /* Purple 900 */
+    --l-banner-fg: #F3E5F5;
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.60 0.15 285), var(--primary));
+}
+
+.dark[data-theme='vibrant'] {
+    --primary: oklch(0.85 0.20 285);
+    --primary-foreground: oklch(0.12 0.02 285);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 285);
+    --accent: oklch(0.20 0.02 285);
+    --accent-foreground: oklch(0.95 0.01 285);
+    --footer-bg: oklch(0.12 0.02 285);
+
+    --background: oklch(0.12 0.015 285);
+    --sidebar: oklch(0.10 0.012 285);
+    --sidebar-border: oklch(0.16 0.015 285);
+    --card: oklch(0.14 0.015 285);
+    --popover: oklch(0.15 0.015 285);
+    --border: oklch(0.18 0.015 285);
+    --muted: oklch(0.15 0.01 285);
+    --l-gradient-hero: linear-gradient(to right, var(--primary), oklch(0.85 0.15 285), oklch(0.98 0.02 285));
+}
+
+/* Theme: Heritage (Burgundy & Rose - Tradition) */
+[data-theme='heritage'] {
+    --primary: oklch(0.32 0.10 25);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 25);
+    --muted: oklch(0.96 0.01 25);
+    --muted-foreground: oklch(0.40 0.02 25);
+    --accent: oklch(0.94 0.03 25);
+    --accent-foreground: oklch(0.15 0.04 25);
+    --ring: oklch(0.32 0.10 25);
+    --footer-bg: oklch(0.98 0.01 25);
+    --l-banner-bg: #4A0E0E;
+    /* Maroon 900 */
+    --l-banner-fg: #FFF5F5;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.25 0.08 25), var(--primary));
+}
+
+.dark[data-theme='heritage'] {
+    --primary: oklch(0.85 0.18 25);
+    --primary-foreground: oklch(0.12 0.02 25);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 25);
+    --accent: oklch(0.20 0.02 25);
+    --accent-foreground: oklch(0.95 0.01 25);
+    --footer-bg: oklch(0.12 0.02 25);
+
+    --background: oklch(0.12 0.015 25);
+    --sidebar: oklch(0.10 0.012 25);
+    --sidebar-border: oklch(0.16 0.015 25);
+    --card: oklch(0.14 0.015 25);
+    --popover: oklch(0.15 0.015 25);
+    --border: oklch(0.18 0.015 25);
+    --muted: oklch(0.15 0.01 25);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 25));
+}
+
+/* Theme: Intelligence (Midnight Indigo - Research) */
+[data-theme='intelligence'] {
+    --primary: oklch(0.30 0.10 275);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 275);
+    --muted: oklch(0.96 0.01 275);
+    --muted-foreground: oklch(0.40 0.02 275);
+    --accent: oklch(0.92 0.03 275);
+    --accent-foreground: oklch(0.15 0.04 275);
+    --ring: oklch(0.30 0.10 275);
+    --footer-bg: oklch(0.98 0.01 275);
+    --l-banner-bg: #1A237E;
+    /* Indigo 900 */
+    --l-banner-fg: #E8EAF6;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.25 0.08 275), var(--primary));
+}
+
+.dark[data-theme='intelligence'] {
+    --primary: oklch(0.85 0.18 275);
+    --primary-foreground: oklch(0.12 0.02 275);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 275);
+    --accent: oklch(0.20 0.02 275);
+    --accent-foreground: oklch(0.95 0.01 275);
+    --footer-bg: oklch(0.12 0.02 275);
+
+    --background: oklch(0.12 0.015 275);
+    --sidebar: oklch(0.10 0.012 275);
+    --sidebar-border: oklch(0.16 0.015 275);
+    --card: oklch(0.14 0.015 275);
+    --popover: oklch(0.15 0.015 275);
+    --border: oklch(0.18 0.015 275);
+    --muted: oklch(0.15 0.01 275);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 275));
+}
+
+/* Theme: Serenity (Deep Teal - Focus) */
+[data-theme='serenity'] {
+    --primary: oklch(0.35 0.08 200);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 200);
+    --muted: oklch(0.96 0.01 200);
+    --muted-foreground: oklch(0.40 0.02 200);
+    --accent: oklch(0.93 0.03 200);
+    --accent-foreground: oklch(0.15 0.04 200);
+    --ring: oklch(0.35 0.08 200);
+    --footer-bg: oklch(0.98 0.01 200);
+    --l-banner-bg: #004D40;
+    /* Teal 900 */
+    --l-banner-fg: #E0F2F1;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.28 0.06 200), var(--primary));
+}
+
+.dark[data-theme='serenity'] {
+    --primary: oklch(0.85 0.15 200);
+    --primary-foreground: oklch(0.12 0.02 200);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 200);
+    --accent: oklch(0.20 0.02 200);
+    --accent-foreground: oklch(0.95 0.01 200);
+    --footer-bg: oklch(0.12 0.02 200);
+
+    --background: oklch(0.12 0.015 200);
+    --sidebar: oklch(0.10 0.012 200);
+    --sidebar-border: oklch(0.16 0.015 200);
+    --card: oklch(0.14 0.015 200);
+    --popover: oklch(0.15 0.015 200);
+    --border: oklch(0.18 0.015 200);
+    --muted: oklch(0.15 0.01 200);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 200));
+}
+
+/* Theme: Energy (Charred Amber - Inspiration) */
+[data-theme='energy'] {
+    --primary: oklch(0.40 0.12 65);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 65);
+    --muted: oklch(0.96 0.01 65);
+    --muted-foreground: oklch(0.40 0.02 65);
+    --accent: oklch(0.95 0.04 65);
+    --accent-foreground: oklch(0.18 0.05 65);
+    --ring: oklch(0.40 0.12 65);
+    --footer-bg: oklch(0.98 0.01 65);
+    --l-banner-bg: #78350F;
+    /* Amber 900 */
+    --l-banner-fg: #FFFBEB;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.35 0.10 65), var(--primary));
+}
+
+.dark[data-theme='energy'] {
+    --primary: oklch(0.85 0.22 65);
+    --primary-foreground: oklch(0.12 0.02 65);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 65);
+    --accent: oklch(0.20 0.02 65);
+    --accent-foreground: oklch(0.95 0.01 65);
+    --footer-bg: oklch(0.12 0.02 65);
+
+    --background: oklch(0.12 0.015 65);
+    --sidebar: oklch(0.10 0.012 65);
+    --sidebar-border: oklch(0.16 0.015 65);
+    --card: oklch(0.14 0.015 65);
+    --popover: oklch(0.15 0.015 65);
+    --border: oklch(0.18 0.015 65);
+    --muted: oklch(0.15 0.01 65);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 65));
+}
+
+/* Theme: Oxford (Academic Navy - Prestige) */
+[data-theme='oxford'] {
+    --primary: oklch(0.22 0.07 260);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 260);
+    --muted: oklch(0.96 0.01 260);
+    --muted-foreground: oklch(0.40 0.02 260);
+    --accent: oklch(0.90 0.03 260);
+    --accent-foreground: oklch(0.12 0.04 260);
+    --ring: oklch(0.22 0.07 260);
+    --footer-bg: oklch(0.98 0.01 260);
+    --l-banner-bg: #1A237E;
+    /* Deep Navy */
+    --l-banner-fg: #E8EAF6;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.18 0.05 260), var(--primary));
+}
+
+.dark[data-theme='oxford'] {
+    --primary: oklch(0.80 0.15 260);
+    --primary-foreground: oklch(0.12 0.02 260);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 260);
+    --accent: oklch(0.20 0.02 260);
+    --accent-foreground: oklch(0.95 0.01 260);
+    --footer-bg: oklch(0.12 0.02 260);
+
+    --background: oklch(0.12 0.015 260);
+    --sidebar: oklch(0.10 0.012 260);
+    --sidebar-border: oklch(0.16 0.015 260);
+    --card: oklch(0.14 0.015 260);
+    --popover: oklch(0.15 0.015 260);
+    --border: oklch(0.18 0.015 260);
+    --muted: oklch(0.15 0.01 260);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 260));
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 2: BRAND IDENTITY PALETTES
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+[data-theme='crimson'] {
+    --primary: oklch(0.40 0.16 25);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 25);
+    --muted: oklch(0.96 0.01 25);
+    --muted-foreground: oklch(0.40 0.02 25);
+    --accent: oklch(0.93 0.04 25);
+    --accent-foreground: oklch(0.18 0.06 25);
+    --ring: oklch(0.40 0.16 25);
+    --footer-bg: oklch(0.97 0.01 25);
+    --l-banner-bg: #7F1D1D;
+    /* Red 900 */
+    --l-banner-fg: #FEF2F2;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.35 0.12 25), var(--primary));
+}
+
+.dark[data-theme='crimson'] {
+    --primary: oklch(0.85 0.18 25);
+    --primary-foreground: oklch(0.12 0.02 25);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 25);
+    --accent: oklch(0.20 0.02 25);
+    --accent-foreground: oklch(0.95 0.01 25);
+    --footer-bg: oklch(0.12 0.03 25);
+
+    --background: oklch(0.12 0.015 25);
+    --sidebar: oklch(0.10 0.012 25);
+    --sidebar-border: oklch(0.16 0.015 25);
+    --card: oklch(0.14 0.015 25);
+    --popover: oklch(0.15 0.015 25);
+    --border: oklch(0.18 0.015 25);
+    --muted: oklch(0.15 0.01 25);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 25));
+}
+
+[data-theme='teal'] {
+    --primary: oklch(0.45 0.10 175);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 175);
+    --muted: oklch(0.96 0.01 175);
+    --muted-foreground: oklch(0.40 0.02 175);
+    --accent: oklch(0.93 0.04 175);
+    --accent-foreground: oklch(0.15 0.04 175);
+    --ring: oklch(0.45 0.10 175);
+    --footer-bg: oklch(0.98 0.01 175);
+    --l-banner-bg: #134E4A;
+    /* Teal 900 */
+    --l-banner-fg: #F0FDFA;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.25 0.08 175));
+}
+
+.dark[data-theme='teal'] {
+    --primary: oklch(0.85 0.12 175);
+    --primary-foreground: oklch(0.12 0.02 175);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 175);
+    --accent: oklch(0.20 0.02 175);
+    --accent-foreground: oklch(0.95 0.01 175);
+    --footer-bg: oklch(0.12 0.02 175);
+
+    --background: oklch(0.12 0.015 175);
+    --sidebar: oklch(0.10 0.012 175);
+    --sidebar-border: oklch(0.16 0.015 175);
+    --card: oklch(0.14 0.015 175);
+    --popover: oklch(0.15 0.015 175);
+    --border: oklch(0.18 0.015 175);
+    --muted: oklch(0.15 0.01 175);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent-foreground), oklch(0.98 0.02 175));
+}
+
+[data-theme='sunset'] {
+    --primary: oklch(0.52 0.16 50);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 50);
+    --muted: oklch(0.96 0.01 50);
+    --muted-foreground: oklch(0.40 0.02 50);
+    --accent: oklch(0.95 0.05 50);
+    --accent-foreground: oklch(0.15 0.04 50);
+    --ring: oklch(0.52 0.16 50);
+    --footer-bg: oklch(0.98 0.01 50);
+    --l-banner-bg: #7C2D12;
+    /* Orange 900 */
+    --l-banner-fg: #FFF7ED;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.35 0.12 50), var(--primary));
+}
+
+.dark[data-theme='sunset'] {
+    --primary: oklch(0.85 0.18 50);
+    --primary-foreground: oklch(0.12 0.02 50);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 50);
+    --accent: oklch(0.20 0.02 50);
+    --accent-foreground: oklch(0.95 0.01 50);
+    --footer-bg: oklch(0.12 0.02 50);
+
+    --background: oklch(0.12 0.015 50);
+    --sidebar: oklch(0.10 0.012 50);
+    --sidebar-border: oklch(0.16 0.015 50);
+    --card: oklch(0.14 0.015 50);
+    --popover: oklch(0.15 0.015 50);
+    --border: oklch(0.18 0.015 50);
+    --muted: oklch(0.15 0.01 50);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.85 0.15 50), oklch(0.98 0.02 50));
+}
+
+[data-theme='forest'] {
+    --primary: oklch(0.38 0.12 145);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 145);
+    --muted: oklch(0.96 0.01 145);
+    --muted-foreground: oklch(0.40 0.02 145);
+    --accent: oklch(0.94 0.04 145);
+    --accent-foreground: oklch(0.15 0.04 145);
+    --ring: oklch(0.38 0.12 145);
+    --footer-bg: oklch(0.98 0.01 145);
+    --l-banner-bg: #064E3B;
+    /* Emerald 900 */
+    --l-banner-fg: #ECFDF5;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.30 0.08 145));
+}
+
+.dark[data-theme='forest'] {
+    --primary: oklch(0.85 0.14 145);
+    --primary-foreground: oklch(0.12 0.02 145);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 145);
+    --accent: oklch(0.20 0.02 145);
+    --accent-foreground: oklch(0.95 0.01 145);
+    --footer-bg: oklch(0.12 0.02 145);
+
+    --background: oklch(0.12 0.015 145);
+    --sidebar: oklch(0.10 0.012 145);
+    --sidebar-border: oklch(0.16 0.015 145);
+    --card: oklch(0.14 0.015 145);
+    --popover: oklch(0.15 0.015 145);
+    --border: oklch(0.18 0.015 145);
+    --muted: oklch(0.15 0.01 145);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.02 145));
+}
+
+[data-theme='plum'] {
+    --primary: oklch(0.38 0.18 300);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 300);
+    --muted: oklch(0.96 0.01 300);
+    --muted-foreground: oklch(0.40 0.02 300);
+    --accent: oklch(0.93 0.05 300);
+    --accent-foreground: oklch(0.15 0.04 300);
+    --ring: oklch(0.38 0.18 300);
+    --footer-bg: oklch(0.98 0.01 300);
+    --l-banner-bg: #4C1D95;
+    /* Violet 900 */
+    --l-banner-fg: #F5F3FF;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.30 0.12 300));
+}
+
+.dark[data-theme='plum'] {
+    --primary: oklch(0.85 0.18 300);
+    --primary-foreground: oklch(0.12 0.02 300);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 300);
+    --accent: oklch(0.20 0.02 300);
+    --accent-foreground: oklch(0.95 0.01 300);
+    --footer-bg: oklch(0.12 0.02 300);
+
+    --background: oklch(0.12 0.015 300);
+    --sidebar: oklch(0.10 0.012 300);
+    --sidebar-border: oklch(0.16 0.015 300);
+    --card: oklch(0.14 0.015 300);
+    --popover: oklch(0.15 0.015 300);
+    --border: oklch(0.18 0.015 300);
+    --muted: oklch(0.15 0.01 300);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.02 300));
+}
+
+[data-theme='cobalt'] {
+    --primary: oklch(0.45 0.15 245);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 245);
+    --muted: oklch(0.96 0.01 245);
+    --muted-foreground: oklch(0.40 0.02 245);
+    --accent: oklch(0.93 0.04 245);
+    --accent-foreground: oklch(0.15 0.04 245);
+    --ring: oklch(0.45 0.15 245);
+    --footer-bg: oklch(0.98 0.01 245);
+    --l-banner-bg: #1E3A8A;
+    /* Blue 900 */
+    --l-banner-fg: #EFF6FF;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.35 0.12 245));
+}
+
+.dark[data-theme='cobalt'] {
+    --primary: oklch(0.85 0.15 245);
+    --primary-foreground: oklch(0.12 0.02 245);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 245);
+    --accent: oklch(0.20 0.02 245);
+    --accent-foreground: oklch(0.95 0.01 245);
+    --footer-bg: oklch(0.12 0.02 245);
+
+    --background: oklch(0.12 0.015 245);
+    --sidebar: oklch(0.10 0.012 245);
+    --sidebar-border: oklch(0.16 0.015 245);
+    --card: oklch(0.14 0.015 245);
+    --popover: oklch(0.15 0.015 245);
+    --border: oklch(0.18 0.015 245);
+    --muted: oklch(0.15 0.01 245);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.02 245));
+}
+
+[data-theme='rose'] {
+    --primary: oklch(0.45 0.17 350);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 350);
+    --muted: oklch(0.96 0.01 350);
+    --muted-foreground: oklch(0.40 0.02 350);
+    --accent: oklch(0.94 0.04 350);
+    --accent-foreground: oklch(0.15 0.04 350);
+    --ring: oklch(0.45 0.17 350);
+    --footer-bg: oklch(0.98 0.01 350);
+    --l-banner-bg: #881337;
+    /* Rose 900 */
+    --l-banner-fg: #FFF1F2;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.35 0.12 350));
+}
+
+.dark[data-theme='rose'] {
+    --primary: oklch(0.85 0.17 350);
+    --primary-foreground: oklch(0.12 0.02 350);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 350);
+    --accent: oklch(0.20 0.02 350);
+    --accent-foreground: oklch(0.95 0.01 350);
+    --footer-bg: oklch(0.12 0.02 350);
+
+    --background: oklch(0.12 0.015 350);
+    --sidebar: oklch(0.10 0.012 350);
+    --sidebar-border: oklch(0.16 0.015 350);
+    --card: oklch(0.14 0.015 350);
+    --popover: oklch(0.15 0.015 350);
+    --border: oklch(0.18 0.015 350);
+    --muted: oklch(0.15 0.01 350);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.02 350));
+}
+
+[data-theme='slate'] {
+    --primary: oklch(0.40 0.03 230);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 230);
+    --muted: oklch(0.96 0.01 230);
+    --muted-foreground: oklch(0.40 0.02 230);
+    --accent: oklch(0.93 0.01 230);
+    --accent-foreground: oklch(0.12 0.04 230);
+    --ring: oklch(0.40 0.03 230);
+    --footer-bg: oklch(0.98 0.01 230);
+    --l-banner-bg: #0F172A;
+    /* Slate 900 */
+    --l-banner-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.30 0.02 230));
+}
+
+.dark[data-theme='slate'] {
+    --primary: oklch(0.85 0.04 230);
+    --primary-foreground: oklch(0.12 0.02 230);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 230);
+    --accent: oklch(0.20 0.02 230);
+    --accent-foreground: oklch(0.95 0.01 230);
+    --footer-bg: oklch(0.12 0.02 230);
+
+    --background: oklch(0.12 0.015 230);
+    --sidebar: oklch(0.10 0.012 230);
+    --sidebar-border: oklch(0.16 0.015 230);
+    --card: oklch(0.14 0.015 230);
+    --popover: oklch(0.15 0.015 230);
+    --border: oklch(0.18 0.015 230);
+    --muted: oklch(0.15 0.01 230);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.01 230));
+}
+
+[data-theme='jade'] {
+    --primary: oklch(0.42 0.08 168);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 168);
+    --muted: oklch(0.96 0.01 168);
+    --muted-foreground: oklch(0.40 0.02 168);
+    --accent: oklch(0.94 0.03 168);
+    --accent-foreground: oklch(0.12 0.04 168);
+    --ring: oklch(0.42 0.08 168);
+    --footer-bg: oklch(0.98 0.01 168);
+    --l-banner-bg: #064E3B;
+    /* Teal-Green 900 */
+    --l-banner-fg: #F0FDFA;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), oklch(0.30 0.06 168));
+}
+
+.dark[data-theme='jade'] {
+    --primary: oklch(0.85 0.10 168);
+    --primary-foreground: oklch(0.12 0.02 168);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 168);
+    --accent: oklch(0.20 0.02 168);
+    --accent-foreground: oklch(0.95 0.01 168);
+    --footer-bg: oklch(0.12 0.02 168);
+
+    --background: oklch(0.12 0.015 168);
+    --sidebar: oklch(0.10 0.012 168);
+    --sidebar-border: oklch(0.16 0.015 168);
+    --card: oklch(0.14 0.015 168);
+    --popover: oklch(0.15 0.015 168);
+    --border: oklch(0.18 0.015 168);
+    --muted: oklch(0.15 0.01 168);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), var(--primary-foreground), oklch(0.98 0.01 168));
+}
+
+[data-theme='saffron'] {
+    --primary: oklch(0.55 0.15 55);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 55);
+    --muted: oklch(0.96 0.01 55);
+    --muted-foreground: oklch(0.40 0.02 55);
+    --accent: oklch(0.95 0.04 55);
+    --accent-foreground: oklch(0.15 0.04 55);
+    --ring: oklch(0.55 0.15 55);
+    --footer-bg: oklch(0.98 0.01 55);
+    --l-banner-bg: #7C2D12;
+    /* Amber 950ish */
+    --l-banner-fg: #FFFBEB;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.40 0.12 55), var(--primary));
+}
+
+.dark[data-theme='saffron'] {
+    --primary: oklch(0.88 0.16 55);
+    --primary-foreground: oklch(0.12 0.02 55);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 55);
+    --accent: oklch(0.20 0.02 55);
+    --accent-foreground: oklch(0.95 0.01 55);
+    --footer-bg: oklch(0.12 0.02 55);
+
+    --background: oklch(0.12 0.015 55);
+    --sidebar: oklch(0.10 0.012 55);
+    --sidebar-border: oklch(0.16 0.015 55);
+    --card: oklch(0.14 0.015 55);
+    --popover: oklch(0.15 0.015 55);
+    --border: oklch(0.18 0.015 55);
+    --muted: oklch(0.15 0.01 55);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.85 0.12 55), oklch(0.98 0.02 55));
+}
+
+[data-theme='pdseducation'] {
+    --primary: oklch(0.45 0.20 25);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 25);
+    --muted: oklch(0.96 0.01 25);
+    --muted-foreground: oklch(0.40 0.02 25);
+    --accent: oklch(0.88 0.12 85);
+    --accent-foreground: oklch(0.20 0.06 25);
+    --ring: oklch(0.45 0.20 25);
+    --footer-bg: oklch(0.98 0.01 25);
+    --l-banner-bg: #450A0A;
+    /* Dark Crimson */
+    --l-banner-fg: #FEF2F2;
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.35 0.15 25), var(--primary));
+}
+
+.dark[data-theme='pdseducation'] {
+    --primary: oklch(0.85 0.20 25);
+    --primary-foreground: oklch(0.12 0.02 25);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.85 0.02 25);
+    --accent: oklch(0.22 0.04 85);
+    --accent-foreground: oklch(0.95 0.01 15);
+    --footer-bg: oklch(0.12 0.02 25);
+
+    --background: oklch(0.12 0.015 25);
+    --sidebar: oklch(0.10 0.012 25);
+    --sidebar-border: oklch(0.16 0.015 25);
+    --card: oklch(0.14 0.015 25);
+    --popover: oklch(0.15 0.015 25);
+    --border: oklch(0.18 0.015 25);
+    --muted: oklch(0.15 0.01 25);
+    --l-gradient-hero: linear-gradient(135deg, var(--primary), oklch(0.85 0.15 25), oklch(0.98 0.02 25));
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 3: FESTIVAL & OCCASION THEMES
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* 1. DIWALI — Festival of Lights */
+[data-theme='diwali'] {
+    --primary: oklch(0.60 0.18 45);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 35);
+    --background: oklch(0.98 0.01 45);
+    --muted: oklch(0.95 0.02 45);
+    --muted-foreground: oklch(0.45 0.05 45);
+    --accent: oklch(0.45 0.20 25);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.60 0.18 45);
+    --footer-bg: oklch(0.97 0.02 45);
+    --l-bg: var(--background);
+    --l-fg: var(--foreground);
+    --l-gradient-hero: linear-gradient(135deg, #FF6F00, #D4740A, #C62828);
+    --l-font-heading: 'Eczar', serif;
+    --l-font-display: 'Eczar', serif;
+    --l-banner-bg: #880E4F;
+    /* Deep Rose */
+    --l-banner-fg: #FCE4EC;
+}
+
+.dark[data-theme='diwali'] {
+    --primary: oklch(0.80 0.12 45);
+    --primary-foreground: oklch(0.15 0.05 35);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 35);
+    --muted: oklch(0.18 0.02 35);
+    --muted-foreground: oklch(0.75 0.05 45);
+    --accent: oklch(0.65 0.15 25);
+    --accent-foreground: oklch(0.99 0 0);
+    --footer-bg: oklch(0.10 0.02 35);
+    --l-bg: var(--background);
+    --l-fg: oklch(0.98 0.05 45);
+    --l-gradient-hero: linear-gradient(135deg, #FFB74D, #FFF3E0, #FF9800);
+}
+
+/* 2. REPUBLIC DAY — 26 January */
+[data-theme='republic'] {
+    --primary: oklch(0.65 0.20 45);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 264);
+    --background: oklch(0.99 0.01 45);
+    --muted: oklch(0.96 0.01 264);
+    --muted-foreground: oklch(0.40 0.02 264);
+    --accent: oklch(0.35 0.12 140);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.65 0.20 45);
+    --footer-bg: oklch(0.98 0.01 264);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #FF9933, #FFFFFF 50%, #138808);
+    --l-banner-bg: #1A237E;
+    /* Deep Indigo */
+    --l-banner-fg: #E8EAF6;
+}
+
+.dark[data-theme='republic'] {
+    --primary: oklch(0.80 0.12 45);
+    --primary-foreground: oklch(0.15 0.02 264);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 25);
+    --muted: oklch(0.18 0.02 264);
+    --muted-foreground: oklch(0.85 0.01 264);
+    --accent: oklch(0.75 0.12 140);
+    --footer-bg: oklch(0.10 0.02 264);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #FFB74D, #F8FAFC, #66BB6A);
+}
+
+/* 3. INDEPENDENCE DAY — 15 August */
+[data-theme='independence'] {
+    --primary: oklch(0.35 0.12 140);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 140);
+    --background: oklch(0.99 0.01 140);
+    --muted: oklch(0.96 0.01 140);
+    --muted-foreground: oklch(0.40 0.02 140);
+    --accent: oklch(0.65 0.20 45);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.35 0.12 140);
+    --footer-bg: oklch(0.98 0.01 140);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #FF9933, #000080, #138808);
+    --l-banner-bg: #000080;
+    /* Navy */
+    --l-banner-fg: #FFFFFF;
+}
+
+.dark[data-theme='independence'] {
+    --primary: oklch(0.75 0.12 140);
+    --primary-foreground: oklch(0.15 0.02 140);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 140);
+    --muted: oklch(0.18 0.02 140);
+    --muted-foreground: oklch(0.85 0.02 140);
+    --accent: oklch(0.80 0.12 45);
+    --footer-bg: oklch(0.10 0.02 140);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #66BB6A, #FFB74D, #81C784);
+}
+
+/* 4. HOLI — Festival of Colors */
+[data-theme='holi'] {
+    --primary: oklch(0.60 0.25 330);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 320);
+    --background: oklch(0.99 0.01 330);
+    --muted: oklch(0.95 0.02 330);
+    --muted-foreground: oklch(0.45 0.10 330);
+    --accent: oklch(0.55 0.20 270);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.60 0.25 330);
+    --footer-bg: oklch(0.98 0.02 330);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #E91E63, #7C4DFF, #00BCD4, #FFEB3B);
+    --l-banner-bg: #FFC107;
+    /* Amber */
+    --l-banner-fg: #1A0A00;
+}
+
+.dark[data-theme='holi'] {
+    --primary: oklch(0.75 0.15 330);
+    --primary-foreground: oklch(0.15 0.05 320);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 320);
+    --muted: oklch(0.18 0.02 320);
+    --muted-foreground: oklch(0.88 0.03 320);
+    --accent: oklch(0.70 0.12 270);
+    --footer-bg: oklch(0.10 0.02 320);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #F48FB1, #B388FF, #81D4FA);
+}
+
+/* 5. NAVRATRI — Nine Nights */
+[data-theme='navratri'] {
+    --primary: oklch(0.45 0.18 20);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 15);
+    --background: oklch(0.99 0.01 20);
+    --muted: oklch(0.96 0.02 15);
+    --muted-foreground: oklch(0.40 0.05 20);
+    --accent: oklch(0.75 0.15 75);
+    --accent-foreground: oklch(0.15 0.05 15);
+    --ring: oklch(0.45 0.18 20);
+    --footer-bg: oklch(0.98 0.01 20);
+
+    --l-bg: var(--background);
+    --l-fg: var(--foreground);
+    --l-gradient-hero: linear-gradient(135deg, #D32F2F, #F9A825, #6A1B9A);
+    --l-banner-bg: #4A148C;
+    /* Royal Purple */
+    --l-banner-fg: #F3E5F5;
+
+    /* Navratri Specific Tokens */
+    --diya-flame: #FF9800;
+    --diya-glow: rgba(255, 152, 0, 0.4);
+}
+
+.dark[data-theme='navratri'] {
+    --primary: #EF5350;
+    --primary-foreground: oklch(0.12 0.02 15);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --muted-foreground: oklch(0.88 0.02 15);
+    --accent: #FFD54F;
+    --accent-foreground: oklch(0.95 0.01 15);
+    --footer-bg: oklch(0.12 0.02 15);
+
+    --background: oklch(0.12 0.015 15);
+    --sidebar: oklch(0.10 0.012 15);
+    --sidebar-border: oklch(0.16 0.015 15);
+    --card: oklch(0.14 0.015 15);
+    --card-foreground: oklch(0.99 0 0);
+    --popover: oklch(0.15 0.015 15);
+    --border: oklch(0.18 0.015 15);
+    --muted: oklch(0.15 0.01 15);
+    --ring: #EF5350;
+
+    --l-bg: oklch(0.12 0.015 15);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #EF5350, #FFD54F, #CE93D8);
+    --l-banner-bg: #310d5e;
+    --l-banner-fg: #F3E5F5;
+
+    /* Navratri Specific Tokens (Dark) */
+    --diya-flame: #FFB74D;
+    --diya-glow: rgba(255, 183, 77, 0.5);
+}
+
+/* 6. ONAM — Harvest Festival */
+[data-theme='onam'] {
+    --primary: oklch(0.65 0.18 60);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 55);
+    --background: oklch(0.99 0.01 60);
+    --muted: oklch(0.96 0.02 55);
+    --muted-foreground: oklch(0.40 0.05 60);
+    --accent: oklch(0.45 0.15 140);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.65 0.18 60);
+    --footer-bg: oklch(0.98 0.02 60);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #F57F17, #FFD600, #2E7D32);
+    --l-banner-bg: #1B5E20;
+    /* Dark Green */
+    --l-banner-fg: #E8F5E9;
+}
+
+.dark[data-theme='onam'] {
+    --primary: oklch(0.80 0.12 60);
+    --primary-foreground: oklch(0.15 0.05 55);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 55);
+    --muted: oklch(0.18 0.02 55);
+    --muted-foreground: oklch(0.88 0.02 55);
+    --accent: oklch(0.75 0.12 140);
+    --footer-bg: oklch(0.10 0.02 55);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #FFD600, #FFF9C4, #66BB6A);
+}
+
+/* 7. EID — Moon & Stars */
+[data-theme='eid'] {
+    --primary: oklch(0.45 0.12 170);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 170);
+    --background: oklch(0.99 0.01 170);
+    --muted: oklch(0.96 0.01 170);
+    --muted-foreground: oklch(0.40 0.02 170);
+    --accent: oklch(0.75 0.15 85);
+    --accent-foreground: oklch(0.15 0.05 85);
+    --ring: oklch(0.45 0.12 170);
+    --footer-bg: oklch(0.98 0.01 170);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #00796B, #004D40, #C6A700);
+    --l-banner-bg: #C6A700;
+    /* Gold */
+    --l-banner-fg: #002D20;
+}
+
+.dark[data-theme='eid'] {
+    --primary: oklch(0.75 0.10 170);
+    --primary-foreground: oklch(0.12 0.02 170);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 170);
+    --muted: oklch(0.18 0.02 170);
+    --muted-foreground: oklch(0.85 0.02 170);
+    --accent: oklch(0.85 0.12 85);
+    --footer-bg: oklch(0.10 0.02 170);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #4DB6AC, #E0F2F1, #FFD54F);
+}
+
+/* 8. CHRISTMAS — Winter Celebrations */
+[data-theme='christmas'] {
+    --primary: oklch(0.42 0.12 145);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 145);
+    --background: oklch(0.99 0.01 145);
+    --muted: oklch(0.96 0.01 145);
+    --muted-foreground: oklch(0.40 0.02 145);
+    --accent: oklch(0.45 0.18 25);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.42 0.12 145);
+    --footer-bg: oklch(0.98 0.01 145);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #2E7D32, #C62828, #FFD700);
+    --l-banner-bg: #B71C1C;
+    /* Dark Red */
+    --l-banner-fg: #FFEBEE;
+}
+
+.dark[data-theme='christmas'] {
+    --primary: oklch(0.80 0.12 145);
+    --primary-foreground: oklch(0.12 0.02 145);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 140);
+    --muted: oklch(0.18 0.02 140);
+    --muted-foreground: oklch(0.88 0.02 140);
+    --accent: oklch(0.65 0.16 25);
+    --footer-bg: oklch(0.10 0.02 140);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #66BB6A, #EF5350, #FFF176);
+}
+
+/* 9. RAMA NAVAMI — Birth of Lord Rama ────────────────────────── */
+[data-theme='ramanavami'] {
+    --primary: oklch(0.40 0.15 250);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.02 250);
+    --background: oklch(0.99 0.01 250);
+    --muted: oklch(0.96 0.01 250);
+    --muted-foreground: oklch(0.40 0.02 250);
+    --accent: oklch(0.72 0.16 85);
+    --accent-foreground: oklch(0.15 0.05 85);
+    --ring: oklch(0.40 0.15 250);
+    --footer-bg: oklch(0.98 0.01 250);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #1565C0, #FDD835, #0D47A1);
+    --l-banner-bg: #0D47A1;
+    /* Deep Blue */
+    --l-banner-fg: #E3F2FD;
+}
+
+.dark[data-theme='ramanavami'] {
+    --primary: oklch(0.80 0.15 250);
+    --primary-foreground: oklch(0.12 0.02 250);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 250);
+    --muted: oklch(0.18 0.02 250);
+    --muted-foreground: oklch(0.85 0.02 250);
+    --accent: oklch(0.85 0.12 85);
+    --footer-bg: oklch(0.10 0.02 250);
+
+    --sidebar: oklch(0.10 0.012 250);
+    --sidebar-border: oklch(0.16 0.015 250);
+    --card: oklch(0.14 0.015 250);
+    --popover: oklch(0.15 0.015 250);
+    --border: oklch(0.18 0.015 250);
+    --muted: oklch(0.15 0.01 250);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #42A5F5, #FFF9C4, #1976D2);
+}
+
+/* 10. HANUMAN JAYANTI — Birth of Lord Hanuman ────────────────── */
+[data-theme='hanumanjayanti'] {
+    --primary: oklch(0.50 0.18 35);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 30);
+    --background: oklch(0.99 0.01 35);
+    --muted: oklch(0.96 0.02 30);
+    --muted-foreground: oklch(0.40 0.05 35);
+    --accent: oklch(0.65 0.18 55);
+    --accent-foreground: oklch(0.15 0.05 55);
+    --ring: oklch(0.50 0.18 35);
+    --footer-bg: oklch(0.98 0.01 35);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #E53935, #FF7043, #FF9800);
+    --l-banner-bg: #BF360C;
+    /* Deep Vermilion */
+    --l-banner-fg: #FBE9E7;
+}
+
+.dark[data-theme='hanumanjayanti'] {
+    --primary: oklch(0.82 0.15 35);
+    --primary-foreground: oklch(0.12 0.02 35);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 30);
+    --muted: oklch(0.18 0.02 30);
+    --muted-foreground: oklch(0.88 0.02 30);
+    --accent: oklch(0.82 0.14 55);
+    --footer-bg: oklch(0.10 0.02 30);
+
+    --sidebar: oklch(0.10 0.012 30);
+    --sidebar-border: oklch(0.16 0.015 30);
+    --card: oklch(0.14 0.015 30);
+    --popover: oklch(0.15 0.015 30);
+    --border: oklch(0.18 0.015 30);
+    --muted: oklch(0.15 0.01 30);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #EF5350, #FFB74D, #FFCC80);
+}
+
+/* 11. VAISAKHI / BAISAKHI — Harvest & Solar New Year ─────────── */
+[data-theme='vaisakhi'] {
+    --primary: oklch(0.55 0.14 90);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 85);
+    --background: oklch(0.99 0.01 90);
+    --muted: oklch(0.96 0.02 85);
+    --muted-foreground: oklch(0.40 0.05 90);
+    --accent: oklch(0.42 0.12 145);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.55 0.14 90);
+    --footer-bg: oklch(0.98 0.01 90);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #F9A825, #2E7D32, #FDD835);
+    --l-banner-bg: #33691E;
+    /* Deep Green */
+    --l-banner-fg: #F1F8E9;
+}
+
+.dark[data-theme='vaisakhi'] {
+    --primary: oklch(0.85 0.14 90);
+    --primary-foreground: oklch(0.12 0.02 90);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 85);
+    --muted: oklch(0.18 0.02 85);
+    --muted-foreground: oklch(0.88 0.02 85);
+    --accent: oklch(0.75 0.12 145);
+    --footer-bg: oklch(0.10 0.02 85);
+
+    --sidebar: oklch(0.10 0.012 85);
+    --sidebar-border: oklch(0.16 0.015 85);
+    --card: oklch(0.14 0.015 85);
+    --popover: oklch(0.15 0.015 85);
+    --border: oklch(0.18 0.015 85);
+    --muted: oklch(0.15 0.01 85);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #FFF176, #66BB6A, #FFD54F);
+}
+
+/* 12. AKSHAYA TRITIYA — Prosperity & Gold ────────────────────── */
+[data-theme='akshayatritiya'] {
+    --primary: oklch(0.58 0.16 75);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 70);
+    --background: oklch(0.99 0.01 75);
+    --muted: oklch(0.96 0.02 70);
+    --muted-foreground: oklch(0.40 0.05 75);
+    --accent: oklch(0.40 0.14 25);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.58 0.16 75);
+    --footer-bg: oklch(0.98 0.01 75);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #FFB300, #8D6E63, #FDD835);
+    --l-banner-bg: #7B1FA2;
+    /* Deep Purple */
+    --l-banner-fg: #F3E5F5;
+}
+
+.dark[data-theme='akshayatritiya'] {
+    --primary: oklch(0.85 0.15 75);
+    --primary-foreground: oklch(0.12 0.02 75);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 70);
+    --muted: oklch(0.18 0.02 70);
+    --muted-foreground: oklch(0.88 0.02 70);
+    --accent: oklch(0.65 0.12 25);
+    --footer-bg: oklch(0.10 0.02 70);
+
+    --sidebar: oklch(0.10 0.012 70);
+    --sidebar-border: oklch(0.16 0.015 70);
+    --card: oklch(0.14 0.015 70);
+    --popover: oklch(0.15 0.015 70);
+    --border: oklch(0.18 0.015 70);
+    --muted: oklch(0.15 0.01 70);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #FFD54F, #A1887F, #FFF176);
+}
+
+/* 13. GANGAUR — Goddess Gauri Festival ───────────────────────── */
+[data-theme='gangaur'] {
+    --primary: oklch(0.55 0.18 15);
+    --primary-foreground: oklch(0.99 0 0);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.15 0.05 10);
+    --background: oklch(0.99 0.01 15);
+    --muted: oklch(0.96 0.02 10);
+    --muted-foreground: oklch(0.40 0.05 15);
+    --accent: oklch(0.45 0.14 145);
+    --accent-foreground: oklch(0.99 0 0);
+    --ring: oklch(0.55 0.18 15);
+    --footer-bg: oklch(0.98 0.01 15);
+    --l-bg: var(--background);
+    --l-gradient-hero: linear-gradient(135deg, #E91E63, #4CAF50, #F48FB1);
+    --l-banner-bg: #880E4F;
+    /* Deep Rose */
+    --l-banner-fg: #FCE4EC;
+}
+
+.dark[data-theme='gangaur'] {
+    --primary: oklch(0.82 0.15 15);
+    --primary-foreground: oklch(0.12 0.02 15);
+    --tooltip-bg: var(--primary);
+    --foreground: oklch(0.99 0 0);
+    --background: oklch(0.12 0.015 10);
+    --muted: oklch(0.18 0.02 10);
+    --muted-foreground: oklch(0.88 0.02 10);
+    --accent: oklch(0.75 0.12 145);
+    --footer-bg: oklch(0.10 0.02 10);
+
+    --sidebar: oklch(0.10 0.012 10);
+    --sidebar-border: oklch(0.16 0.015 10);
+    --card: oklch(0.14 0.015 10);
+    --popover: oklch(0.15 0.015 10);
+    --border: oklch(0.18 0.015 10);
+    --muted: oklch(0.15 0.01 10);
+    --l-bg: var(--background);
+    --l-fg: #F8FAFC;
+    --l-gradient-hero: linear-gradient(135deg, #F48FB1, #81C784, #F06292);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 4: LANDING UTILITIES & MOTIFS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Core Landing Container Tokens */
+.landing-page,
+.l-theme {
+    --l-bg: var(--background, #FAFBFF);
+    --l-fg: var(--foreground, #0F172A);
+    --l-primary: var(--primary, #4F46E5);
+    --l-primary-soft: var(--primary-foreground, #EEF2FF);
+    --l-accent: var(--accent, #7C3AED);
+    --l-muted: var(--muted-foreground, #64748B);
+    --l-surface: var(--sidebar, var(--card, #FFFFFF));
+    --l-border: var(--border, #E2E8F0);
+
+    --l-banner-bg-neon-1: color-mix(in srgb, var(--primary) 20%, #020617);
+    --l-banner-bg-neon-2: color-mix(in srgb, var(--accent) 15%, #020617);
+    --l-banner-bg: linear-gradient(90deg, var(--l-banner-bg-neon-1), var(--l-banner-bg-neon-2), var(--l-banner-bg-neon-1));
+    --l-banner-fg: #FFFFFF;
+
+    /* Use a uniquely named internal variable to avoid recursion */
+    --l-hero-gradient: var(--l-gradient-hero, linear-gradient(to right, var(--primary), var(--accent), var(--accent-foreground, #EC4899)));
+    --l-gradient-cta: linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, #020617), color-mix(in srgb, var(--accent) 10%, #020617), #020617);
+    --l-gradient-card: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+    --l-card-glare: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+    --l-motif-glare: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+    --l-motif-color: var(--primary);
+    --l-motif-opacity: 0.08;
+    --l-motif-mask-size: 280px 280px;
+
+    --l-font-heading: var(--l-font-heading, 'Plus Jakarta Sans', sans-serif);
+    --l-font-body: 'Plus Jakarta Sans', sans-serif;
+    --l-font-display: var(--l-font-display, 'Instrument Serif', serif);
+}
+
+.dark .landing-page,
+.dark .l-theme {
+    --l-bg: var(--background, oklch(0.12 0.015 264));
+    --l-fg: var(--foreground, oklch(0.99 0 0));
+    --l-primary-soft: rgba(255, 255, 255, 0.05);
+    --l-surface: var(--sidebar, var(--card, #0F172A));
+    --l-border: var(--border, #1E293B);
+    --l-muted: var(--muted-foreground, oklch(0.85 0.02 264));
+    --l-card-glare: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+    --l-motif-glare: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+    --l-motif-color: var(--primary);
+    --l-motif-opacity: 0.15;
+    --l-motif-mask-size: 280px 280px;
+    --l-gradient-cta: linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, black), color-mix(in srgb, var(--accent) 15%, black), var(--background));
+
+    /* Dynamic Banner Variables (Neon Gradient Polish) */
+    --l-banner-bg-base: color-mix(in srgb, var(--primary) 20%, #0F172A);
+    --l-banner-neon-1: color-mix(in srgb, var(--primary) 80%, black);
+    --l-banner-neon-2: color-mix(in srgb, var(--accent) 70%, black);
+
+    --l-banner-bg: linear-gradient(90deg,
+            var(--l-banner-neon-1),
+            var(--l-banner-neon-2),
+            var(--l-banner-neon-1));
+    --l-banner-fg: color-mix(in srgb, var(--primary) 10%, white);
+    --l-banner-border: color-mix(in srgb, var(--primary) 40%, transparent);
+    --l-banner-glow: 0 4px 12px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+/* Landing Utility Classes */
+.l-bg {
+    background-color: var(--l-bg);
+}
+
+.l-fg {
+    color: var(--l-fg);
+}
+
+.l-bg-primary {
+    background-color: var(--l-primary);
+}
+
+.l-text-primary {
+    color: var(--l-primary);
+}
+
+.l-bg-primary-soft {
+    background-color: var(--l-primary-soft);
+}
+
+.l-text-accent {
+    color: var(--l-accent);
+}
+
+.l-bg-surface {
+    background-color: var(--l-surface);
+}
+
+.l-text-muted {
+    color: var(--l-muted);
+}
+
+.l-border {
+    border-color: var(--l-border);
+}
+
+.l-bg-inverse-text {
+    color: var(--l-bg);
+}
+
+.l-font-heading {
+    font-family: var(--l-font-heading);
+}
+
+.l-font-body {
+    font-family: var(--l-font-body);
+}
+
+.l-font-display {
+    font-family: var(--l-font-display);
+}
+
+.l-gradient-hero {
+    background-image: var(--l-hero-gradient);
+}
+
+.l-gradient-cta {
+    background-image: var(--l-gradient-cta);
+}
+
+.l-gradient-card {
+    background-image: var(--l-gradient-card);
+}
+
+.l-gradient-text {
+    background-image: var(--l-hero-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 100% auto;
+}
+
+/* India-Specific Decorative Motifs (Mask-based to inherit theme color) */
+[class*="l-motif-"] {
+    background-color: var(--l-motif-color);
+    background-repeat: repeat;
+    opacity: var(--l-motif-opacity);
+    mask-repeat: repeat;
+    -webkit-mask-repeat: repeat;
+    mask-size: var(--l-motif-mask-size, auto);
+    -webkit-mask-size: var(--l-motif-mask-size, auto);
+}
+
+.l-motif-ashoka {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='2' fill='white' opacity='1'/%3E%3Ccircle cx='60' cy='30' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='60' cy='90' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='30' cy='60' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='90' cy='60' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='38.8' cy='38.8' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='81.2' cy='38.8' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='38.8' cy='81.2' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='81.2' cy='81.2' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='45' cy='33' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='75' cy='33' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='33' cy='45' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='87' cy='45' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='33' cy='75' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='87' cy='75' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='45' cy='87' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='75' cy='87' r='1' fill='white' opacity='0.5'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='2' fill='white' opacity='1'/%3E%3Ccircle cx='60' cy='30' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='60' cy='90' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='30' cy='60' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='90' cy='60' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='38.8' cy='38.8' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='81.2' cy='38.8' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='38.8' cy='81.2' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='81.2' cy='81.2' r='1.2' fill='white' opacity='0.6'/%3E%3Ccircle cx='45' cy='33' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='75' cy='33' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='33' cy='45' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='87' cy='45' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='33' cy='75' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='87' cy='75' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='45' cy='87' r='1' fill='white' opacity='0.5'/%3E%3Ccircle cx='75' cy='87' r='1' fill='white' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.l-motif-rangoli {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Cpath d='M50 10 Q 70 30 50 50 Q 30 70 50 90' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M10 50 Q 30 30 50 50 Q 70 70 90 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Cpath d='M50 10 Q 70 30 50 50 Q 30 70 50 90' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M10 50 Q 30 30 50 50 Q 70 70 90 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+.l-motif-paisley {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q 65 25 55 50 Q 45 75 20 60 Q 5 50 15 30 Q 25 10 40 10Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M35 20 Q 50 30 45 45 Q 40 60 25 52 Q 15 45 22 32 Q 28 20 35 20Z' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q 65 25 55 50 Q 45 75 20 60 Q 5 50 15 30 Q 25 10 40 10Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M35 20 Q 50 30 45 45 Q 40 60 25 52 Q 15 45 22 32 Q 28 20 35 20Z' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+.l-motif-lotus {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 20 Q 55 35 50 50 Q 45 35 50 20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M50 80 Q 55 65 50 50 Q 45 65 50 80' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M20 50 Q 35 55 50 50 Q 35 45 20 50' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M80 50 Q 65 55 50 50 Q 65 45 80 50' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M28 28 Q 40 38 50 50 Q 38 40 28 28' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M72 28 Q 60 38 50 50 Q 62 40 72 28' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M28 72 Q 40 62 50 50 Q 38 60 28 72' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M72 72 Q 60 62 50 50 Q 62 60 72 72' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 20 Q 55 35 50 50 Q 45 35 50 20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M50 80 Q 55 65 50 50 Q 45 65 50 80' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M20 50 Q 35 55 50 50 Q 35 45 20 50' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M80 50 Q 65 55 50 50 Q 65 45 80 50' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M28 28 Q 40 38 50 50 Q 38 40 28 28' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M72 28 Q 60 38 50 50 Q 62 40 72 28' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M28 72 Q 40 62 50 50 Q 38 60 28 72' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M72 72 Q 60 62 50 50 Q 62 60 72 72' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+.l-motif-mithila {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 20 Q 15 5 30 20 Q 45 35 60 20 Q 75 5 90 20 Q 105 35 120 20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M0 10 Q 15 0 30 10 Q 45 20 60 10 Q 75 0 90 10 Q 105 20 120 10' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M0 30 Q 15 20 30 30 Q 45 40 60 30 Q 75 20 90 30 Q 105 40 120 30' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Ccircle cx='30' cy='20' r='1.5' fill='white' opacity='1'/%3E%3Ccircle cx='90' cy='20' r='1.5' fill='white' opacity='1'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 20 Q 15 5 30 20 Q 45 35 60 20 Q 75 5 90 20 Q 105 35 120 20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M0 10 Q 15 0 30 10 Q 45 20 60 10 Q 75 0 90 10 Q 105 20 120 10' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M0 30 Q 15 20 30 30 Q 45 40 60 30 Q 75 20 90 30 Q 105 40 120 30' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Ccircle cx='30' cy='20' r='1.5' fill='white' opacity='1'/%3E%3Ccircle cx='90' cy='20' r='1.5' fill='white' opacity='1'/%3E%3C/svg%3E");
+}
+
+.l-motif-warli {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpolygon points='40,15 50,35 30,35' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='40' cy='12' r='3' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cline x1='35' y1='35' x2='25' y2='55' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cline x1='45' y1='35' x2='55' y2='55' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='20' cy='65' r='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='60' cy='65' r='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpolygon points='40,15 50,35 30,35' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='40' cy='12' r='3' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cline x1='35' y1='35' x2='25' y2='55' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cline x1='45' y1='35' x2='55' y2='55' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='20' cy='65' r='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='60' cy='65' r='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.l-motif-chikankari {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 Q 35 15 30 25 Q 25 15 30 5' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M30 35 Q 35 45 30 55 Q 25 45 30 35' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M5 30 Q 15 35 25 30 Q 15 25 5 30' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M35 30 Q 45 35 55 30 Q 45 25 35 30' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Ccircle cx='30' cy='30' r='1.5' fill='white' opacity='1'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 Q 35 15 30 25 Q 25 15 30 5' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M30 35 Q 35 45 30 55 Q 25 45 30 35' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M5 30 Q 15 35 25 30 Q 15 25 5 30' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Cpath d='M35 30 Q 45 35 55 30 Q 45 25 35 30' fill='none' stroke='white' stroke-width='1.2' opacity='1'/%3E%3Ccircle cx='30' cy='30' r='1.5' fill='white' opacity='1'/%3E%3C/svg%3E");
+}
+
+.l-motif-vedic {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect x='20' y='20' width='40' height='40' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Crect x='28' y='28' width='24' height='24' fill='none' stroke='white' stroke-width='1.2' opacity='0.8' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='16' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='40' cy='40' r='2' fill='white' opacity='1'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect x='20' y='20' width='40' height='40' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Crect x='28' y='28' width='24' height='24' fill='none' stroke='white' stroke-width='1.2' opacity='0.8' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='16' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='40' cy='40' r='2' fill='white' opacity='1'/%3E%3C/svg%3E");
+}
+
+.l-motif-swastik {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 18 L30 30 L42 30' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M30 42 L30 30 L18 30' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M18 18 L18 30' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M42 30 L42 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M30 18 L42 18' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M18 42 L30 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 18 L30 30 L42 30' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M30 42 L30 30 L18 30' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M18 18 L18 30' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M42 30 L42 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M30 18 L42 18' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M18 42 L30 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3C/svg%3E");
+}
+
+.l-motif-shloka {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='30' viewBox='0 0 140 30'%3E%3Cline x1='0' y1='8' x2='140' y2='8' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='10' y1='15' x2='130' y2='15' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cline x1='0' y1='22' x2='140' y2='22' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='5' cy='15' r='1.5' fill='white' opacity='1'/%3E%3Ccircle cx='135' cy='15' r='1.5' fill='white' opacity='1'/%3E%3Cpath d='M65 4 Q 70 2 75 4' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='30' viewBox='0 0 140 30'%3E%3Cline x1='0' y1='8' x2='140' y2='8' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='10' y1='15' x2='130' y2='15' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cline x1='0' y1='22' x2='140' y2='22' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='5' cy='15' r='1.5' fill='white' opacity='1'/%3E%3Ccircle cx='135' cy='15' r='1.5' fill='white' opacity='1'/%3E%3Cpath d='M65 4 Q 70 2 75 4' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+
+.l-motif-navratri {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M35 85 Q35 80 45 75 L75 75 Q85 80 85 85 Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M60 55 Q55 65 60 75 Q65 65 60 55Z' fill='white' opacity='0.9'/%3E%3Cpath d='M60 45 Q53 58 60 70 Q67 58 60 45Z' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='60' y1='10' x2='60' y2='50' stroke='white' stroke-width='1.5' opacity='0.8'/%3E%3Cpath d='M50 20 Q55 10 60 10 Q65 10 70 20' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cline x1='50' y1='20' x2='50' y2='28' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='70' y1='20' x2='70' y2='28' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='20' cy='60' r='2' fill='white' opacity='0.5'/%3E%3Ccircle cx='100' cy='60' r='2' fill='white' opacity='0.5'/%3E%3Ccircle cx='30' cy='100' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='90' cy='100' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='15' cy='30' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='105' cy='30' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='40' cy='110' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='80' cy='110' r='1' fill='white' opacity='0.3'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M35 85 Q35 80 45 75 L75 75 Q85 80 85 85 Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M60 55 Q55 65 60 75 Q65 65 60 55Z' fill='white' opacity='0.9'/%3E%3Cpath d='M60 45 Q53 58 60 70 Q67 58 60 45Z' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='60' y1='10' x2='60' y2='50' stroke='white' stroke-width='1.5' opacity='0.8'/%3E%3Cpath d='M50 20 Q55 10 60 10 Q65 10 70 20' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Cline x1='50' y1='20' x2='50' y2='28' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='70' y1='20' x2='70' y2='28' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='20' cy='60' r='2' fill='white' opacity='0.5'/%3E%3Ccircle cx='100' cy='60' r='2' fill='white' opacity='0.5'/%3E%3Ccircle cx='30' cy='100' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='90' cy='100' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='15' cy='30' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='105' cy='30' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='40' cy='110' r='1' fill='white' opacity='0.3'/%3E%3Ccircle cx='80' cy='110' r='1' fill='white' opacity='0.3'/%3E%3C/svg%3E");
+}
+
+.l-motif-mudra {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg%3E%3Cpath d='M70 12 Q60 30 63 42 Q66 50 70 50 Q74 50 77 42 Q80 30 70 12Z' fill='white' opacity='0.9' stroke='white' stroke-width='2'/%3E%3Cpath d='M56 22 Q62 34 66 44' fill='none' stroke='white' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M84 22 Q78 34 74 44' fill='none' stroke='white' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M48 30 Q56 38 64 46' fill='none' stroke='white' stroke-width='2' opacity='0.6'/%3E%3Cpath d='M92 30 Q84 38 76 46' fill='none' stroke='white' stroke-width='2' opacity='0.6'/%3E%3Cpath d='M42 40 Q52 44 62 48' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3Cpath d='M98 40 Q88 44 78 48' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3C/g%3E%3Cg%3E%3Cpath d='M58 50 Q56 56 52 62 Q46 72 44 80 Q42 90 48 96 Q54 100 60 96' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M82 50 Q84 56 88 62 Q94 72 96 80 Q98 90 92 96 Q86 100 80 96' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M52 62 L48 54 Q47 52 50 53 L55 58' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M88 62 L92 54 Q93 52 90 53 L85 58' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M48 74 Q56 70 64 74 Q72 70 80 74 Q88 70 92 74' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3Cpath d='M50 82 Q58 78 66 82 Q74 78 82 82 Q88 78 92 82' fill='none' stroke='white' stroke-width='1.2' opacity='0.4'/%3E%3Ccircle cx='62' cy='78' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='78' cy='78' r='2.5' fill='white' opacity='0.4'/%3E%3C/g%3E%3Cg%3E%3Cpath d='M44 94 Q42 90 44 86' stroke='white' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.7'/%3E%3Cpath d='M40 96 Q38 92 40 88' stroke='white' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.5'/%3E%3Cpath d='M96 94 Q98 90 96 86' stroke='white' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.7'/%3E%3Cpath d='M100 96 Q102 92 100 88' stroke='white' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.5'/%3E%3C/g%3E%3Cg%3E%3Ccircle cx='52' cy='18' r='2' fill='white' opacity='0.6'/%3E%3Ccircle cx='88' cy='18' r='2' fill='white' opacity='0.6'/%3E%3Ccircle cx='40' cy='36' r='1.8' fill='white' opacity='0.5'/%3E%3Ccircle cx='100' cy='36' r='1.8' fill='white' opacity='0.5'/%3E%3Ccircle cx='70' cy='6' r='2' fill='white' opacity='0.7'/%3E%3Ccircle cx='16' cy='16' r='3' fill='white' opacity='0.5'/%3E%3Ccircle cx='124' cy='16' r='3' fill='white' opacity='0.5'/%3E%3Ccircle cx='16' cy='124' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='124' cy='124' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='8' cy='70' r='2' fill='white' opacity='0.35'/%3E%3Ccircle cx='132' cy='70' r='2' fill='white' opacity='0.35'/%3E%3Ccircle cx='70' cy='130' r='2' fill='white' opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg%3E%3Cpath d='M70 12 Q60 30 63 42 Q66 50 70 50 Q74 50 77 42 Q80 30 70 12Z' fill='white' opacity='0.9' stroke='white' stroke-width='2'/%3E%3Cpath d='M56 22 Q62 34 66 44' fill='none' stroke='white' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M84 22 Q78 34 74 44' fill='none' stroke='white' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M48 30 Q56 38 64 46' fill='none' stroke='white' stroke-width='2' opacity='0.6'/%3E%3Cpath d='M92 30 Q84 38 76 46' fill='none' stroke='white' stroke-width='2' opacity='0.6'/%3E%3Cpath d='M42 40 Q52 44 62 48' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3Cpath d='M98 40 Q88 44 78 48' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3C/g%3E%3Cg%3E%3Cpath d='M58 50 Q56 56 52 62 Q46 72 44 80 Q42 90 48 96 Q54 100 60 96' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M82 50 Q84 56 88 62 Q94 72 96 80 Q98 90 92 96 Q86 100 80 96' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M52 62 L48 54 Q47 52 50 53 L55 58' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M88 62 L92 54 Q93 52 90 53 L85 58' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M48 74 Q56 70 64 74 Q72 70 80 74 Q88 70 92 74' fill='none' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3Cpath d='M50 82 Q58 78 66 82 Q74 78 82 82 Q88 78 92 82' fill='none' stroke='white' stroke-width='1.2' opacity='0.4'/%3E%3Ccircle cx='62' cy='78' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='78' cy='78' r='2.5' fill='white' opacity='0.4'/%3E%3C/g%3E%3Cg%3E%3Cpath d='M44 94 Q42 90 44 86' stroke='white' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.7'/%3E%3Cpath d='M40 96 Q38 92 40 88' stroke='white' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.5'/%3E%3Cpath d='M96 94 Q98 90 96 86' stroke='white' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.7'/%3E%3Cpath d='M100 96 Q102 92 100 88' stroke='white' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.5'/%3E%3C/g%3E%3Cg%3E%3Ccircle cx='52' cy='18' r='2' fill='white' opacity='0.6'/%3E%3Ccircle cx='88' cy='18' r='2' fill='white' opacity='0.6'/%3E%3Ccircle cx='40' cy='36' r='1.8' fill='white' opacity='0.5'/%3E%3Ccircle cx='100' cy='36' r='1.8' fill='white' opacity='0.5'/%3E%3Ccircle cx='70' cy='6' r='2' fill='white' opacity='0.7'/%3E%3Ccircle cx='16' cy='16' r='3' fill='white' opacity='0.5'/%3E%3Ccircle cx='124' cy='16' r='3' fill='white' opacity='0.5'/%3E%3Ccircle cx='16' cy='124' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='124' cy='124' r='2.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='8' cy='70' r='2' fill='white' opacity='0.35'/%3E%3Ccircle cx='132' cy='70' r='2' fill='white' opacity='0.35'/%3E%3Ccircle cx='70' cy='130' r='2' fill='white' opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Rama Navami — Bow & Arrow (Dhanush) Motif */
+.l-motif-dhanush {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30 80 Q20 50 30 20 Q35 10 40 20 Q50 50 40 80 Q35 90 30 80Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='35' y1='18' x2='35' y2='82' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='35' y1='50' x2='80' y2='20' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3Cpath d='M76 18 L80 20 L76 24' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Ccircle cx='58' cy='35' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='70' cy='26' r='1' fill='white' opacity='0.3'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30 80 Q20 50 30 20 Q35 10 40 20 Q50 50 40 80 Q35 90 30 80Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='35' y1='18' x2='35' y2='82' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cline x1='35' y1='50' x2='80' y2='20' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3Cpath d='M76 18 L80 20 L76 24' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Ccircle cx='58' cy='35' r='1.5' fill='white' opacity='0.4'/%3E%3Ccircle cx='70' cy='26' r='1' fill='white' opacity='0.3'/%3E%3C/svg%3E");
+}
+
+/* Hanuman Jayanti — Gada (Mace) Motif */
+.l-motif-gada {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'%3E%3Cline x1='40' y1='35' x2='40' y2='100' stroke='white' stroke-width='2' opacity='1'/%3E%3Ccircle cx='40' cy='22' r='16' fill='none' stroke='white' stroke-width='1.8' opacity='1'/%3E%3Ccircle cx='40' cy='22' r='10' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='40' cy='22' r='4' fill='white' opacity='0.6'/%3E%3Cline x1='35' y1='60' x2='45' y2='60' stroke='white' stroke-width='1.2' opacity='0.5'/%3E%3Cline x1='36' y1='70' x2='44' y2='70' stroke='white' stroke-width='1' opacity='0.4'/%3E%3Cpath d='M36 98 L40 105 L44 98' fill='none' stroke='white' stroke-width='1.2' opacity='0.6'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'%3E%3Cline x1='40' y1='35' x2='40' y2='100' stroke='white' stroke-width='2' opacity='1'/%3E%3Ccircle cx='40' cy='22' r='16' fill='none' stroke='white' stroke-width='1.8' opacity='1'/%3E%3Ccircle cx='40' cy='22' r='10' fill='none' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='40' cy='22' r='4' fill='white' opacity='0.6'/%3E%3Cline x1='35' y1='60' x2='45' y2='60' stroke='white' stroke-width='1.2' opacity='0.5'/%3E%3Cline x1='36' y1='70' x2='44' y2='70' stroke='white' stroke-width='1' opacity='0.4'/%3E%3Cpath d='M36 98 L40 105 L44 98' fill='none' stroke='white' stroke-width='1.2' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+/* Vaisakhi — Wheat Sheaf Motif */
+.l-motif-wheat {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'%3E%3Cline x1='40' y1='30' x2='40' y2='110' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M40 30 Q32 38 28 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M40 30 Q48 38 52 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M40 45 Q30 52 26 62' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M40 45 Q50 52 54 62' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M40 60 Q32 66 28 74' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M40 60 Q48 66 52 74' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M40 75 Q34 80 32 86' fill='none' stroke='white' stroke-width='0.8' opacity='0.5'/%3E%3Cpath d='M40 75 Q46 80 48 86' fill='none' stroke='white' stroke-width='0.8' opacity='0.5'/%3E%3Cellipse cx='40' cy='22' rx='6' ry='12' fill='none' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'%3E%3Cline x1='40' y1='30' x2='40' y2='110' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cpath d='M40 30 Q32 38 28 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M40 30 Q48 38 52 50' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M40 45 Q30 52 26 62' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M40 45 Q50 52 54 62' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M40 60 Q32 66 28 74' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M40 60 Q48 66 52 74' fill='none' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M40 75 Q34 80 32 86' fill='none' stroke='white' stroke-width='0.8' opacity='0.5'/%3E%3Cpath d='M40 75 Q46 80 48 86' fill='none' stroke='white' stroke-width='0.8' opacity='0.5'/%3E%3Cellipse cx='40' cy='22' rx='6' ry='12' fill='none' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3C/svg%3E");
+}
+
+/* Akshaya Tritiya — Kalash (Sacred Pot) Motif */
+.l-motif-kalash {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120' viewBox='0 0 100 120'%3E%3Cpath d='M30 90 Q28 60 35 45 L65 45 Q72 60 70 90 Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='30' y1='45' x2='70' y2='45' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3Cpath d='M38 42 Q40 30 50 25 Q60 30 62 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M45 25 Q42 18 50 10 Q58 18 55 25' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M50 10 L50 5' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='50' cy='4' r='2' fill='white' opacity='0.5'/%3E%3Cpath d='M38 65 Q50 55 62 65' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Cpath d='M35 78 Q50 70 65 78' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Cline x1='28' y1='90' x2='72' y2='90' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Crect x='32' y='90' width='36' height='6' rx='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120' viewBox='0 0 100 120'%3E%3Cpath d='M30 90 Q28 60 35 45 L65 45 Q72 60 70 90 Z' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Cline x1='30' y1='45' x2='70' y2='45' stroke='white' stroke-width='1.5' opacity='0.9'/%3E%3Cpath d='M38 42 Q40 30 50 25 Q60 30 62 42' fill='none' stroke='white' stroke-width='1.2' opacity='0.8'/%3E%3Cpath d='M45 25 Q42 18 50 10 Q58 18 55 25' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M50 10 L50 5' stroke='white' stroke-width='1' opacity='0.6'/%3E%3Ccircle cx='50' cy='4' r='2' fill='white' opacity='0.5'/%3E%3Cpath d='M38 65 Q50 55 62 65' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Cpath d='M35 78 Q50 70 65 78' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Cline x1='28' y1='90' x2='72' y2='90' stroke='white' stroke-width='1.2' opacity='0.7'/%3E%3Crect x='32' y='90' width='36' height='6' rx='2' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Gangaur — Sindoor / Mangal Kalash Motif */
+.l-motif-sindoor {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='35' r='20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='50' cy='35' r='12' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Ccircle cx='50' cy='35' r='5' fill='white' opacity='0.8'/%3E%3Cpath d='M35 52 Q50 65 65 52' fill='none' stroke='white' stroke-width='1.2' opacity='0.6'/%3E%3Cpath d='M30 58 Q50 75 70 58' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Cpath d='M42 70 Q50 80 58 70' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Ccircle cx='25' cy='25' r='1.5' fill='white' opacity='0.3'/%3E%3Ccircle cx='75' cy='25' r='1.5' fill='white' opacity='0.3'/%3E%3Ccircle cx='20' cy='50' r='1' fill='white' opacity='0.25'/%3E%3Ccircle cx='80' cy='50' r='1' fill='white' opacity='0.25'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='35' r='20' fill='none' stroke='white' stroke-width='1.5' opacity='1'/%3E%3Ccircle cx='50' cy='35' r='12' fill='none' stroke='white' stroke-width='1' opacity='0.7'/%3E%3Ccircle cx='50' cy='35' r='5' fill='white' opacity='0.8'/%3E%3Cpath d='M35 52 Q50 65 65 52' fill='none' stroke='white' stroke-width='1.2' opacity='0.6'/%3E%3Cpath d='M30 58 Q50 75 70 58' fill='none' stroke='white' stroke-width='1' opacity='0.5'/%3E%3Cpath d='M42 70 Q50 80 58 70' fill='none' stroke='white' stroke-width='0.8' opacity='0.4'/%3E%3Ccircle cx='25' cy='25' r='1.5' fill='white' opacity='0.3'/%3E%3Ccircle cx='75' cy='25' r='1.5' fill='white' opacity='0.3'/%3E%3Ccircle cx='20' cy='50' r='1' fill='white' opacity='0.25'/%3E%3Ccircle cx='80' cy='50' r='1' fill='white' opacity='0.25'/%3E%3C/svg%3E");
+}
+
+/* ============================================
+   FLASH BANNER — Structural Design System
+   ============================================
+   Mobile-first responsive banner with shimmer,
+   edge glow, and layered content.
+   ============================================ */
+
+/* ── Base container ── */
+.flash-banner {
+    --_shimmer-color: rgba(255, 255, 255, 0.08);
+    --_glow-color: rgba(255, 255, 255, 0.06);
+
+    position: relative;
+    /* Use landing theme variables → banner-theme override → fallback */
+    background: var(--banner-bg, var(--l-banner-bg, linear-gradient(90deg, #1e293b, #334155, #1e293b)));
+    color: var(--banner-fg, var(--l-banner-fg, #ffffff));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    background-size: 200% 100%;
+    animation: flash-banner-gradient 8s ease infinite;
+}
+
+/* ── Shimmer stripe ── */
+.flash-banner__shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        var(--_shimmer-color) 45%,
+        transparent 55%
+    );
+    background-size: 250% 100%;
+    animation: flash-banner-shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Edge glow lines ── */
+.flash-banner__edge-glow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.flash-banner__edge-glow--top {
+    top: 0;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15) 20%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0.15) 80%,
+        transparent);
+}
+
+.flash-banner__edge-glow--bottom {
+    bottom: 0;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.08) 30%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.08) 70%,
+        transparent);
+}
+
+/* ── Content layout ── */
+.flash-banner__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 2.75rem 0.5rem 0.75rem;
+    max-width: 80rem;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 640px) {
+    .flash-banner__content {
+        gap: 0.75rem;
+        padding: 0.5rem 3rem 0.5rem 1.5rem;
+        flex-wrap: nowrap;
+    }
+}
+
+/* ── Emoji ── */
+.flash-banner__emoji {
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+@media (min-width: 640px) {
+    .flash-banner__emoji {
+        font-size: 1.125rem;
+    }
+}
+
+/* ── Text ── */
+.flash-banner__text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    opacity: 0.92;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
+@media (min-width: 640px) {
+    .flash-banner__text {
+        font-size: 0.8125rem;
+        text-align: left;
+    }
+}
+
+@media (min-width: 768px) {
+    .flash-banner__text {
+        font-size: 0.875rem;
+    }
+}
+
+/* ── CTA pill ── */
+.flash-banner__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+.flash-banner__cta:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+@media (min-width: 640px) {
+    .flash-banner__cta {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.875rem;
+    }
+}
+
+/* ── Dismiss button ── */
+.flash-banner__dismiss {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.375rem;
+    border-radius: 0.5rem;
+    color: inherit;
+    opacity: 0.4;
+    transition: all 0.2s ease;
+    z-index: 20;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.flash-banner__dismiss:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 640px) {
+    .flash-banner__dismiss {
+        right: 0.75rem;
+    }
+}
+
+
+/* ============================================
+   BANNER FESTIVAL & EVENT PALETTES
+   ============================================
+   Dedicated styles for the FlashBanner Software Factory.
+   Usage: Set `data-banner-theme="{key}"` on the banner container.
+   ============================================ */
+
+/* ── Base Variables ── */
+[data-banner-theme] {
+    --banner-bg: linear-gradient(90deg, #1e293b, #334155, #1e293b);
+    --banner-fg: #ffffff;
+    --banner-border: rgba(255, 255, 255, 0.12);
+}
+
+/* ── 1. Festival Themes ── */
+[data-banner-theme='navratri'] {
+    --banner-bg: linear-gradient(90deg, #4A148C, #6A1B9A, #4A148C);
+    --banner-fg: #F3E5F5;
+}
+
+.dark [data-banner-theme='navratri'] {
+    --banner-bg: linear-gradient(90deg, #310d5e, #4a148c, #310d5e);
+}
+
+[data-banner-theme='diwali'] {
+    --banner-bg: linear-gradient(90deg, #7c2d12, #9a3412, #7c2d12);
+    --banner-fg: #FFFBEB;
+}
+
+[data-banner-theme='holi'] {
+    --banner-bg: linear-gradient(90deg, #ec4899, #8b5cf6, #ec4899);
+}
+
+[data-banner-theme='raksha_bandhan'] {
+    --banner-bg: linear-gradient(90deg, #b91c1c, #dc2626, #b91c1c);
+}
+
+[data-banner-theme='janmashtami'] {
+    --banner-bg: linear-gradient(90deg, #1e3a8a, #1d4ed8, #1e3a8a);
+}
+
+[data-banner-theme='ganesh_chaturthi'] {
+    --banner-bg: linear-gradient(90deg, #ea580c, #f97316, #ea580c);
+}
+
+[data-banner-theme='dussehra'] {
+    --banner-bg: linear-gradient(90deg, #991b1b, #7f1d1d, #991b1b);
+}
+
+[data-banner-theme='christmas'] {
+    --banner-bg: linear-gradient(90deg, #065f46, #047857, #065f46);
+}
+
+[data-banner-theme='new_year'] {
+    --banner-bg: linear-gradient(90deg, #111827, #1f2937, #111827);
+}
+
+/* ── 2. National Themes ── */
+[data-banner-theme='republic'],
+[data-banner-theme='independence'] {
+    --banner-bg: linear-gradient(90deg, #f97316, #ffffff, #16a34a);
+    --banner-fg: #1e293b;
+    /* Dark text for tricolor */
+}
+
+.dark [data-banner-theme='republic'],
+.dark [data-banner-theme='independence'] {
+    --banner-bg: linear-gradient(90deg, #ea580c, #f8fafc, #15803d);
+}
+
+[data-banner-theme='gandhi_jayanti'] {
+    --banner-bg: linear-gradient(90deg, #4b5563, #6b7280, #4b5563);
+}
+
+/* ── 3. Regional Themes ── */
+[data-banner-theme='pongal'] {
+    --banner-bg: linear-gradient(90deg, #b45309, #d97706, #b45309);
+}
+
+[data-banner-theme='onam'] {
+    --banner-bg: linear-gradient(90deg, #166534, #15803d, #166534);
+}
+
+[data-banner-theme='bihu'] {
+    --banner-bg: linear-gradient(90deg, #be123c, #e11d48, #be123c);
+}
+
+[data-banner-theme='baisakhi'],
+[data-banner-theme='vaisakhi'] {
+    --banner-bg: linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24);
+    --banner-fg: #451a03;
+}
+
+[data-banner-theme='ramanavami'] {
+    --banner-bg: linear-gradient(90deg, #0D47A1, #1565C0, #0D47A1);
+}
+
+[data-banner-theme='hanumanjayanti'] {
+    --banner-bg: linear-gradient(90deg, #BF360C, #E64A19, #BF360C);
+}
+
+[data-banner-theme='akshayatritiya'] {
+    --banner-bg: linear-gradient(90deg, #F57F17, #FFB300, #F57F17);
+    --banner-fg: #3E2723;
+}
+
+[data-banner-theme='gangaur'] {
+    --banner-bg: linear-gradient(90deg, #880E4F, #C2185B, #880E4F);
+}
+
+[data-banner-theme='ugadi'] {
+    --banner-bg: linear-gradient(90deg, #65a30d, #84cc16, #65a30d);
+}
+
+[data-banner-theme='lohr'] {
+    --banner-bg: linear-gradient(90deg, #7c2d12, #9a3412, #7c2d12);
+}
+
+[data-banner-theme='charaideo'] {
+    --banner-bg: linear-gradient(90deg, #451a03, #78350f, #451a03);
+}
+
+/* ── 4. Academic Events ── */
+[data-banner-theme='admission_open'] {
+    --banner-bg: linear-gradient(90deg, #1e40af, #1e3a8a, #1e40af);
+}
+
+[data-banner-theme='early_bird'] {
+    --banner-bg: linear-gradient(90deg, #0369a1, #0c4a6e, #0369a1);
+}
+
+[data-banner-theme='exam_results'] {
+    --banner-bg: linear-gradient(90deg, #3730a3, #312e81, #3730a3);
+}
+
+[data-banner-theme='new_session'] {
+    --banner-bg: linear-gradient(90deg, #065f46, #064e3b, #065f46);
+}
+
+[data-banner-theme='annual_day'] {
+    --banner-bg: linear-gradient(90deg, #5b21b6, #4c1d95, #5b21b6);
+}
+
+[data-banner-theme='sports_meet'] {
+    --banner-bg: linear-gradient(90deg, #9d174d, #831843, #9d174d);
+}
+
+[data-banner-theme='scholarship'] {
+    --banner-bg: linear-gradient(90deg, #1e40af, #1e3a8a, #1e40af);
+}
+
+[data-banner-theme='webinar'],
+[data-banner-theme='workshop'] {
+    --banner-bg: linear-gradient(90deg, #111827, #000000, #111827);
+}
+
+[data-banner-theme='maintenance'] {
+    --banner-bg: linear-gradient(90deg, #9a3412, #7c2d12, #9a3412);
+}
+
+[data-banner-theme='summer_camp'] {
+    --banner-bg: linear-gradient(90deg, #ea580c, #c2410c, #ea580c);
+}
+
+[data-banner-theme='winter_break'] {
+    --banner-bg: linear-gradient(90deg, #0284c7, #0369a1, #0284c7);
+}
+
+/* ── 5. Brand Palettes ── */
+[data-banner-theme='pdseducation_purple'] {
+    --banner-bg: linear-gradient(90deg, #4A148C, #6A1B9A, #4A148C);
+}
+
+[data-banner-theme='pdseducation_gold'] {
+    --banner-bg: linear-gradient(90deg, #854d0e, #a16207, #854d0e);
+}
+
+[data-banner-theme='pdseducation_ocean'] {
+    --banner-bg: linear-gradient(90deg, #075985, #0369a1, #075985);
+}
+
+[data-banner-theme='pdseducation_forest'] {
+    --banner-bg: linear-gradient(90deg, #065f46, #064e3b, #065f46);
+}

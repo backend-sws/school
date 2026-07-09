@@ -1,0 +1,676 @@
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+export const customIndex = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: customIndex.url(options),
+    method: 'get',
+})
+
+customIndex.definition = {
+    methods: ["get","head"],
+    url: '/api/v1/roles/custom',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+customIndex.url = (options?: RouteQueryOptions) => {
+    return customIndex.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+customIndex.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: customIndex.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+customIndex.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: customIndex.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+    const customIndexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: customIndex.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+        customIndexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: customIndex.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::customIndex
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:60
+ * @route '/api/v1/roles/custom'
+ */
+        customIndexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: customIndex.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    customIndex.form = customIndexForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+
+index.definition = {
+    methods: ["get","head"],
+    url: '/api/v1/roles',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+index.url = (options?: RouteQueryOptions) => {
+    return index.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::index
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:40
+ * @route '/api/v1/roles'
+ */
+        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    index.form = indexForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::store
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:94
+ * @route '/api/v1/roles'
+ */
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+store.definition = {
+    methods: ["post"],
+    url: '/api/v1/roles',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::store
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:94
+ * @route '/api/v1/roles'
+ */
+store.url = (options?: RouteQueryOptions) => {
+    return store.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::store
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:94
+ * @route '/api/v1/roles'
+ */
+store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::store
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:94
+ * @route '/api/v1/roles'
+ */
+    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::store
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:94
+ * @route '/api/v1/roles'
+ */
+        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+export const show = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
+    method: 'get',
+})
+
+show.definition = {
+    methods: ["get","head"],
+    url: '/api/v1/roles/{role}',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+show.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { role: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { role: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    role: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        role: typeof args.role === 'object'
+                ? args.role.id
+                : args.role,
+                }
+
+    return show.definition.url
+            .replace('{role}', parsedArgs.role.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+show.get = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+show.head = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: show.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+    const showForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: show.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+        showForm.get = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::show
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
+ * @route '/api/v1/roles/{role}'
+ */
+        showForm.head = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    show.form = showForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+export const update = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+update.definition = {
+    methods: ["put","patch"],
+    url: '/api/v1/roles/{role}',
+} satisfies RouteDefinition<["put","patch"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+update.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { role: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { role: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    role: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        role: typeof args.role === 'object'
+                ? args.role.id
+                : args.role,
+                }
+
+    return update.definition.url
+            .replace('{role}', parsedArgs.role.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+update.put = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+update.patch = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: update.url(args, options),
+    method: 'patch',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+    const updateForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: update.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'PUT',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+        updateForm.put = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PUT',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::update
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
+ * @route '/api/v1/roles/{role}'
+ */
+        updateForm.patch = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PATCH',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    update.form = updateForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::destroy
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
+ * @route '/api/v1/roles/{role}'
+ */
+export const destroy = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+destroy.definition = {
+    methods: ["delete"],
+    url: '/api/v1/roles/{role}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::destroy
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
+ * @route '/api/v1/roles/{role}'
+ */
+destroy.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { role: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { role: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    role: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        role: typeof args.role === 'object'
+                ? args.role.id
+                : args.role,
+                }
+
+    return destroy.definition.url
+            .replace('{role}', parsedArgs.role.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::destroy
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
+ * @route '/api/v1/roles/{role}'
+ */
+destroy.delete = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::destroy
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
+ * @route '/api/v1/roles/{role}'
+ */
+    const destroyForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: destroy.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'DELETE',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::destroy
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
+ * @route '/api/v1/roles/{role}'
+ */
+        destroyForm.delete = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: destroy.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'DELETE',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    destroy.form = destroyForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncWorkflows
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
+ * @route '/api/v1/roles/{role}/workflows'
+ */
+export const syncWorkflows = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: syncWorkflows.url(args, options),
+    method: 'post',
+})
+
+syncWorkflows.definition = {
+    methods: ["post"],
+    url: '/api/v1/roles/{role}/workflows',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncWorkflows
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
+ * @route '/api/v1/roles/{role}/workflows'
+ */
+syncWorkflows.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { role: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { role: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    role: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        role: typeof args.role === 'object'
+                ? args.role.id
+                : args.role,
+                }
+
+    return syncWorkflows.definition.url
+            .replace('{role}', parsedArgs.role.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncWorkflows
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
+ * @route '/api/v1/roles/{role}/workflows'
+ */
+syncWorkflows.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: syncWorkflows.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncWorkflows
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
+ * @route '/api/v1/roles/{role}/workflows'
+ */
+    const syncWorkflowsForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: syncWorkflows.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncWorkflows
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
+ * @route '/api/v1/roles/{role}/workflows'
+ */
+        syncWorkflowsForm.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: syncWorkflows.url(args, options),
+            method: 'post',
+        })
+    
+    syncWorkflows.form = syncWorkflowsForm
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncPermissions
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
+ * @route '/api/v1/roles/{role}/permissions'
+ */
+export const syncPermissions = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: syncPermissions.url(args, options),
+    method: 'post',
+})
+
+syncPermissions.definition = {
+    methods: ["post"],
+    url: '/api/v1/roles/{role}/permissions',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncPermissions
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
+ * @route '/api/v1/roles/{role}/permissions'
+ */
+syncPermissions.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { role: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { role: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    role: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        role: typeof args.role === 'object'
+                ? args.role.id
+                : args.role,
+                }
+
+    return syncPermissions.definition.url
+            .replace('{role}', parsedArgs.role.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncPermissions
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
+ * @route '/api/v1/roles/{role}/permissions'
+ */
+syncPermissions.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: syncPermissions.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncPermissions
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
+ * @route '/api/v1/roles/{role}/permissions'
+ */
+    const syncPermissionsForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: syncPermissions.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Auth\RoleController::syncPermissions
+ * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
+ * @route '/api/v1/roles/{role}/permissions'
+ */
+        syncPermissionsForm.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: syncPermissions.url(args, options),
+            method: 'post',
+        })
+    
+    syncPermissions.form = syncPermissionsForm
+const RoleController = { customIndex, index, store, show, update, destroy, syncWorkflows, syncPermissions }
+
+export default RoleController

@@ -1,0 +1,26 @@
+# Alertmanager - email alerts via Mailtrap SMTP to sutracodehq@gmail.com
+# From: aleartcollege@sutracode.in; From name = college label when present (e.g. ptjmrajgir).
+# Mailtrap sandbox catches mail for testing; switch to Mailtrap sending or another SMTP for production delivery.
+
+global:
+  smtp_smarthost: 'sandbox.smtp.mailtrap.io:2525'
+  smtp_from: 'aleartcollege@sutracode.in'
+  smtp_auth_username: 'd3b0b0870322ea'
+  smtp_auth_password: 'c65f8c8f4dff66'
+  smtp_require_tls: true
+
+route:
+  receiver: 'email-sutracode'
+  group_by: ['alertname', 'severity', 'college']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: 'email-sutracode'
+    email_configs:
+      - to: 'sutracodehq@gmail.com'
+        send_resolved: true
+        headers:
+          From: '"{{ .GroupLabels.college | default "CMS" }} Alerts" <aleartcollege@sutracode.in>'
+          Subject: '[{{ .GroupLabels.college | default "CMS" }}] {{ .GroupLabels.alertname }}'

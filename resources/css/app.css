@@ -1,0 +1,39 @@
+/* ============================================
+   APP.CSS — Import Hub
+   ============================================
+   All styles are split into dedicated files by concern.
+   This file only contains imports and TW config directives.
+
+   File Map:
+   ├── base-tokens.css       → Root variables, spacing, fonts, light/dark mode
+   ├── design-system.css     → @theme token mappings (Tailwind bridge)
+   ├── admin-themes.css      → 8 predefined data-theme palettes (original)
+   ├── brand-palettes.css    → 10 additional brand color palettes
+   ├── landing-tokens.css    → Landing page --l-* variables, utility classes, motifs
+   ├── festival-themes.css   → 8 Indian festival/occasion landing themes
+   ├── animations.css        → All @keyframes + animation classes
+   └── utilities.css         → Utility classes, accessibility, components
+   ============================================ */
+
+/* ── External Fonts ───── */
+@import url('https://fonts.googleapis.com/css2?family=Eczar:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap');
+
+/* ── Tailwind & Plugins ───── */
+@import 'tailwindcss';
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Design System & Themes ───── */
+@import './design-system.css';
+@import './base-tokens.css';
+@import './brand-palettes.css';
+
+/* ── Animations ───── */
+@import './animations.css';
+
+/* ── Utilities & Components ───── */
+@import './utilities.css';

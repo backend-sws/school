@@ -1,0 +1,8 @@
+; =============================================================================
+; PgBouncer userlist — auto-managed by add-college script.
+; Format: "username" "SCRAM-SHA-256$<iterations>:<salt>$<stored_key>:<server_key>"
+;
+; This file is dynamically updated when institutes are added.
+; Do NOT edit manually on VPS — use add-college or manage-secrets.
+; =============================================================================
+; USER_ENTRY_HERE (do not remove this marker)

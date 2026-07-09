@@ -1,0 +1,150 @@
+# =============================================================================
+# Deploy to VPS (podman-compose). Reusable; expects image already built & pushed.
+#
+# Flow: GHCR login → pull → Horizon terminate → compose restart → migrate →
+#       post-deploy checks → save rollback tag → cleanup.
+# =============================================================================
+name: Deploy VPS
+
+on:
+  workflow_dispatch:
+    inputs:
+      institution_id:
+        description: 'Institution ID'
+        required: true
+        type: string
+      image_tag:
+        description: 'Image tag to deploy'
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      institution_id:
+        description: 'Institution ID'
+        required: true
+        type: string
+      image_tag:
+        description: 'Image tag to deploy'
+        required: true
+        type: string
+
+env:
+  IMAGE_NAME: ghcr.io/sutracodehq-ui/education-system-management
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate institution in registry
+        run: |
+          if ! jq -e --arg id "${{ inputs.institution_id }}" '.institutions[$id]' .github/institution-registry.json > /dev/null; then
+            echo "Institution '${{ inputs.institution_id }}' not in .github/institution-registry.json"
+            exit 1
+          fi
+
+      - name: Read VPS config from registry
+        id: registry
+        run: |
+          HOST=$(jq -r --arg id "${{ inputs.institution_id }}" '.institutions[$id].vps_host // empty' .github/institution-registry.json)
+          echo "host=${HOST}" >> $GITHUB_OUTPUT
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          GHCR_USER: ${{ secrets.GHCR_USERNAME || github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PAT || secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ steps.registry.outputs.host || secrets.VPS_HOST }}
+          username: deploy
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          timeout: 60s
+          command_timeout: 15m
+          envs: GHCR_USER,GHCR_TOKEN
+          script: |
+            set -e
+            cd /opt/ems
+            INSTITUTION_ID="${{ inputs.institution_id }}"
+            IMAGE_TAG="${{ inputs.image_tag }}"
+            IMAGE="${{ env.IMAGE_NAME }}"
+            INSTITUTION_LATEST="${INSTITUTION_ID}-latest"
+            ENV_FILE="/opt/ems/colleges/${INSTITUTION_ID}/.env"
+            SECRET_FILE="/opt/ems/colleges/${INSTITUTION_ID}/.env.secret"
+            COMPOSE_DIR="/opt/ems/colleges/${INSTITUTION_ID}"
+
+            if [ ! -f "${ENV_FILE}" ]; then
+              echo "ERROR: Institution ${INSTITUTION_ID} not on VPS (missing ${ENV_FILE}). Run add-college-from-local.sh first."
+              exit 1
+            fi
+
+            # ── Save current tag for rollback ──
+            CURRENT_TAG=$(grep '^CMS_IMAGE_TAG=' "${ENV_FILE}" 2>/dev/null | cut -d= -f2- || echo "")
+            if [ -n "${CURRENT_TAG}" ]; then
+              echo "${CURRENT_TAG}" > "${COMPOSE_DIR}/.last-good-tag"
+              echo "  Rollback tag saved: ${CURRENT_TAG}"
+            fi
+
+            # ── Update image tag in .env ──
+            grep -q "^CMS_IMAGE_TAG=" "${ENV_FILE}" && sed -i "s|^CMS_IMAGE_TAG=.*|CMS_IMAGE_TAG=${IMAGE_TAG}|" "${ENV_FILE}" || echo "CMS_IMAGE_TAG=${IMAGE_TAG}" >> "${ENV_FILE}"
+
+            APP_PORT=$(grep "^APP_PORT=" "${ENV_FILE}" | cut -d= -f2 | tr -d '\r' | xargs)
+
+            # ── [1/6] GHCR login ──
+            echo "[1/6] Logging in to GHCR..."
+            echo "${GHCR_TOKEN}" | podman login ghcr.io -u "${GHCR_USER}" --password-stdin
+
+            # ── [2/6] Pull image ──
+            echo "[2/6] Pulling image..."
+            podman pull "${IMAGE}:${IMAGE_TAG}"
+            podman tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${INSTITUTION_LATEST}"
+            echo "  Done"
+
+            # ── [3/6] Graceful Horizon terminate ──
+            echo "[3/6] Gracefully terminating Horizon..."
+            podman exec "ems-horizon-${INSTITUTION_ID}" php artisan horizon:terminate 2>/dev/null || echo "  Horizon not running (skipped)"
+            sleep 3
+
+            # ── [4/6] Compose restart (all services) ──
+            echo "[4/6] Restarting all services via compose..."
+            cd "${COMPOSE_DIR}"
+            podman-compose down 2>/dev/null || true
+            podman-compose up -d
+            echo "  All services restarted"
+
+            # ── [5/6] Wait for health + migrate ──
+            echo "[5/6] Waiting for app to be ready..."
+            sleep 15
+            for i in $(seq 1 12); do
+              if curl -sf "http://127.0.0.1:${APP_PORT}/" > /dev/null 2>&1; then
+                echo "  App is ready."
+                break
+              fi
+              echo "  attempt $i/12..."
+              sleep 5
+            done
+
+            echo "  Running migrations..."
+            podman exec "ems-app-${INSTITUTION_ID}" php artisan migrate --force
+
+            # ── [6/6] Post-deploy verification ──
+            echo "[6/6] Post-deploy verification..."
+            podman exec "ems-app-${INSTITUTION_ID}" php artisan config:cache
+            podman exec "ems-app-${INSTITUTION_ID}" php artisan tinker --execute="DB::select('SELECT 1'); echo 'DB OK';" || echo "  ⚠ DB check failed"
+            podman exec "ems-horizon-${INSTITUTION_ID}" php artisan horizon:status 2>/dev/null || echo "  ⚠ Horizon not ready yet"
+
+            # ── Cleanup old images ──
+            echo "Cleaning up old images..."
+            podman images --format "{{.Repository}}:{{.Tag}}" \
+              | grep "education-system-management:${INSTITUTION_ID}" \
+              | grep -v "${IMAGE_TAG}" \
+              | grep -v "${INSTITUTION_LATEST}" \
+              | xargs -r podman rmi 2>/dev/null || true
+            podman image prune -f > /dev/null 2>&1 || true
+
+            echo ""
+            echo "=== Deployed ${INSTITUTION_ID} with ${IMAGE_TAG} ==="

@@ -1,0 +1,295 @@
+# Education Management System — Analysis & Roadmap
+
+## System Overview
+
+A **multi-tenant SaaS** education management platform built with **Laravel 11 + Inertia.js/React**, supporting both **schools and colleges**. The system uses a 4-tier subscription model (Foundation → Professional → Enterprise → Plus) with configurable per-institution workflows and a fine-grained RBAC permission system.
+
+| Metric | Count |
+|---|---|
+| Models | 93 |
+| API Controllers | 112+ |
+| Frontend Pages | 171 |
+| React Components | 272 |
+| Database Migrations | 72 |
+| Notification Types | 16 |
+| Background Jobs | 5 |
+| Feature Tests | ~28 |
+
+---
+
+## Current Modules (What Exists)
+
+### ✅ Core Platform
+- **Multi-tenant Architecture** — Organization → Institution hierarchy, institution-level scoping
+- **RBAC & Workflows** — Roles, permissions, workflow scoping (school vs college variants), permission groups gating route access
+- **Onboarding Flow** — Registration, email verification, plan selection, institution setup
+- **4-Tier Subscription** — Starter (₹1,499/mo), Professional (₹3,999/mo), Enterprise (₹7,999/mo), Plus (₹14,999/mo)
+- **Settings** — Institution, academics, SEO, digital presence, approval settings, admission verification, landing page CMS
+
+### ✅ Academic Setup
+- Departments, Streams, Main Streams, Sessions
+- Subjects, Subject Categories, Subject Groups
+- Class-Subject allocation, Course sections & enrollment
+- School vs College workflow scoping
+
+### ✅ Admissions
+- Multi-step application flow with verification
+- Admission heads & papers, entrance exam tracking
+- Application status tracking & notifications
+- Payment recording (PayU integration)
+- Admission-to-student sync service
+
+### ✅ Fee Management
+- Fee types, fee heads, fee structures, fee regulation profiles
+- Class-based and profile-based fee loading
+- Fee collection with payment receipts
+- Fee due & overdue reminder notifications (background jobs)
+- Analytics dashboard
+
+### ✅ Student Management
+- Student profiles, academic info, addresses, documents
+- Guardian management (multi-child support)
+- Previous exam records, verification data
+- Student portal (dashboard, fees, certificates, tickets, classes)
+
+### ✅ Staff Management
+- Staff profiles, invitations, resend invitation
+- Staff directory with permission-based visibility
+- Role-based filtering (teacher, principal, non-teaching, etc.)
+
+### ✅ LMS (Learning Management System)
+- Courses & Classrooms (LMS Classes)
+- Materials, Assignments, Submissions
+- Live sessions & recordings
+- Tests, questions, attempts
+- Announcements, enrollment
+- Subject-level allocation
+
+### ✅ Attendance
+- Class-level and subject-level attendance marking
+- Attendance records and reports
+- Parent/student notifications
+
+### ✅ Library
+- Book catalog, copies management
+- Issue & return workflow
+- Overdue reports
+
+### ✅ Inventory
+- Categories, items, locations
+- Stock movements, low-stock reports
+- Sales (POS) with line items
+
+### ✅ Transport
+- Routes, stops, route-stop mapping
+- Vehicles, drivers
+- Student transport assignments
+
+### ✅ Certificates
+- Certificate heads, applications
+- Service branch workflow
+
+### ✅ Website & Communications
+- Landing page CMS, home sliders, news, tickers
+- Gallery with images
+- SEO settings, contact forms
+- Notice board with targeted notifications
+- Public grievance & feedback forms
+
+### ✅ Support & Redressal
+- Support tickets & messages
+- Grievance management
+- Student-facing ticket system
+
+### ✅ Infrastructure
+- Podman-based containerization (dev & prod)
+- R2 (Cloudflare) file storage
+- PayU payment gateway
+- Push notifications (service worker)
+- Prometheus metrics endpoint
+- Import/export capabilities (Excel)
+- Audit logging
+
+---
+
+## What's Missing — Recommended Enhancements
+
+### 🔴 High Priority (Core Gaps)
+
+#### 1. Examinations & Grade Management
+> Currently the biggest missing module for any education system.
+
+- **Exam scheduling** — Create exam timetables per class/semester
+- **Grade/marks entry** — Subject-wise marks with internal/external breakdown
+- **Result processing** — Auto-calculate GPA/CGPA/percentages, pass/fail status
+- **Report cards** — Generate downloadable PDF report cards
+- **Transcripts** — Official transcript generation for colleges
+- **Exam seating plans** — Auto-generate seating arrangements
+
+#### 2. Timetable & Scheduling
+- **Class timetable builder** — Drag-and-drop weekly timetable creation
+- **Teacher timetable view** — Teacher schedule derived from class timetables
+- **Room allocation** — Bind classes to rooms, prevent conflicts
+- **Substitution management** — Track teacher leaves and assign substitutes
+- **Calendar sync** — Export timetables to Google Calendar / iCal
+
+#### 3. Comprehensive Reporting & Analytics
+- **Student performance analytics** — Trend analysis, comparison across terms
+- **Financial reports** — Fee collection summary, outstanding dues, daily/monthly collection reports, revenue forecasting
+- **Attendance analytics** — Trends, flagging chronically absent students
+- **Staff analytics** — Workload distribution, attendance
+- **Custom report builder** — Let admins build reports from available data
+- **Export to PDF/Excel** — Uniform export across all report types
+
+#### 4. Parent Portal & Mobile Communication
+- **Dedicated parent dashboard** — Unlike student dashboard, parents see all children in one view
+- **Parent-teacher messaging** — Secure direct messaging channel
+- **SMS/WhatsApp notifications** — Fee reminders, attendance alerts, exam results via SMS/WhatsApp
+- **Mobile-first PWA optimization** — Since parents mostly use phones
+
+---
+
+### 🟡 Medium Priority (Competitive Differentiators)
+
+#### 5. HR & Payroll Module
+- Staff attendance (biometric/manual)
+- Leave management (apply, approve, balance tracking)
+- Payroll generation with salary structures
+- Tax deductions (TDS, PF, ESI for Indian compliance)
+- Payslip generation
+
+#### 6. Hostel Management
+- Room/bed allocation
+- Hostel fee integration
+- Room inspection tracking
+- Guest/visitor register
+- Mess management
+
+#### 7. Accounting & Finance (Double-Entry)
+- Chart of accounts, journal entries
+- Income & expenditure reports
+- Balance sheet, profit & loss
+- Bank reconciliation
+- Scholarship/concession management with audit trails
+
+#### 8. Events & Calendar
+- Institutional event calendar
+- Event registrations
+- Holiday management
+- Academic calendar (terms, exam dates, vacation)
+- Automatic notice generation for events
+
+#### 9. Communication Hub
+- Bulk SMS / WhatsApp integration
+- Email campaigns
+- In-app chat (teacher-student, admin-staff)
+- Discussion forums per class/subject
+- Parent-teacher meeting scheduler
+
+#### 10. Document Management
+- Student document vault (marksheets, IDs, certificates)
+- Staff document management
+- Bulk document upload & verification
+- Digital signature integration
+- T.C. (Transfer Certificate) generation
+
+---
+
+### 🟢 Nice-to-Have (Future Differentiators)
+
+#### 11. Alumni Management
+- Alumni registration portal
+- Alumni directory
+- Donation/fundraising tracking
+- Alumni events management
+- Career network / job board
+
+#### 12. Placement & Internship Module
+> Partially exists as `training-placement` page but appears minimal.
+
+- Company database
+- Placement drives management
+- Student resume/profile builder
+- Interview scheduling
+- Placement statistics & dashboard
+
+#### 13. Advanced LMS Enhancements
+- Video hosting & streaming (or integration with YouTube/Vimeo)
+- SCORM/xAPI content support
+- AI-powered quiz generation
+- Plagiarism detection
+- Discussion forums per course
+- Peer review assignments
+
+#### 14. Compliance & Accreditation
+- NAAC/NIRF data collection helpers (for Indian colleges)
+- AISHE data submission
+- UDISE+ compliance (for schools)
+- Configurable compliance checklists
+- Document readiness tracker for inspections
+
+#### 15. Advanced Security & Governance
+- **SSO integration** (listed in Enterprise tier but not implemented)
+- API access for third-party integration
+- Data retention policies
+- GDPR/data privacy compliance tools
+- IP-based access restrictions
+
+---
+
+## Technical Debt & Infrastructure Improvements
+
+| Area | Current State | Recommendation |
+|---|---|---|
+| **Test Coverage** | ~28 feature tests, minimal unit tests | Increase to 70%+ coverage, add integration tests for fee/admission flows |
+| **API Documentation** | None visible | Add Swagger/OpenAPI spec, auto-generated from routes |
+| **Error Monitoring** | Not visible | Add Sentry/Bugsnag integration |
+| **Performance** | No visible caching layer | Add Redis caching for dashboard queries, permission resolution |
+| **Search** | Basic queries | Add full-text search (Meilisearch/Algolia) for students, books, inventory |
+| **CI/CD** | `.github` exists (12 items) | Ensure full pipeline: lint → test → build → deploy |
+| **i18n** | Not present | Add multi-language support (Hindi, regional languages) |
+| **Accessibility** | Unknown | Audit WCAG 2.1 AA compliance |
+| **Rate Limiting** | Partial (auth routes only) | Extend to all API endpoints |
+| **Backup & Recovery** | Not visible | Automated database backups with point-in-time recovery |
+
+---
+
+## Suggested Roadmap
+
+```mermaid
+gantt
+    title EMS Enhancement Roadmap
+    dateFormat  YYYY-MM
+    section Phase 1 - Core
+    Examination & Grades        :2026-03, 2026-05
+    Timetable & Scheduling      :2026-04, 2026-06
+    Reporting & Analytics       :2026-04, 2026-06
+    Test Coverage Improvement   :2026-03, 2026-05
+    section Phase 2 - Communication
+    Parent Portal               :2026-06, 2026-07
+    SMS/WhatsApp Integration    :2026-06, 2026-07
+    Events & Calendar           :2026-07, 2026-08
+    section Phase 3 - Operations
+    HR & Payroll                :2026-08, 2026-10
+    Hostel Management           :2026-09, 2026-10
+    Document Management         :2026-09, 2026-10
+    section Phase 4 - Growth
+    Alumni Module               :2026-11, 2026-12
+    Placement Enhancement       :2026-11, 2026-12
+    Advanced LMS Features       :2026-12, 2027-02
+    Compliance & Accreditation  :2027-01, 2027-03
+```
+
+---
+
+## Summary
+
+Your EMS already covers an impressive breadth — **12 major modules** across academics, finance, LMS, transport, library, inventory, and more. The architecture is solid with multi-tenancy, RBAC, subscription tiers, and a modern tech stack.
+
+The **three biggest gaps** that would transform this from a good system to a market-leading product are:
+
+1. **Examinations & Results** — Every school/college needs this daily
+2. **Timetabling** — A core operational need with no current solution
+3. **Parent Communication** (SMS/WhatsApp) — The #1 feature parents look for
+
+Addressing these three alone would cover ~90% of what competitors offer, while your existing LMS, inventory, and transport modules already give you a competitive edge.

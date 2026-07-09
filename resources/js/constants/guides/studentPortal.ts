@@ -1,0 +1,92 @@
+import { GuideDefinition } from "@/types/guide";
+
+export const STUDENT_DASHBOARD_GUIDE: GuideDefinition = {
+    id: "student_dashboard_guide",
+    pageTitle: "Student Dashboard",
+    pageSubtitle: "Your academic profile and key details at a glance.",
+    pageGuidance: [
+        "Monitor your academic progress, attendance percentage, and pending fee dues.",
+        "Quickly access your university roll number, current semester, and session details.",
+        "Keep track of important institutional notices and verified documents for easy reference."
+    ],
+    settingsTip: "Welcome to your personal hub! Use the 'Profile Banner' to verify your official photo and signature, which will appear on your ID card and certificates.",
+    steps: [
+        {
+            element: "#student-dashboard-header",
+            title: "Your Hub",
+            description: "A summary of your academic journey and personal details.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: ".grid-cols-1",
+            title: "Quick Stats",
+            description: "A bird's eye view of your most important academic identifiers.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const STUDENT_FEES_GUIDE: GuideDefinition = {
+    id: "student_fees_guide",
+    pageTitle: "My Fees",
+    pageSubtitle: "Track your fee payments, due amounts, and download receipts.",
+    pageGuidance: [
+        "View a detailed breakdown of your fee dues and payment history.",
+        "Download digital receipts for all successful transactions for your records.",
+        "Ensure all fees are cleared before the deadline to avoid late payment penalties."
+    ],
+    settingsTip: "Stay ahead of your finances! Clearing your dues early ensures uninterrupted access to your academic results and exam registrations.",
+    steps: [
+        {
+            element: "#student-fees-header",
+            title: "Fee Hub",
+            description: "All your financial interactions with the institution in one place.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const STUDENT_CLASSES_GUIDE: GuideDefinition = {
+    id: "student_classes_guide",
+    pageTitle: "My Classes",
+    pageSubtitle: "Access your course timetable and classroom details.",
+    pageGuidance: [
+        "Stay organized with your daily and weekly class schedule.",
+        "Identify your assigned classrooms and subject-wise faculty members.",
+        "Check for any sudden changes in the timetable through the real-time updates."
+    ],
+    settingsTip: "Punctuality is key to academic success. Check your 'My Classes' view every morning to stay updated on your lecture timings and room locations.",
+    steps: [
+        {
+            element: "#student-classes-header",
+            title: "Academic Routine",
+            description: "Your comprehensive roadmap for scheduled learning sessions.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};
+
+export const STUDENT_APPLICATIONS_GUIDE: GuideDefinition = {
+    id: "student_applications_guide",
+    pageTitle: "My Applications",
+    pageSubtitle: "Track your re-admission, scholarship, and certificate requests.",
+    pageGuidance: [
+        "Monitor the status of your various institutional applications in real-time.",
+        "Review any feedback or required document corrections from the administration.",
+        "Once approved, download your certificates or proceed with next enrollment steps."
+    ],
+    settingsTip: "Always double-check your application details before submission. Accurate information ensures faster processing by the administrative team.",
+    steps: [
+        {
+            element: "#student-applications-header",
+            title: "Self-Service Desk",
+            description: "Submit and track all your formal requests to the institution.",
+            type: "standard",
+            position: "bottom"
+        }
+    ]
+};

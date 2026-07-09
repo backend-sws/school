@@ -1,0 +1,146 @@
+# Phase 1 — Examinations & Results
+
+> **Priority:** 🔴 Critical | **Effort:** ~6–8 weeks | **Dependencies:** Existing academics, student, LMS modules
+
+## Why This Is #1
+
+Every institution—school or college—depends on examination workflows **daily**. Without this module, the EMS cannot serve its core purpose. This touches students, parents, teachers, and administrators.
+
+---
+
+## Scope
+
+### 1.1 Exam Types & Configuration
+- **Exam categories** — Unit Test, Mid-Term, Final, Practical, Viva, Internal Assessment
+- **Grading systems** — Marks-based, Grade-based (CGPA), Pass/Fail
+- **Configurable per institution** — Each institution defines its own exam calendar and grading scale
+- **Weightage configuration** — Internal vs External, theory vs practical split
+
+### 1.2 Exam Scheduling
+- Create exams linked to a session and stream/class
+- Assign subjects to exam with date, time, duration
+- Auto-conflict detection (no student has two exams at the same time)
+- Exam timetable view (calendar + list)
+- Publish/unpublish exam schedule to students
+
+### 1.3 Marks / Grade Entry
+- Teacher-facing marks entry grid (subject × student matrix)
+- Bulk entry support (paste from spreadsheet, CSV import)
+- Multi-component marks — Theory, Practical, Internal, Viva (configurable)
+- Draft → Submit → Locked workflow (teachers submit, HOD/admin locks)
+- Moderation flow — admin can adjust marks with audit log
+- Absentee / medical / grace marks flags
+
+### 1.4 Result Processing
+- Auto-calculate totals, percentages, GPA/CGPA
+- Auto-determine pass/fail based on subject minimum + overall minimum
+- Class ranking (optional — configurable on/off)
+- Subject-wise toppers
+- Backlog / supplementary exam tracking (for colleges)
+- Re-evaluation request workflow
+
+### 1.5 Report Cards & Transcripts
+- PDF report card generation (per student)
+- Bulk report card generation (per class)
+- Customizable report card templates (institution logo, principal signature)
+- College transcript / marksheet generation
+- Digital verification QR code on report cards
+- Student portal: view & download results
+
+### 1.6 Seating Plans (optional, lower priority)
+- Auto-generate seating arrangements
+- Room capacity management
+- Seating chart PDF export
+
+---
+
+## Data Models
+
+| Model | Key Fields | Relationships |
+|---|---|---|
+| `ExamType` | name, slug, institution_id, is_active | hasMany Exams |
+| `GradingScale` | name, institution_id, type (marks/grade/cgpa) | hasMany GradingScaleItems |
+| `GradingScaleItem` | min_marks, max_marks, grade, grade_point, remark | belongsTo GradingScale |
+| `Exam` | name, exam_type_id, session_id, stream_id, start_date, end_date, status (draft/published/completed/result_declared) | belongsTo ExamType, Session; hasMany ExamSubjects |
+| `ExamSubject` | exam_id, subject_id, date, start_time, end_time, max_marks, pass_marks, weightage | belongsTo Exam, Subject |
+| `ExamResult` | exam_subject_id, student_profile_id, marks_obtained, grade, is_absent, is_pass, remarks, entered_by, locked_at | belongsTo ExamSubject, StudentProfile |
+| `ExamResultSummary` | exam_id, student_profile_id, total_marks, total_obtained, percentage, cgpa, rank, overall_status | belongsTo Exam, StudentProfile |
+| `ReportCardTemplate` | name, institution_id, layout_json, header_image, signature_image | belongsTo Institution |
+
+---
+
+## API Endpoints
+
+```
+# Exam Types & Grading
+GET/POST       /api/v1/exams/types
+PUT/DELETE      /api/v1/exams/types/{id}
+GET/POST       /api/v1/exams/grading-scales
+PUT/DELETE      /api/v1/exams/grading-scales/{id}
+
+# Exam CRUD
+GET/POST       /api/v1/exams
+GET/PUT/DELETE /api/v1/exams/{id}
+POST           /api/v1/exams/{id}/publish
+POST           /api/v1/exams/{id}/declare-results
+
+# Exam Subjects
+GET/POST       /api/v1/exams/{id}/subjects
+PUT/DELETE      /api/v1/exams/{examId}/subjects/{id}
+
+# Marks Entry
+GET            /api/v1/exams/{examId}/subjects/{subjectId}/marks  (grid data)
+POST           /api/v1/exams/{examId}/subjects/{subjectId}/marks  (bulk save)
+POST           /api/v1/exams/{examId}/subjects/{subjectId}/marks/lock
+POST           /api/v1/exams/{examId}/subjects/{subjectId}/marks/import  (CSV)
+
+# Results
+GET            /api/v1/exams/{id}/results              (class results)
+GET            /api/v1/exams/{id}/results/{studentId}   (individual result)
+GET            /api/v1/exams/{id}/results/summary        (stats, toppers)
+GET            /api/v1/students/{id}/results             (all exams for a student)
+
+# Report Cards
+GET            /api/v1/exams/{id}/report-cards/{studentId}/pdf
+POST           /api/v1/exams/{id}/report-cards/bulk-generate
+GET/POST       /api/v1/report-card-templates
+```
+
+---
+
+## UI Pages
+
+| Page | Route | Description |
+|---|---|---|
+| Exam Types | `/settings/exam-types` | CRUD exam types & grading scales |
+| Exam List | `/exams` | List all exams with filters (session, type, status) |
+| Create Exam | `/exams/create` | Multi-step: basic info → add subjects → review |
+| Exam Detail | `/exams/{id}` | Overview, subject schedule, entry status per subject |
+| Marks Entry | `/exams/{id}/marks/{subjectId}` | Spreadsheet-like grid for marks entry |
+| Class Results | `/exams/{id}/results` | Tabular result view with export |
+| Student Result | `/exams/{id}/results/{studentId}` | Individual student result card |
+| Report Card Preview | `/exams/{id}/report-card/{studentId}` | Preview before PDF generation |
+| Student Portal: My Results | `/student-portal/results` | Student sees all their exam results |
+
+---
+
+## Integration Points
+
+- **Academics** → Exams scoped by Session, Stream, Class, Subjects
+- **Student Profiles** → Results linked to `student_profile_id`
+- **LMS** → LMS tests could optionally feed into exam marks (internal assessment)
+- **Notifications** → Exam schedule published, result declared → push + email to students/parents
+- **Attendance** → Exam-day attendance auto-marking
+- **Permissions** → New permission group: `examination_cell`
+
+---
+
+## Workflow Scoping
+
+| Feature | School | College |
+|---|---|---|
+| Exam Types | Unit Test, Half-Yearly, Annual | Internal, Mid-Sem, End-Sem, Practical, Viva |
+| Grading | Marks + Grades | CGPA + Grades |
+| Report Card | Class-wise | Semester-wise transcript |
+| Backlog tracking | No | Yes |
+| Re-evaluation | No | Yes |

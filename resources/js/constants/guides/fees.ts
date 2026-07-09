@@ -1,0 +1,141 @@
+import { GuideDefinition } from "@/types/guide";
+
+export const FEE_TYPES_GUIDE: GuideDefinition = {
+    id: "fee_types_guide",
+    pageTitle: "Fee Categories",
+    pageSubtitle: "Define and categorize your institution's income sources.",
+    pageGuidance: [
+        "Create distinct fee types like Tuition, Transport, or Lab fees for clear accounting.",
+        "Set up ledger naming conventions to ensure consistency with your financial records.",
+        "Mark fee types as mandatory or optional to streamline the registration process."
+    ],
+    settingsTip: "Fee categories are the building blocks of your ledger. Clearly name them to avoid confusion during manual collections or reporting.",
+    steps: [
+        {
+            element: "#fee-types-header",
+            title: "Fee Hub: Types",
+            description: "This is where you define all the different types of fees your institution collects.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-fee-type-btn",
+            title: "Create New Type",
+            description: "Click here to add a new category of fee to your system.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#fee-types-table",
+            title: "Manage Categories",
+            description: "Search, edit, or archive existing fee types from this list.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const FEE_PROFILES_GUIDE: GuideDefinition = {
+    id: "fee_profiles_guide",
+    pageTitle: "Fee Profiles",
+    pageSubtitle: "Group fees into reusable templates for different student cohorts.",
+    pageGuidance: [
+        "Bundle multiple fee types into a single profile (e.g., 'Grade 10 - Science Stream').",
+        "Assign profiles to student groups to automate fee allocation during admission.",
+        "Easily update amounts across an entire cohort by modifying the parent profile."
+    ],
+    settingsTip: "Profiles save time during bulk admissions. Ensure each stream has its own profile to automate calculations for new students.",
+    steps: [
+        {
+            element: "#fee-profiles-header",
+            title: "Fee Hub: Profiles",
+            description: "Profiles allow you to bundle fees together for easier assignment to students.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#new-profile-btn",
+            title: "Draft Profile",
+            description: "Start creating a new fee blueprint for your academic session.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#profiles-table",
+            title: "Profiles Inventory",
+            description: "Review your active fee blueprints and their associated amounts.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const FEE_REGULATIONS_GUIDE: GuideDefinition = {
+    id: "fee_regulations_guide",
+    pageTitle: "Fee Regulations",
+    pageSubtitle: "Set global billing rules, academic settings, and refund policies.",
+    pageGuidance: [
+        "Define which academic year and term are currently active for fee collection.",
+        "Configure automatic fine logic for overdue payments to ensure timely collections.",
+        "Set up institution-wide billing preferences like invoice naming patterns."
+    ],
+    settingsTip: "Regulations determine how late fees are calculated. Set clear rules here to automate penalty generation for overdue payments.",
+    steps: [
+        {
+            element: "#fee-regulations-header",
+            title: "Fee Hub: Regulations",
+            description: "Configure class-specific fee structures and collection frequencies.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#class-search-bar",
+            title: "Class Search",
+            description: "Search for specific classrooms or sections to manage their billing rules.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#class-grid-container",
+            title: "Manage Structures",
+            description: "Select a class to deep-dive into its specific fee ledger and fine rules.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
+
+export const FEE_DUES_GUIDE: GuideDefinition = {
+    id: "fee_dues_guide",
+    pageTitle: "Dues & Overdue",
+    pageSubtitle: "Real-time monitoring of outstanding payments and collection status.",
+    pageGuidance: [
+        "Get an immediate summary of total pending dues across the institution.",
+        "Filter by class or stream to identify cohorts with high outstanding balances.",
+        "Access detailed student ledgers to initiate reminders or reconcile payments."
+    ],
+    settingsTip: "Regularly check the Dues report to maintain your institution's cash flow. Filter by 'Overdue' to prioritize follow-ups.",
+    steps: [
+        {
+            element: "#fee-dues-header",
+            title: "Fee Hub: Collections",
+            description: "Track your institution's collection health and identify gaps.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#dues-summary-grid",
+            title: "Financial Snapshot",
+            description: "Monitor total dues, collected amounts, and overdue accounts at a glance.",
+            type: "standard",
+            position: "bottom"
+        },
+        {
+            element: "#dues-table",
+            title: "Outstanding List",
+            description: "Drill down into individual student dues and export reports for follow-up.",
+            type: "standard",
+            position: "top"
+        }
+    ]
+};
