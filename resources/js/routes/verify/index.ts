@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import email from './email'
 /**
  * @see routes/web.php:25
  * @route '/verify/id-card/{token}'
@@ -91,6 +92,7 @@ idCard.head = (args: { token: string | number } | [token: string | number ] | st
     idCard.form = idCardForm
 const verify = {
     idCard: Object.assign(idCard, idCard),
+email: Object.assign(email, email),
 }
 
 export default verify

@@ -1,0 +1,1 @@
+import{a as t}from"./api-0bYhVjdy.js";const p="/departments",m={getDepartment:e=>t.get(p,{params:e}),getDepartmentById:e=>t.get(`${p}/${e}`),createDepartment:e=>t.post(p,e),updateDepartment:(e,a)=>t.put(`${p}/${e}`,a),deleteDepartment:e=>t.delete(`${p}/${e}`)};export{m as D};

@@ -95,7 +95,7 @@ Route::get('/training-placement', function () {
 })->name('training-placement');
 
 // Generic verification link (students, staff, etc.): verify token → set password page
-Route::get('verify-email', \App\Http\Controllers\Web\VerifyEmailController::class)->name('verification.verify');
+Route::get('verify-email', \App\Http\Controllers\Web\VerifyEmailController::class)->name('verify.email.custom');
 
 Route::get('/verify-account', function () {
     return Inertia::render('auth/verify-account');

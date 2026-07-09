@@ -1,1 +1,0 @@
-import{c as s,u as i}from"./app-BKno2X9M.js";import{g as r}from"./institutionContent-D9LodCHp.js";function c(){const t=s.c(2),{institution:e}=i().props;e?.type;const o=e?.type;let n;return t[0]!==o?(n=r(o),t[0]=o,t[1]=n):n=t[1],n}export{c as u};
