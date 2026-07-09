@@ -16,10 +16,10 @@ return new class extends Migration
         if (Schema::hasTable('student_addresses')) {
             Schema::table('student_addresses', function (Blueprint $table) {
                 if (! Schema::hasColumn('student_addresses', 'student_profile_id')) {
-                    $table->foreignId('student_profile_id')->nullable()->after('id')->constrained('student_profiles')->cascadeOnDelete();
+                    $table->foreignId('student_profile_id')->nullable()->constrained('student_profiles')->cascadeOnDelete();
                 }
                 if (! Schema::hasColumn('student_addresses', 'address_type')) {
-                    $table->string('address_type', 30)->nullable()->after('student_profile_id');
+                    $table->string('address_type', 30)->nullable();
                 }
                 if (! Schema::hasColumn('student_addresses', 'village_mohalla')) {
                     $table->string('village_mohalla', 200)->nullable();
@@ -40,7 +40,7 @@ return new class extends Migration
         if (Schema::hasTable('student_academic_info')) {
             Schema::table('student_academic_info', function (Blueprint $table) {
                 if (! Schema::hasColumn('student_academic_info', 'institute_name')) {
-                    $table->string('institute_name', 200)->nullable()->after('user_id');
+                    $table->string('institute_name', 200)->nullable();
                 }
                 if (! Schema::hasColumn('student_academic_info', 'session')) {
                     $table->string('session', 50)->nullable();
@@ -61,7 +61,7 @@ return new class extends Migration
         if (Schema::hasTable('student_documents')) {
             Schema::table('student_documents', function (Blueprint $table) {
                 if (! Schema::hasColumn('student_documents', 'doc_type')) {
-                    $table->string('doc_type', 100)->nullable()->after('user_id');
+                    $table->string('doc_type', 100)->nullable();
                 }
                 if (! Schema::hasColumn('student_documents', 'doc_path')) {
                     $table->text('doc_path')->nullable();
@@ -79,7 +79,7 @@ return new class extends Migration
         if (Schema::hasTable('student_previous_exams')) {
             Schema::table('student_previous_exams', function (Blueprint $table) {
                 if (! Schema::hasColumn('student_previous_exams', 'exam_type')) {
-                    $table->string('exam_type', 50)->nullable()->after('user_id');
+                    $table->string('exam_type', 50)->nullable();
                 }
                 if (! Schema::hasColumn('student_previous_exams', 'subjects')) {
                     $table->string('subjects', 100)->nullable();

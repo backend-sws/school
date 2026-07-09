@@ -208,6 +208,11 @@ updatefc6874003af373efc88e5e18eecd9c17.patch = (options?: RouteQueryOptions): Ro
     
     updatefc6874003af373efc88e5e18eecd9c17.form = updatefc6874003af373efc88e5e18eecd9c17Form
 
+/**
+* Multiple routes resolve to \App\Http\Controllers\Settings\ProfileController::update, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `update['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
 export const update = {
     '/api/v1/settings/profile': updateae9c7fb79cbf4d5f9ffa3dce834eec71,
     '/settings/profile': updatefc6874003af373efc88e5e18eecd9c17,

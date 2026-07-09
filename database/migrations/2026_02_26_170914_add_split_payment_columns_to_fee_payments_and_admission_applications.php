@@ -11,15 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('fee_payments', function (Blueprint $table) {
-            $table->decimal('cash_amount', 10, 2)->nullable()->after('total_amount');
-            $table->decimal('online_amount', 10, 2)->nullable()->after('cash_amount');
-            $table->string('online_transaction_id', 100)->nullable()->after('online_amount');
+            $table->decimal('cash_amount', 10, 2)->nullable();
+            $table->decimal('online_amount', 10, 2)->nullable();
+            $table->string('online_transaction_id', 100)->nullable();
         });
 
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->decimal('cash_amount', 10, 2)->nullable()->after('amount');
-            $table->decimal('online_amount', 10, 2)->nullable()->after('cash_amount');
-            $table->string('online_transaction_id', 100)->nullable()->after('online_amount');
+            $table->decimal('cash_amount', 10, 2)->nullable();
+            $table->decimal('online_amount', 10, 2)->nullable();
+            $table->string('online_transaction_id', 100)->nullable();
         });
     }
 

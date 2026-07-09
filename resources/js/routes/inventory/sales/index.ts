@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:371
+ * @see routes/web.php:399
  * @route '/inventory/sales'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ create.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ create.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:372
+ * @see routes/web.php:400
  * @route '/inventory/sales/create'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -142,7 +142,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     create.form = createForm
 /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -156,7 +156,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -183,7 +183,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 }
 
 /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
     method: 'get',
 })
 /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
     /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -209,7 +209,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     })
 
             /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -217,7 +217,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
             method: 'get',
         })
             /**
- * @see routes/web.php:373
+ * @see routes/web.php:401
  * @route '/inventory/sales/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -232,7 +232,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     
     show.form = showForm
 /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
 export const collectPayment = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -246,7 +246,7 @@ collectPayment.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
 collectPayment.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -273,7 +273,7 @@ collectPayment.url = (args: { id: string | number } | [id: string | number ] | s
 }
 
 /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
 collectPayment.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -281,7 +281,7 @@ collectPayment.get = (args: { id: string | number } | [id: string | number ] | s
     method: 'get',
 })
 /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
 collectPayment.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -290,7 +290,7 @@ collectPayment.head = (args: { id: string | number } | [id: string | number ] | 
 })
 
     /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
     const collectPaymentForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -299,7 +299,7 @@ collectPayment.head = (args: { id: string | number } | [id: string | number ] | 
     })
 
             /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
         collectPaymentForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ collectPayment.head = (args: { id: string | number } | [id: string | number ] | 
             method: 'get',
         })
             /**
- * @see routes/web.php:374
+ * @see routes/web.php:402
  * @route '/inventory/sales/{id}/collect-payment'
  */
         collectPaymentForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

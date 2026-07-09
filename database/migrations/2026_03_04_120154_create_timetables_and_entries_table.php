@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->foreignId('teacher_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
-            $table->index(['timetable_id', 'day_of_week', 'period_slot_id']);
+            $table->index(['timetable_id', 'day_of_week', 'period_slot_id'], 'tt_entries_time_day_period_idx');
         });
     }
 

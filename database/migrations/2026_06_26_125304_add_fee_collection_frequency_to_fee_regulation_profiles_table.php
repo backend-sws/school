@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('fee_regulation_profiles', function (Blueprint $table) {
-            $table->string('fee_collection_frequency', 50)->nullable()->after('is_default');
+            $table->string('fee_collection_frequency', 50)->nullable();
         });
     }
 

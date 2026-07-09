@@ -8,11 +8,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('institutions', function (Blueprint $table) {
-            $table->string('brand_theme', 32)->nullable()->after('logo_url')
+            $table->string('brand_theme', 32)->nullable()
                   ->comment('CSS theme key: royal, nature, vibrant, heritage, etc.');
-            $table->string('brand_font', 32)->nullable()->after('brand_theme')
+            $table->string('brand_font', 32)->nullable()
                   ->comment('Font key: serif, display, or null (sans default)');
-            $table->string('brand_color', 7)->nullable()->after('brand_font')
+            $table->string('brand_color', 7)->nullable()
                   ->comment('Custom hex primary color, e.g. #2E7D32');
         });
     }

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 import templates from './templates'
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,7 +15,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -23,7 +23,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:317
+ * @see routes/web.php:345
  * @route '/certificates/id-cards'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -72,7 +72,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
 export const generate = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -86,7 +86,7 @@ generate.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
 generate.url = (options?: RouteQueryOptions) => {
@@ -94,7 +94,7 @@ generate.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
 generate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ generate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
 generate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -111,7 +111,7 @@ generate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
     const generateForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -120,7 +120,7 @@ generate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
         generateForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -128,7 +128,7 @@ generate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:321
+ * @see routes/web.php:349
  * @route '/certificates/id-cards/generate'
  */
         generateForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -143,7 +143,7 @@ generate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     generate.form = generateForm
 /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -184,7 +184,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 }
 
 /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -192,7 +192,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
     method: 'get',
 })
 /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
     /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     })
 
             /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -218,7 +218,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
             method: 'get',
         })
             /**
- * @see routes/web.php:322
+ * @see routes/web.php:350
  * @route '/certificates/id-cards/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

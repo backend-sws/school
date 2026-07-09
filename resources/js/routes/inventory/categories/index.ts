@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:361
+ * @see routes/web.php:389
  * @route '/inventory/categories'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ create.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ create.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:362
+ * @see routes/web.php:390
  * @route '/inventory/categories/create'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -142,7 +142,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     create.form = createForm
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
 export const edit = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -156,7 +156,7 @@ edit.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
 edit.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -183,7 +183,7 @@ edit.url = (args: { id: string | number } | [id: string | number ] | string | nu
 }
 
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
 edit.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ edit.get = (args: { id: string | number } | [id: string | number ] | string | nu
     method: 'get',
 })
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
 edit.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ edit.head = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
     /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
     const editForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -209,7 +209,7 @@ edit.head = (args: { id: string | number } | [id: string | number ] | string | n
     })
 
             /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
         editForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -217,7 +217,7 @@ edit.head = (args: { id: string | number } | [id: string | number ] | string | n
             method: 'get',
         })
             /**
- * @see routes/web.php:363
+ * @see routes/web.php:391
  * @route '/inventory/categories/{id}/edit'
  */
         editForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -9,27 +9,27 @@ return new class extends Migration {
     {
         Schema::table('organizations', function (Blueprint $table) {
             // Subscription tier
-            $table->string('subscription_tier', 20)->default('starter')->after('status');
+            $table->string('subscription_tier', 20)->default('starter');
 
             // Limits (overridable — defaults come from SubscriptionTier enum)
-            $table->integer('max_institutions')->default(1)->after('subscription_tier');
-            $table->integer('max_users')->default(200)->after('max_institutions');
-            $table->integer('max_staff')->default(5)->after('max_users');
-            $table->integer('max_emails_per_month')->default(1000)->after('max_staff');
-            $table->integer('storage_quota_gb')->default(2)->after('max_emails_per_month');
+            $table->integer('max_institutions')->default(1);
+            $table->integer('max_users')->default(200);
+            $table->integer('max_staff')->default(5);
+            $table->integer('max_emails_per_month')->default(1000);
+            $table->integer('storage_quota_gb')->default(2);
 
             // Billing
-            $table->string('billing_cycle', 10)->default('monthly')->after('storage_quota_gb');
-            $table->timestamp('subscription_start')->nullable()->after('billing_cycle');
-            $table->timestamp('subscription_end')->nullable()->after('subscription_start');
-            $table->timestamp('trial_ends_at')->nullable()->after('subscription_end');
+            $table->string('billing_cycle', 10)->default('monthly');
+            $table->timestamp('subscription_start')->nullable();
+            $table->timestamp('subscription_end')->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
 
             // Add-ons (JSON array of strings, e.g. ["sms","payment_gateway","extra_storage"])
-            $table->jsonb('add_ons')->default('[]')->after('trial_ends_at');
+            $table->jsonb('add_ons')->default('[]');
 
             // Usage tracking
-            $table->integer('emails_sent_this_month')->default(0)->after('add_ons');
-            $table->integer('storage_used_mb')->default(0)->after('emails_sent_this_month');
+            $table->integer('emails_sent_this_month')->default(0);
+            $table->integer('storage_used_mb')->default(0);
 
             // Index for quick lookups
             $table->index('subscription_tier');

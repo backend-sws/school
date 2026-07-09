@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->string('caste', 50)->nullable()->after('category');
-            $table->string('apaar_id', 50)->nullable()->after('abc_id');
-            $table->string('father_mobile', 15)->nullable()->after('father_name');
-            $table->string('father_qualification', 100)->nullable()->after('father_mobile');
-            $table->string('father_occupation', 100)->nullable()->after('father_qualification');
+            $table->string('caste', 50)->nullable();
+            $table->string('apaar_id', 50)->nullable();
+            $table->string('father_mobile', 15)->nullable();
+            $table->string('father_qualification', 100)->nullable();
+            $table->string('father_occupation', 100)->nullable();
         });
     }
 

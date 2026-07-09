@@ -15,15 +15,15 @@ return new class extends Migration {
             $table->renameColumn('message', 'description');
             $table->renameColumn('attachment_url', 'attachment');
 
-            $table->string('support_for', 100)->nullable()->after('user_id');
-            $table->string('issue_type', 100)->nullable()->after('support_for');
-            $table->timestamp('opened_on')->nullable()->after('status');
-            $table->timestamp('closed_on')->nullable()->after('opened_on');
-            $table->foreignId('closed_by')->nullable()->constrained('users')->after('closed_on');
+            $table->string('support_for', 100)->nullable();
+            $table->string('issue_type', 100)->nullable();
+            $table->timestamp('opened_on')->nullable();
+            $table->timestamp('closed_on')->nullable();
+            $table->foreignId('closed_by')->nullable()->constrained('users');
         });
 
         Schema::table('support_messages', function (Blueprint $table) {
-            $table->string('attachment', 500)->nullable()->after('message');
+            $table->string('attachment', 500)->nullable();
         });
     }
 

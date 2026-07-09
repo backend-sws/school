@@ -125,8 +125,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('workflows', function (Blueprint $table) {
-            $table->string('scope_type', 32)->nullable()->after('description');
-            $table->unsignedBigInteger('scope_id')->nullable()->after('scope_type');
+            $table->string('scope_type', 32)->nullable();
+            $table->unsignedBigInteger('scope_id')->nullable();
             $table->index(['scope_type', 'scope_id']);
         });
 
@@ -143,8 +143,8 @@ return new class extends Migration {
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-            $table->string('scope_type', 32)->nullable()->after('description');
-            $table->unsignedBigInteger('scope_id')->nullable()->after('scope_type');
+            $table->string('scope_type', 32)->nullable();
+            $table->unsignedBigInteger('scope_id')->nullable();
             $table->index(['scope_type', 'scope_id']);
         });
 

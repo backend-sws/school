@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('workflows', function (Blueprint $table) {
-            $table->string('subscription_module')->nullable()->after('description')
+            $table->string('subscription_module')->nullable()
                 ->comment('Maps to SubscriptionTier::modules() key (e.g. core, admissions, fee_management)');
             $table->index('subscription_module');
         });

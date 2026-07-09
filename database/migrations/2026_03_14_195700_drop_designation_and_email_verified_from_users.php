@@ -28,8 +28,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('designation', 100)->nullable()->after('reg_no');
-            $table->boolean('email_verified')->default(false)->after('status');
+            $table->string('designation', 100)->nullable();
+            $table->boolean('email_verified')->default(false);
         });
 
         // Restore email_verified from email_verified_at

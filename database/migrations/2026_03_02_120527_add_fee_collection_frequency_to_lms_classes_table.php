@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('lms_classes', function (Blueprint $table) {
-            $table->string('fee_collection_frequency', 20)->nullable()->after('section')->comment('monthly | quarterly');
+            $table->string('fee_collection_frequency', 20)->nullable()->comment('monthly | quarterly');
         });
     }
 

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('transport_route_stops') && !Schema::hasColumn('transport_route_stops', 'fare')) {
             Schema::table('transport_route_stops', function (Blueprint $table) {
-                $table->double('fare', 8, 2)->default(0.00)->after('departure_time');
+                $table->double('fare', 8, 2)->default(0.00);
             });
         }
     }

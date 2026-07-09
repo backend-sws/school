@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('student_profiles', function (Blueprint $table) {
-            $table->json('guardian_snapshot')->nullable()->after('father_occupation');
+            $table->json('guardian_snapshot')->nullable();
         });
     }
 

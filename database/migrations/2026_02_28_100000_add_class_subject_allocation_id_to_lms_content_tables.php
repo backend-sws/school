@@ -22,7 +22,7 @@ return new class extends Migration
                 Schema::table($tableName, function (Blueprint $table) {
                     $table->foreignId('class_subject_allocation_id')
                         ->nullable()
-                        ->after('lms_class_id')
+                        
                         ->constrained('class_subject_allocations')
                         ->nullOnDelete();
                 });

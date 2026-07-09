@@ -196,8 +196,10 @@ class FinancialCollectionReport extends BaseReport
 
     protected function getDailyTrend($start, $end, $institutionId)
     {
+        $dateExpr = DB::connection()->getDriverName() === 'pgsql' ? 'payment_date::date' : 'DATE(payment_date)';
+
         $query = DB::table('fee_payments')
-            ->select(DB::raw("payment_date::date as date"), DB::raw("SUM(total_amount) as total"))
+            ->select(DB::raw("{$dateExpr} as date"), DB::raw("SUM(total_amount) as total"))
             ->whereIn('payment_status', ['paid', 'success'])
             ->whereBetween('payment_date', [$start, $end]);
 

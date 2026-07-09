@@ -97,19 +97,19 @@ return new class extends Migration
     {
         // Restore columns to organizations
         Schema::table('organizations', function (Blueprint $table) {
-            $table->string('subscription_tier', 30)->default('starter')->after('status');
-            $table->integer('max_institutions')->default(1)->after('subscription_tier');
-            $table->integer('max_users')->default(100)->after('max_institutions');
-            $table->integer('max_staff')->default(5)->after('max_users');
-            $table->integer('max_emails_per_month')->default(500)->after('max_staff');
-            $table->integer('storage_quota_gb')->default(1)->after('max_emails_per_month');
-            $table->string('billing_cycle', 20)->default('monthly')->after('storage_quota_gb');
-            $table->timestamp('subscription_start')->nullable()->after('billing_cycle');
-            $table->timestamp('subscription_end')->nullable()->after('subscription_start');
-            $table->timestamp('trial_ends_at')->nullable()->after('subscription_end');
-            $table->jsonb('add_ons')->nullable()->after('trial_ends_at');
-            $table->integer('emails_sent_this_month')->default(0)->after('add_ons');
-            $table->integer('storage_used_mb')->default(0)->after('emails_sent_this_month');
+            $table->string('subscription_tier', 30)->default('starter');
+            $table->integer('max_institutions')->default(1);
+            $table->integer('max_users')->default(100);
+            $table->integer('max_staff')->default(5);
+            $table->integer('max_emails_per_month')->default(500);
+            $table->integer('storage_quota_gb')->default(1);
+            $table->string('billing_cycle', 20)->default('monthly');
+            $table->timestamp('subscription_start')->nullable();
+            $table->timestamp('subscription_end')->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
+            $table->jsonb('add_ons')->nullable();
+            $table->integer('emails_sent_this_month')->default(0);
+            $table->integer('storage_used_mb')->default(0);
         });
 
         // Migrate data back from subscriptions → organizations

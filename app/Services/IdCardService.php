@@ -36,9 +36,9 @@ class IdCardService
             $searchBy = $filters['search_by'] ?? 'name';
             $search = $filters['search'];
             if ($searchBy === 'reg_no') {
-                $query->whereHas('user', fn ($q) => $q->where('reg_no', 'ilike', "%{$search}%"));
+                $query->whereHas('user', fn ($q) => $q->where('reg_no', 'like', "%{$search}%"));
             } else {
-                $query->whereHas('user', fn ($q) => $q->where('name', 'ilike', "%{$search}%"));
+                $query->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
             }
         }
 

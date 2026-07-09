@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('import_logs', function (Blueprint $table) {
-            $table->string('file_path', 500)->nullable()->after('file_name');
-            $table->string('file_disk', 30)->default('s3')->after('file_path');
+            $table->string('file_path', 500)->nullable();
+            $table->string('file_disk', 30)->default('s3');
         });
     }
 

@@ -29,10 +29,10 @@ return new class extends Migration
             $table->timestamps();
         });
         Schema::table('lms_classes', function (Blueprint $table) {
-            $table->foreignId('classroom_id')->nullable()->after('session_id')->constrained('classrooms')->nullOnDelete();
+            $table->foreignId('classroom_id')->nullable()->constrained('classrooms')->nullOnDelete();
         });
         Schema::table('class_subject_allocations', function (Blueprint $table) {
-            $table->foreignId('classroom_id')->nullable()->after('session_id')->constrained('classrooms')->nullOnDelete();
+            $table->foreignId('classroom_id')->nullable()->constrained('classrooms')->nullOnDelete();
         });
     }
 };

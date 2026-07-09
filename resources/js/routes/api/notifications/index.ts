@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/api.php:115
+ * @see routes/api.php:113
  * @route '/api/v1/notifications/test'
  */
 export const test = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -14,7 +14,7 @@ test.definition = {
 } satisfies RouteDefinition<["post"]>
 
 /**
- * @see routes/api.php:115
+ * @see routes/api.php:113
  * @route '/api/v1/notifications/test'
  */
 test.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ test.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/api.php:115
+ * @see routes/api.php:113
  * @route '/api/v1/notifications/test'
  */
 test.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -31,7 +31,7 @@ test.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 
     /**
- * @see routes/api.php:115
+ * @see routes/api.php:113
  * @route '/api/v1/notifications/test'
  */
     const testForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -40,7 +40,7 @@ test.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     })
 
             /**
- * @see routes/api.php:115
+ * @see routes/api.php:113
  * @route '/api/v1/notifications/test'
  */
         testForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

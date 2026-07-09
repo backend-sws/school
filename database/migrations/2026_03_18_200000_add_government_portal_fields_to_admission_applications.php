@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->boolean('has_government_portal')->default(false)->after('previous_marks');
-            $table->string('government_portal_name', 200)->nullable()->after('has_government_portal');
+            $table->boolean('has_government_portal')->default(false);
+            $table->string('government_portal_name', 200)->nullable();
         });
     }
 

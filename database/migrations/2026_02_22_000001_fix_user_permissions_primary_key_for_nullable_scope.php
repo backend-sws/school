@@ -11,25 +11,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('user_permissions', function (Blueprint $table) {
-            $table->dropPrimary(['user_id', 'permission_id', 'scope_type', 'scope_id']);
-        });
-
-        Schema::table('user_permissions', function (Blueprint $table) {
-            $table->id();
-            $table->unique(['user_id', 'permission_id', 'scope_type', 'scope_id'], 'user_permissions_user_perm_scope_unique');
-        });
     }
 
     public function down(): void
     {
-        Schema::table('user_permissions', function (Blueprint $table) {
-            $table->dropUnique('user_permissions_user_perm_scope_unique');
-            $table->dropColumn('id');
-        });
-
-        Schema::table('user_permissions', function (Blueprint $table) {
-            $table->primary(['user_id', 'permission_id', 'scope_type', 'scope_id']);
-        });
     }
 };

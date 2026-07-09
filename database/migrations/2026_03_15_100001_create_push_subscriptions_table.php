@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('content_encoding', 20)->nullable();
             $table->timestamps();
 
-            $table->unique(['subscribable_type', 'subscribable_id', 'endpoint']);
+            $table->unique(['subscribable_type', 'subscribable_id', 'endpoint'], 'push_subs_type_id_endpt_unq');
         });
     }
 

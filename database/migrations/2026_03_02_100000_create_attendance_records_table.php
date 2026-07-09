@@ -23,7 +23,7 @@ return new class extends Migration
             $table->index(['institution_id', 'date']);
             $table->index(['lms_class_id', 'date']);
             $table->index(['user_id', 'date']);
-            $table->index(['lms_class_id', 'date', 'class_subject_allocation_id']);
+            $table->index(['lms_class_id', 'date', 'class_subject_allocation_id'], 'att_rec_cls_date_sub_idx');
             // Subject-level: unique (lms_class_id, user_id, date, class_subject_allocation_id) is enforced in app for class_subject_allocation_id NOT NULL.
             // Class-level: at most one row per (lms_class_id, user_id, date) when class_subject_allocation_id IS NULL is enforced in application code.
         });

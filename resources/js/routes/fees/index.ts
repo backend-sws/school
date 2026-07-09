@@ -215,11 +215,11 @@ payments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     payments.form = paymentsForm
-const fees = {
+const feesNamespace = {
     feeParticulars: Object.assign(feeParticulars, feeParticulars),
 heads: Object.assign(heads, headsC7aea8),
 fees: Object.assign(fees, fees),
 payments: Object.assign(payments, payments4e2b3d),
 }
 
-export default fees
+export default feesNamespace

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sms_logs', function (Blueprint $table) {
-            $table->unsignedTinyInteger('retry_count')->default(0)->after('error_message');
+            $table->unsignedTinyInteger('retry_count')->default(0);
         });
     }
 

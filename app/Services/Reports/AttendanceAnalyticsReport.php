@@ -158,7 +158,7 @@ class AttendanceAnalyticsReport extends BaseReport
             'daily_trend' => (clone $query)
                 ->select(
                     'date',
-                    DB::raw("ROUND((COUNT(CASE WHEN status = 'present' THEN 1 END)::numeric / COUNT(*)::numeric) * 100, 2) as total")
+                    DB::raw("ROUND((COUNT(CASE WHEN status = 'present' THEN 1 END) * 1.0 / NULLIF(COUNT(*), 0)) * 100, 2) as total")
                 )
                 ->groupBy('date')
                 ->orderBy('date')
@@ -198,10 +198,10 @@ class AttendanceAnalyticsReport extends BaseReport
                 'users.reg_no',
                 DB::raw("COUNT(*) as total_days"),
                 DB::raw("COUNT(CASE WHEN attendance_records.status = 'present' THEN 1 END) as present_days"),
-                DB::raw("ROUND((COUNT(CASE WHEN attendance_records.status = 'present' THEN 1 END)::numeric / COUNT(*)::numeric) * 100, 2) as percentage")
+                DB::raw("ROUND((COUNT(CASE WHEN attendance_records.status = 'present' THEN 1 END) * 1.0 / NULLIF(COUNT(*), 0)) * 100, 2) as percentage")
             )
             ->groupBy('users.id', 'users.name', 'users.reg_no')
-            ->having(DB::raw("(COUNT(CASE WHEN attendance_records.status = 'present' THEN 1 END)::numeric / COUNT(*)::numeric)"), '<', 0.75)
+            ->having(DB::raw("(COUNT(CASE WHEN attendance_records.status = 'present' THEN 1 END) * 1.0 / NULLIF(COUNT(*), 0))"), '<', 0.75)
             ->orderBy('percentage', 'asc')
             ->limit(10)
             ->get();

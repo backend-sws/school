@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('admission_applications', function (Blueprint $table) {
             if (!Schema::hasColumn('admission_applications', 'online_transaction_id')) {
-                $table->string('online_transaction_id', 100)->nullable()->after('online_amount');
+                $table->string('online_transaction_id', 100)->nullable();
             }
         });
     }

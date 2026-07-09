@@ -68,8 +68,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->string('scope_type', 32)->nullable()->after('is_system');
-            $table->unsignedBigInteger('scope_id')->nullable()->after('scope_type');
+            $table->string('scope_type', 32)->nullable();
+            $table->unsignedBigInteger('scope_id')->nullable();
             $table->index(['scope_type', 'scope_id']);
         });
 

@@ -8,17 +8,17 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->string('religion', 50)->nullable()->after('category');
-            $table->string('nationality', 50)->nullable()->after('religion');
-            $table->string('previous_school_name', 200)->nullable()->after('previous_roll_no');
-            $table->boolean('has_tc')->default(false)->after('previous_school_name');
-            $table->string('photo_url', 500)->nullable()->after('has_tc');
-            $table->boolean('hostel_required')->default(false)->after('photo_url');
-            $table->date('admission_date')->nullable()->after('submitted_at');
-            $table->string('medical_condition', 200)->nullable()->after('place');
-            $table->string('disability', 200)->nullable()->after('medical_condition');
-            $table->string('allergy', 200)->nullable()->after('disability');
-            $table->jsonb('guardian_snapshot')->nullable()->after('address_snapshot');
+            $table->string('religion', 50)->nullable();
+            $table->string('nationality', 50)->nullable();
+            $table->string('previous_school_name', 200)->nullable();
+            $table->boolean('has_tc')->default(false);
+            $table->string('photo_url', 500)->nullable();
+            $table->boolean('hostel_required')->default(false);
+            $table->date('admission_date')->nullable();
+            $table->string('medical_condition', 200)->nullable();
+            $table->string('disability', 200)->nullable();
+            $table->string('allergy', 200)->nullable();
+            $table->jsonb('guardian_snapshot')->nullable();
         });
     }
 

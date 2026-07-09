@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lms_classes', function (Blueprint $table) {
-            $table->foreignId('stream_id')->nullable()->after('institution_id')->constrained('streams')->nullOnDelete();
-            $table->string('section', 50)->nullable()->after('session_id');
+            $table->foreignId('stream_id')->nullable()->constrained('streams')->nullOnDelete();
+            $table->string('section', 50)->nullable();
             $table->index(['stream_id', 'session_id']);
         });
     }

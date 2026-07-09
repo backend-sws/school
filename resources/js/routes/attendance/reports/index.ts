@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
 export const daily = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ daily.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
 daily.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ daily.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
 daily.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ daily.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
 daily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ daily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
     const dailyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ daily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
         dailyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ daily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:431
+ * @see routes/web.php:459
  * @route '/attendance/reports/daily'
  */
         dailyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ daily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     daily.form = dailyForm
 /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
 export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ summary.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
 summary.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ summary.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
 summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
 summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
     const summaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
         summaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:432
+ * @see routes/web.php:460
  * @route '/attendance/reports/summary'
  */
         summaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

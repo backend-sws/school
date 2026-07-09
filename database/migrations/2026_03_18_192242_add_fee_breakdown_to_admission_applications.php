@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->jsonb('fee_breakdown')->nullable()->after('amount');
+            $table->jsonb('fee_breakdown')->nullable();
         });
     }
 

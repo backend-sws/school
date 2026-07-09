@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-export const index = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -19,11 +19,14 @@ index.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-index.url = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions) => {
+index.url = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { admission_head: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { admission_head: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -34,7 +37,9 @@ index.url = (args: { admission_head: string | number } | [admission_head: string
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        admission_head: args.admission_head,
+                        admission_head: typeof args.admission_head === 'object'
+                ? args.admission_head.id
+                : args.admission_head,
                 }
 
     return index.definition.url
@@ -47,7 +52,7 @@ index.url = (args: { admission_head: string | number } | [admission_head: string
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-index.get = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -56,7 +61,7 @@ index.get = (args: { admission_head: string | number } | [admission_head: string
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-index.head = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -66,7 +71,7 @@ index.head = (args: { admission_head: string | number } | [admission_head: strin
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-    const indexForm = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const indexForm = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: index.url(args, options),
         method: 'get',
     })
@@ -76,7 +81,7 @@ index.head = (args: { admission_head: string | number } | [admission_head: strin
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-        indexForm.get = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.get = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, options),
             method: 'get',
         })
@@ -85,7 +90,7 @@ index.head = (args: { admission_head: string | number } | [admission_head: strin
  * @see app/Http/Controllers/Api/V1/Admission/FeeStructureController.php:27
  * @route '/api/v1/admission-heads/{admission_head}/fee-structures'
  */
-        indexForm.head = (args: { admission_head: string | number } | [admission_head: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.head = (args: { admission_head: number | { id: number } } | [admission_head: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

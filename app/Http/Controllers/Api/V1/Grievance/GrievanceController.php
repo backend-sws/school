@@ -75,12 +75,11 @@ class GrievanceController extends BaseController
 
             return $q->where(function ($subQuery) use ($search) {
                 // Ticket No search
-                $subQuery->where('ticket_no', 'ILIKE', "%{$search}%")
-                    // Subject search
-                    ->orWhere('subject', 'ILIKE', "%{$search}%")
+                $subQuery->where('ticket_no', 'LIKE', "%{$search}%")
+                    ->orWhere('subject', 'LIKE', "%{$search}%")
                     // Student (User) Name search through relationship
                     ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'ILIKE', "%{$search}%");
+                        $userQuery->where('name', 'LIKE', "%{$search}%");
                     });
             });
         });

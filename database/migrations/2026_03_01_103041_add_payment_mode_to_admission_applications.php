@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('admission_applications', function (Blueprint $table) {
-            $table->string('payment_mode', 50)->nullable()->after('transaction_id');
-            $table->decimal('hostel_amount', 12, 2)->nullable()->after('hostel_required');
+            $table->string('payment_mode', 50)->nullable();
+            $table->decimal('hostel_amount', 12, 2)->nullable();
         });
     }
 

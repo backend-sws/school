@@ -58,9 +58,9 @@ return new class extends Migration
     {
         // 1. Re-add the columns
         Schema::table('institutions', function (Blueprint $table) {
-            $table->string('brand_theme', 32)->nullable()->after('logo_url');
-            $table->string('brand_font', 32)->nullable()->after('brand_theme');
-            $table->string('brand_color', 32)->nullable()->after('brand_font');
+            $table->string('brand_theme', 32)->nullable();
+            $table->string('brand_font', 32)->nullable();
+            $table->string('brand_color', 32)->nullable();
         });
 
         // 2. Copy values back from settings → institution

@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('fee_regulation_profiles', function (Blueprint $table) {
-            $table->string('profile_type', 30)->nullable()->after('name');
-            $table->string('gender', 20)->nullable()->after('profile_type');
+            $table->string('profile_type', 30)->nullable();
+            $table->string('gender', 20)->nullable();
         });
     }
 

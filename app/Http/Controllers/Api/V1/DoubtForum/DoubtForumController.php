@@ -26,8 +26,8 @@ class DoubtForumController extends Controller
         }
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'ilike', "%{$search}%")
-                  ->orWhere('body', 'ilike', "%{$search}%");
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('body', 'like', "%{$search}%");
             });
         }
 

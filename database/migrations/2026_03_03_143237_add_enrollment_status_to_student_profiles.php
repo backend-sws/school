@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('student_profiles', function (Blueprint $table) {
-            $table->string('enrollment_status')->default('active')->after('verified_at');
+            $table->string('enrollment_status')->default('active');
             $table->index('enrollment_status');
         });
     }

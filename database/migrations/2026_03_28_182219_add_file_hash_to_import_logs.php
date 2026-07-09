@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('import_logs', function (Blueprint $table) {
-            $table->string('file_hash', 32)->nullable()->after('file_disk')
+            $table->string('file_hash', 32)->nullable()
                 ->comment('MD5 hash of file contents for idempotent re-import detection');
             $table->index(['institution_id', 'module', 'file_hash', 'status'], 'import_logs_dedup_idx');
         });

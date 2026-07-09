@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('card_last_four', 4)->nullable()->after('onboarding_data');
-            $table->string('card_holder_name', 50)->nullable()->after('card_last_four');
-            $table->text('card_expiry_encrypted')->nullable()->after('card_holder_name');
-            $table->text('card_token_encrypted')->nullable()->after('card_expiry_encrypted');
+            $table->string('card_last_four', 4)->nullable();
+            $table->string('card_holder_name', 50)->nullable();
+            $table->text('card_expiry_encrypted')->nullable();
+            $table->text('card_token_encrypted')->nullable();
         });
     }
 

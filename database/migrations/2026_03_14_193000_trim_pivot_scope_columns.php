@@ -19,7 +19,7 @@ return new class extends Migration {
     {
         // ── user_roles ──────────────────────────────────────────────────
         Schema::table('user_roles', function (Blueprint $table) {
-            $table->unsignedBigInteger('institution_id')->nullable()->after('role_id');
+            $table->unsignedBigInteger('institution_id')->nullable();
         });
         DB::table('user_roles')->whereNotNull('scope_id')->update([
             'institution_id' => DB::raw('scope_id'),
@@ -34,36 +34,40 @@ return new class extends Migration {
 
         // ── user_workflows ──────────────────────────────────────────────
         Schema::table('user_workflows', function (Blueprint $table) {
-            $table->unsignedBigInteger('institution_id')->nullable()->after('workflow_id');
+            $table->unsignedBigInteger('institution_id')->nullable();
         });
         DB::table('user_workflows')->whereNotNull('scope_id')->update([
             'institution_id' => DB::raw('scope_id'),
         ]);
-        // Drop old primary, add new one (composite PKs need special handling)
+        // Drop old unique, add new one safely
         Schema::table('user_workflows', function (Blueprint $table) {
-            $table->dropPrimary(['user_id', 'workflow_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'workflow_id', 'institution_id'], 'usr_wf_inst_unique');
+        });
+        Schema::table('user_workflows', function (Blueprint $table) {
+            $table->dropUnique('usr_wf_scp_unique');
         });
         Schema::table('user_workflows', function (Blueprint $table) {
             $table->dropIndex(['scope_type', 'scope_id']);
             $table->dropColumn(['scope_type', 'scope_id']);
-            $table->primary(['user_id', 'workflow_id', 'institution_id']);
             $table->foreign('institution_id')->references('id')->on('institutions')->nullOnDelete();
         });
 
         // ── user_permissions ────────────────────────────────────────────
         Schema::table('user_permissions', function (Blueprint $table) {
-            $table->unsignedBigInteger('institution_id')->nullable()->after('permission_id');
+            $table->unsignedBigInteger('institution_id')->nullable();
         });
         DB::table('user_permissions')->whereNotNull('scope_id')->update([
             'institution_id' => DB::raw('scope_id'),
         ]);
         Schema::table('user_permissions', function (Blueprint $table) {
-            $table->dropPrimary(['user_id', 'permission_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'permission_id', 'institution_id'], 'usr_perm_inst_unique');
+        });
+        Schema::table('user_permissions', function (Blueprint $table) {
+            $table->dropUnique('usr_perm_scp_unique');
         });
         Schema::table('user_permissions', function (Blueprint $table) {
             $table->dropIndex(['scope_type', 'scope_id']);
             $table->dropColumn(['scope_type', 'scope_id']);
-            $table->primary(['user_id', 'permission_id', 'institution_id']);
             $table->foreign('institution_id')->references('id')->on('institutions')->nullOnDelete();
         });
     }
@@ -95,20 +99,20 @@ return new class extends Migration {
             $table->unique(['user_id', 'role_id', 'scope_type', 'scope_id']);
         });
 
-        // Restore primary keys (user_workflows)
+        // Restore unique keys (user_workflows)
         Schema::table('user_workflows', function (Blueprint $table) {
             $table->dropForeign(['institution_id']);
-            $table->dropPrimary(['user_id', 'workflow_id', 'institution_id']);
+            $table->dropUnique('usr_wf_inst_unique');
             $table->dropColumn('institution_id');
-            $table->primary(['user_id', 'workflow_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'workflow_id', 'scope_type', 'scope_id'], 'usr_wf_scp_unique');
         });
 
-        // Restore primary keys (user_permissions)
+        // Restore unique keys (user_permissions)
         Schema::table('user_permissions', function (Blueprint $table) {
             $table->dropForeign(['institution_id']);
-            $table->dropPrimary(['user_id', 'permission_id', 'institution_id']);
+            $table->dropUnique('usr_perm_inst_unique');
             $table->dropColumn('institution_id');
-            $table->primary(['user_id', 'permission_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'permission_id', 'scope_type', 'scope_id'], 'usr_perm_scp_unique');
         });
     }
 };

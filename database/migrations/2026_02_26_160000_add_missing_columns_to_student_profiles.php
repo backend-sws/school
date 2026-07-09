@@ -12,20 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('student_profiles', function (Blueprint $table) {
-            $table->string('father_mobile', 20)->nullable()->after('father_name');
-            $table->string('father_qualification', 100)->nullable()->after('father_mobile');
-            $table->string('father_occupation', 100)->nullable()->after('father_qualification');
-            $table->string('mobile', 20)->nullable()->after('mother_name');
-            $table->string('aadhar_no', 20)->nullable()->after('mobile');
-            $table->text('address')->nullable()->after('current_semester');
-            $table->string('city', 100)->nullable()->after('address');
-            $table->string('state', 100)->nullable()->after('city');
-            $table->string('pincode', 10)->nullable()->after('state');
-            $table->string('caste', 50)->nullable()->after('religion');
-            $table->foreignId('subject_id')->nullable()->after('session_id')->constrained('subjects')->nullOnDelete();
-            $table->boolean('is_differently_abled')->default(false)->nullable()->after('marital_status');
+            $table->string('father_mobile', 20)->nullable();
+            $table->string('father_qualification', 100)->nullable();
+            $table->string('father_occupation', 100)->nullable();
+            $table->string('mobile', 20)->nullable();
+            $table->string('aadhar_no', 20)->nullable();
+            $table->text('address')->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('state', 100)->nullable();
+            $table->string('pincode', 10)->nullable();
+            $table->string('caste', 50)->nullable();
+            $table->foreignId('subject_id')->nullable()->constrained('subjects')->nullOnDelete();
+            $table->boolean('is_differently_abled')->default(false)->nullable();
             if (! Schema::hasColumn('student_profiles', 'abc_no')) {
-                $table->string('abc_no', 50)->nullable()->after('aadhar_no');
+                $table->string('abc_no', 50)->nullable();
             }
         });
     }

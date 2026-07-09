@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::table('admission_applications', function (Blueprint $table) {
             if (!Schema::hasColumn('admission_applications', 'due_amount')) {
-                $table->decimal('due_amount', 12, 2)->nullable()->default(0)->after('amount');
+                $table->decimal('due_amount', 12, 2)->nullable()->default(0);
             }
             if (!Schema::hasColumn('admission_applications', 'discount_amount')) {
-                $table->decimal('discount_amount', 12, 2)->nullable()->default(0)->after('due_amount');
+                $table->decimal('discount_amount', 12, 2)->nullable()->default(0);
             }
             if (!Schema::hasColumn('admission_applications', 'discount_reason')) {
-                $table->string('discount_reason', 255)->nullable()->after('discount_amount');
+                $table->string('discount_reason', 255)->nullable();
             }
         });
     }

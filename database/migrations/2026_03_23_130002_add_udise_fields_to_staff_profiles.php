@@ -8,12 +8,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('staff_profiles', function (Blueprint $table) {
-            $table->string('aadhaar_no', 12)->nullable()->after('employee_id');
-            $table->string('professional_qualification', 100)->nullable()->after('qualification');
-            $table->string('appointment_type', 30)->nullable()->after('professional_qualification');
-            $table->string('gender', 20)->nullable()->after('designation');
-            $table->date('dob')->nullable()->after('gender');
-            $table->boolean('trained_status')->default(false)->after('appointment_type');
+            $table->string('aadhaar_no', 12)->nullable();
+            $table->string('professional_qualification', 100)->nullable();
+            $table->string('appointment_type', 30)->nullable();
+            $table->string('gender', 20)->nullable();
+            $table->date('dob')->nullable();
+            $table->boolean('trained_status')->default(false);
         });
     }
 

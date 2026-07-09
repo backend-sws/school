@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('admission_applications', function (Blueprint $table) {
             if (!Schema::hasColumn('admission_applications', 'transport_route_id')) {
-                $table->foreignId('transport_route_id')->nullable()->after('section_id');
+                $table->foreignId('transport_route_id')->nullable();
             }
         });
     }

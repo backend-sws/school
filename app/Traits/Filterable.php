@@ -22,7 +22,7 @@ trait Filterable
             $search = strtolower($request->search);
             return $q->where(function ($subQuery) use ($search, $searchFields) {
                 foreach ($searchFields as $field) {
-                    $subQuery->orWhere($field, 'ILIKE', "%{$search}%");
+                    $subQuery->orWhere($field, 'LIKE', "%{$search}%");
                 }
             });
         });

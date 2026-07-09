@@ -31,7 +31,7 @@ return new class extends Migration
         Schema::table('institutions', function (Blueprint $table) {
             $table->foreignId('organization_id')
                 ->nullable()
-                ->after('id')
+                
                 ->constrained('organizations')
                 ->nullOnDelete();
         });

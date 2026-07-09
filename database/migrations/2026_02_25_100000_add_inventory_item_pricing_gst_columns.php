@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('inventory_items', function (Blueprint $table) {
-            $table->decimal('purchase_price', 12, 2)->nullable()->after('selling_price');
-            $table->decimal('margin_percentage', 10, 2)->nullable()->after('purchase_price');
-            $table->decimal('gst_rate', 5, 2)->nullable()->after('margin_percentage');
-            $table->string('hsn_code', 20)->nullable()->after('gst_rate');
+            $table->decimal('purchase_price', 12, 2)->nullable();
+            $table->decimal('margin_percentage', 10, 2)->nullable();
+            $table->decimal('gst_rate', 5, 2)->nullable();
+            $table->string('hsn_code', 20)->nullable();
         });
     }
 

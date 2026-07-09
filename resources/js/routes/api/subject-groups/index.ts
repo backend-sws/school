@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-export const show = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,11 +152,14 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-show.url = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions) => {
+show.url = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { subject_group: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { subject_group: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -167,7 +170,9 @@ show.url = (args: { subject_group: string | number } | [subject_group: string | 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        subject_group: args.subject_group,
+                        subject_group: typeof args.subject_group === 'object'
+                ? args.subject_group.id
+                : args.subject_group,
                 }
 
     return show.definition.url
@@ -180,7 +185,7 @@ show.url = (args: { subject_group: string | number } | [subject_group: string | 
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-show.get = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -189,7 +194,7 @@ show.get = (args: { subject_group: string | number } | [subject_group: string | 
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-show.head = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -199,7 +204,7 @@ show.head = (args: { subject_group: string | number } | [subject_group: string |
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-    const showForm = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -209,7 +214,7 @@ show.head = (args: { subject_group: string | number } | [subject_group: string |
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-        showForm.get = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -218,7 +223,7 @@ show.head = (args: { subject_group: string | number } | [subject_group: string |
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:41
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-        showForm.head = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -234,7 +239,7 @@ show.head = (args: { subject_group: string | number } | [subject_group: string |
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-export const update = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -249,11 +254,14 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-update.url = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions) => {
+update.url = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { subject_group: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { subject_group: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -264,7 +272,9 @@ update.url = (args: { subject_group: string | number } | [subject_group: string 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        subject_group: args.subject_group,
+                        subject_group: typeof args.subject_group === 'object'
+                ? args.subject_group.id
+                : args.subject_group,
                 }
 
     return update.definition.url
@@ -277,7 +287,7 @@ update.url = (args: { subject_group: string | number } | [subject_group: string 
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-update.put = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -286,7 +296,7 @@ update.put = (args: { subject_group: string | number } | [subject_group: string 
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-update.patch = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -296,7 +306,7 @@ update.patch = (args: { subject_group: string | number } | [subject_group: strin
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-    const updateForm = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -311,7 +321,7 @@ update.patch = (args: { subject_group: string | number } | [subject_group: strin
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-        updateForm.put = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -325,7 +335,7 @@ update.patch = (args: { subject_group: string | number } | [subject_group: strin
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:46
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-        updateForm.patch = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -341,7 +351,7 @@ update.patch = (args: { subject_group: string | number } | [subject_group: strin
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:57
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-export const destroy = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -356,11 +366,14 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:57
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-destroy.url = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions) => {
+destroy.url = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { subject_group: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { subject_group: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -371,7 +384,9 @@ destroy.url = (args: { subject_group: string | number } | [subject_group: string
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        subject_group: args.subject_group,
+                        subject_group: typeof args.subject_group === 'object'
+                ? args.subject_group.id
+                : args.subject_group,
                 }
 
     return destroy.definition.url
@@ -384,7 +399,7 @@ destroy.url = (args: { subject_group: string | number } | [subject_group: string
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:57
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-destroy.delete = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -394,7 +409,7 @@ destroy.delete = (args: { subject_group: string | number } | [subject_group: str
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:57
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-    const destroyForm = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -409,7 +424,7 @@ destroy.delete = (args: { subject_group: string | number } | [subject_group: str
  * @see app/Http/Controllers/Api/V1/Organization/SubjectGroupController.php:57
  * @route '/api/v1/subject-groups/{subject_group}'
  */
-        destroyForm.delete = (args: { subject_group: string | number } | [subject_group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { subject_group: number | { id: number } } | [subject_group: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

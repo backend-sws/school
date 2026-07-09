@@ -109,10 +109,10 @@ class OrganizationController extends BaseController
         if ($search && is_string($search)) {
             $term = '%' . addcslashes($search, '%_') . '%';
             $query->where(function ($q) use ($term) {
-                $q->where('name', 'ilike', $term)
-                    ->orWhere('code', 'ilike', $term)
-                    ->orWhere('city', 'ilike', $term)
-                    ->orWhere('state', 'ilike', $term);
+                $q->where('name', 'like', $term)
+                    ->orWhere('code', 'like', $term)
+                    ->orWhere('city', 'like', $term)
+                    ->orWhere('state', 'like', $term);
             });
         }
 

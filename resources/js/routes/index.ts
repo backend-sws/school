@@ -977,84 +977,6 @@ trainingPlacement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
     
     trainingPlacement.form = trainingPlacementForm
 /**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-export const verifyEmail = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: verifyEmail.url(options),
-    method: 'get',
-})
-
-verifyEmail.definition = {
-    methods: ["get","head"],
-    url: '/verify-email',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-verifyEmail.url = (options?: RouteQueryOptions) => {
-    return verifyEmail.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-verifyEmail.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: verifyEmail.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-verifyEmail.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: verifyEmail.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-    const verifyEmailForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: verifyEmail.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-        verifyEmailForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: verifyEmail.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Web\VerifyEmailController::__invoke
- * @see app/Http/Controllers/Web/VerifyEmailController.php:20
- * @route '/verify-email'
- */
-        verifyEmailForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: verifyEmail.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    verifyEmail.form = verifyEmailForm
-/**
  * @see routes/web.php:100
  * @route '/verify-account'
  */
@@ -1268,7 +1190,7 @@ notifications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     
     notifications.form = notificationsForm
 /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
 export const noticeManagement = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1282,7 +1204,7 @@ noticeManagement.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
 noticeManagement.url = (options?: RouteQueryOptions) => {
@@ -1290,7 +1212,7 @@ noticeManagement.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
 noticeManagement.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1298,7 +1220,7 @@ noticeManagement.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
     method: 'get',
 })
 /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
 noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1307,7 +1229,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 })
 
     /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
     const noticeManagementForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1316,7 +1238,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     })
 
             /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
         noticeManagementForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1324,7 +1246,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
             method: 'get',
         })
             /**
- * @see routes/web.php:339
+ * @see routes/web.php:367
  * @route '/notice-management'
  */
         noticeManagementForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1339,7 +1261,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     
     noticeManagement.form = noticeManagementForm
 /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
 export const analytics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1353,7 +1275,7 @@ analytics.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
 analytics.url = (options?: RouteQueryOptions) => {
@@ -1361,7 +1283,7 @@ analytics.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
 analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1369,7 +1291,7 @@ analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
 analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1378,7 +1300,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
     const analyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1387,7 +1309,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
         analyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1395,7 +1317,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:513
+ * @see routes/web.php:541
  * @route '/analytics'
  */
         analyticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

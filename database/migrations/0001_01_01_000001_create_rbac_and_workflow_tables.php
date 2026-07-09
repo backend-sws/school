@@ -113,6 +113,7 @@ return new class extends Migration {
         });
 
         Schema::create('user_workflows', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
             $table->string('scope_type', 32)->nullable();
@@ -120,18 +121,19 @@ return new class extends Migration {
             $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('assigned_at')->useCurrent();
 
-            $table->primary(['user_id', 'workflow_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'workflow_id', 'scope_type', 'scope_id'], 'usr_wf_scp_unique');
             $table->index(['scope_type', 'scope_id']);
         });
 
         Schema::create('user_permissions', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
             $table->boolean('granted');
             $table->string('scope_type', 32)->nullable();
             $table->unsignedBigInteger('scope_id')->nullable();
 
-            $table->primary(['user_id', 'permission_id', 'scope_type', 'scope_id']);
+            $table->unique(['user_id', 'permission_id', 'scope_type', 'scope_id'], 'usr_perm_scp_unique');
             $table->index(['scope_type', 'scope_id']);
         });
     }

@@ -9,10 +9,10 @@ return new class extends Migration {
     {
         Schema::table('staff_profiles', function (Blueprint $table) {
             if (!Schema::hasColumn('staff_profiles', 'category')) {
-                $table->unsignedBigInteger('category')->nullable()->after('institution_id');
+                $table->unsignedBigInteger('category')->nullable();
             }
             if (!Schema::hasColumn('staff_profiles', 'joining_date')) {
-                $table->date('joining_date')->nullable()->after('designation');
+                $table->date('joining_date')->nullable();
             }
         });
     }

@@ -23,6 +23,10 @@ import applications from './applications'
 import feeTypes from './fee-types'
 import feeRegulationProfiles from './fee-regulation-profiles'
 import feePayments from './fee-payments'
+import expenses from './expenses'
+import expenseCategories from './expense-categories'
+import expenseBudgets from './expense-budgets'
+import hr from './hr'
 import certificateHeads from './certificate-heads'
 import certificateApplications from './certificate-applications'
 import idCardTemplates from './id-card-templates'
@@ -80,6 +84,10 @@ applications: Object.assign(applications, applications),
 feeTypes: Object.assign(feeTypes, feeTypes),
 feeRegulationProfiles: Object.assign(feeRegulationProfiles, feeRegulationProfiles),
 feePayments: Object.assign(feePayments, feePayments),
+expenses: Object.assign(expenses, expenses),
+expenseCategories: Object.assign(expenseCategories, expenseCategories),
+expenseBudgets: Object.assign(expenseBudgets, expenseBudgets),
+hr: Object.assign(hr, hr),
 certificateHeads: Object.assign(certificateHeads, certificateHeads),
 certificateApplications: Object.assign(certificateApplications, certificateApplications),
 idCardTemplates: Object.assign(idCardTemplates, idCardTemplates),

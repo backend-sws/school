@@ -17,7 +17,7 @@ class IdCardTemplateService
         if (!empty($filters['search'])) {
             $searchBy = $filters['search_by'] ?? 'name';
             $column = in_array($searchBy, ['name', 'card_type']) ? $searchBy : 'name';
-            $query->where($column, 'ilike', "%{$filters['search']}%");
+            $query->where($column, 'like', "%{$filters['search']}%");
         }
 
         if (!empty($filters['card_type'])) {

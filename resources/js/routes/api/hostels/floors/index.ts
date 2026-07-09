@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-export const index = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ index.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-index.url = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+index.url = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { hostel: args }
     }
@@ -52,7 +52,7 @@ index.url = (args: { hostel: string | number | { id: string | number } } | [host
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-index.get = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ index.get = (args: { hostel: string | number | { id: string | number } } | [host
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-index.head = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ index.head = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-    const indexForm = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const indexForm = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: index.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ index.head = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-        indexForm.get = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.get = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ index.head = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:13
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-        indexForm.head = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.head = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -106,7 +106,7 @@ index.head = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:24
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-export const store = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -121,7 +121,7 @@ store.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:24
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-store.url = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+store.url = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { hostel: args }
     }
@@ -154,7 +154,7 @@ store.url = (args: { hostel: string | number | { id: string | number } } | [host
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:24
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-store.post = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -164,7 +164,7 @@ store.post = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:24
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-    const storeForm = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForm = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: store.url(args, options),
         method: 'post',
     })
@@ -174,7 +174,7 @@ store.post = (args: { hostel: string | number | { id: string | number } } | [hos
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:24
  * @route '/api/v1/hostel/hostels/{hostel}/floors'
  */
-        storeForm.post = (args: { hostel: string | number | { id: string | number } } | [hostel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForm.post = (args: { hostel: number | { id: number } } | [hostel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: store.url(args, options),
             method: 'post',
         })

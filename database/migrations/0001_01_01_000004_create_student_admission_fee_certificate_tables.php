@@ -139,7 +139,7 @@ return new class extends Migration {
             $table->integer('sort_order')->default(1);
             $table->boolean('is_compulsory')->default(false);
             $table->timestamps();
-            $table->index(['admission_head_id', 'subject_category_id']);
+            $table->index(['admission_head_id', 'subject_category_id'], 'adm_head_subj_cat_idx');
         });
 
         Schema::create('admission_application_subjects', function (Blueprint $table) {
@@ -149,7 +149,7 @@ return new class extends Migration {
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['admission_application_id', 'subject_category_id', 'subject_id']);
+            $table->unique(['admission_application_id', 'subject_category_id', 'subject_id'], 'adm_app_subj_cat_sub_idx');
         });
 
         Schema::create('admission_verification_data', function (Blueprint $table) {
@@ -162,7 +162,7 @@ return new class extends Migration {
             $table->text('file_url')->nullable();
             $table->timestamps();
 
-            $table->unique(['admission_application_id', 'field_key']);
+            $table->unique(['admission_application_id', 'field_key'], 'adm_ver_data_app_id_fk_unq');
         });
 
         Schema::create('fee_heads', function (Blueprint $table) {

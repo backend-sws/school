@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import expenses from './expenses'
 /**
  * @see routes/web.php:249
  * @route '/accounts/fee-hub'
@@ -72,6 +73,7 @@ feeHub.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     feeHub.form = feeHubForm
 const accounts = {
     feeHub: Object.assign(feeHub, feeHub),
+expenses: Object.assign(expenses, expenses),
 }
 
 export default accounts

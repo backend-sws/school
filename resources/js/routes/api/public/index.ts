@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
 export const institutionLogo = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ institutionLogo.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
 institutionLogo.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ institutionLogo.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
 institutionLogo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ institutionLogo.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
     method: 'get',
 })
 /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
 institutionLogo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ institutionLogo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 })
 
     /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
     const institutionLogoForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ institutionLogo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
     })
 
             /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
         institutionLogoForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ institutionLogo.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
             method: 'get',
         })
             /**
- * @see routes/api.php:72
+ * @see routes/api.php:71
  * @route '/api/v1/public/institution-logo'
  */
         institutionLogoForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

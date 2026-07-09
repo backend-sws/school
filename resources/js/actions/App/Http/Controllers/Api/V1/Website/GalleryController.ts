@@ -156,6 +156,11 @@ index099e16fa76251d657ad6644519de66e9.head = (options?: RouteQueryOptions): Rout
     
     index099e16fa76251d657ad6644519de66e9.form = index099e16fa76251d657ad6644519de66e9Form
 
+/**
+* Multiple routes resolve to \App\Http\Controllers\Api\V1\Website\GalleryController::index, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `index['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
 export const index = {
     '/api/v1/public/galleries': index1f96404ba317b769b7b60ebe522483f9,
     '/api/v1/website/galleries': index099e16fa76251d657ad6644519de66e9,

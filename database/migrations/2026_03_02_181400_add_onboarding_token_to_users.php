@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('onboarding_token', 64)->nullable()->after('remember_token');
-            $table->json('onboarding_data')->nullable()->after('onboarding_token');
+            $table->string('onboarding_token', 64)->nullable();
+            $table->json('onboarding_data')->nullable();
             $table->index('onboarding_token');
         });
     }

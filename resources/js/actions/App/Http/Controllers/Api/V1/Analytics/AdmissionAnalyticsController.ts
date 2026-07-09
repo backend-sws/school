@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Analytics\AdmissionAnalyticsController::index
- * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:35
+ * @see app/Http/Controllers/Api/V1/Analytics/AdmissionAnalyticsController.php:36
  * @route '/api/v1/admission-analytics'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

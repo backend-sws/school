@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('fee_structures', function (Blueprint $table) {
-            $table->string('fee_slot', 30)->nullable()->after('scope_id');
+            $table->string('fee_slot', 30)->nullable();
             $table->index(['institution_id', 'scope_type', 'scope_id', 'fee_slot']);
         });
     }

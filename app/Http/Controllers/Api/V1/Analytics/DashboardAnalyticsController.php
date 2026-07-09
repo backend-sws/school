@@ -118,9 +118,11 @@ class DashboardAnalyticsController extends BaseController
             'pending_tasks' => $this->calculatePendingTasks(),
         ];
 
+        $monthExpr = DB::connection()->getDriverName() === 'pgsql' ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
+
         // 2. ADMISSION TYPE BREAKDOWN (Monthly Comparison Chart)
         $admissionBreakdownChart = AdmissionApplication::select(
-            DB::raw("to_char(created_at, 'Mon') as month"),
+            DB::raw("{$monthExpr} as month"),
             DB::raw("SUM(CASE WHEN application_type = 'new' THEN 1 ELSE 0 END) as new_admissions"),
             DB::raw("SUM(CASE WHEN application_type = 'readmission' THEN 1 ELSE 0 END) as re_admissions"),
             DB::raw("extract(month from created_at) as month_num")
@@ -167,6 +169,8 @@ class DashboardAnalyticsController extends BaseController
         $institutionId = InstitutionContext::getActiveInstitutionId();
         $instFilter = $institutionId ? " AND institution_id = {$institutionId}" : '';
 
+        $monthExpr = DB::connection()->getDriverName() === 'pgsql' ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
+
         return DB::table(DB::raw("(
             SELECT amount, created_at FROM admission_applications WHERE payment_status IN ('paid', 'success'){$instFilter}
             UNION ALL
@@ -175,7 +179,7 @@ class DashboardAnalyticsController extends BaseController
             SELECT total_amount as amount, payment_date as created_at FROM fee_payments WHERE payment_status IN ('success', 'paid'){$instFilter}
         ) as combined_fees"))
             ->select(
-                DB::raw("to_char(created_at, 'Mon') as month"),
+                DB::raw("{$monthExpr} as month"),
                 DB::raw('SUM(amount) as total'),
                 DB::raw("extract(month from created_at) as month_num")
             )

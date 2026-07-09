@@ -56,7 +56,7 @@ submitForm.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     submitForm.form = submitFormForm
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
 export const getFeePreview = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -71,7 +71,7 @@ getFeePreview.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
 getFeePreview.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -99,7 +99,7 @@ getFeePreview.url = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
 getFeePreview.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -108,7 +108,7 @@ getFeePreview.get = (args: { id: string | number } | [id: string | number ] | st
 })
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
 getFeePreview.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -118,7 +118,7 @@ getFeePreview.head = (args: { id: string | number } | [id: string | number ] | s
 
     /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
     const getFeePreviewForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -128,7 +128,7 @@ getFeePreview.head = (args: { id: string | number } | [id: string | number ] | s
 
             /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
         getFeePreviewForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -137,7 +137,7 @@ getFeePreview.head = (args: { id: string | number } | [id: string | number ] | s
         })
             /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\AdmissionSubmissionController::getFeePreview
- * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:619
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/AdmissionSubmissionController.php:661
  * @route '/api/v1/student/admission-applications/{id}/fee-preview'
  */
         getFeePreviewForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

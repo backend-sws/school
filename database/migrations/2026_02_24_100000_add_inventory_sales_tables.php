@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('inventory_items', function (Blueprint $table) {
-            $table->decimal('selling_price', 12, 2)->nullable()->after('is_active');
+            $table->decimal('selling_price', 12, 2)->nullable();
         });
 
         Schema::create('inventory_sales', function (Blueprint $table) {

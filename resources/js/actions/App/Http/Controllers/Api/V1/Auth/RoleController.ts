@@ -215,7 +215,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-export const show = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -230,7 +230,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-show.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { role: args }
     }
@@ -263,7 +263,7 @@ show.url = (args: { role: string | number | { id: string | number } } | [role: s
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-show.get = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -272,7 +272,7 @@ show.get = (args: { role: string | number | { id: string | number } } | [role: s
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-show.head = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -282,7 +282,7 @@ show.head = (args: { role: string | number | { id: string | number } } | [role: 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-    const showForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -292,7 +292,7 @@ show.head = (args: { role: string | number | { id: string | number } } | [role: 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-        showForm.get = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -301,7 +301,7 @@ show.head = (args: { role: string | number | { id: string | number } } | [role: 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:133
  * @route '/api/v1/roles/{role}'
  */
-        showForm.head = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -317,7 +317,7 @@ show.head = (args: { role: string | number | { id: string | number } } | [role: 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-export const update = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -332,7 +332,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-update.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { role: args }
     }
@@ -365,7 +365,7 @@ update.url = (args: { role: string | number | { id: string | number } } | [role:
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-update.put = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -374,7 +374,7 @@ update.put = (args: { role: string | number | { id: string | number } } | [role:
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-update.patch = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -384,7 +384,7 @@ update.patch = (args: { role: string | number | { id: string | number } } | [rol
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-    const updateForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -399,7 +399,7 @@ update.patch = (args: { role: string | number | { id: string | number } } | [rol
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-        updateForm.put = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -413,7 +413,7 @@ update.patch = (args: { role: string | number | { id: string | number } } | [rol
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:161
  * @route '/api/v1/roles/{role}'
  */
-        updateForm.patch = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -429,7 +429,7 @@ update.patch = (args: { role: string | number | { id: string | number } } | [rol
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
  * @route '/api/v1/roles/{role}'
  */
-export const destroy = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -444,7 +444,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
  * @route '/api/v1/roles/{role}'
  */
-destroy.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { role: args }
     }
@@ -477,7 +477,7 @@ destroy.url = (args: { role: string | number | { id: string | number } } | [role
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
  * @route '/api/v1/roles/{role}'
  */
-destroy.delete = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -487,7 +487,7 @@ destroy.delete = (args: { role: string | number | { id: string | number } } | [r
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
  * @route '/api/v1/roles/{role}'
  */
-    const destroyForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -502,7 +502,7 @@ destroy.delete = (args: { role: string | number | { id: string | number } } | [r
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:191
  * @route '/api/v1/roles/{role}'
  */
-        destroyForm.delete = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -518,7 +518,7 @@ destroy.delete = (args: { role: string | number | { id: string | number } } | [r
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
  * @route '/api/v1/roles/{role}/workflows'
  */
-export const syncWorkflows = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const syncWorkflows = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncWorkflows.url(args, options),
     method: 'post',
 })
@@ -533,7 +533,7 @@ syncWorkflows.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
  * @route '/api/v1/roles/{role}/workflows'
  */
-syncWorkflows.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+syncWorkflows.url = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { role: args }
     }
@@ -566,7 +566,7 @@ syncWorkflows.url = (args: { role: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
  * @route '/api/v1/roles/{role}/workflows'
  */
-syncWorkflows.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+syncWorkflows.post = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncWorkflows.url(args, options),
     method: 'post',
 })
@@ -576,7 +576,7 @@ syncWorkflows.post = (args: { role: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
  * @route '/api/v1/roles/{role}/workflows'
  */
-    const syncWorkflowsForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const syncWorkflowsForm = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: syncWorkflows.url(args, options),
         method: 'post',
     })
@@ -586,7 +586,7 @@ syncWorkflows.post = (args: { role: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:254
  * @route '/api/v1/roles/{role}/workflows'
  */
-        syncWorkflowsForm.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        syncWorkflowsForm.post = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: syncWorkflows.url(args, options),
             method: 'post',
         })
@@ -597,7 +597,7 @@ syncWorkflows.post = (args: { role: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
  * @route '/api/v1/roles/{role}/permissions'
  */
-export const syncPermissions = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const syncPermissions = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncPermissions.url(args, options),
     method: 'post',
 })
@@ -612,7 +612,7 @@ syncPermissions.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
  * @route '/api/v1/roles/{role}/permissions'
  */
-syncPermissions.url = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+syncPermissions.url = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { role: args }
     }
@@ -645,7 +645,7 @@ syncPermissions.url = (args: { role: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
  * @route '/api/v1/roles/{role}/permissions'
  */
-syncPermissions.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+syncPermissions.post = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncPermissions.url(args, options),
     method: 'post',
 })
@@ -655,7 +655,7 @@ syncPermissions.post = (args: { role: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
  * @route '/api/v1/roles/{role}/permissions'
  */
-    const syncPermissionsForm = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const syncPermissionsForm = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: syncPermissions.url(args, options),
         method: 'post',
     })
@@ -665,7 +665,7 @@ syncPermissions.post = (args: { role: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Auth/RoleController.php:222
  * @route '/api/v1/roles/{role}/permissions'
  */
-        syncPermissionsForm.post = (args: { role: string | number | { id: string | number } } | [role: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        syncPermissionsForm.post = (args: { role: number | { id: number } } | [role: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: syncPermissions.url(args, options),
             method: 'post',
         })

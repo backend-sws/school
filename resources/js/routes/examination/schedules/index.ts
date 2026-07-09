@@ -157,7 +157,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::store
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:102
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:100
  * @route '/examination/schedules'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::store
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:102
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:100
  * @route '/examination/schedules'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::store
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:102
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:100
  * @route '/examination/schedules'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::store
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:102
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:100
  * @route '/examination/schedules'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::store
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:102
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:100
  * @route '/examination/schedules'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,10 +212,10 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-export const edit = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -227,10 +227,10 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-edit.url = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+edit.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { schedule: args }
     }
@@ -260,48 +260,48 @@ edit.url = (args: { schedule: string | number | { id: string | number } } | [sch
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-edit.get = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-edit.head = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-    const editForm = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const editForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: edit.url(args, options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-        editForm.get = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::edit
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:148
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:146
  * @route '/examination/schedules/{schedule}/edit'
  */
-        editForm.head = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -314,10 +314,10 @@ edit.head = (args: { schedule: string | number | { id: string | number } } | [sc
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::update
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:161
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:159
  * @route '/examination/schedules/{schedule}'
  */
-export const update = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -329,10 +329,10 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::update
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:161
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:159
  * @route '/examination/schedules/{schedule}'
  */
-update.url = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { schedule: args }
     }
@@ -362,20 +362,20 @@ update.url = (args: { schedule: string | number | { id: string | number } } | [s
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::update
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:161
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:159
  * @route '/examination/schedules/{schedule}'
  */
-update.put = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 
     /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::update
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:161
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:159
  * @route '/examination/schedules/{schedule}'
  */
-    const updateForm = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -387,10 +387,10 @@ update.put = (args: { schedule: string | number | { id: string | number } } | [s
 
             /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::update
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:161
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:159
  * @route '/examination/schedules/{schedule}'
  */
-        updateForm.put = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -403,10 +403,10 @@ update.put = (args: { schedule: string | number | { id: string | number } } | [s
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::destroy
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:181
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:179
  * @route '/examination/schedules/{schedule}'
  */
-export const destroy = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -418,10 +418,10 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::destroy
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:181
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:179
  * @route '/examination/schedules/{schedule}'
  */
-destroy.url = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { schedule: args }
     }
@@ -451,20 +451,20 @@ destroy.url = (args: { schedule: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::destroy
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:181
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:179
  * @route '/examination/schedules/{schedule}'
  */
-destroy.delete = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
     /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::destroy
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:181
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:179
  * @route '/examination/schedules/{schedule}'
  */
-    const destroyForm = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -476,10 +476,10 @@ destroy.delete = (args: { schedule: string | number | { id: string | number } } 
 
             /**
 * @see \App\Http\Controllers\Examination\ExamScheduleController::destroy
- * @see app/Http/Controllers/Examination/ExamScheduleController.php:181
+ * @see app/Http/Controllers/Examination/ExamScheduleController.php:179
  * @route '/examination/schedules/{schedule}'
  */
-        destroyForm.delete = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

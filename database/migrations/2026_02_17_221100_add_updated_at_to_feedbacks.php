@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::table('feedbacks', function (Blueprint $table) {
             if (!Schema::hasColumn('feedbacks', 'updated_at')) {
-                $table->timestamp('updated_at')->nullable()->after('created_at');
+                $table->timestamp('updated_at')->nullable();
             }
         });
     }

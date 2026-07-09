@@ -16,6 +16,8 @@ import Student from './Student'
 import Notices from './Notices'
 import Admission from './Admission'
 import Fees from './Fees'
+import Expense from './Expense'
+import HR from './HR'
 import Certificates from './Certificates'
 import Inventory from './Inventory'
 import Transport from './Transport'
@@ -46,6 +48,8 @@ Student: Object.assign(Student, Student),
 Notices: Object.assign(Notices, Notices),
 Admission: Object.assign(Admission, Admission),
 Fees: Object.assign(Fees, Fees),
+Expense: Object.assign(Expense, Expense),
+HR: Object.assign(HR, HR),
 Certificates: Object.assign(Certificates, Certificates),
 Inventory: Object.assign(Inventory, Inventory),
 Transport: Object.assign(Transport, Transport),

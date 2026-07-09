@@ -45,7 +45,7 @@ return new class extends Migration
     {
         // Re-add the column
         Schema::table('institutions', function (Blueprint $table) {
-            $table->string('domain', 255)->nullable()->after('website');
+            $table->string('domain', 255)->nullable();
         });
 
         // Restore first domain from institution_domains back to institutions.domain

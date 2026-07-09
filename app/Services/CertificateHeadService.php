@@ -14,7 +14,7 @@ class CertificateHeadService
             ->when(isset($filters['stream_id']), fn($q) => $q->where('stream_id', $filters['stream_id']))
             ->when(isset($filters['status']), fn($q) => $q->where('status', $filters['status']))
             ->when(isset($filters['search']), function ($q) use ($filters) {
-                $q->where('title', 'ILIKE', "%{$filters['search']}%");
+                $q->where('title', 'LIKE', "%{$filters['search']}%");
             })
             ->with(['mainStream:id,name', 'stream:id,name'])
             ->latest()

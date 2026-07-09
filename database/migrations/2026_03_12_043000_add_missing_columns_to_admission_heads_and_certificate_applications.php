@@ -8,14 +8,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('admission_heads', function (Blueprint $table) {
-            $table->boolean('allow_subject_paper_selection')->default(false)->after('is_enabled');
-            $table->boolean('has_application_fees')->default(false)->after('allow_subject_paper_selection');
-            $table->decimal('application_fees', 10, 2)->default(0)->after('has_application_fees');
-            $table->decimal('total_admission_fees', 10, 2)->default(0)->after('application_fees');
+            $table->boolean('allow_subject_paper_selection')->default(false);
+            $table->boolean('has_application_fees')->default(false);
+            $table->decimal('application_fees', 10, 2)->default(0);
+            $table->decimal('total_admission_fees', 10, 2)->default(0);
         });
 
         Schema::table('certificate_applications', function (Blueprint $table) {
-            $table->timestamp('updated_at')->nullable()->after('completed_at');
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

@@ -156,6 +156,11 @@ showa2c058616aeb0c9393ca03a98bc05c02.head = (options?: RouteQueryOptions): Route
     
     showa2c058616aeb0c9393ca03a98bc05c02.form = showa2c058616aeb0c9393ca03a98bc05c02Form
 
+/**
+* Multiple routes resolve to \App\Http\Controllers\Web\LegalController::show, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `show['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
 export const show = {
     '/terms': show619dc3a99425f668ea9cab64e6648cb4,
     '/privacy': showa2c058616aeb0c9393ca03a98bc05c02,

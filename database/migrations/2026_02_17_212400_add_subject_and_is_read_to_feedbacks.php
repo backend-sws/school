@@ -9,13 +9,13 @@ return new class extends Migration {
     {
         Schema::table('feedbacks', function (Blueprint $table) {
             if (!Schema::hasColumn('feedbacks', 'subject')) {
-                $table->string('subject', 500)->nullable()->after('mobile');
+                $table->string('subject', 500)->nullable();
             }
             if (!Schema::hasColumn('feedbacks', 'is_read')) {
-                $table->boolean('is_read')->default(false)->after('status');
+                $table->boolean('is_read')->default(false);
             }
             if (!Schema::hasColumn('feedbacks', 'updated_at')) {
-                $table->timestamp('updated_at')->nullable()->after('created_at');
+                $table->timestamp('updated_at')->nullable();
             }
         });
     }

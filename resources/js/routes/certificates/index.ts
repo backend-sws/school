@@ -3,7 +3,7 @@ import types907509 from './types'
 import applications17f98b from './applications'
 import idCards from './id-cards'
 /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -33,7 +33,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -42,7 +42,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -51,7 +51,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -59,7 +59,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:305
+ * @see routes/web.php:333
  * @route '/certificates'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -74,7 +74,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
 export const manageCertificateHead = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -88,7 +88,7 @@ manageCertificateHead.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
 manageCertificateHead.url = (options?: RouteQueryOptions) => {
@@ -96,7 +96,7 @@ manageCertificateHead.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
 manageCertificateHead.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -104,7 +104,7 @@ manageCertificateHead.get = (options?: RouteQueryOptions): RouteDefinition<'get'
     method: 'get',
 })
 /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
 manageCertificateHead.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -113,7 +113,7 @@ manageCertificateHead.head = (options?: RouteQueryOptions): RouteDefinition<'hea
 })
 
     /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
     const manageCertificateHeadForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -122,7 +122,7 @@ manageCertificateHead.head = (options?: RouteQueryOptions): RouteDefinition<'hea
     })
 
             /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
         manageCertificateHeadForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -130,7 +130,7 @@ manageCertificateHead.head = (options?: RouteQueryOptions): RouteDefinition<'hea
             method: 'get',
         })
             /**
- * @see routes/web.php:306
+ * @see routes/web.php:334
  * @route '/certificates/manage-certificate-head'
  */
         manageCertificateHeadForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -145,7 +145,7 @@ manageCertificateHead.head = (options?: RouteQueryOptions): RouteDefinition<'hea
     
     manageCertificateHead.form = manageCertificateHeadForm
 /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
 export const manageCertificateRules = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ manageCertificateRules.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
 manageCertificateRules.url = (options?: RouteQueryOptions) => {
@@ -167,7 +167,7 @@ manageCertificateRules.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
 manageCertificateRules.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -175,7 +175,7 @@ manageCertificateRules.get = (options?: RouteQueryOptions): RouteDefinition<'get
     method: 'get',
 })
 /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
 manageCertificateRules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -184,7 +184,7 @@ manageCertificateRules.head = (options?: RouteQueryOptions): RouteDefinition<'he
 })
 
     /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
     const manageCertificateRulesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -193,7 +193,7 @@ manageCertificateRules.head = (options?: RouteQueryOptions): RouteDefinition<'he
     })
 
             /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
         manageCertificateRulesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -201,7 +201,7 @@ manageCertificateRules.head = (options?: RouteQueryOptions): RouteDefinition<'he
             method: 'get',
         })
             /**
- * @see routes/web.php:307
+ * @see routes/web.php:335
  * @route '/certificates/rules'
  */
         manageCertificateRulesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -216,7 +216,7 @@ manageCertificateRules.head = (options?: RouteQueryOptions): RouteDefinition<'he
     
     manageCertificateRules.form = manageCertificateRulesForm
 /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
 export const types = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -230,7 +230,7 @@ types.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
 types.url = (options?: RouteQueryOptions) => {
@@ -238,7 +238,7 @@ types.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
 types.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -246,7 +246,7 @@ types.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
 types.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -255,7 +255,7 @@ types.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
     const typesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -264,7 +264,7 @@ types.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
         typesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -272,7 +272,7 @@ types.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:309
+ * @see routes/web.php:337
  * @route '/certificates/types'
  */
         typesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -287,7 +287,7 @@ types.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     types.form = typesForm
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
 export const applications = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -301,7 +301,7 @@ applications.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
 applications.url = (options?: RouteQueryOptions) => {
@@ -309,7 +309,7 @@ applications.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
 applications.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -317,7 +317,7 @@ applications.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
 applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -326,7 +326,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
     const applicationsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -335,7 +335,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
         applicationsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -343,7 +343,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:313
+ * @see routes/web.php:341
  * @route '/certificates/applications'
  */
         applicationsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

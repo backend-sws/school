@@ -112,12 +112,14 @@ class FeeHubAnalytics implements AnalyticsContract
                 $q->whereHas('student.academicInfo', fn($ai) => $ai->where('lms_class_id', $classId));
             });
 
+        $monthExpr = DB::connection()->getDriverName() === 'pgsql' ? "to_char(date, 'Mon')" : "DATE_FORMAT(date, '%b')";
+
         return DB::table(DB::raw("({$admissionQuery->toSql()} UNION ALL {$certQuery->toSql()} UNION ALL {$generalQuery->toSql()}) as combined_fees"))
             ->mergeBindings($admissionQuery->getQuery())
             ->mergeBindings($certQuery->getQuery())
             ->mergeBindings($generalQuery->getQuery())
             ->select(
-                DB::raw("to_char(date, 'Mon') as month"),
+                DB::raw("{$monthExpr} as month"),
                 DB::raw('SUM(amount) as total'),
                 DB::raw("extract(month from date) as month_num")
             )

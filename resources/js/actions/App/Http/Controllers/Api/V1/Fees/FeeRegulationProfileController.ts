@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-export const show = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,14 +152,11 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-show.url = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { fee_regulation_profile: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { fee_regulation_profile: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -170,9 +167,7 @@ show.url = (args: { fee_regulation_profile: string | number | { id: string | num
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        fee_regulation_profile: typeof args.fee_regulation_profile === 'object'
-                ? args.fee_regulation_profile.id
-                : args.fee_regulation_profile,
+                        fee_regulation_profile: args.fee_regulation_profile,
                 }
 
     return show.definition.url
@@ -185,7 +180,7 @@ show.url = (args: { fee_regulation_profile: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-show.get = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +189,7 @@ show.get = (args: { fee_regulation_profile: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-show.head = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +199,7 @@ show.head = (args: { fee_regulation_profile: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-    const showForm = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +209,7 @@ show.head = (args: { fee_regulation_profile: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-        showForm.get = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +218,7 @@ show.head = (args: { fee_regulation_profile: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-        showForm.head = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -236,10 +231,10 @@ show.head = (args: { fee_regulation_profile: string | number | { id: string | nu
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-export const update = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -251,17 +246,14 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-update.url = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { fee_regulation_profile: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { fee_regulation_profile: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -272,9 +264,7 @@ update.url = (args: { fee_regulation_profile: string | number | { id: string | n
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        fee_regulation_profile: typeof args.fee_regulation_profile === 'object'
-                ? args.fee_regulation_profile.id
-                : args.fee_regulation_profile,
+                        fee_regulation_profile: args.fee_regulation_profile,
                 }
 
     return update.definition.url
@@ -284,29 +274,29 @@ update.url = (args: { fee_regulation_profile: string | number | { id: string | n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-update.put = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-update.patch = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-    const updateForm = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -318,10 +308,10 @@ update.patch = (args: { fee_regulation_profile: string | number | { id: string |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-        updateForm.put = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -332,10 +322,10 @@ update.patch = (args: { fee_regulation_profile: string | number | { id: string |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:164
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-        updateForm.patch = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -348,10 +338,10 @@ update.patch = (args: { fee_regulation_profile: string | number | { id: string |
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:241
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-export const destroy = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -363,17 +353,14 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:241
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-destroy.url = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { fee_regulation_profile: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { fee_regulation_profile: args.id }
-        }
     
     if (Array.isArray(args)) {
         args = {
@@ -384,9 +371,7 @@ destroy.url = (args: { fee_regulation_profile: string | number | { id: string | 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        fee_regulation_profile: typeof args.fee_regulation_profile === 'object'
-                ? args.fee_regulation_profile.id
-                : args.fee_regulation_profile,
+                        fee_regulation_profile: args.fee_regulation_profile,
                 }
 
     return destroy.definition.url
@@ -396,20 +381,20 @@ destroy.url = (args: { fee_regulation_profile: string | number | { id: string | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:241
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-destroy.delete = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:241
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-    const destroyForm = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -421,10 +406,10 @@ destroy.delete = (args: { fee_regulation_profile: string | number | { id: string
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:241
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
-        destroyForm.delete = (args: { fee_regulation_profile: string | number | { id: string | number } } | [fee_regulation_profile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

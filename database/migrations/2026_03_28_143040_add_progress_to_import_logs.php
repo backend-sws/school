@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('import_logs', function (Blueprint $table) {
-            $table->unsignedTinyInteger('progress')->default(0)->after('status');
+            $table->unsignedTinyInteger('progress')->default(0);
         });
     }
 

@@ -20,13 +20,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use NotificationChannels\WebPush\HasPushSubscriptions;
 use App\Notifications\Auth\ResetPasswordNotification as CustomResetPasswordNotification;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, NotifiableRealtime, HasPushSubscriptions, TwoFactorAuthenticatable, Auditable, ResolvesUserContext;
+    use HasFactory, Notifiable, NotifiableRealtime, TwoFactorAuthenticatable, Auditable, ResolvesUserContext;
 
     /**
      * The attributes that are mass assignable.

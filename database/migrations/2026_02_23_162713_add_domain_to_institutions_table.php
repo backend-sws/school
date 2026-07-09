@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('institutions', function (Blueprint $table) {
-            $table->string('domain')->unique()->nullable()->after('website');
+            $table->string('domain')->unique()->nullable();
         });
     }
 

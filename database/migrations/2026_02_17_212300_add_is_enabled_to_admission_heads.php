@@ -9,10 +9,10 @@ return new class extends Migration {
     {
         Schema::table('admission_heads', function (Blueprint $table) {
             if (!Schema::hasColumn('admission_heads', 'is_enabled')) {
-                $table->boolean('is_enabled')->default(true)->after('status');
+                $table->boolean('is_enabled')->default(true);
             }
             if (!Schema::hasColumn('admission_heads', 'updated_at')) {
-                $table->timestamp('updated_at')->nullable()->after('created_at');
+                $table->timestamp('updated_at')->nullable();
             }
         });
     }

@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
 export const overdue = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ overdue.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
 overdue.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ overdue.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
 overdue.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ overdue.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
 overdue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ overdue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
     const overdueForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ overdue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
         overdueForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ overdue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::overdue
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:142
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:198
  * @route '/api/v1/fees/dues/overdue'
  */
         overdueForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ overdue.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     overdue.form = overdueForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::sendReminder
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:229
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:285
  * @route '/api/v1/fees/dues/send-reminder'
  */
 export const sendReminder = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ sendReminder.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::sendReminder
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:229
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:285
  * @route '/api/v1/fees/dues/send-reminder'
  */
 sendReminder.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ sendReminder.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::sendReminder
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:229
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:285
  * @route '/api/v1/fees/dues/send-reminder'
  */
 sendReminder.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ sendReminder.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::sendReminder
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:229
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:285
  * @route '/api/v1/fees/dues/send-reminder'
  */
     const sendReminderForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ sendReminder.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeDuesController::sendReminder
- * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:229
+ * @see app/Http/Controllers/Api/V1/Fees/FeeDuesController.php:285
  * @route '/api/v1/fees/dues/send-reminder'
  */
         sendReminderForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

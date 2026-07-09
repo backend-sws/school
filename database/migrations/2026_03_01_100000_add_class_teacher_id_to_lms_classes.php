@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lms_classes', function (Blueprint $table) {
-            $table->foreignId('class_teacher_id')->nullable()->after('created_by')->constrained('users')->nullOnDelete();
+            $table->foreignId('class_teacher_id')->nullable()->constrained('users')->nullOnDelete();
         });
     }
 

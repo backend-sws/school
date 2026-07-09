@@ -11,11 +11,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('fee_payments', function (Blueprint $table) {
-            $table->string('for_month', 10)->nullable()->after('fee_head_id')->index();
-            $table->string('receipt_no', 50)->nullable()->after('transaction_id')->index();
-            $table->jsonb('ledger_snapshot')->nullable()->after('remarks');
-            $table->string('payable_entity_type', 100)->nullable()->after('ledger_snapshot')->index();
-            $table->unsignedBigInteger('payable_entity_id')->nullable()->after('payable_entity_type')->index();
+            $table->string('for_month', 10)->nullable()->index();
+            $table->string('receipt_no', 50)->nullable()->index();
+            $table->jsonb('ledger_snapshot')->nullable();
+            $table->string('payable_entity_type', 100)->nullable()->index();
+            $table->unsignedBigInteger('payable_entity_id')->nullable()->index();
         });
     }
 

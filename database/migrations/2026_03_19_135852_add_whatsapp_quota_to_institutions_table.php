@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('institutions', function (Blueprint $table) {
-            $table->unsignedInteger('whatsapp_monthly_quota')->default(500)->after('sms_daily_limit');
-            $table->unsignedInteger('whatsapp_daily_limit')->default(100)->after('whatsapp_monthly_quota');
+            $table->unsignedInteger('whatsapp_monthly_quota')->default(500);
+            $table->unsignedInteger('whatsapp_daily_limit')->default(100);
         });
     }
 

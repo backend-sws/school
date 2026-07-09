@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-export const show = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-show.url = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_movement: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { inventory_movement: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-show.get = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { inventory_movement: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-show.head = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { inventory_movement: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-    const showForm = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { inventory_movement: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-        showForm.get = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { inventory_movement: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
-        showForm.head = (args: { inventory_movement: string | number | { id: string | number } } | [inventory_movement: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

@@ -13,14 +13,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('admission_verification_data', function (Blueprint $table) {
-            $table->string('admission_id', 50)->nullable()->after('institution_id');
-            $table->string('student_name', 150)->nullable()->after('admission_id');
-            $table->string('fathers_name', 150)->nullable()->after('student_name');
-            $table->date('dob')->nullable()->after('fathers_name');
-            $table->string('gender', 20)->nullable()->after('dob');
-            $table->string('category', 30)->nullable()->after('gender');
-            $table->string('mobile_number', 15)->nullable()->after('category');
-            $table->string('email', 150)->nullable()->after('mobile_number');
+            $table->string('admission_id', 50)->nullable();
+            $table->string('student_name', 150)->nullable();
+            $table->string('fathers_name', 150)->nullable();
+            $table->date('dob')->nullable();
+            $table->string('gender', 20)->nullable();
+            $table->string('category', 30)->nullable();
+            $table->string('mobile_number', 15)->nullable();
+            $table->string('email', 150)->nullable();
             $table->index('admission_id');
         });
 

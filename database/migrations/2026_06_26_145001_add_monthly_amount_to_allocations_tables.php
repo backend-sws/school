@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transport_assignments', function (Blueprint $table) {
-            $table->decimal('monthly_amount', 10, 2)->nullable()->after('transport_stop_id');
+            $table->decimal('monthly_amount', 10, 2)->nullable();
         });
 
         Schema::table('hostel_allocations', function (Blueprint $table) {
-            $table->decimal('monthly_amount', 10, 2)->nullable()->after('hostel_bed_id');
+            $table->decimal('monthly_amount', 10, 2)->nullable();
         });
     }
 

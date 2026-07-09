@@ -110,6 +110,11 @@ storee4124cac5b7f0ad62031af8a793cce3b.post = (options?: RouteQueryOptions): Rout
     
     storee4124cac5b7f0ad62031af8a793cce3b.form = storee4124cac5b7f0ad62031af8a793cce3bForm
 
+/**
+* Multiple routes resolve to \App\Http\Controllers\Api\V1\Grievance\FeedbackController::store, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `store['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
 export const store = {
     '/api/v1/public/feedback': stored4fcf0ad96a53ca69814762722e01786,
     '/api/v1/feedbacks': storee4124cac5b7f0ad62031af8a793cce3b,

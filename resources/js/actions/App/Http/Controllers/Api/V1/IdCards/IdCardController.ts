@@ -56,7 +56,7 @@ generate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     generate.form = generateForm
 /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
 export const bulkDownload = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -71,7 +71,7 @@ bulkDownload.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
 bulkDownload.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ bulkDownload.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
 bulkDownload.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -89,7 +89,7 @@ bulkDownload.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
 bulkDownload.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -99,7 +99,7 @@ bulkDownload.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
     const bulkDownloadForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -109,7 +109,7 @@ bulkDownload.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
         bulkDownloadForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -118,7 +118,7 @@ bulkDownload.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\IdCards\IdCardController::bulkDownload
- * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:120
+ * @see app/Http/Controllers/Api/V1/IdCards/IdCardController.php:118
  * @route '/api/v1/id-cards/bulk-download'
  */
         bulkDownloadForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
