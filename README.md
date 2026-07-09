@@ -1,105 +1,40 @@
-# College Management System
+# SaaS School Management System
 
-> [!NOTE]
-> This project is powered by Neon PostgreSQL and hosted on Linode Kubernetes.
-
-## 🚀 Deployment Status
-Automated CI/CD is active via GitHub Actions.
-
-A modern college management system built with Laravel 12, Inertia.js, React, and PostgreSQL.
+A modern, multi-tenant SaaS School/College management system built with Laravel 12, Inertia.js, React, and MySQL.
 
 ## Features
 
-- 🎓 **Student Management** - Registration, profiles, verification
-- 📚 **Academic Setup** - Departments, Streams, Sessions
-- 📝 **Admission** - Online applications, fee structures
-- 💰 **Fee Management** - Fee heads, payments, receipts
-- 📜 **Certificates** - Application and issuance
-- 🌐 **Website Content** - Sliders, news, galleries
-- 📩 **Grievances** - Student complaints and contact forms
-- 👥 **User Management** - Roles and permissions
-- 📊 **Audit Logs** - Track all changes
+- 🎓 **Multi-Tenant SaaS** - Infinite schools from a single database/codebase.
+- 🏫 **Subdomain Routing** - Automatic school resolution (e.g. `school1.yoursaas.com`).
+- 🌐 **Custom Domains** - Full support for mapping custom domains to specific schools.
+- 👥 **User Roles** - Super Admin, School Admin, Teacher, Student, Parent.
+- 📚 **Academic Setup** - Timetables, Subjects, Streams, Sessions.
+- 💰 **Fee Management** - Dynamic fee structures, receipts, reports.
+- 📄 **Heavy Optimizations** - PDF Generation and Excel exports optimized for Shared Hosting memory constraints.
 
 ## Tech Stack
 
-- **Backend**: Laravel 12, PHP 8.4
+- **Backend**: Laravel 12, PHP 8.2+
 - **Frontend**: React 18, Inertia.js, TypeScript
-- **Database**: PostgreSQL
+- **Database**: MySQL (or PostgreSQL via driver support)
 - **Styling**: Tailwind CSS, shadcn/ui
-- **API Docs**: Swagger/OpenAPI
 
 ---
 
-## 🐳 Setup with Docker (Recommended)
+## 💻 Local Development Setup (Windows / XAMPP)
 
 ### Prerequisites
-- Docker & Docker Compose installed
-
-### Steps
-
-```bash
-# 1. Clone the repository
-git clone <repo-url>
-cd college-management-system
-
-# 2. Copy environment file
-cp .env.docker .env
-
-# 3. Generate app key (if not set)
-# You can do this after containers are up
-
-# 4. Build and start containers
-docker compose build
-docker compose up -d
-
-# 5. Wait for containers to be healthy, then run migrations
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
-docker compose exec app php artisan db:seed
-
-# 6. Generate Swagger docs
-docker compose exec app php artisan l5-swagger:generate
-```
-
-### Access Points
-| Service | URL |
-|---------|-----|
-| Application | http://localhost:18088 |
-| API Docs (Swagger) | http://localhost:18088/api/documentation |
-| Adminer (DB GUI) | http://localhost:18090 |
-
-Default ports (override in `.env`): `APP_PORT=18088`, `ADMINER_PORT=18090`, `POSTGRES_HOST_PORT=15432`, `VITE_PORT=15173`.
-
-**Using Podman?** If you see "proxy already running" or "no such container", run `./scripts/podman-reset-and-up.sh` or see [docker/PODMAN.md](docker/PODMAN.md).
-
-### Stopping & Restarting
-```bash
-# Stop containers
-docker compose down
-
-# Restart containers
-docker compose up -d
-
-# View logs
-docker compose logs -f app
-```
-
----
-
-## 💻 Setup without Docker (Local Development)
-
-### Prerequisites
-- PHP 8.4+
+- PHP 8.2+
 - Composer
 - Node.js 18+ & npm
-- PostgreSQL 15+
+- MySQL (XAMPP / WAMP)
 
 ### Steps
 
 ```bash
 # 1. Clone the repository
 git clone <repo-url>
-cd college-management-system
+cd zytrixonschool
 
 # 2. Install PHP dependencies
 composer install
@@ -111,122 +46,87 @@ npm install
 cp .env.example .env
 
 # 5. Configure database in .env
-# DB_CONNECTION=pgsql
+# DB_CONNECTION=mysql
 # DB_HOST=127.0.0.1
-# DB_PORT=5432
-# DB_DATABASE=college_mgmt
-# DB_USERNAME=postgres
-# DB_PASSWORD=your_password
+# DB_PORT=3306
+# DB_DATABASE=school
+# DB_USERNAME=root
+# DB_PASSWORD=
 
 # 6. Generate application key
 php artisan key:generate
 
-# 7. Run migrations and seeders
-php artisan migrate
-php artisan db:seed
+# 7. Run migrations and seeders (Creates Super Admin)
+php artisan migrate:fresh --seed
 
-# 8. Generate Swagger docs
-php artisan l5-swagger:generate
-
-# 9. Build frontend assets
-npm run build
-
-# 10. Start the development server
-php artisan serve
-```
-
-### Development Mode (with hot reload)
-```bash
-# Terminal 1: Start Laravel server
+# 8. Start the development server (Terminal 1)
 php artisan serve
 
-# Terminal 2: Start Vite dev server
+# 9. Start Vite for frontend hot-reload (Terminal 2)
 npm run dev
 ```
 
-### Access Points
-| Service | URL |
-|---------|-----|
-| Application | http://localhost:8000 |
-| API Docs (Swagger) | http://localhost:8000/api/documentation |
+> **Note on Service Workers**: If you previously had `APP_ENV=production` locally, VitePWA might cache HTTPS routes. Open browser DevTools > Application > Service Workers and click "Unregister" to fix local SSL errors.
 
 ---
 
-## 📁 Project Structure
+## 🚀 Shared Hosting / cPanel Deployment Guide
 
-```
-├── app/
-│   ├── Http/Controllers/Api/V1/   # API Controllers
-│   ├── Models/                     # Eloquent Models
-│   └── Traits/                     # Reusable Traits
-├── config/
-│   ├── cms.php                     # CMS Configuration
-│   └── l5-swagger.php              # Swagger Config
-├── database/
-│   ├── migrations/                 # Database Migrations
-│   └── seeders/                    # Database Seeders
-├── resources/js/
-│   ├── pages/                      # React Pages
-│   ├── components/                 # React Components
-│   └── layouts/                    # Page Layouts
-├── routes/
-│   ├── api.php                     # API Routes
-│   └── web.php                     # UI Routes
-└── docker/
-    └── entrypoint.sh               # Docker Entrypoint
-```
+This application is fully optimized to run on standard Shared Hosting (e.g., Hostinger, GoDaddy) using a **Single Database Multi-Tenancy** approach.
 
----
-
-## 🔧 Configuration
-
-### Single College Mode (Default)
-The system is configured for single-college operation. The `college_id` is auto-populated from:
-
-```env
-CMS_DEFAULT_COLLEGE_ID=1
-CMS_MULTI_COLLEGE_MODE=false
-```
-
-### Multi-College Mode
-To enable multi-college support:
-```env
-CMS_MULTI_COLLEGE_MODE=true
-```
-
----
-
-## 📖 API Documentation
-
-Swagger UI is available at `/api/documentation` (no authentication required).
-
-### API Endpoints Summary
-
-| Module | Endpoints |
-|--------|-----------|
-| Auth | `POST /api/v1/auth/login`, `/register`, `/logout` |
-| Students | `GET/POST/PUT/DELETE /api/v1/students` |
-| Admission | `/api/v1/admission-heads`, `/api/v1/applications` |
-| Fees | `/api/v1/fee-heads`, `/api/v1/fee-payments` |
-| Certificates | `/api/v1/certificate-heads`, `/api/v1/certificate-applications` |
-| Website | `/api/v1/website/sliders`, `/news`, `/galleries` |
-| Grievances | `/api/v1/grievances`, `/api/v1/contacts` |
-| Settings | `/api/v1/settings`, `/api/v1/audit-logs` |
-
----
-
-## 🧪 Testing
-
+### 1. Pre-deployment (Local)
+Shared hosting often doesn't handle Node.js compilation well. Compile your assets locally:
 ```bash
-# Run tests
-php artisan test
+npm run build
+```
+Create a `.zip` of your project. **Include `vendor` and `public/build`**, but **Exclude `node_modules`**.
 
-# Run with coverage
-php artisan test --coverage
+### 2. File Upload & Setup
+1. Upload the `.zip` to your cPanel File Manager (e.g., in `/home/username/school_saas/`).
+2. Extract the files.
+3. Configure your Domain or Subdomain's **Document Root** to point to the `/public` directory (e.g., `/home/username/school_saas/public`).
+
+### 3. Database
+1. Create a MySQL Database and User in cPanel.
+2. Edit your `.env` file with the production credentials and set:
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://yoursaasdomain.com
+   FORCE_HTTPS=true
+   ```
+
+### 4. Run Migrations & Cache
+Run the following via cPanel Terminal or SSH:
+```bash
+cd school_saas
+php artisan migrate --seed
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### 5. Multi-Tenant Subdomains (Wildcard)
+To dynamically route `school1.domain.com` without creating folders:
+1. In cPanel, create a Subdomain named `*` (asterisk).
+2. Point its Document Root to the same `/public` folder.
+3. In your DNS settings, ensure there is an `A` record for `*` pointing to your Server IP.
+
+### 6. Background Tasks (Cron Job)
+Add a Cron Job in cPanel to run **Once Per Minute** (`* * * * *`):
+```bash
+cd /home/username/school_saas && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1
 ```
 
 ---
+
+## 🔗 Custom Domain Mapping
+
+If a school wants to use a custom domain (e.g., `their-school.com`):
+1. **App Level:** Login as Super Admin and assign the domain to their Institution profile.
+2. **cPanel Level:** Add the domain as an **Alias / Parked Domain** or **Addon Domain** pointing to the exact same `/public` document root.
+3. **DNS Level:** The school points their `A Record` to your server IP.
 
 ## 📄 License
-
-MIT License
+Proprietary / Closed Source
