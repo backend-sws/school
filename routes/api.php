@@ -466,7 +466,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::apiResource('hostels', \App\Http\Controllers\Api\V1\Hostel\HostelController::class);
                 Route::apiResource('hostels.floors', \App\Http\Controllers\Api\V1\Hostel\HostelFloorController::class)->shallow();
                 Route::get('rooms/export', [\App\Http\Controllers\Api\V1\Hostel\HostelRoomController::class, 'export']);
-                Route::apiResource('rooms', \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::class)->parameters(['rooms' => 'hostel_room']);
+                Route::apiResource('rooms', \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::class)->parameters(['rooms' => 'hostel_room'])->names('hostel.rooms');
                 Route::apiResource('beds', \App\Http\Controllers\Api\V1\Hostel\HostelBedController::class)->parameters(['beds' => 'hostel_bed'])->only(['index', 'update', 'destroy']);
                 Route::get('allocations/export', [\App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::class, 'export']);
                 Route::apiResource('allocations', \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::class)->parameters(['allocations' => 'hostel_allocation']);
