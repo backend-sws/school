@@ -1,0 +1,1 @@
+import{a as e}from"./api-ChtOm0iL.js";const g="/settings",n={getSettingsByGroup:t=>e.get(`${g}/group/${t}`),getSettingByKey:t=>e.get(`${g}/${t}`),updateSettings:(t,p)=>e.post(`${g}/group/${t}`,p),updateSettingbulk:t=>e.put(`${g}`,t),updateSetting:(t,p)=>e.patch(`${g}/${t}`,{value:p})};export{n as S};

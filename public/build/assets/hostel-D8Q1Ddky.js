@@ -1,0 +1,1 @@
+const o=[{title:"Hostel",href:"/hostel"}],e=["Define hostel buildings first, then add rooms to each.","Allocate students to rooms based on bed availability.","Manage maintenance complaints and mess plans from this module."],s="Keep room configurations accurate to avoid overbooking beds.";export{o as H,s as a,e as b};
