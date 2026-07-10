@@ -78,6 +78,14 @@ class OnboardingController extends Controller
         // Generate verification token
         $token = Str::random(64);
 
+        // Delete any existing unverified user with the same mobile to prevent duplicate key database violation
+        if (!empty($validated['mobile'])) {
+            User::where('mobile', $validated['mobile'])
+                ->where('status', 0)
+                ->where('email', '!=', $validated['email'])
+                ->delete();
+        }
+
         // 2. Updated to updateOrCreate to bypass the duplicate entry error
         $user = User::updateOrCreate(
             ['email' => $validated['email']], // Find by email
