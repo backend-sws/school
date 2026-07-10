@@ -36,14 +36,14 @@ class OnboardingService
         $tier = SubscriptionTier::from($planData['plan_key']);
         $institution = null;
 
+        // 1. Clean up stale records from failed previous attempts
+        $this->cleanupStaleRecords($validated['slug'], $validated['org_name']);
+        $user->workflows()->detach();
+
+        // 2. Reset sequences (PostgreSQL/MySQL)
+        $this->resetSequences();
+
         DB::transaction(function () use ($user, $validated, $planData, $tier, &$institution) {
-            // 1. Clean up stale records from failed previous attempts
-            $this->cleanupStaleRecords($validated['slug'], $validated['org_name']);
-            $user->workflows()->detach();
-
-            // 2. Reset sequences (PostgreSQL-specific)
-            $this->resetSequences();
-
             // 3. Create Organization + Institution
             $organization = $this->createOrganization($validated['org_name'], $tier, $planData['billing_cycle']);
             $institution = $this->createInstitution($organization, $validated);
