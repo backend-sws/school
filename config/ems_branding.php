@@ -11,8 +11,8 @@
 
 return [
     'brand_name' => env('EMS_BRAND_NAME', env('APP_NAME', 'Laravel')),
-    'powered_by' => env('EMS_POWERED_BY', ''),
-    'powered_by_url' => env('EMS_POWERED_BY_URL', '#'),
+    'powered_by' => env('EMS_POWERED_BY', 'StartupWebSupport'),
+    'powered_by_url' => env('EMS_POWERED_BY_URL', 'https://startupwebsupport.com'),
     'designed_by' => env('EMS_DESIGNED_BY', ''),
     'designed_by_url' => env('EMS_DESIGNED_BY_URL', '#'),
     'copyright_by' => env('EMS_COPYRIGHT_BY', ''),
