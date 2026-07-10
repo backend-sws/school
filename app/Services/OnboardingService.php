@@ -87,12 +87,21 @@ class OnboardingService
     }
 
     /**
-     * Reset PostgreSQL sequences after cleanup to avoid ID collisions.
+     * Reset database sequences/auto-increment counters after cleanup to avoid ID collisions.
      */
     public function resetSequences(): void
     {
-        DB::statement("SELECT setval('institutions_id_seq', COALESCE((SELECT MAX(id) FROM institutions), 0) + 1, false)");
-        DB::statement("SELECT setval('organizations_id_seq', COALESCE((SELECT MAX(id) FROM organizations), 0) + 1, false)");
+        $driver = DB::getDriverName();
+
+        if ($driver === 'pgsql') {
+            DB::statement("SELECT setval('institutions_id_seq', COALESCE((SELECT MAX(id) FROM institutions), 0) + 1, false)");
+            DB::statement("SELECT setval('organizations_id_seq', COALESCE((SELECT MAX(id) FROM organizations), 0) + 1, false)");
+        } elseif ($driver === 'mysql') {
+            $nextInstId = (int) DB::table('institutions')->max('id') + 1;
+            $nextOrgId = (int) DB::table('organizations')->max('id') + 1;
+            DB::statement("ALTER TABLE institutions AUTO_INCREMENT = {$nextInstId}");
+            DB::statement("ALTER TABLE organizations AUTO_INCREMENT = {$nextOrgId}");
+        }
     }
 
     /**
