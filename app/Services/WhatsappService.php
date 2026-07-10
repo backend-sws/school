@@ -42,8 +42,8 @@ class WhatsappService
      * Send a single WhatsApp message (queued).
      */
     public function send(
-        int $institutionId,
-        int $sentBy,
+        ?int $institutionId,
+        ?int $sentBy,
         string $phone,
         string $message,
         string $templateName,
@@ -53,7 +53,9 @@ class WhatsappService
         ?string $mediaUrl = null,
         ?string $mediaType = null
     ): CommunicationLog {
-        $this->checkQuota($institutionId);
+        if ($institutionId !== null) {
+            $this->checkQuota($institutionId);
+        }
 
         $log = CommunicationLog::create([
             'institution_id'    => $institutionId,
@@ -80,8 +82,8 @@ class WhatsappService
      * Send bulk WhatsApp messages to multiple recipients.
      */
     public function sendBulk(
-        int $institutionId,
-        int $sentBy,
+        ?int $institutionId,
+        ?int $sentBy,
         array $recipients, // [{phone, name, user_id?}]
         string $message,
         string $templateName,
@@ -89,7 +91,9 @@ class WhatsappService
         ?string $mediaUrl = null,
         ?string $mediaType = null
     ): array {
-        $this->checkQuota($institutionId, count($recipients));
+        if ($institutionId !== null) {
+            $this->checkQuota($institutionId, count($recipients));
+        }
 
         $logs = [];
         foreach ($recipients as $r) {
@@ -158,8 +162,9 @@ class WhatsappService
      *
      * @throws \App\Exceptions\SmsQuotaExceededException
      */
-    public function checkQuota(int $institutionId, int $count = 1): void
+    public function checkQuota(?int $institutionId, int $count = 1): void
     {
+        if ($institutionId === null) return;
         $institution = Institution::find($institutionId);
         if (!$institution) return;
 

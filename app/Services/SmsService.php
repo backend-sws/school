@@ -91,7 +91,7 @@ class SmsService
      * Send a single SMS (queued).
      */
     public function send(
-        int $institutionId,
+        ?int $institutionId,
         ?int $sentBy,
         string $phone,
         string $message,
@@ -129,7 +129,7 @@ class SmsService
      * Send bulk SMS to multiple recipients.
      */
     public function sendBulk(
-        int $institutionId,
+        ?int $institutionId,
         int $sentBy,
         array $recipients,
         string $message,

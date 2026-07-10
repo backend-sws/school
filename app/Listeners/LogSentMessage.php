@@ -38,7 +38,7 @@ class LogSentMessage
                     ?? $recipientUser->institution_id
                     ?? null;
             }
-            $institutionId = $institutionId ?? config('ems.default_institution_id', 1);
+            $institutionId = $institutionId ?? config('ems.default_institution_id') ?? null;
 
             CommunicationLog::create([
                 'institution_id'      => $institutionId,

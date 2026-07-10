@@ -24,7 +24,10 @@ class OtpService
      */
     public function sendOtp(string $mobile, string $otp, ?int $institutionId = null): bool
     {
-        $institutionId = $institutionId ?? (int) config('ems.default_institution_id', 0);
+        $institutionId = $institutionId ?? config('ems.default_institution_id');
+        if ($institutionId !== null) {
+            $institutionId = (int) $institutionId;
+        }
 
         // Try unified SMS factory first
         try {

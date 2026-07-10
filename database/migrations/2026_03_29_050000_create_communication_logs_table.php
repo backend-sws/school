@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('communication_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('institution_id')->constrained()->onDelete('cascade');
+            $table->foreignId('institution_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('channel', 20)->index();              // sms, whatsapp, email
             $table->foreignId('sent_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('recipient_phone', 20)->nullable();
