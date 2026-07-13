@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::seed
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 export const seed = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ seed.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::seed
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 seed.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ seed.url = (args: { category: string | number } | [category: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::seed
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 seed.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -54,7 +54,7 @@ seed.post = (args: { category: string | number } | [category: string | number ] 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::seed
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
     const seedForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -64,7 +64,7 @@ seed.post = (args: { category: string | number } | [category: string | number ] 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::seed
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
         seedForm.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -75,7 +75,7 @@ seed.post = (args: { category: string | number } | [category: string | number ] 
     seed.form = seedForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::upload
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 export const upload = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::upload
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 upload.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -118,7 +118,7 @@ upload.url = (args: { category: string | number } | [category: string | number ]
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::upload
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 upload.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -128,7 +128,7 @@ upload.post = (args: { category: string | number } | [category: string | number 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::upload
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
     const uploadForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ upload.post = (args: { category: string | number } | [category: string | number 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::upload
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
         uploadForm.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -149,7 +149,7 @@ upload.post = (args: { category: string | number } | [category: string | number 
     upload.form = uploadForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 export const template = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -164,7 +164,7 @@ template.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 template.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -192,7 +192,7 @@ template.url = (args: { category: string | number } | [category: string | number
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 template.get = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -201,7 +201,7 @@ template.get = (args: { category: string | number } | [category: string | number
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 template.head = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -211,7 +211,7 @@ template.head = (args: { category: string | number } | [category: string | numbe
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
     const templateForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -221,7 +221,7 @@ template.head = (args: { category: string | number } | [category: string | numbe
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
         templateForm.get = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -230,7 +230,7 @@ template.head = (args: { category: string | number } | [category: string | numbe
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::template
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
         templateForm.head = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

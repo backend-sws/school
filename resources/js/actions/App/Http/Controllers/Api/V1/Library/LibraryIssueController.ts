@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-export const show = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-show.url = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_issue: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { library_issue: number | { id: number } } | [library_issue: n
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-show.get = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { library_issue: number | { id: number } } | [library_issue: n
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-show.head = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { library_issue: number | { id: number } } | [library_issue: 
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-    const showForm = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { library_issue: number | { id: number } } | [library_issue: 
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-        showForm.get = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { library_issue: number | { id: number } } | [library_issue: 
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:87
  * @route '/api/v1/library/issues/{library_issue}'
  */
-        showForm.head = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { library_issue: number | { id: number } } | [library_issue: 
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-export const update = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-update.url = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_issue: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { library_issue: number | { id: number } } | [library_issue:
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-update.put = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { library_issue: number | { id: number } } | [library_issue:
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-update.patch = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { library_issue: number | { id: number } } | [library_issu
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-    const updateForm = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { library_issue: number | { id: number } } | [library_issu
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-        updateForm.put = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { library_issue: number | { id: number } } | [library_issu
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:96
  * @route '/api/v1/library/issues/{library_issue}'
  */
-        updateForm.patch = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -435,7 +435,7 @@ destroy.delete = (args: { library_issue: string | number } | [library_issue: str
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:126
  * @route '/api/v1/library/issues/{library_issue}/return'
  */
-export const returnBook = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const returnBook = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: returnBook.url(args, options),
     method: 'post',
 })
@@ -450,7 +450,7 @@ returnBook.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:126
  * @route '/api/v1/library/issues/{library_issue}/return'
  */
-returnBook.url = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+returnBook.url = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_issue: args }
     }
@@ -483,7 +483,7 @@ returnBook.url = (args: { library_issue: number | { id: number } } | [library_is
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:126
  * @route '/api/v1/library/issues/{library_issue}/return'
  */
-returnBook.post = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+returnBook.post = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: returnBook.url(args, options),
     method: 'post',
 })
@@ -493,7 +493,7 @@ returnBook.post = (args: { library_issue: number | { id: number } } | [library_i
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:126
  * @route '/api/v1/library/issues/{library_issue}/return'
  */
-    const returnBookForm = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const returnBookForm = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: returnBook.url(args, options),
         method: 'post',
     })
@@ -503,7 +503,7 @@ returnBook.post = (args: { library_issue: number | { id: number } } | [library_i
  * @see app/Http/Controllers/Api/V1/Library/LibraryIssueController.php:126
  * @route '/api/v1/library/issues/{library_issue}/return'
  */
-        returnBookForm.post = (args: { library_issue: number | { id: number } } | [library_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        returnBookForm.post = (args: { library_issue: string | number | { id: string | number } } | [library_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: returnBook.url(args, options),
             method: 'post',
         })

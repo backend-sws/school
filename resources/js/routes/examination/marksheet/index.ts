@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-export const show = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ show.definition = {
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-show.url = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions) => {
+show.url = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
                     exam: args[0],
@@ -49,7 +49,7 @@ show.url = (args: { exam: number | { id: number }, student: number | { id: numbe
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-show.get = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -58,7 +58,7 @@ show.get = (args: { exam: number | { id: number }, student: number | { id: numbe
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-show.head = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -68,7 +68,7 @@ show.head = (args: { exam: number | { id: number }, student: number | { id: numb
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-    const showForm = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -78,7 +78,7 @@ show.head = (args: { exam: number | { id: number }, student: number | { id: numb
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-        showForm.get = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -87,7 +87,7 @@ show.head = (args: { exam: number | { id: number }, student: number | { id: numb
  * @see app/Http/Controllers/Examination/MarksheetController.php:24
  * @route '/examination/exams/{exam}/marksheet/{student}'
  */
-        showForm.head = (args: { exam: number | { id: number }, student: number | { id: number } } | [exam: number | { id: number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { exam: string | number | { id: string | number }, student: number | { id: number } } | [exam: string | number | { id: string | number }, student: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

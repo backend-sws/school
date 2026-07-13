@@ -215,7 +215,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-export const show = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -230,7 +230,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-show.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { hostel_mess_plan: args }
     }
@@ -263,7 +263,7 @@ show.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_p
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-show.get = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -272,7 +272,7 @@ show.get = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_p
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-show.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -282,7 +282,7 @@ show.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-    const showForm = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -292,7 +292,7 @@ show.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-        showForm.get = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -301,7 +301,7 @@ show.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:104
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-        showForm.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -317,7 +317,7 @@ show.head = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-export const update = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -332,7 +332,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-update.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { hostel_mess_plan: args }
     }
@@ -365,7 +365,7 @@ update.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-update.put = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -374,7 +374,7 @@ update.put = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-update.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -384,7 +384,7 @@ update.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_me
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-    const updateForm = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -399,7 +399,7 @@ update.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_me
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-        updateForm.put = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -413,7 +413,7 @@ update.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_me
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:113
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-        updateForm.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -429,7 +429,7 @@ update.patch = (args: { hostel_mess_plan: number | { id: number } } | [hostel_me
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:133
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-export const destroy = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -444,7 +444,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:133
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-destroy.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { hostel_mess_plan: args }
     }
@@ -477,7 +477,7 @@ destroy.url = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mes
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:133
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-destroy.delete = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -487,7 +487,7 @@ destroy.delete = (args: { hostel_mess_plan: number | { id: number } } | [hostel_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:133
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-    const destroyForm = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -502,7 +502,7 @@ destroy.delete = (args: { hostel_mess_plan: number | { id: number } } | [hostel_
  * @see app/Http/Controllers/Api/V1/Hostel/HostelMessPlanController.php:133
  * @route '/api/v1/hostel/mess-plans/{hostel_mess_plan}'
  */
-        destroyForm.delete = (args: { hostel_mess_plan: number | { id: number } } | [hostel_mess_plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { hostel_mess_plan: string | number | { id: string | number } } | [hostel_mess_plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

@@ -134,7 +134,7 @@ storeAccountData.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =
     storeAccountData.form = storeAccountDataForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 export const showVerifyNotice = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ showVerifyNotice.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 showVerifyNotice.url = (options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ showVerifyNotice.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 showVerifyNotice.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -167,7 +167,7 @@ showVerifyNotice.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 showVerifyNotice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -177,7 +177,7 @@ showVerifyNotice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
     const showVerifyNoticeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -187,7 +187,7 @@ showVerifyNotice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
         showVerifyNoticeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -196,7 +196,7 @@ showVerifyNotice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showVerifyNotice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
         showVerifyNoticeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -212,7 +212,7 @@ showVerifyNotice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     showVerifyNotice.form = showVerifyNoticeForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::resendVerification
- * @see app/Http/Controllers/Web/OnboardingController.php:331
+ * @see app/Http/Controllers/Web/OnboardingController.php:339
  * @route '/onboarding/resend-verification'
  */
 export const resendVerification = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -227,7 +227,7 @@ resendVerification.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::resendVerification
- * @see app/Http/Controllers/Web/OnboardingController.php:331
+ * @see app/Http/Controllers/Web/OnboardingController.php:339
  * @route '/onboarding/resend-verification'
  */
 resendVerification.url = (options?: RouteQueryOptions) => {
@@ -236,7 +236,7 @@ resendVerification.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::resendVerification
- * @see app/Http/Controllers/Web/OnboardingController.php:331
+ * @see app/Http/Controllers/Web/OnboardingController.php:339
  * @route '/onboarding/resend-verification'
  */
 resendVerification.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -246,7 +246,7 @@ resendVerification.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::resendVerification
- * @see app/Http/Controllers/Web/OnboardingController.php:331
+ * @see app/Http/Controllers/Web/OnboardingController.php:339
  * @route '/onboarding/resend-verification'
  */
     const resendVerificationForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -256,7 +256,7 @@ resendVerification.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::resendVerification
- * @see app/Http/Controllers/Web/OnboardingController.php:331
+ * @see app/Http/Controllers/Web/OnboardingController.php:339
  * @route '/onboarding/resend-verification'
  */
         resendVerificationForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -267,7 +267,7 @@ resendVerification.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
     resendVerification.form = resendVerificationForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
 export const checkVerificationStatus = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -282,7 +282,7 @@ checkVerificationStatus.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
 checkVerificationStatus.url = (options?: RouteQueryOptions) => {
@@ -291,7 +291,7 @@ checkVerificationStatus.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
 checkVerificationStatus.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -300,7 +300,7 @@ checkVerificationStatus.get = (options?: RouteQueryOptions): RouteDefinition<'ge
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
 checkVerificationStatus.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -310,7 +310,7 @@ checkVerificationStatus.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
     const checkVerificationStatusForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -320,7 +320,7 @@ checkVerificationStatus.head = (options?: RouteQueryOptions): RouteDefinition<'h
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
         checkVerificationStatusForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -329,7 +329,7 @@ checkVerificationStatus.head = (options?: RouteQueryOptions): RouteDefinition<'h
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::checkVerificationStatus
- * @see app/Http/Controllers/Web/OnboardingController.php:269
+ * @see app/Http/Controllers/Web/OnboardingController.php:277
  * @route '/onboarding/check-verification'
  */
         checkVerificationStatusForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -345,7 +345,7 @@ checkVerificationStatus.head = (options?: RouteQueryOptions): RouteDefinition<'h
     checkVerificationStatus.form = checkVerificationStatusForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
 export const verifyEmail = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -360,7 +360,7 @@ verifyEmail.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
 verifyEmail.url = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -388,7 +388,7 @@ verifyEmail.url = (args: { token: string | number } | [token: string | number ] 
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
 verifyEmail.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -397,7 +397,7 @@ verifyEmail.get = (args: { token: string | number } | [token: string | number ] 
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
 verifyEmail.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -407,7 +407,7 @@ verifyEmail.head = (args: { token: string | number } | [token: string | number ]
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
     const verifyEmailForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -417,7 +417,7 @@ verifyEmail.head = (args: { token: string | number } | [token: string | number ]
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
         verifyEmailForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -426,7 +426,7 @@ verifyEmail.head = (args: { token: string | number } | [token: string | number ]
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::verifyEmail
- * @see app/Http/Controllers/Web/OnboardingController.php:292
+ * @see app/Http/Controllers/Web/OnboardingController.php:300
  * @route '/onboarding/verify/{token}'
  */
         verifyEmailForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -442,7 +442,7 @@ verifyEmail.head = (args: { token: string | number } | [token: string | number ]
     verifyEmail.form = verifyEmailForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
 export const showPlanSelection = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -457,7 +457,7 @@ showPlanSelection.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
 showPlanSelection.url = (options?: RouteQueryOptions) => {
@@ -466,7 +466,7 @@ showPlanSelection.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
 showPlanSelection.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -475,7 +475,7 @@ showPlanSelection.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
 showPlanSelection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -485,7 +485,7 @@ showPlanSelection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
     const showPlanSelectionForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -495,7 +495,7 @@ showPlanSelection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
         showPlanSelectionForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -504,7 +504,7 @@ showPlanSelection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:384
+ * @see app/Http/Controllers/Web/OnboardingController.php:392
  * @route '/onboarding/plan'
  */
         showPlanSelectionForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -520,7 +520,7 @@ showPlanSelection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
     showPlanSelection.form = showPlanSelectionForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storePlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:136
+ * @see app/Http/Controllers/Web/OnboardingController.php:144
  * @route '/onboarding/plan'
  */
 export const storePlanSelection = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -535,7 +535,7 @@ storePlanSelection.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storePlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:136
+ * @see app/Http/Controllers/Web/OnboardingController.php:144
  * @route '/onboarding/plan'
  */
 storePlanSelection.url = (options?: RouteQueryOptions) => {
@@ -544,7 +544,7 @@ storePlanSelection.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storePlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:136
+ * @see app/Http/Controllers/Web/OnboardingController.php:144
  * @route '/onboarding/plan'
  */
 storePlanSelection.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -554,7 +554,7 @@ storePlanSelection.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::storePlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:136
+ * @see app/Http/Controllers/Web/OnboardingController.php:144
  * @route '/onboarding/plan'
  */
     const storePlanSelectionForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -564,7 +564,7 @@ storePlanSelection.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::storePlanSelection
- * @see app/Http/Controllers/Web/OnboardingController.php:136
+ * @see app/Http/Controllers/Web/OnboardingController.php:144
  * @route '/onboarding/plan'
  */
         storePlanSelectionForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -575,7 +575,7 @@ storePlanSelection.post = (options?: RouteQueryOptions): RouteDefinition<'post'>
     storePlanSelection.form = storePlanSelectionForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
 export const showCardDetails = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -590,7 +590,7 @@ showCardDetails.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
 showCardDetails.url = (options?: RouteQueryOptions) => {
@@ -599,7 +599,7 @@ showCardDetails.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
 showCardDetails.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -608,7 +608,7 @@ showCardDetails.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
 showCardDetails.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -618,7 +618,7 @@ showCardDetails.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
     const showCardDetailsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -628,7 +628,7 @@ showCardDetails.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
         showCardDetailsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -637,7 +637,7 @@ showCardDetails.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:153
+ * @see app/Http/Controllers/Web/OnboardingController.php:161
  * @route '/onboarding/card'
  */
         showCardDetailsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -653,7 +653,7 @@ showCardDetails.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
     showCardDetails.form = showCardDetailsForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 export const storeCardDetails = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -668,7 +668,7 @@ storeCardDetails.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 storeCardDetails.url = (options?: RouteQueryOptions) => {
@@ -677,7 +677,7 @@ storeCardDetails.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 storeCardDetails.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -687,7 +687,7 @@ storeCardDetails.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
     const storeCardDetailsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -697,7 +697,7 @@ storeCardDetails.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeCardDetails
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
         storeCardDetailsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -708,7 +708,7 @@ storeCardDetails.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =
     storeCardDetails.form = storeCardDetailsForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
 export const showOrgSetup = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -723,7 +723,7 @@ showOrgSetup.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
 showOrgSetup.url = (options?: RouteQueryOptions) => {
@@ -732,7 +732,7 @@ showOrgSetup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
 showOrgSetup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -741,7 +741,7 @@ showOrgSetup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
 showOrgSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -751,7 +751,7 @@ showOrgSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
     const showOrgSetupForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -761,7 +761,7 @@ showOrgSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
         showOrgSetupForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -770,7 +770,7 @@ showOrgSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:205
+ * @see app/Http/Controllers/Web/OnboardingController.php:213
  * @route '/onboarding/setup'
  */
         showOrgSetupForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -786,7 +786,7 @@ showOrgSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     showOrgSetup.form = showOrgSetupForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:416
+ * @see app/Http/Controllers/Web/OnboardingController.php:424
  * @route '/onboarding/setup'
  */
 export const storeOrgSetup = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -801,7 +801,7 @@ storeOrgSetup.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:416
+ * @see app/Http/Controllers/Web/OnboardingController.php:424
  * @route '/onboarding/setup'
  */
 storeOrgSetup.url = (options?: RouteQueryOptions) => {
@@ -810,7 +810,7 @@ storeOrgSetup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:416
+ * @see app/Http/Controllers/Web/OnboardingController.php:424
  * @route '/onboarding/setup'
  */
 storeOrgSetup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -820,7 +820,7 @@ storeOrgSetup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:416
+ * @see app/Http/Controllers/Web/OnboardingController.php:424
  * @route '/onboarding/setup'
  */
     const storeOrgSetupForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -830,7 +830,7 @@ storeOrgSetup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::storeOrgSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:416
+ * @see app/Http/Controllers/Web/OnboardingController.php:424
  * @route '/onboarding/setup'
  */
         storeOrgSetupForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -841,7 +841,7 @@ storeOrgSetup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
     storeOrgSetup.form = storeOrgSetupForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
 export const showDataImport = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -856,7 +856,7 @@ showDataImport.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
 showDataImport.url = (options?: RouteQueryOptions) => {
@@ -865,7 +865,7 @@ showDataImport.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
 showDataImport.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -874,7 +874,7 @@ showDataImport.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
 showDataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -884,7 +884,7 @@ showDataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
     const showDataImportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -894,7 +894,7 @@ showDataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
         showDataImportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -903,7 +903,7 @@ showDataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showDataImport
- * @see app/Http/Controllers/Web/OnboardingController.php:460
+ * @see app/Http/Controllers/Web/OnboardingController.php:468
  * @route '/onboarding/data-import'
  */
         showDataImportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -919,7 +919,7 @@ showDataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
     showDataImport.form = showDataImportForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::autoSeedCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 export const autoSeedCategory = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -934,7 +934,7 @@ autoSeedCategory.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::autoSeedCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 autoSeedCategory.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -962,7 +962,7 @@ autoSeedCategory.url = (args: { category: string | number } | [category: string 
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::autoSeedCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
 autoSeedCategory.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -972,7 +972,7 @@ autoSeedCategory.post = (args: { category: string | number } | [category: string
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::autoSeedCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
     const autoSeedCategoryForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -982,7 +982,7 @@ autoSeedCategory.post = (args: { category: string | number } | [category: string
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::autoSeedCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:481
+ * @see app/Http/Controllers/Web/OnboardingController.php:489
  * @route '/onboarding/data-import/auto-seed/{category}'
  */
         autoSeedCategoryForm.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -993,7 +993,7 @@ autoSeedCategory.post = (args: { category: string | number } | [category: string
     autoSeedCategory.form = autoSeedCategoryForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::uploadCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 export const uploadCategory = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -1008,7 +1008,7 @@ uploadCategory.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::uploadCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 uploadCategory.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -1036,7 +1036,7 @@ uploadCategory.url = (args: { category: string | number } | [category: string | 
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::uploadCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
 uploadCategory.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -1046,7 +1046,7 @@ uploadCategory.post = (args: { category: string | number } | [category: string |
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::uploadCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
     const uploadCategoryForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -1056,7 +1056,7 @@ uploadCategory.post = (args: { category: string | number } | [category: string |
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::uploadCategory
- * @see app/Http/Controllers/Web/OnboardingController.php:501
+ * @see app/Http/Controllers/Web/OnboardingController.php:509
  * @route '/onboarding/data-import/upload/{category}'
  */
         uploadCategoryForm.post = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -1067,7 +1067,7 @@ uploadCategory.post = (args: { category: string | number } | [category: string |
     uploadCategory.form = uploadCategoryForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 export const downloadSampleTemplate = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1082,7 +1082,7 @@ downloadSampleTemplate.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 downloadSampleTemplate.url = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -1110,7 +1110,7 @@ downloadSampleTemplate.url = (args: { category: string | number } | [category: s
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 downloadSampleTemplate.get = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1119,7 +1119,7 @@ downloadSampleTemplate.get = (args: { category: string | number } | [category: s
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
 downloadSampleTemplate.head = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1129,7 +1129,7 @@ downloadSampleTemplate.head = (args: { category: string | number } | [category: 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
     const downloadSampleTemplateForm = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1139,7 +1139,7 @@ downloadSampleTemplate.head = (args: { category: string | number } | [category: 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
         downloadSampleTemplateForm.get = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1148,7 +1148,7 @@ downloadSampleTemplate.head = (args: { category: string | number } | [category: 
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::downloadSampleTemplate
- * @see app/Http/Controllers/Web/OnboardingController.php:513
+ * @see app/Http/Controllers/Web/OnboardingController.php:521
  * @route '/onboarding/data-import/template/{category}'
  */
         downloadSampleTemplateForm.head = (args: { category: string | number } | [category: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1164,7 +1164,7 @@ downloadSampleTemplate.head = (args: { category: string | number } | [category: 
     downloadSampleTemplate.form = downloadSampleTemplateForm
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
 export const showPlatformSetup = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1179,7 +1179,7 @@ showPlatformSetup.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
 showPlatformSetup.url = (options?: RouteQueryOptions) => {
@@ -1188,7 +1188,7 @@ showPlatformSetup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
 showPlatformSetup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1197,7 +1197,7 @@ showPlatformSetup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
 showPlatformSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1207,7 +1207,7 @@ showPlatformSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
     const showPlatformSetupForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1217,7 +1217,7 @@ showPlatformSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
         showPlatformSetupForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1226,7 +1226,7 @@ showPlatformSetup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::showPlatformSetup
- * @see app/Http/Controllers/Web/OnboardingController.php:561
+ * @see app/Http/Controllers/Web/OnboardingController.php:569
  * @route '/onboarding/platform-setup'
  */
         showPlatformSetupForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -46,7 +46,7 @@ import vehicles from './vehicles'
 import assignments from './assignments'
 import hostels from './hostels'
 import floors from './floors'
-import rooms from './rooms'
+import hostel from './hostel'
 import beds from './beds'
 import allocations from './allocations'
 import complaints from './complaints'
@@ -55,6 +55,7 @@ import books from './books'
 import copies from './copies'
 import issues from './issues'
 import templates from './templates'
+import rooms from './rooms'
 import timetables from './timetables'
 import courses from './courses'
 import classes from './classes'
@@ -107,7 +108,7 @@ vehicles: Object.assign(vehicles, vehicles),
 assignments: Object.assign(assignments, assignments),
 hostels: Object.assign(hostels, hostels),
 floors: Object.assign(floors, floors),
-rooms: Object.assign(rooms, rooms),
+hostel: Object.assign(hostel, hostel),
 beds: Object.assign(beds, beds),
 allocations: Object.assign(allocations, allocations),
 complaints: Object.assign(complaints, complaints),
@@ -116,6 +117,7 @@ books: Object.assign(books, books),
 copies: Object.assign(copies, copies),
 issues: Object.assign(issues, issues),
 templates: Object.assign(templates, templates),
+rooms: Object.assign(rooms, rooms),
 timetables: Object.assign(timetables, timetables),
 courses: Object.assign(courses, courses),
 classes: Object.assign(classes, classes),

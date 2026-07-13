@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-export const bulkPrint = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const bulkPrint = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: bulkPrint.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ bulkPrint.definition = {
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-bulkPrint.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+bulkPrint.url = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { exam: args }
     }
@@ -52,7 +52,7 @@ bulkPrint.url = (args: { exam: number | { id: number } } | [exam: number | { id:
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-bulkPrint.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+bulkPrint.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: bulkPrint.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ bulkPrint.post = (args: { exam: number | { id: number } } | [exam: number | { id
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-    const bulkPrintForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const bulkPrintForm = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: bulkPrint.url(args, options),
         method: 'post',
     })
@@ -72,7 +72,7 @@ bulkPrint.post = (args: { exam: number | { id: number } } | [exam: number | { id
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-        bulkPrintForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        bulkPrintForm.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: bulkPrint.url(args, options),
             method: 'post',
         })

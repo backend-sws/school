@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::store
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::store
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::store
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::store
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::store
- * @see app/Http/Controllers/Web/OnboardingController.php:161
+ * @see app/Http/Controllers/Web/OnboardingController.php:169
  * @route '/onboarding/card'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

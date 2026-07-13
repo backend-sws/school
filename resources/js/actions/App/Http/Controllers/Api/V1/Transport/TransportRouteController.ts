@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-export const show = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-show.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { transport_route: number | { id: number } } | [transport_rout
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-show.get = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { transport_route: number | { id: number } } | [transport_rout
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-show.head = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { transport_route: number | { id: number } } | [transport_rou
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-    const showForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { transport_route: number | { id: number } } | [transport_rou
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-        showForm.get = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { transport_route: number | { id: number } } | [transport_rou
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:70
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-        showForm.head = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { transport_route: number | { id: number } } | [transport_rou
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-export const update = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-update.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { transport_route: number | { id: number } } | [transport_ro
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-update.put = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { transport_route: number | { id: number } } | [transport_ro
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-update.patch = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { transport_route: number | { id: number } } | [transport_
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-    const updateForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { transport_route: number | { id: number } } | [transport_
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-        updateForm.put = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { transport_route: number | { id: number } } | [transport_
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:81
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-        updateForm.patch = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { transport_route: number | { id: number } } | [transport_
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:107
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-export const destroy = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:107
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-destroy.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { transport_route: number | { id: number } } | [transport_r
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:107
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-destroy.delete = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:107
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-    const destroyForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:107
  * @route '/api/v1/transport/routes/{transport_route}'
  */
-        destroyForm.delete = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -440,7 +440,7 @@ destroy.delete = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-export const indexStops = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const indexStops = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: indexStops.url(args, options),
     method: 'get',
 })
@@ -455,7 +455,7 @@ indexStops.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-indexStops.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+indexStops.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -488,7 +488,7 @@ indexStops.url = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-indexStops.get = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+indexStops.get = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: indexStops.url(args, options),
     method: 'get',
 })
@@ -497,7 +497,7 @@ indexStops.get = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-indexStops.head = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+indexStops.head = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: indexStops.url(args, options),
     method: 'head',
 })
@@ -507,7 +507,7 @@ indexStops.head = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-    const indexStopsForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const indexStopsForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: indexStops.url(args, options),
         method: 'get',
     })
@@ -517,7 +517,7 @@ indexStops.head = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-        indexStopsForm.get = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexStopsForm.get = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: indexStops.url(args, options),
             method: 'get',
         })
@@ -526,7 +526,7 @@ indexStops.head = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:123
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-        indexStopsForm.head = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexStopsForm.head = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: indexStops.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -542,7 +542,7 @@ indexStops.head = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:134
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-export const storeStop = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const storeStop = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeStop.url(args, options),
     method: 'post',
 })
@@ -557,7 +557,7 @@ storeStop.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:134
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-storeStop.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+storeStop.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -590,7 +590,7 @@ storeStop.url = (args: { transport_route: number | { id: number } } | [transport
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:134
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-storeStop.post = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+storeStop.post = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeStop.url(args, options),
     method: 'post',
 })
@@ -600,7 +600,7 @@ storeStop.post = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:134
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-    const storeStopForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeStopForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: storeStop.url(args, options),
         method: 'post',
     })
@@ -610,7 +610,7 @@ storeStop.post = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:134
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-        storeStopForm.post = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeStopForm.post = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: storeStop.url(args, options),
             method: 'post',
         })
@@ -621,7 +621,7 @@ storeStop.post = (args: { transport_route: number | { id: number } } | [transpor
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:155
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-export const updateStops = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const updateStops = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: updateStops.url(args, options),
     method: 'put',
 })
@@ -636,7 +636,7 @@ updateStops.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:155
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-updateStops.url = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+updateStops.url = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transport_route: args }
     }
@@ -669,7 +669,7 @@ updateStops.url = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:155
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-updateStops.put = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+updateStops.put = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: updateStops.url(args, options),
     method: 'put',
 })
@@ -679,7 +679,7 @@ updateStops.put = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:155
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-    const updateStopsForm = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateStopsForm = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: updateStops.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -694,7 +694,7 @@ updateStops.put = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:155
  * @route '/api/v1/transport/routes/{transport_route}/stops'
  */
-        updateStopsForm.put = (args: { transport_route: number | { id: number } } | [transport_route: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateStopsForm.put = (args: { transport_route: string | number | { id: string | number } } | [transport_route: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: updateStops.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -710,7 +710,7 @@ updateStops.put = (args: { transport_route: number | { id: number } } | [transpo
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:188
  * @route '/api/v1/transport/routes/{transport_route}/stops/{route_stop_id}'
  */
-export const destroyStop = (args: { transport_route: number | { id: number }, route_stop_id: string | number } | [transport_route: number | { id: number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroyStop = (args: { transport_route: string | number | { id: string | number }, route_stop_id: string | number } | [transport_route: string | number | { id: string | number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroyStop.url(args, options),
     method: 'delete',
 })
@@ -725,7 +725,7 @@ destroyStop.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:188
  * @route '/api/v1/transport/routes/{transport_route}/stops/{route_stop_id}'
  */
-destroyStop.url = (args: { transport_route: number | { id: number }, route_stop_id: string | number } | [transport_route: number | { id: number }, route_stop_id: string | number ], options?: RouteQueryOptions) => {
+destroyStop.url = (args: { transport_route: string | number | { id: string | number }, route_stop_id: string | number } | [transport_route: string | number | { id: string | number }, route_stop_id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
                     transport_route: args[0],
@@ -753,7 +753,7 @@ destroyStop.url = (args: { transport_route: number | { id: number }, route_stop_
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:188
  * @route '/api/v1/transport/routes/{transport_route}/stops/{route_stop_id}'
  */
-destroyStop.delete = (args: { transport_route: number | { id: number }, route_stop_id: string | number } | [transport_route: number | { id: number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroyStop.delete = (args: { transport_route: string | number | { id: string | number }, route_stop_id: string | number } | [transport_route: string | number | { id: string | number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroyStop.url(args, options),
     method: 'delete',
 })
@@ -763,7 +763,7 @@ destroyStop.delete = (args: { transport_route: number | { id: number }, route_st
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:188
  * @route '/api/v1/transport/routes/{transport_route}/stops/{route_stop_id}'
  */
-    const destroyStopForm = (args: { transport_route: number | { id: number }, route_stop_id: string | number } | [transport_route: number | { id: number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyStopForm = (args: { transport_route: string | number | { id: string | number }, route_stop_id: string | number } | [transport_route: string | number | { id: string | number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroyStop.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -778,7 +778,7 @@ destroyStop.delete = (args: { transport_route: number | { id: number }, route_st
  * @see app/Http/Controllers/Api/V1/Transport/TransportRouteController.php:188
  * @route '/api/v1/transport/routes/{transport_route}/stops/{route_stop_id}'
  */
-        destroyStopForm.delete = (args: { transport_route: number | { id: number }, route_stop_id: string | number } | [transport_route: number | { id: number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyStopForm.delete = (args: { transport_route: string | number | { id: string | number }, route_stop_id: string | number } | [transport_route: string | number | { id: string | number }, route_stop_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroyStop.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

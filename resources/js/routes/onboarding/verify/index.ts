@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 export const notice = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ notice.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 notice.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ notice.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 notice.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ notice.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
 notice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ notice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
     const noticeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ notice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
         noticeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ notice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\OnboardingController::notice
- * @see app/Http/Controllers/Web/OnboardingController.php:221
+ * @see app/Http/Controllers/Web/OnboardingController.php:229
  * @route '/onboarding/verify-notice'
  */
         noticeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -82,7 +82,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:161
  * @route '/api/v1/expenses/{expense}/approve'
  */
-export const approve = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const approve = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -97,7 +97,7 @@ approve.definition = {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:161
  * @route '/api/v1/expenses/{expense}/approve'
  */
-approve.url = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+approve.url = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { expense: args }
     }
@@ -130,7 +130,7 @@ approve.url = (args: { expense: number | { id: number } } | [expense: number | {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:161
  * @route '/api/v1/expenses/{expense}/approve'
  */
-approve.post = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+approve.post = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -140,7 +140,7 @@ approve.post = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:161
  * @route '/api/v1/expenses/{expense}/approve'
  */
-    const approveForm = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const approveForm = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: approve.url(args, options),
         method: 'post',
     })
@@ -150,7 +150,7 @@ approve.post = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:161
  * @route '/api/v1/expenses/{expense}/approve'
  */
-        approveForm.post = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        approveForm.post = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: approve.url(args, options),
             method: 'post',
         })
@@ -161,7 +161,7 @@ approve.post = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:180
  * @route '/api/v1/expenses/{expense}/reject'
  */
-export const reject = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const reject = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reject.url(args, options),
     method: 'post',
 })
@@ -176,7 +176,7 @@ reject.definition = {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:180
  * @route '/api/v1/expenses/{expense}/reject'
  */
-reject.url = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+reject.url = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { expense: args }
     }
@@ -209,7 +209,7 @@ reject.url = (args: { expense: number | { id: number } } | [expense: number | { 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:180
  * @route '/api/v1/expenses/{expense}/reject'
  */
-reject.post = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+reject.post = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reject.url(args, options),
     method: 'post',
 })
@@ -219,7 +219,7 @@ reject.post = (args: { expense: number | { id: number } } | [expense: number | {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:180
  * @route '/api/v1/expenses/{expense}/reject'
  */
-    const rejectForm = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const rejectForm = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: reject.url(args, options),
         method: 'post',
     })
@@ -229,7 +229,7 @@ reject.post = (args: { expense: number | { id: number } } | [expense: number | {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:180
  * @route '/api/v1/expenses/{expense}/reject'
  */
-        rejectForm.post = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        rejectForm.post = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: reject.url(args, options),
             method: 'post',
         })
@@ -373,7 +373,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-export const show = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -388,7 +388,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-show.url = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { expense: args }
     }
@@ -421,7 +421,7 @@ show.url = (args: { expense: number | { id: number } } | [expense: number | { id
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-show.get = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -430,7 +430,7 @@ show.get = (args: { expense: number | { id: number } } | [expense: number | { id
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-show.head = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -440,7 +440,7 @@ show.head = (args: { expense: number | { id: number } } | [expense: number | { i
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-    const showForm = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -450,7 +450,7 @@ show.head = (args: { expense: number | { id: number } } | [expense: number | { i
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-        showForm.get = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -459,7 +459,7 @@ show.head = (args: { expense: number | { id: number } } | [expense: number | { i
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:111
  * @route '/api/v1/expenses/{expense}'
  */
-        showForm.head = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -475,7 +475,7 @@ show.head = (args: { expense: number | { id: number } } | [expense: number | { i
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-export const update = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -490,7 +490,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-update.url = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { expense: args }
     }
@@ -523,7 +523,7 @@ update.url = (args: { expense: number | { id: number } } | [expense: number | { 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-update.put = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -532,7 +532,7 @@ update.put = (args: { expense: number | { id: number } } | [expense: number | { 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-update.patch = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -542,7 +542,7 @@ update.patch = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-    const updateForm = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -557,7 +557,7 @@ update.patch = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-        updateForm.put = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -571,7 +571,7 @@ update.patch = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:120
  * @route '/api/v1/expenses/{expense}'
  */
-        updateForm.patch = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -587,7 +587,7 @@ update.patch = (args: { expense: number | { id: number } } | [expense: number | 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:147
  * @route '/api/v1/expenses/{expense}'
  */
-export const destroy = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -602,7 +602,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:147
  * @route '/api/v1/expenses/{expense}'
  */
-destroy.url = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { expense: args }
     }
@@ -635,7 +635,7 @@ destroy.url = (args: { expense: number | { id: number } } | [expense: number | {
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:147
  * @route '/api/v1/expenses/{expense}'
  */
-destroy.delete = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -645,7 +645,7 @@ destroy.delete = (args: { expense: number | { id: number } } | [expense: number 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:147
  * @route '/api/v1/expenses/{expense}'
  */
-    const destroyForm = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -660,7 +660,7 @@ destroy.delete = (args: { expense: number | { id: number } } | [expense: number 
  * @see app/Http/Controllers/Api/V1/Expense/ExpenseController.php:147
  * @route '/api/v1/expenses/{expense}'
  */
-        destroyForm.delete = (args: { expense: number | { id: number } } | [expense: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { expense: string | number | { id: string | number } } | [expense: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

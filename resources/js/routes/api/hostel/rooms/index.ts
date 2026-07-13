@@ -1,82 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: exportMethod.url(options),
-    method: 'get',
-})
-
-exportMethod.definition = {
-    methods: ["get","head"],
-    url: '/api/v1/hostel/rooms/export',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-exportMethod.url = (options?: RouteQueryOptions) => {
-    return exportMethod.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: exportMethod.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: exportMethod.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-    const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: exportMethod.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-        exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: exportMethod.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:109
- * @route '/api/v1/hostel/rooms/export'
- */
-        exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: exportMethod.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    exportMethod.form = exportMethodForm
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
  * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
@@ -513,6 +435,12 @@ destroy.delete = (args: { hostel_room: string | number | { id: string | number }
         })
     
     destroy.form = destroyForm
-const HostelRoomController = { exportMethod, index, store, show, update, destroy, export: exportMethod }
+const rooms = {
+    index: Object.assign(index, index),
+store: Object.assign(store, store),
+show: Object.assign(show, show),
+update: Object.assign(update, update),
+destroy: Object.assign(destroy, destroy),
+}
 
-export default HostelRoomController
+export default rooms

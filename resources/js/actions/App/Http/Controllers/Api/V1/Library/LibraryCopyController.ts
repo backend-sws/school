@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-export const show = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-show.url = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_copy: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { library_copy: number | { id: number } } | [library_copy: num
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-show.get = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { library_copy: number | { id: number } } | [library_copy: num
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-show.head = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { library_copy: number | { id: number } } | [library_copy: nu
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-    const showForm = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { library_copy: number | { id: number } } | [library_copy: nu
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-        showForm.get = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { library_copy: number | { id: number } } | [library_copy: nu
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:62
  * @route '/api/v1/library/copies/{library_copy}'
  */
-        showForm.head = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { library_copy: number | { id: number } } | [library_copy: nu
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-export const update = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-update.url = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_copy: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { library_copy: number | { id: number } } | [library_copy: n
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-update.put = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { library_copy: number | { id: number } } | [library_copy: n
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-update.patch = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { library_copy: number | { id: number } } | [library_copy:
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-    const updateForm = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { library_copy: number | { id: number } } | [library_copy:
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-        updateForm.put = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { library_copy: number | { id: number } } | [library_copy:
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:71
  * @route '/api/v1/library/copies/{library_copy}'
  */
-        updateForm.patch = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { library_copy: number | { id: number } } | [library_copy:
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:88
  * @route '/api/v1/library/copies/{library_copy}'
  */
-export const destroy = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:88
  * @route '/api/v1/library/copies/{library_copy}'
  */
-destroy.url = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { library_copy: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { library_copy: number | { id: number } } | [library_copy: 
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:88
  * @route '/api/v1/library/copies/{library_copy}'
  */
-destroy.delete = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { library_copy: number | { id: number } } | [library_cop
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:88
  * @route '/api/v1/library/copies/{library_copy}'
  */
-    const destroyForm = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { library_copy: number | { id: number } } | [library_cop
  * @see app/Http/Controllers/Api/V1/Library/LibraryCopyController.php:88
  * @route '/api/v1/library/copies/{library_copy}'
  */
-        destroyForm.delete = (args: { library_copy: number | { id: number } } | [library_copy: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { library_copy: string | number | { id: string | number } } | [library_copy: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

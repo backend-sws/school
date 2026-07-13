@@ -1,83 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
-    method: 'get',
-})
-
-index.definition = {
-    methods: ["get","head"],
-    url: '/api/v1/hostel/rooms',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::index
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:12
- * @route '/api/v1/hostel/rooms'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
-/**
 * @see \App\Http\Controllers\Api\V1\Timetable\RoomController::index
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:12
  * @route '/api/v1/timetable/rooms'
@@ -156,61 +78,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:126
- * @route '/api/v1/hostel/rooms'
- */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
-    method: 'post',
-})
-
-store.definition = {
-    methods: ["post"],
-    url: '/api/v1/hostel/rooms',
-} satisfies RouteDefinition<["post"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:126
- * @route '/api/v1/hostel/rooms'
- */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:126
- * @route '/api/v1/hostel/rooms'
- */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
-    method: 'post',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:126
- * @route '/api/v1/hostel/rooms'
- */
-    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: store.url(options),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:126
- * @route '/api/v1/hostel/rooms'
- */
-        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: store.url(options),
-            method: 'post',
-        })
-    
-    store.form = storeForm
-/**
 * @see \App\Http\Controllers\Api\V1\Timetable\RoomController::store
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:17
  * @route '/api/v1/timetable/rooms'
@@ -266,113 +133,11 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     
     store.form = storeForm
 /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-export const show = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(args, options),
-    method: 'get',
-})
-
-show.definition = {
-    methods: ["get","head"],
-    url: '/api/v1/hostel/rooms/{hostel_room}',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-show.url = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { hostel_room: args }
-    }
-
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { hostel_room: args.id }
-        }
-    
-    if (Array.isArray(args)) {
-        args = {
-                    hostel_room: args[0],
-                }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-                        hostel_room: typeof args.hostel_room === 'object'
-                ? args.hostel_room.id
-                : args.hostel_room,
-                }
-
-    return show.definition.url
-            .replace('{hostel_room}', parsedArgs.hostel_room.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-show.get = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(args, options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-show.head = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: show.url(args, options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-    const showForm = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: show.url(args, options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-        showForm.get = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:168
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-        showForm.head = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    show.form = showForm
-/**
 * @see \App\Http\Controllers\Api\V1\Timetable\RoomController::show
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-export const show = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -387,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-show.url = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { room: args }
     }
@@ -420,7 +185,7 @@ show.url = (args: { room: number | { id: number } } | [room: number | { id: numb
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-show.get = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -429,7 +194,7 @@ show.get = (args: { room: number | { id: number } } | [room: number | { id: numb
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-show.head = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -439,7 +204,7 @@ show.head = (args: { room: number | { id: number } } | [room: number | { id: num
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-    const showForm = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -449,7 +214,7 @@ show.head = (args: { room: number | { id: number } } | [room: number | { id: num
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-        showForm.get = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -458,7 +223,7 @@ show.head = (args: { room: number | { id: number } } | [room: number | { id: num
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:33
  * @route '/api/v1/timetable/rooms/{room}'
  */
-        showForm.head = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -470,123 +235,11 @@ show.head = (args: { room: number | { id: number } } | [room: number | { id: num
     
     show.form = showForm
 /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-export const update = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
-    url: update.url(args, options),
-    method: 'put',
-})
-
-update.definition = {
-    methods: ["put","patch"],
-    url: '/api/v1/hostel/rooms/{hostel_room}',
-} satisfies RouteDefinition<["put","patch"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-update.url = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { hostel_room: args }
-    }
-
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { hostel_room: args.id }
-        }
-    
-    if (Array.isArray(args)) {
-        args = {
-                    hostel_room: args[0],
-                }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-                        hostel_room: typeof args.hostel_room === 'object'
-                ? args.hostel_room.id
-                : args.hostel_room,
-                }
-
-    return update.definition.url
-            .replace('{hostel_room}', parsedArgs.hostel_room.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-update.put = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
-    url: update.url(args, options),
-    method: 'put',
-})
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-update.patch = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
-    url: update.url(args, options),
-    method: 'patch',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-    const updateForm = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: update.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'PUT',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-        updateForm.put = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: update.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'PUT',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:182
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-        updateForm.patch = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: update.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'PATCH',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    update.form = updateForm
-/**
 * @see \App\Http\Controllers\Api\V1\Timetable\RoomController::update
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-export const update = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -601,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-update.url = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { room: args }
     }
@@ -634,7 +287,7 @@ update.url = (args: { room: number | { id: number } } | [room: number | { id: nu
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-update.put = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -643,7 +296,7 @@ update.put = (args: { room: number | { id: number } } | [room: number | { id: nu
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-update.patch = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -653,7 +306,7 @@ update.patch = (args: { room: number | { id: number } } | [room: number | { id: 
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-    const updateForm = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -668,7 +321,7 @@ update.patch = (args: { room: number | { id: number } } | [room: number | { id: 
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-        updateForm.put = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -682,7 +335,7 @@ update.patch = (args: { room: number | { id: number } } | [room: number | { id: 
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:38
  * @route '/api/v1/timetable/rooms/{room}'
  */
-        updateForm.patch = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -694,100 +347,11 @@ update.patch = (args: { room: number | { id: number } } | [room: number | { id: 
     
     update.form = updateForm
 /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:231
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-export const destroy = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
-    method: 'delete',
-})
-
-destroy.definition = {
-    methods: ["delete"],
-    url: '/api/v1/hostel/rooms/{hostel_room}',
-} satisfies RouteDefinition<["delete"]>
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:231
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-destroy.url = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { hostel_room: args }
-    }
-
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { hostel_room: args.id }
-        }
-    
-    if (Array.isArray(args)) {
-        args = {
-                    hostel_room: args[0],
-                }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-                        hostel_room: typeof args.hostel_room === 'object'
-                ? args.hostel_room.id
-                : args.hostel_room,
-                }
-
-    return destroy.definition.url
-            .replace('{hostel_room}', parsedArgs.hostel_room.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:231
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-destroy.delete = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
-    method: 'delete',
-})
-
-    /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:231
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-    const destroyForm = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: destroy.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'DELETE',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\Api\V1\Hostel\HostelRoomController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelRoomController.php:231
- * @route '/api/v1/hostel/rooms/{hostel_room}'
- */
-        destroyForm.delete = (args: { hostel_room: number | { id: number } } | [hostel_room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: destroy.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'DELETE',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    destroy.form = destroyForm
-/**
 * @see \App\Http\Controllers\Api\V1\Timetable\RoomController::destroy
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:54
  * @route '/api/v1/timetable/rooms/{room}'
  */
-export const destroy = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -802,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:54
  * @route '/api/v1/timetable/rooms/{room}'
  */
-destroy.url = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { room: args }
     }
@@ -835,7 +399,7 @@ destroy.url = (args: { room: number | { id: number } } | [room: number | { id: n
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:54
  * @route '/api/v1/timetable/rooms/{room}'
  */
-destroy.delete = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -845,7 +409,7 @@ destroy.delete = (args: { room: number | { id: number } } | [room: number | { id
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:54
  * @route '/api/v1/timetable/rooms/{room}'
  */
-    const destroyForm = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -860,7 +424,7 @@ destroy.delete = (args: { room: number | { id: number } } | [room: number | { id
  * @see app/Http/Controllers/Api/V1/Timetable/RoomController.php:54
  * @route '/api/v1/timetable/rooms/{room}'
  */
-        destroyForm.delete = (args: { room: number | { id: number } } | [room: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { room: string | number | { id: string | number } } | [room: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
