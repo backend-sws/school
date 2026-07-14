@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults, validateParameters } from './../../../wayfinder'
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
 export const newMethod = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ newMethod.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
 newMethod.url = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ newMethod.url = (args?: { step?: string | number } | [step: string | number ] | 
 }
 
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
 newMethod.get = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ newMethod.get = (args?: { step?: string | number } | [step: string | number ] | 
     method: 'get',
 })
 /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
 newMethod.head = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -62,7 +62,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
 })
 
     /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
     const newMethodForm = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
     })
 
             /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
         newMethodForm.get = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
             method: 'get',
         })
             /**
- * @see routes/web.php:321
+ * @see routes/web.php:332
  * @route '/admission/readmissions/new/{step?}'
  */
         newMethodForm.head = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

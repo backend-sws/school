@@ -66,6 +66,13 @@ class FeedbackController extends BaseController
      */
     public function store(Request $request): JsonResponse
     {
+        if (config('ems.default_institution_id') === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No institution context resolved. Please submit this form from a school subdomain.',
+            ], 422);
+        }
+
         $validated = $request->validate([
             'institution_id' => 'nullable|exists:institutions,id',
             'name' => 'required|string|max:200',

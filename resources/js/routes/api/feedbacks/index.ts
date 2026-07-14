@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
 export const show = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
 show.url = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +177,7 @@ show.url = (args: { feedback: string | number } | [feedback: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
 show.get = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +186,7 @@ show.get = (args: { feedback: string | number } | [feedback: string | number ] |
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
 show.head = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +196,7 @@ show.head = (args: { feedback: string | number } | [feedback: string | number ] 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
     const showForm = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ show.head = (args: { feedback: string | number } | [feedback: string | number ] 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
         showForm.get = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +215,7 @@ show.head = (args: { feedback: string | number } | [feedback: string | number ] 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::show
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:92
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:99
  * @route '/api/v1/feedbacks/{feedback}'
  */
         showForm.head = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -338,7 +338,7 @@ update.patch = (args: { feedback: string | number } | [feedback: string | number
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:130
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:137
  * @route '/api/v1/feedbacks/{feedback}'
  */
 export const destroy = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -353,7 +353,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:130
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:137
  * @route '/api/v1/feedbacks/{feedback}'
  */
 destroy.url = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -381,7 +381,7 @@ destroy.url = (args: { feedback: string | number } | [feedback: string | number 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:130
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:137
  * @route '/api/v1/feedbacks/{feedback}'
  */
 destroy.delete = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -391,7 +391,7 @@ destroy.delete = (args: { feedback: string | number } | [feedback: string | numb
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:130
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:137
  * @route '/api/v1/feedbacks/{feedback}'
  */
     const destroyForm = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { feedback: string | number } | [feedback: string | numb
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\FeedbackController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:130
+ * @see app/Http/Controllers/Api/V1/Grievance/FeedbackController.php:137
  * @route '/api/v1/feedbacks/{feedback}'
  */
         destroyForm.delete = (args: { feedback: string | number } | [feedback: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults, validateParameters } from './../../../wayfinder'
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
 export const newMethod = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ newMethod.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
 newMethod.url = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ newMethod.url = (args?: { step?: string | number } | [step: string | number ] | 
 }
 
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
 newMethod.get = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ newMethod.get = (args?: { step?: string | number } | [step: string | number ] | 
     method: 'get',
 })
 /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
 newMethod.head = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -62,7 +62,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
 })
 
     /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
     const newMethodForm = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
     })
 
             /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
         newMethodForm.get = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
             method: 'get',
         })
             /**
- * @see routes/web.php:313
+ * @see routes/web.php:324
  * @route '/admission/applications/new/{step?}'
  */
         newMethodForm.head = (args?: { step?: string | number } | [step: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -94,7 +94,7 @@ newMethod.head = (args?: { step?: string | number } | [step: string | number ] |
     
     newMethod.form = newMethodForm
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -108,7 +108,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -135,7 +135,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 }
 
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -143,7 +143,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
     method: 'get',
 })
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -152,7 +152,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
     /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -161,7 +161,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     })
 
             /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -169,7 +169,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
             method: 'get',
         })
             /**
- * @see routes/web.php:316
+ * @see routes/web.php:327
  * @route '/admission/applications/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -184,7 +184,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     
     show.form = showForm
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
 export const pay = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -198,7 +198,7 @@ pay.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
 pay.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -225,7 +225,7 @@ pay.url = (args: { id: string | number } | [id: string | number ] | string | num
 }
 
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
 pay.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -233,7 +233,7 @@ pay.get = (args: { id: string | number } | [id: string | number ] | string | num
     method: 'get',
 })
 /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
 pay.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -242,7 +242,7 @@ pay.head = (args: { id: string | number } | [id: string | number ] | string | nu
 })
 
     /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
     const payForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -251,7 +251,7 @@ pay.head = (args: { id: string | number } | [id: string | number ] | string | nu
     })
 
             /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
         payForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -259,7 +259,7 @@ pay.head = (args: { id: string | number } | [id: string | number ] | string | nu
             method: 'get',
         })
             /**
- * @see routes/web.php:317
+ * @see routes/web.php:328
  * @route '/admission/applications/{id}/pay'
  */
         payForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

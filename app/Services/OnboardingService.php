@@ -206,19 +206,17 @@ class OnboardingService
      */
     public static function mapModulesToWorkflows(array $modules, string $instType = 'college'): array
     {
-        $isSchool = $instType === 'school';
-
         $mapping = [
             'core' => [
                 'admin_desk',
                 'info_pr_hub',
-                $isSchool ? 'office_registry_school' : 'office_registry',
-                $isSchool ? 'system_console_school' : 'system_console',
+                'office_registry',
+                'system_console',
             ],
-            'academics' => [$isSchool ? 'academic_setup_school' : 'academic_setup', 'attendance', 'timetable'],
-            'fee_management' => [$isSchool ? 'accounts_room_school' : 'accounts_room', 'expense_tracker'],
-            'admissions' => [$isSchool ? 'admission_cell_school' : 'admission_cell'],
-            'certificates' => [$isSchool ? 'service_branch_school' : 'service_branch'],
+            'academics' => ['academic_setup', 'attendance', 'timetable'],
+            'fee_management' => ['accounts_room', 'expense_tracker'],
+            'admissions' => ['admission_cell'],
+            'certificates' => ['service_branch'],
             'library' => ['library'],
             'inventory' => ['inventory'],
             'transport' => ['transport'],

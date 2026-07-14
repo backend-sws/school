@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import expenses from './expenses'
 /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
 export const feeHub = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,7 +15,7 @@ feeHub.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
 feeHub.url = (options?: RouteQueryOptions) => {
@@ -23,7 +23,7 @@ feeHub.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
 feeHub.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ feeHub.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
 feeHub.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ feeHub.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
     const feeHubForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ feeHub.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
         feeHubForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ feeHub.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:250
+ * @see routes/web.php:261
  * @route '/accounts/fee-hub'
  */
         feeHubForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

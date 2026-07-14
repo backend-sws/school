@@ -21,7 +21,22 @@ import {
     Mail,
     LayoutDashboard,
     LogOut,
+    Loader2,
 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import axios from "axios";
 
 const STUDENT_ROLES = ["student", "candidate"];
 
@@ -43,6 +58,95 @@ export function PublicHeader() {
     const { name, locationLine, contact } = useInstitution();
     const { navItems, ctaLabel, topBarTag, utilityLinks, importantLinks } = useLayoutContext();
     const isLoggedIn = Boolean(auth?.user);
+
+    const [feedbackOpen, setFeedbackOpen] = useState(false);
+    const [feedbackForm, setFeedbackForm] = useState({
+        name: "",
+        mobile: "",
+        email: "",
+        subject: "",
+        message: "",
+    });
+    const [feedbackErrors, setFeedbackErrors] = useState<Record<string, string>>({});
+    const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+
+    const [grievanceOpen, setGrievanceOpen] = useState(false);
+    const [grievanceForm, setGrievanceForm] = useState({
+        name: "",
+        mobile: "",
+        email: "",
+        category: "",
+        subject: "",
+        description: "",
+    });
+    const [grievanceErrors, setGrievanceErrors] = useState<Record<string, string>>({});
+    const [grievanceSubmitting, setGrievanceSubmitting] = useState(false);
+
+    const handleFeedbackSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setFeedbackErrors({});
+        setFeedbackSubmitting(true);
+        try {
+            await axios.post("/api/v1/public/feedback", {
+                ...feedbackForm,
+                rating: 5,
+            });
+            toast.success("Feedback submitted successfully! Thank you.");
+            setFeedbackForm({ name: "", mobile: "", email: "", subject: "", message: "" });
+            setFeedbackOpen(false);
+        } catch (error: any) {
+            if (error.response?.status === 422) {
+                const validationErrors = error.response.data.errors || {};
+                const formattedErrors: Record<string, string> = {};
+                Object.keys(validationErrors).forEach((key) => {
+                    formattedErrors[key] = validationErrors[key][0];
+                });
+                setFeedbackErrors(formattedErrors);
+                // Also show first error in toast
+                const firstErrorKey = Object.keys(formattedErrors)[0];
+                if (firstErrorKey) {
+                    toast.error(formattedErrors[firstErrorKey]);
+                }
+            } else {
+                const msg = error.response?.data?.message || "Failed to submit feedback.";
+                toast.error(msg);
+            }
+        } finally {
+            setFeedbackSubmitting(false);
+        }
+    };
+
+    const handleGrievanceSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setGrievanceErrors({});
+        setGrievanceSubmitting(true);
+        try {
+            await axios.post("/api/v1/public/grievances", grievanceForm);
+            toast.success("Grievance ticket created successfully! We will address it promptly.");
+            setGrievanceForm({ name: "", mobile: "", email: "", category: "", subject: "", description: "" });
+            setGrievanceOpen(false);
+        } catch (error: any) {
+            if (error.response?.status === 422) {
+                const validationErrors = error.response.data.errors || {};
+                const formattedErrors: Record<string, string> = {};
+                Object.keys(validationErrors).forEach((key) => {
+                    formattedErrors[key] = validationErrors[key][0];
+                });
+                setGrievanceErrors(formattedErrors);
+                // Also show first error in toast
+                const firstErrorKey = Object.keys(formattedErrors)[0];
+                if (firstErrorKey) {
+                    toast.error(formattedErrors[firstErrorKey]);
+                }
+            } else {
+                const msg = error.response?.data?.message || "Failed to submit grievance.";
+                toast.error(msg);
+            }
+        } finally {
+            setGrievanceSubmitting(false);
+        }
+    };
+
     const dashboardHref =
         auth?.role && STUDENT_ROLES.includes(auth.role)
             ? "/student-portal/dashboard"
@@ -83,11 +187,32 @@ export function PublicHeader() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4 font-medium shrink-0">
-                        {utilityLinks.map((link) => (
-                            <IconLink key={link.label} href={link.href} icon={link.icon}>
-                                <span className="hidden sm:inline">{link.label}</span>
-                            </IconLink>
-                        ))}
+                        {utilityLinks.map((link) => {
+                            const isFeedback = link.label === "Feedback";
+                            const isGrievance = link.label === "Grievance";
+                            return (
+                                <IconLink
+                                    key={link.label}
+                                    href={isFeedback || isGrievance ? "#" : link.href}
+                                    icon={link.icon}
+                                    onClick={
+                                        isFeedback
+                                            ? (e) => {
+                                                  e.preventDefault();
+                                                  setFeedbackOpen(true);
+                                              }
+                                            : isGrievance
+                                            ? (e) => {
+                                                  e.preventDefault();
+                                                  setGrievanceOpen(true);
+                                              }
+                                            : undefined
+                                    }
+                                >
+                                    <span className="hidden sm:inline">{link.label}</span>
+                                </IconLink>
+                            );
+                        })}
                         <span className="opacity-30 hidden sm:inline">|</span>
                         <ThemeSettings />
                     </div>
@@ -289,6 +414,276 @@ export function PublicHeader() {
             </div>
 
             <MobileNav isOpen={mobileMenuOpen} />
+
+            {/* Feedback Modal */}
+            <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
+                <DialogContent className="sm:max-w-[550px] p-6 gap-6 rounded-2xl border border-border">
+                    <DialogHeader className="space-y-1.5 text-left">
+                        <DialogTitle className="text-xl font-bold text-foreground">Share your Feedback</DialogTitle>
+                        <DialogDescription className="text-sm text-muted-foreground">
+                            We value your suggestions and feedback to improve our services.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="fb-name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                    Full Name <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    id="fb-name"
+                                    placeholder="John Doe"
+                                    value={feedbackForm.name}
+                                    onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
+                                    required
+                                    className="h-10 rounded-lg bg-background"
+                                />
+                                {feedbackErrors.name && (
+                                    <p className="text-xs text-destructive mt-1">{feedbackErrors.name}</p>
+                                )}
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="fb-mobile" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                    Mobile Number <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    id="fb-mobile"
+                                    placeholder="9876543210"
+                                    value={feedbackForm.mobile}
+                                    onChange={(e) => setFeedbackForm({ ...feedbackForm, mobile: e.target.value })}
+                                    required
+                                    className="h-10 rounded-lg bg-background"
+                                />
+                                {feedbackErrors.mobile && (
+                                    <p className="text-xs text-destructive mt-1">{feedbackErrors.mobile}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="fb-email" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Email Address <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="fb-email"
+                                type="email"
+                                placeholder="john@example.com"
+                                value={feedbackForm.email}
+                                onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
+                                required
+                                className="h-10 rounded-lg bg-background w-full"
+                            />
+                            {feedbackErrors.email && (
+                                <p className="text-xs text-destructive mt-1">{feedbackErrors.email}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="fb-subject" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Subject <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="fb-subject"
+                                placeholder="Brief summary of your submission"
+                                value={feedbackForm.subject}
+                                onChange={(e) => setFeedbackForm({ ...feedbackForm, subject: e.target.value })}
+                                required
+                                className="h-10 rounded-lg bg-background w-full"
+                            />
+                            {feedbackErrors.subject && (
+                                <p className="text-xs text-destructive mt-1">{feedbackErrors.subject}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="fb-message" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Message <span className="text-destructive">*</span>
+                            </Label>
+                            <Textarea
+                                id="fb-message"
+                                placeholder="Provide detailed information here..."
+                                value={feedbackForm.message}
+                                onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
+                                required
+                                className="min-h-[100px] rounded-lg bg-background w-full"
+                            />
+                            {feedbackErrors.message && (
+                                <p className="text-xs text-destructive mt-1">{feedbackErrors.message}</p>
+                            )}
+                        </div>
+
+                        <DialogFooter className="pt-2 sm:space-x-2 flex justify-end">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setFeedbackOpen(false)}
+                                className="h-11 px-6 rounded-lg text-sm font-semibold border-border hover:bg-muted"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={feedbackSubmitting}
+                                className="h-11 px-6 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center gap-2"
+                            >
+                                {feedbackSubmitting ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    "Submit Now"
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Grievance Modal */}
+            <Dialog open={grievanceOpen} onOpenChange={setGrievanceOpen}>
+                <DialogContent className="sm:max-w-[550px] p-6 gap-6 rounded-2xl border border-border">
+                    <DialogHeader className="space-y-1.5 text-left">
+                        <DialogTitle className="text-xl font-bold text-foreground">Submit a Grievance</DialogTitle>
+                        <DialogDescription className="text-sm text-muted-foreground">
+                            Submit your grievance and our team will address it promptly.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form onSubmit={handleGrievanceSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="gr-name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                    Full Name <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    id="gr-name"
+                                    placeholder="John Doe"
+                                    value={grievanceForm.name}
+                                    onChange={(e) => setGrievanceForm({ ...grievanceForm, name: e.target.value })}
+                                    required
+                                    className="h-10 rounded-lg bg-background"
+                                />
+                                {grievanceErrors.name && (
+                                    <p className="text-xs text-destructive mt-1">{grievanceErrors.name}</p>
+                                )}
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="gr-mobile" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                    Mobile Number
+                                </Label>
+                                <Input
+                                    id="gr-mobile"
+                                    placeholder="9876543210"
+                                    value={grievanceForm.mobile}
+                                    onChange={(e) => setGrievanceForm({ ...grievanceForm, mobile: e.target.value })}
+                                    className="h-10 rounded-lg bg-background"
+                                />
+                                {grievanceErrors.mobile && (
+                                    <p className="text-xs text-destructive mt-1">{grievanceErrors.mobile}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="gr-email" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Email Address
+                            </Label>
+                            <Input
+                                id="gr-email"
+                                type="email"
+                                placeholder="john@example.com"
+                                value={grievanceForm.email}
+                                onChange={(e) => setGrievanceForm({ ...grievanceForm, email: e.target.value })}
+                                className="h-10 rounded-lg bg-background w-full"
+                            />
+                            {grievanceErrors.email && (
+                                <p className="text-xs text-destructive mt-1">{grievanceErrors.email}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5 flex flex-col">
+                            <Label htmlFor="gr-category" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+                                Category
+                            </Label>
+                            <Select
+                                value={grievanceForm.category}
+                                onValueChange={(val) => setGrievanceForm({ ...grievanceForm, category: val })}
+                            >
+                                <SelectTrigger className="h-10 rounded-lg bg-background w-full text-left">
+                                    <SelectValue placeholder="Select Category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Academic">Academic</SelectItem>
+                                    <SelectItem value="Admissions">Admissions</SelectItem>
+                                    <SelectItem value="Fee & Payments">Fee & Payments</SelectItem>
+                                    <SelectItem value="Facilities & Infrastructure">Facilities & Infrastructure</SelectItem>
+                                    <SelectItem value="Hostel & Mess">Hostel & Mess</SelectItem>
+                                    <SelectItem value="Transport">Transport</SelectItem>
+                                    <SelectItem value="Other">Other</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {grievanceErrors.category && (
+                                <p className="text-xs text-destructive mt-1">{grievanceErrors.category}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="gr-subject" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Subject <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="gr-subject"
+                                placeholder="Brief summary of your submission"
+                                value={grievanceForm.subject}
+                                onChange={(e) => setGrievanceForm({ ...grievanceForm, subject: e.target.value })}
+                                required
+                                className="h-10 rounded-lg bg-background w-full"
+                            />
+                            {grievanceErrors.subject && (
+                                <p className="text-xs text-destructive mt-1">{grievanceErrors.subject}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="gr-description" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Description <span className="text-destructive">*</span>
+                            </Label>
+                            <Textarea
+                                id="gr-description"
+                                placeholder="Provide detailed information here..."
+                                value={grievanceForm.description}
+                                onChange={(e) => setGrievanceForm({ ...grievanceForm, description: e.target.value })}
+                                required
+                                className="min-h-[100px] rounded-lg bg-background w-full"
+                            />
+                            {grievanceErrors.description && (
+                                <p className="text-xs text-destructive mt-1">{grievanceErrors.description}</p>
+                            )}
+                        </div>
+
+                        <DialogFooter className="pt-2 sm:space-x-2 flex justify-end">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setGrievanceOpen(false)}
+                                className="h-11 px-6 rounded-lg text-sm font-semibold border-border hover:bg-muted"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={grievanceSubmitting}
+                                className="h-11 px-6 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center gap-2"
+                            >
+                                {grievanceSubmitting ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    "Submit Now"
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

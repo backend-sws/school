@@ -29,8 +29,8 @@ type ClassOption = { id: number; name: string; stream?: { name: string }; sessio
 
 export default function AttendanceReportsSummary() {
 useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
-  const [level, setLevel] = useState<AttendanceLevel | "">("");
-  const [classId, setClassId] = useState<string>("");
+  const [level, setLevel] = useState<AttendanceLevel | "all">("all");
+  const [classId, setClassId] = useState<string>("all");
   const [fromDate, setFromDate] = useState(defaultFrom());
   const [toDate, setToDate] = useState(defaultTo());
 
@@ -44,8 +44,8 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
     () => ({
       from_date: fromDate,
       to_date: toDate,
-      ...(classId ? { lms_class_id: Number(classId) } : {}),
-      ...(level ? { level } : {}),
+      ...(classId && classId !== "all" ? { lms_class_id: Number(classId) } : {}),
+      ...(level && level !== "all" ? { level: level as AttendanceLevel } : {}),
     }),
     [fromDate, toDate, classId, level]
   );
@@ -54,7 +54,7 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
     queryKey: ["attendance-reports-summary", params],
     queryFn: () => attendanceApi.reports.summary(params),
   });
-  const payload = summaryRes ?? null;
+  const payload = (summaryRes as any)?.data || summaryRes || null;
   const summary = payload?.summary;
   const thresholdPercentage = payload?.threshold_percentage ?? 75;
 
@@ -71,17 +71,18 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
     <>
       <Head title="Attendance Summary" />
       <MainPageHeader
-        id="attendance-summary-header"
         breadcrumbs={ATTENDANCE_SUMMARY_BREADCRUMBS}
         icon={BarChart3}
-        title="Summary & Reports"
-        subtitle="Aggregated attendance counts and percentage for a date range"
+        title="Analytics & Compliance"
+        subtitle="Monitor student attendance trends and compliance thresholds"
       />
-      <Card className="mt-4">
-        <CardContent className="pt-6 space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Card>
+          <CardContent className="p-6 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
             <div className="space-y-2">
-              <Label>From date</Label>
+              <Label>From Date</Label>
               <input
                 type="date"
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
@@ -90,7 +91,7 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
               />
             </div>
             <div className="space-y-2">
-              <Label>To date</Label>
+              <Label>To Date</Label>
               <input
                 type="date"
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
@@ -105,36 +106,28 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
                   <SelectValue placeholder="All classes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All classes</SelectItem>
-                  <Each
-                      of={classOptions}
-                      keyExtractor={(o) => String(o.value)}
-                      render={(o) => (
+                  <SelectItem value="all">All classes</SelectItem>
+                  {classOptions.map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
                     </SelectItem>
-                  )}
-                  />
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Level (optional)</Label>
-              <Select value={level} onValueChange={(v) => setLevel(v as AttendanceLevel | "")}>
+              <Select value={level} onValueChange={setLevel}>
                 <SelectTrigger>
                   <SelectValue placeholder="Both" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Both</SelectItem>
-                  <Each
-                      of={ATTENDANCE_LEVEL_OPTIONS}
-                      keyExtractor={(o) => String(o.value)}
-                      render={(o) => (
+                  <SelectItem value="all">Both</SelectItem>
+                  {ATTENDANCE_LEVEL_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
                     </SelectItem>
-                  )}
-                  />
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -162,6 +155,7 @@ useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
           )}
         </CardContent>
       </Card>
+      </div>
     </>
   );
 }

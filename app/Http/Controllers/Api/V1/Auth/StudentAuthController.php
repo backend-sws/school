@@ -149,7 +149,7 @@ class StudentAuthController extends BaseController
 
             // 2. Assign Role Candidate
             $role = Role::where('key', 'candidate')->first();
-            $user->roles()->attach($role->id, ['assigned_at' => now()]);
+            $user->roles()->attach($role->id, ['institution_id' => $excel->institution_id, 'assigned_at' => now()]);
 
             // 3. Create Profile with ALL Excel Details
             StudentProfile::create([

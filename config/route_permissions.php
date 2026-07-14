@@ -19,7 +19,7 @@ return [
     'middleware' => [
         // Polymorphic: all access checks are permission-based, no hardcoded role lists.
         // If a user has ANY permission from the group, they can access the routes.
-        'admin' => ['ensure-permission-group:admin_desk'],
+        'admin' => ['ensure-permission-group:admin_desk,admission_cell,office_registry,info_pr_hub,accounts_room,expense_tracker,academic_setup,service_branch,redressal_cell,system_console,my_organisation,inventory,transport,attendance,library,lms,timetable,question_bank,examination,hostel'],
         'portal' => ['ensure-permission-group:student_portal'],
         'admin_desk' => ['ensure-permission-group:admin_desk'],
         'admission_cell' => ['ensure-permission-group:admission_cell'],
@@ -425,6 +425,8 @@ return [
     */
     'landing_pages' => [
         'view_dashboard'   => 'dashboard', // admin / principal
+        'view_attendance'  => 'attendance.index', // staff (attendance)
+        'view_lms_courses' => 'lms.index', // staff (lms)
         'view_my_students' => 'dashboard', // parent
         'portal'           => 'dashboard', // student / candidate
     ],

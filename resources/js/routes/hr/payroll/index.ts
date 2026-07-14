@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:258
+ * @see routes/web.php:269
  * @route '/hr/payroll'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
 export const components = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ components.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
 components.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ components.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
 components.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ components.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
 components.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ components.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
     const componentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ components.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
         componentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ components.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:259
+ * @see routes/web.php:270
  * @route '/hr/payroll/components'
  */
         componentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -142,7 +142,7 @@ components.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     components.form = componentsForm
 /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
 export const salaryStructures = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -156,7 +156,7 @@ salaryStructures.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
 salaryStructures.url = (options?: RouteQueryOptions) => {
@@ -164,7 +164,7 @@ salaryStructures.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
 salaryStructures.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ salaryStructures.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
     method: 'get',
 })
 /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
 salaryStructures.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -181,7 +181,7 @@ salaryStructures.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 })
 
     /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
     const salaryStructuresForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -190,7 +190,7 @@ salaryStructures.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     })
 
             /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
         salaryStructuresForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -198,7 +198,7 @@ salaryStructures.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
             method: 'get',
         })
             /**
- * @see routes/web.php:260
+ * @see routes/web.php:271
  * @route '/hr/payroll/salary-structures'
  */
         salaryStructuresForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -213,7 +213,7 @@ salaryStructures.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     
     salaryStructures.form = salaryStructuresForm
 /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
 export const runDetails = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ runDetails.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
 runDetails.url = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -254,7 +254,7 @@ runDetails.url = (args: { payroll: string | number } | [payroll: string | number
 }
 
 /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
 runDetails.get = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -262,7 +262,7 @@ runDetails.get = (args: { payroll: string | number } | [payroll: string | number
     method: 'get',
 })
 /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
 runDetails.head = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -271,7 +271,7 @@ runDetails.head = (args: { payroll: string | number } | [payroll: string | numbe
 })
 
     /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
     const runDetailsForm = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -280,7 +280,7 @@ runDetails.head = (args: { payroll: string | number } | [payroll: string | numbe
     })
 
             /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
         runDetailsForm.get = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ runDetails.head = (args: { payroll: string | number } | [payroll: string | numbe
             method: 'get',
         })
             /**
- * @see routes/web.php:261
+ * @see routes/web.php:272
  * @route '/hr/payroll/{payroll}'
  */
         runDetailsForm.head = (args: { payroll: string | number } | [payroll: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

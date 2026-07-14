@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import subjects from './subjects'
 import rooms from './rooms'
 /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -24,7 +24,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -32,7 +32,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -41,7 +41,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -50,7 +50,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:472
+ * @see routes/web.php:483
  * @route '/lms/classes'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
 export const stream = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -87,7 +87,7 @@ stream.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
 stream.url = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -114,7 +114,7 @@ stream.url = (args: { streamId: string | number } | [streamId: string | number ]
 }
 
 /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
 stream.get = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ stream.get = (args: { streamId: string | number } | [streamId: string | number ]
     method: 'get',
 })
 /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
 stream.head = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -131,7 +131,7 @@ stream.head = (args: { streamId: string | number } | [streamId: string | number 
 })
 
     /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
     const streamForm = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -140,7 +140,7 @@ stream.head = (args: { streamId: string | number } | [streamId: string | number 
     })
 
             /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
         streamForm.get = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -148,7 +148,7 @@ stream.head = (args: { streamId: string | number } | [streamId: string | number 
             method: 'get',
         })
             /**
- * @see routes/web.php:473
+ * @see routes/web.php:484
  * @route '/lms/classes/stream/{streamId}'
  */
         streamForm.head = (args: { streamId: string | number } | [streamId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ stream.head = (args: { streamId: string | number } | [streamId: string | number 
     
     stream.form = streamForm
 /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -177,7 +177,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -204,7 +204,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 }
 
 /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -212,7 +212,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
     method: 'get',
 })
 /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -221,7 +221,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
     /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
     const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -230,7 +230,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     })
 
             /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
         showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -238,7 +238,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
             method: 'get',
         })
             /**
- * @see routes/web.php:474
+ * @see routes/web.php:485
  * @route '/lms/classes/{id}'
  */
         showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

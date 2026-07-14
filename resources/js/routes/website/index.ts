@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import galleries6fe4c2 from './galleries'
 /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
 export const builder = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,7 +15,7 @@ builder.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
 builder.url = (options?: RouteQueryOptions) => {
@@ -23,7 +23,7 @@ builder.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
 builder.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ builder.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
 builder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ builder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
     const builderForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ builder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
         builderForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ builder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:360
+ * @see routes/web.php:371
  * @route '/website/builder'
  */
         builderForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -72,7 +72,7 @@ builder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     builder.form = builderForm
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
 export const sliders = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -86,7 +86,7 @@ sliders.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
 sliders.url = (options?: RouteQueryOptions) => {
@@ -94,7 +94,7 @@ sliders.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
 sliders.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ sliders.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
 sliders.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -111,7 +111,7 @@ sliders.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
     const slidersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -120,7 +120,7 @@ sliders.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
         slidersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -128,7 +128,7 @@ sliders.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:361
+ * @see routes/web.php:372
  * @route '/website/sliders'
  */
         slidersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -143,7 +143,7 @@ sliders.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     sliders.form = slidersForm
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
 export const tickers = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ tickers.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
 tickers.url = (options?: RouteQueryOptions) => {
@@ -165,7 +165,7 @@ tickers.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
 tickers.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -173,7 +173,7 @@ tickers.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
 tickers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -182,7 +182,7 @@ tickers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
     const tickersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -191,7 +191,7 @@ tickers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
         tickersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -199,7 +199,7 @@ tickers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:362
+ * @see routes/web.php:373
  * @route '/website/tickers'
  */
         tickersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -214,7 +214,7 @@ tickers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     tickers.form = tickersForm
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
 export const news = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -228,7 +228,7 @@ news.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
 news.url = (options?: RouteQueryOptions) => {
@@ -236,7 +236,7 @@ news.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
 news.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -244,7 +244,7 @@ news.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
 news.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -253,7 +253,7 @@ news.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
     const newsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -262,7 +262,7 @@ news.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
         newsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -270,7 +270,7 @@ news.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:363
+ * @see routes/web.php:374
  * @route '/website/news'
  */
         newsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -285,7 +285,7 @@ news.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     news.form = newsForm
 /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
 export const galleries = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -299,7 +299,7 @@ galleries.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
 galleries.url = (options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ galleries.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
 galleries.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -315,7 +315,7 @@ galleries.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
 galleries.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -324,7 +324,7 @@ galleries.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
     const galleriesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -333,7 +333,7 @@ galleries.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
         galleriesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -341,7 +341,7 @@ galleries.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:364
+ * @see routes/web.php:375
  * @route '/website/galleries'
  */
         galleriesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -356,7 +356,7 @@ galleries.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     galleries.form = galleriesForm
 /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
 export const faculties = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -370,7 +370,7 @@ faculties.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
 faculties.url = (options?: RouteQueryOptions) => {
@@ -378,7 +378,7 @@ faculties.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
 faculties.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -386,7 +386,7 @@ faculties.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
 faculties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -395,7 +395,7 @@ faculties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
     const facultiesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -404,7 +404,7 @@ faculties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
         facultiesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -412,7 +412,7 @@ faculties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:366
+ * @see routes/web.php:377
  * @route '/website/faculties'
  */
         facultiesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -24,6 +24,10 @@ class PermissionResolverService
      */
     public function resolveEffectivePermissionKeys(User $user, ?int $institutionId = null): array
     {
+        if ($this->userHasSuperAdmin($user)) {
+            return Permission::pluck('key')->all();
+        }
+
         if ($institutionId === null) {
             $institutionId = InstitutionContext::getActiveInstitutionId($user);
         }

@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
 export const notices = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ notices.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
 notices.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ notices.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
 notices.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ notices.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
 notices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ notices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
     const noticesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ notices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
         noticesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ notices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:167
+ * @see routes/web.php:178
  * @route '/student-portal/notices'
  */
         noticesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

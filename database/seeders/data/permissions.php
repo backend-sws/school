@@ -32,7 +32,6 @@ return [
     ['key' => 'update_applications', 'name' => 'Update Applications', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'delete_applications', 'name' => 'Delete Applications', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'approve_applications', 'name' => 'Approve/Reject Applications', 'module' => 'admission_cell', 'scope_types' => $ALL],
-    ['key' => 'approve_applications', 'name' => 'Approve/Reject Applications', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'view_promotions', 'name' => 'View Promotions', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'create_promotions', 'name' => 'Promote Students', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'bulk_promote', 'name' => 'Bulk Promote Students', 'module' => 'admission_cell', 'scope_types' => $ALL],
@@ -46,7 +45,6 @@ return [
     // ── Field-Level: Student Admission ────────────────────────────
     ['key' => 'field_admission_applicant_name', 'name' => 'Admission – Applicant Name', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_roll_no', 'name' => 'Admission – Roll No', 'module' => 'admission_cell', 'scope_types' => $ALL],
-    ['key' => 'field_admission_roll_no', 'name' => 'Admission – Roll No', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_father_name', 'name' => 'Admission – Father Name', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_father_qual', 'name' => 'Admission – Father Qualification', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_father_occ', 'name' => 'Admission – Father Occupation', 'module' => 'admission_cell', 'scope_types' => $ALL],
@@ -59,7 +57,6 @@ return [
     ['key' => 'field_admission_religion', 'name' => 'Admission – Religion', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_marital_status', 'name' => 'Admission – Marital Status', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_blood_group', 'name' => 'Admission – Blood Group', 'module' => 'admission_cell', 'scope_types' => $ALL],
-    ['key' => 'field_admission_differently_abled', 'name' => 'Admission – Differently Abled', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_differently_abled', 'name' => 'Admission – Differently Abled', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_mobile', 'name' => 'Admission – Mobile', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_admission_father_mobile', 'name' => 'Admission – Father Mobile', 'module' => 'admission_cell', 'scope_types' => $ALL],
@@ -85,7 +82,6 @@ return [
     // ── Field-Level: Student Re-Admission ─────────────────────────
     ['key' => 'field_readmission_applicant_name', 'name' => 'Re-Admission – Applicant Name', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_roll_no', 'name' => 'Re-Admission – Roll No', 'module' => 'admission_cell', 'scope_types' => $ALL],
-    ['key' => 'field_readmission_roll_no', 'name' => 'Re-Admission – Roll No', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_father_name', 'name' => 'Re-Admission – Father Name', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_father_qual', 'name' => 'Re-Admission – Father Qualification', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_father_occ', 'name' => 'Re-Admission – Father Occupation', 'module' => 'admission_cell', 'scope_types' => $ALL],
@@ -98,7 +94,6 @@ return [
     ['key' => 'field_readmission_religion', 'name' => 'Re-Admission – Religion', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_marital_status', 'name' => 'Re-Admission – Marital Status', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_blood_group', 'name' => 'Re-Admission – Blood Group', 'module' => 'admission_cell', 'scope_types' => $ALL],
-    ['key' => 'field_readmission_differently_abled', 'name' => 'Re-Admission – Differently Abled', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_differently_abled', 'name' => 'Re-Admission – Differently Abled', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_mobile', 'name' => 'Re-Admission – Mobile', 'module' => 'admission_cell', 'scope_types' => $ALL],
     ['key' => 'field_readmission_father_mobile', 'name' => 'Re-Admission – Father Mobile', 'module' => 'admission_cell', 'scope_types' => $ALL],
@@ -201,7 +196,8 @@ return [
     ['key' => 'create_faculty', 'name' => 'Create Faculty', 'module' => 'office_registry', 'scope_types' => $ALL],
     ['key' => 'update_faculty', 'name' => 'Update Faculty', 'module' => 'office_registry', 'scope_types' => $ALL],
     ['key' => 'delete_faculty', 'name' => 'Delete Faculty', 'module' => 'office_registry', 'scope_types' => $ALL],
-    ['key' => 'delete_faculty', 'name' => 'Delete Faculty', 'module' => 'office_registry', 'scope_types' => $ALL],
+    ['key' => 'view_staff_links', 'name' => 'View Staff Links', 'module' => 'office_registry', 'scope_types' => $ALL],
+    ['key' => 'update_staff_links', 'name' => 'Update Staff Links', 'module' => 'office_registry', 'scope_types' => $ALL],
     ['key' => 'view_notices', 'name' => 'View Notices', 'module' => 'info_pr_hub', 'scope_types' => $ALL],
 
     // ── Information & PR Hub ──────────────────────────────────────
@@ -223,8 +219,10 @@ return [
     ['key' => 'manage_website_themes', 'name' => 'Manage Website Themes (activate/switch)', 'module' => 'info_pr_hub', 'scope_types' => $ALL],
 
     // ── Accounts Room ─────────────────────────────────────────────
-    ['key' => 'delete_news', 'name' => 'Delete News/Notices', 'module' => 'info_pr_hub', 'scope_types' => $ALL],
-    ['key' => 'view_fee_particulars', 'name' => 'View Fee Particulars', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'view_fee_heads', 'name' => 'View Fee Heads', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'create_fee_heads', 'name' => 'Create Fee Heads', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'update_fee_heads', 'name' => 'Update Fee Heads', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'delete_fee_heads', 'name' => 'Delete Fee Heads', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_fee_particulars', 'name' => 'View Fee Particulars', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'create_fee_particulars', 'name' => 'Create Fee Particulars', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'update_fee_particulars', 'name' => 'Update Fee Particulars', 'module' => 'accounts_room', 'scope_types' => $ALL],
@@ -232,6 +230,8 @@ return [
     ['key' => 'collect_fees', 'name' => 'Collect Fee Payments', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_fee_payments', 'name' => 'View Fee Payments', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_fee_reports', 'name' => 'View Fee Reports', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'view_fee_regulations', 'name' => 'View Fee Regulations', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'update_fee_regulations', 'name' => 'Update Fee Regulations', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_fee_collection_settings', 'name' => 'View Fee Collection Settings', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'update_fee_collection_settings', 'name' => 'Update Fee Collection Settings', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_fee_dues', 'name' => 'View Fee Dues & Overdue', 'module' => 'accounts_room', 'scope_types' => $ALL],
@@ -241,10 +241,8 @@ return [
     // ── Field-Level: Fee Types ────────────────────────────────────
     ['key' => 'field_fee_type_name', 'name' => 'Fee Type – Name Field', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'field_fee_type_category', 'name' => 'Fee Type – Category Field', 'module' => 'accounts_room', 'scope_types' => $ALL],
-    ['key' => 'field_fee_type_category', 'name' => 'Fee Type – Category Field', 'module' => 'accounts_room', 'scope_types' => $ALL],
 
     // ── Academic Setup ────────────────────────────────────────────
-    ['key' => 'delete_fee_dues', 'name' => 'Delete Fee Dues', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_main_streams', 'name' => 'View Main Streams / Levels', 'module' => 'academic_setup', 'scope_types' => $ALL],
     ['key' => 'create_main_streams', 'name' => 'Create Main Streams / Levels', 'module' => 'academic_setup', 'scope_types' => $ALL],
     ['key' => 'update_main_streams', 'name' => 'Update Main Streams / Levels', 'module' => 'academic_setup', 'scope_types' => $ALL],
@@ -280,7 +278,12 @@ return [
     ['key' => 'delete_subject_category_mappings', 'name' => 'Delete Subject Category Mappings', 'module' => 'academic_setup', 'scope_types' => $ALL],
 
     // ── Service Branch ────────────────────────────────────────────
-    ['key' => 'delete_subject_category_mappings', 'name' => 'Delete Subject Category Mappings', 'module' => 'academic_setup', 'scope_types' => $ALL],
+    ['key' => 'view_certificates', 'name' => 'View Certificates', 'module' => 'service_branch', 'scope_types' => $ALL],
+    ['key' => 'create_certificates', 'name' => 'Create Certificates', 'module' => 'service_branch', 'scope_types' => $ALL],
+    ['key' => 'update_certificates', 'name' => 'Update Certificates', 'module' => 'service_branch', 'scope_types' => $ALL],
+    ['key' => 'delete_certificates', 'name' => 'Delete Certificates', 'module' => 'service_branch', 'scope_types' => $ALL],
+    ['key' => 'issue_certificates', 'name' => 'Issue Certificates', 'module' => 'service_branch', 'scope_types' => $ALL],
+    ['key' => 'request_certificate', 'name' => 'Request Certificate', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'view_id_card_templates', 'name' => 'View ID Card Templates', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'create_id_card_templates', 'name' => 'Create ID Card Templates', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'update_id_card_templates', 'name' => 'Update ID Card Templates', 'module' => 'service_branch', 'scope_types' => $ALL],
@@ -288,7 +291,6 @@ return [
     ['key' => 'generate_id_cards', 'name' => 'Generate Student ID Cards', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'view_id_cards', 'name' => 'View Generated ID Cards', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'download_id_cards', 'name' => 'Download ID Cards', 'module' => 'service_branch', 'scope_types' => $ALL],
-    ['key' => 'revoke_id_cards', 'name' => 'Revoke ID Cards', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'revoke_id_cards', 'name' => 'Revoke ID Cards', 'module' => 'service_branch', 'scope_types' => $ALL],
 
     // ── Field-Level: ID Card Templates ────────────────────────────
@@ -316,7 +318,6 @@ return [
     ['key' => 'field_id_card_valid_until', 'name' => 'ID Card – Valid Until', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'field_id_card_father_name', 'name' => 'ID Card – Father Name', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'field_id_card_mother_name', 'name' => 'ID Card – Mother Name', 'module' => 'service_branch', 'scope_types' => $ALL],
-    ['key' => 'field_id_card_address', 'name' => 'ID Card – Address', 'module' => 'service_branch', 'scope_types' => $ALL],
     ['key' => 'field_id_card_address', 'name' => 'ID Card – Address', 'module' => 'service_branch', 'scope_types' => $ALL],
 
     // ── Redressal Cell ────────────────────────────────────────────
@@ -524,9 +525,9 @@ return [
     // Dedicated student-portal-exclusive keys (only in student/parent portal workflows)
     ['key' => 'student_portal_classes', 'name' => 'View My Classes (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
     ['key' => 'student_portal_fees', 'name' => 'View My Fees (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
-    ['key' => 'student_portal_fees', 'name' => 'View My Fees (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
     ['key' => 'student_portal_support', 'name' => 'View Support Tickets (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
-    ['key' => 'student_portal_support', 'name' => 'View Support Tickets (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
+    ['key' => 'student_portal_applications', 'name' => 'View My Applications (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
+    ['key' => 'student_portal_certificates', 'name' => 'View My Certificates (Student Portal)', 'module' => 'student_portal', 'scope_types' => $ALL],
 
     // ── Parent Portal ────────────────────────────────────────────
     ['key' => 'view_my_students', 'name' => 'View My Students (Parent Panel)', 'module' => 'parent_portal', 'scope_types' => $ALL],
@@ -545,5 +546,10 @@ return [
     ['key' => 'create_expense_budgets', 'name' => 'Create Expense Budgets', 'module' => 'expense_tracker', 'scope_types' => $ALL],
     ['key' => 'update_expense_budgets', 'name' => 'Update Expense Budgets', 'module' => 'expense_tracker', 'scope_types' => $ALL],
     ['key' => 'delete_expense_budgets', 'name' => 'Delete Expense Budgets', 'module' => 'expense_tracker', 'scope_types' => $ALL],
-];
 
+    // ── Question Bank ────────────────────────────────────────────
+    ['key' => 'view_question_bank', 'name' => 'View Question Bank', 'module' => 'question_bank', 'scope_types' => $ALL],
+    ['key' => 'create_questions', 'name' => 'Create Questions', 'module' => 'question_bank', 'scope_types' => $ALL],
+    ['key' => 'update_questions', 'name' => 'Update Questions', 'module' => 'question_bank', 'scope_types' => $ALL],
+    ['key' => 'delete_questions', 'name' => 'Delete Questions', 'module' => 'question_bank', 'scope_types' => $ALL],
+];

@@ -46,9 +46,8 @@ export default function AttendanceMark() {
   });
 
   const classes = useMemo(() => {
-    const raw = (classesRes as { data?: unknown[] } | undefined)?.data;
+    const raw = (classesRes as any)?.data?.data || (classesRes as any)?.data || classesRes;
     if (Array.isArray(raw)) return raw as { id: number; name: string }[];
-    if (Array.isArray(classesRes)) return classesRes as unknown as { id: number; name: string }[];
     return [];
   }, [classesRes]);
 
@@ -60,9 +59,8 @@ export default function AttendanceMark() {
   });
 
   const allocations = useMemo(() => {
-    const raw = (allocationsRes as { data?: unknown[] } | undefined)?.data;
+    const raw = (allocationsRes as any)?.data?.data || (allocationsRes as any)?.data || allocationsRes;
     if (Array.isArray(raw)) return raw as { id: number; subject: { name: string } | null }[];
-    if (Array.isArray(allocationsRes)) return allocationsRes as unknown as { id: number; subject: { name: string } | null }[];
     return [];
   }, [allocationsRes]);
 
@@ -221,14 +219,11 @@ export default function AttendanceMark() {
                     {classesLoading ? (
                       <LoadingIndicator label="Classes" />
                     ) : (
-                      <Each
-                        of={classes}
-                        render={(c: { id: number; name: string }) => (
-                          <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-3">
-                            {c.name}
-                          </SelectItem>
-                        )}
-                      />
+                      classes.map((c: { id: number; name: string }) => (
+                        <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-3">
+                          {c.name}
+                        </SelectItem>
+                      ))
                     )}
                   </SelectContent>
                 </Select>
@@ -249,14 +244,11 @@ export default function AttendanceMark() {
                     {allocationsLoading ? (
                       <LoadingIndicator label="Subjects" />
                     ) : (
-                      <Each
-                        of={allocations}
-                        render={(a: { id: number; subject: { name: string } | null }) => (
-                          <SelectItem key={a.id} value={a.id.toString()} className="font-bold py-3">
-                            {a.subject?.name || "Unknown"}
-                          </SelectItem>
-                        )}
-                      />
+                      allocations.map((a: { id: number; subject: { name: string } | null }) => (
+                        <SelectItem key={a.id} value={a.id.toString()} className="font-bold py-3">
+                          {a.subject?.name || "Unknown"}
+                        </SelectItem>
+                      ))
                     )}
                   </SelectContent>
                 </Select>

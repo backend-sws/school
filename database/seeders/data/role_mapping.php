@@ -46,20 +46,14 @@ return [
             'timetable',
             'examination',
             'hostel',
-            // School variants
-            'admission_cell_school',
-            'office_registry_school',
-            'accounts_room_school',
-            'academic_setup_school',
-            'service_branch_school',
-            'system_console_school',
-            // Higher-ed variants (college/coaching/university)
+            // Specific Modules
             'admission_cell',
             'office_registry',
             'accounts_room',
             'academic_setup',
             'service_branch',
             'system_console',
+            'question_bank',
         ],
     ],
 
@@ -80,18 +74,13 @@ return [
             'timetable',
             'examination',
             'hostel',
-            // School variants
-            'admission_cell_school',
-            'office_registry_school',
-            'accounts_room_school',
-            'academic_setup_school',
-            'service_branch_school',
-            // Higher-ed variants
+            // Specific Modules
             'admission_cell',
             'office_registry',
             'accounts_room',
             'academic_setup',
             'service_branch',
+            'question_bank',
         ],
     ],
 
@@ -119,8 +108,7 @@ return [
         'permissions' => [],
         'workflows' => [
             'account',
-            'student_portal_school',   // school
-            'student_portal',          // college/coaching/university
+            'student_portal',
         ],
     ],
 
@@ -129,8 +117,7 @@ return [
         'permissions' => [],
         'workflows' => [
             'account',
-            'student_portal_school',   // school
-            'student_portal',          // college/coaching/university
+            'student_portal',
         ],
     ],
 
@@ -139,8 +126,7 @@ return [
         'permissions' => [],
         'workflows' => [
             'account',
-            'parent_portal_school',    // school
-            'parent_portal',           // college/coaching/university
+            'parent_portal',
         ],
     ],
 ];

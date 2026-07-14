@@ -51,7 +51,7 @@ class Role extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_roles')
-            ->withPivot(['scope_type', 'scope_id', 'assigned_at']);
+            ->withPivot(['institution_id', 'assigned_at']);
     }
 
     public function permissions()

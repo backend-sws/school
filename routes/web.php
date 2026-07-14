@@ -157,6 +157,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if ($user->hasAbility('portal')) {
             return Inertia::render('student-portal/dashboard');
         }
+        
+        $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($user);
+        if (!$user->hasAbility('view_dashboard', $institutionId)) {
+            if ($user->hasAbility('view_attendance', $institutionId)) {
+                return redirect()->route('attendance.index');
+            }
+            if ($user->hasAbility('view_lms_courses', $institutionId)) {
+                return redirect()->route('lms.index');
+            }
+        }
+        
         return Inertia::render('dashboard');
     })
         ->middleware('dashboard-redirect')

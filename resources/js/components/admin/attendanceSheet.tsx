@@ -72,9 +72,8 @@ export function AttendanceSheet({ open, onClose, initialClassId, initialAllocati
     });
 
     const classes = useMemo(() => {
-        const raw = (classesRes as { data?: unknown[] } | undefined)?.data;
+        const raw = (classesRes as any)?.data?.data || (classesRes as any)?.data || classesRes;
         if (Array.isArray(raw)) return raw as { id: number; name: string }[];
-        if (Array.isArray(classesRes)) return classesRes as unknown as { id: number; name: string }[];
         return [];
     }, [classesRes]);
 
@@ -86,9 +85,8 @@ export function AttendanceSheet({ open, onClose, initialClassId, initialAllocati
     });
 
     const allocations = useMemo(() => {
-        const raw = (allocationsRes as { data?: unknown[] } | undefined)?.data;
+        const raw = (allocationsRes as any)?.data?.data || (allocationsRes as any)?.data || allocationsRes;
         if (Array.isArray(raw)) return raw as { id: number; subject: { name: string } | null }[];
-        if (Array.isArray(allocationsRes)) return allocationsRes as unknown as { id: number; subject: { name: string } | null }[];
         return [];
     }, [allocationsRes]);
 

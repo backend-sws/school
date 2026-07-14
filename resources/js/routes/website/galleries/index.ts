@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
 export const manage = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ manage.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
 manage.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -41,7 +41,7 @@ manage.url = (args: { id: string | number } | [id: string | number ] | string | 
 }
 
 /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
 manage.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -49,7 +49,7 @@ manage.get = (args: { id: string | number } | [id: string | number ] | string | 
     method: 'get',
 })
 /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
 manage.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -58,7 +58,7 @@ manage.head = (args: { id: string | number } | [id: string | number ] | string |
 })
 
     /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
     const manageForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -67,7 +67,7 @@ manage.head = (args: { id: string | number } | [id: string | number ] | string |
     })
 
             /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
         manageForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ manage.head = (args: { id: string | number } | [id: string | number ] | string |
             method: 'get',
         })
             /**
- * @see routes/web.php:365
+ * @see routes/web.php:376
  * @route '/website/galleries/{id}'
  */
         manageForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

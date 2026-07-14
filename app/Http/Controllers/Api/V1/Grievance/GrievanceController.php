@@ -143,6 +143,13 @@ class GrievanceController extends BaseController
 
     public function publicStore(Request $request): JsonResponse
     {
+        if (config('ems.default_institution_id') === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No institution context resolved. Please submit this form from a school subdomain.',
+            ], 422);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'nullable|email|max:150',

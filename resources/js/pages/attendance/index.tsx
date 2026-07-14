@@ -44,9 +44,8 @@ export default function AttendanceIndex() {
   });
 
   const classes = useMemo(() => {
-    const raw = (classesRes as { data?: unknown[] } | undefined)?.data;
+    const raw = (classesRes as any)?.data?.data || (classesRes as any)?.data || classesRes;
     if (Array.isArray(raw)) return raw as { id: number; name: string }[];
-    if (Array.isArray(classesRes)) return classesRes as unknown as { id: number; name: string }[];
     return [];
   }, [classesRes]);
 
@@ -58,9 +57,8 @@ export default function AttendanceIndex() {
   });
 
   const allocations = useMemo(() => {
-    const raw = (allocationsRes as { data?: unknown[] } | undefined)?.data;
+    const raw = (allocationsRes as any)?.data?.data || (allocationsRes as any)?.data || allocationsRes;
     if (Array.isArray(raw)) return raw as { id: number; subject: { name: string } | null }[];
-    if (Array.isArray(allocationsRes)) return allocationsRes as unknown as { id: number; subject: { name: string } | null }[];
     return [];
   }, [allocationsRes]);
 
@@ -106,14 +104,11 @@ export default function AttendanceIndex() {
                       <span className="text-xs text-muted-foreground">Loading...</span>
                     </div>
                   ) : (
-                    <Each
-                      of={classes}
-                      render={(c: { id: number; name: string }) => (
-                        <SelectItem key={c.id} value={c.id.toString()} className="font-medium">
-                          {c.name}
-                        </SelectItem>
-                      )}
-                    />
+                    classes.map((c: { id: number; name: string }) => (
+                      <SelectItem key={c.id} value={c.id.toString()} className="font-medium">
+                        {c.name}
+                      </SelectItem>
+                    ))
                   )}
                 </SelectContent>
               </Select>
@@ -140,14 +135,11 @@ export default function AttendanceIndex() {
                       <span className="text-xs text-muted-foreground">Loading...</span>
                     </div>
                   ) : (
-                    <Each
-                      of={allocations}
-                      render={(a: { id: number; subject: { name: string } | null }) => (
-                        <SelectItem key={a.id} value={a.id.toString()} className="font-medium">
-                          {a.subject?.name || "Unknown"}
-                        </SelectItem>
-                      )}
-                    />
+                    allocations.map((a: { id: number; subject: { name: string } | null }) => (
+                      <SelectItem key={a.id} value={a.id.toString()} className="font-medium">
+                        {a.subject?.name || "Unknown"}
+                      </SelectItem>
+                    ))
                   )}
                 </SelectContent>
               </Select>

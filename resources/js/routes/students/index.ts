@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import manageF1b31d from './manage'
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
 export const analytics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,7 +15,7 @@ analytics.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
 analytics.url = (options?: RouteQueryOptions) => {
@@ -23,7 +23,7 @@ analytics.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
 analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
 analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
     const analyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
         analyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:286
+ * @see routes/web.php:297
  * @route '/students/analytics'
  */
         analyticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -72,7 +72,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     analytics.form = analyticsForm
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
 export const manage = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -86,7 +86,7 @@ manage.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
 manage.url = (options?: RouteQueryOptions) => {
@@ -94,7 +94,7 @@ manage.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
 manage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ manage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
 manage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -111,7 +111,7 @@ manage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
     const manageForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -120,7 +120,7 @@ manage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
         manageForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -128,7 +128,7 @@ manage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:287
+ * @see routes/web.php:298
  * @route '/students/manage'
  */
         manageForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -143,7 +143,7 @@ manage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     manage.form = manageForm
 /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
 export const candidate = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ candidate.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
 candidate.url = (options?: RouteQueryOptions) => {
@@ -165,7 +165,7 @@ candidate.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
 candidate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -173,7 +173,7 @@ candidate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
 candidate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -182,7 +182,7 @@ candidate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
     const candidateForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -191,7 +191,7 @@ candidate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
         candidateForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -199,7 +199,7 @@ candidate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:290
+ * @see routes/web.php:301
  * @route '/students/candidate'
  */
         candidateForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

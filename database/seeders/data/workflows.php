@@ -629,5 +629,14 @@ return [
         'permissions' => ['view_doubts', 'create_doubts', 'reply_doubts', 'resolve_doubts', 'delete_doubts'],
     ],
 
+    // ── Question Bank ────────────────────────────────────────────
+    [
+        'key' => 'question_bank',
+        'name' => 'Question Bank – Subject Wise Repository',
+        'description' => 'Manage questions, question types, and tagging for assignments and test series.',
+        'subscription_module' => 'lms',
+        'scope_types' => $ALL_TYPES,
+        'permissions' => ['view_question_bank', 'create_questions', 'update_questions', 'delete_questions'],
+    ],
 
 ];

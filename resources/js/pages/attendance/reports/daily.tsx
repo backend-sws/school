@@ -68,7 +68,7 @@ useRegisterGuide(ATTENDANCE_DAILY_GUIDE);
     queryFn: () => attendanceApi.reports.daily(params!),
     enabled: !!params && (level !== "subject" || !!allocationId),
   });
-  const payload = reportRes ?? null;
+  const payload = (reportRes as any)?.data || reportRes || null;
   const records = (payload?.records ?? []) as AttendanceRecordRow[];
   const summary = payload?.summary;
 
@@ -109,15 +109,11 @@ useRegisterGuide(ATTENDANCE_DAILY_GUIDE);
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <Each
-                      of={ATTENDANCE_LEVEL_OPTIONS}
-                      keyExtractor={(o) => String(o.value)}
-                      render={(o) => (
+                  {ATTENDANCE_LEVEL_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
                     </SelectItem>
-                  )}
-                  />
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -128,15 +124,11 @@ useRegisterGuide(ATTENDANCE_DAILY_GUIDE);
                   <SelectValue placeholder="Select class" />
                 </SelectTrigger>
                 <SelectContent>
-                  <Each
-                      of={classOptions}
-                      keyExtractor={(o) => String(o.value)}
-                      render={(o) => (
+                  {classOptions.map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
                     </SelectItem>
-                  )}
-                  />
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -148,15 +140,11 @@ useRegisterGuide(ATTENDANCE_DAILY_GUIDE);
                     <SelectValue placeholder="Select subject" />
                   </SelectTrigger>
                   <SelectContent>
-                    <Each
-                        of={allocationOptions}
-                        keyExtractor={(o) => String(o.value)}
-                        render={(o) => (
+                    {allocationOptions.map((o) => (
                       <SelectItem key={o.value} value={o.value}>
                         {o.label}
                       </SelectItem>
-                    )}
-                    />
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

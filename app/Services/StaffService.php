@@ -277,8 +277,9 @@ class StaffService
         if (array_key_exists('role_id', $data) && (int) $data['role_id'] > 0) {
             $role = Role::find((int) $data['role_id']);
             if ($role && !in_array($role->key, self::PROTECTED_ROLE_KEYS, true)) {
-                DB::table('user_roles')->where('user_id', $user->id)->delete();
-                $this->assignRoleToUser($user->id, $role->id, auth()->id());
+                $collegeId = InstitutionContext::getActiveInstitutionId(auth()->user());
+                DB::table('user_roles')->where('user_id', $user->id)->where('institution_id', $collegeId)->delete();
+                $this->assignRoleToUser($user->id, $role->id, auth()->id(), $collegeId);
             }
         }
 

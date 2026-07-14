@@ -13,8 +13,7 @@ class UserRole extends Model
     protected $fillable = [
         'user_id',
         'role_id',
-        'scope_type',
-        'scope_id',
+        'institution_id',
         'assigned_by',
         'expires_at',
     ];
@@ -43,14 +42,10 @@ class UserRole extends Model
 
     /* ── Scopes ──────────────────────────────────────────── */
 
-    /** Filter by scope type (global, college, department, stream). */
-    public function scopeOfScope($query, string $scopeType, ?int $scopeId = null)
+    /** Filter by institution. */
+    public function scopeForInstitution($query, ?int $institutionId)
     {
-        $query->where('scope_type', $scopeType);
-        if ($scopeId !== null) {
-            $query->where('scope_id', $scopeId);
-        }
-        return $query;
+        return $query->where('institution_id', $institutionId);
     }
 
     /** Only active (non-expired) assignments. */
