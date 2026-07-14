@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:286
+ * @see routes/web.php:290
  * @route '/accounts/expenses'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
 export const records = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ records.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
 records.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ records.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
 records.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ records.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
 records.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ records.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
     const recordsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ records.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
         recordsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ records.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:287
+ * @see routes/web.php:291
  * @route '/accounts/expenses/records'
  */
         recordsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -142,7 +142,7 @@ records.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     records.form = recordsForm
 /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
 export const categories = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -156,7 +156,7 @@ categories.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
 categories.url = (options?: RouteQueryOptions) => {
@@ -164,7 +164,7 @@ categories.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
 categories.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ categories.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
 categories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -181,7 +181,7 @@ categories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
     const categoriesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -190,7 +190,7 @@ categories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
         categoriesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -198,7 +198,7 @@ categories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:288
+ * @see routes/web.php:292
  * @route '/accounts/expenses/categories'
  */
         categoriesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

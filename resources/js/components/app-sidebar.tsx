@@ -9,7 +9,7 @@ import {
 import { Link, usePage, router } from "@inertiajs/react";
 import * as React from "react";
 import { motion } from "framer-motion";
-import { type LucideIcon, LayoutGrid, Settings } from "lucide-react";
+import { type LucideIcon, LayoutGrid, Settings, Shield, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type SharedData } from "@/types";
 import { useAuth } from "@/hooks/use-can";
@@ -98,7 +98,19 @@ export function AppSidebar() {
   // ─── Constants ──────────────────────────────────────────────────────────────
   const isActive = React.useCallback((href: string) => url === href, [url]);
 
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+  const isSuperAdmin = auth.auth?.role === "super_admin";
+  const isPortal = !isSuperAdmin && ["student", "parent", "candidate"].includes(auth.auth?.role || "");
+
   const railItems = React.useMemo(() => {
+    if (isSuperAdmin) {
+      return [
+        { id: "super_admin", label: "Super Admin", icon: Shield, href: "/super-admin" },
+        { id: "audit_logs", label: "Audit Logs", icon: History, href: "/admin/audit-logs" }
+      ];
+    }
+
     // Individual main items (student portal items, etc.) — only if user has permission
     const permittedMainItems = config.mainItems
       .filter(i => {
@@ -137,7 +149,7 @@ export function AppSidebar() {
       ...permittedMainItems,
       ...permittedGroups,
     ];
-  }, [config.groups, config.mainItems, auth, firstPermittedHref]);
+  }, [config.groups, config.mainItems, auth, firstPermittedHref, isSuperAdmin]);
 
   const permittedSettingsNav = React.useMemo(() => {
     return settingsNav
@@ -153,10 +165,6 @@ export function AppSidebar() {
   }, [settingsNav, auth]);
 
   const activeGroup = config.groups.find(g => g.label === activeModule);
-
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-  const isPortal = ["student", "parent", "candidate"].includes(auth.auth?.role || "");
 
   return (
     <Sidebar
@@ -175,10 +183,10 @@ export function AppSidebar() {
               {/* Logo Section - Height matched with Detail Pane Header */}
               <div className="h-16 flex items-center justify-center border-b border-sidebar-border shrink-0">
                 <Link
-                  href={config.homePath}
+                  href={isSuperAdmin ? "/super-admin" : config.homePath}
                   className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 transition-all hover:bg-primary/20 shadow-sm"
                 >
-                  {institution?.logo_url ? (
+                  {institution?.logo_url && !isSuperAdmin ? (
                      <img
                      src={institution.logo_url}
                      alt={institution.short_name || institution.name}
@@ -186,7 +194,7 @@ export function AppSidebar() {
                    />
                   ) : (
                     <span className="text-primary font-black text-lg leading-none font-logo">
-                      {(institution?.short_name || institution?.name || "V").charAt(0).toUpperCase()}
+                      {isSuperAdmin ? "S" : (institution?.short_name || institution?.name || "V").charAt(0).toUpperCase()}
                     </span>
                   )}
                 </Link>
@@ -198,7 +206,7 @@ export function AppSidebar() {
                   <Each 
                      of={railItems}
                     render={(item: { id: string; label: string; icon: LucideIcon; href?: string }) => {
-                      const active = activeModule === item.id;
+                      const active = activeModule === item.id || (isSuperAdmin && url.startsWith(item.href || ""));
                       const Icon = item.icon;
                       return (
                         <Link
@@ -229,46 +237,50 @@ export function AppSidebar() {
                 </nav>
 
                 {/* Rail Footer Items (Settings, etc.) */}
-                <div className="w-8 h-px bg-sidebar-border mx-auto my-4 shrink-0" />
-                <nav className="flex flex-col gap-1 px-1 pb-2 items-center w-full">
-                {config.footerItems?.map((item) => {
-                  const isSettings = item.title === "Settings";
-                  const active = isSettings ? activeModule === "settings" : isActive(item.href);
-                  const Icon = item.icon || LayoutGrid;
-                  
-                  return (
-                    <button
-                      key={item.title}
-                      onClick={() => {
-                        if (isSettings) {
-                          setActiveModule("settings");
-                          // Flatten all settings groups, find first permitted
-                          const allSettingsItems = permittedSettingsNav.flatMap(g => g.items);
-                          const href = firstPermittedHref(allSettingsItems);
-                          if (href) router.visit(href);
-                        }
-                      }}
-                      className={cn(
-                        "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full",
-                        active 
-                          ? "text-primary bg-primary/10" 
-                          : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
-                      )}
-                    >
-                      {active && (
-                        <motion.div
-                          layoutId="rail-footer-active-indicator"
-                          className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
-                          initial={false}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        />
-                      )}
-                      <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
-                      <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.title}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+                {!isSuperAdmin && (
+                  <>
+                    <div className="w-8 h-px bg-sidebar-border mx-auto my-4 shrink-0" />
+                    <nav className="flex flex-col gap-1 px-1 pb-2 items-center w-full">
+                    {config.footerItems?.map((item) => {
+                      const isSettings = item.title === "Settings";
+                      const active = isSettings ? activeModule === "settings" : isActive(item.href);
+                      const Icon = item.icon || LayoutGrid;
+                      
+                      return (
+                        <button
+                          key={item.title}
+                          onClick={() => {
+                            if (isSettings) {
+                              setActiveModule("settings");
+                              // Flatten all settings groups, find first permitted
+                              const allSettingsItems = permittedSettingsNav.flatMap(g => g.items);
+                              const href = firstPermittedHref(allSettingsItems);
+                              if (href) router.visit(href);
+                            }
+                          }}
+                          className={cn(
+                            "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full",
+                            active 
+                              ? "text-primary bg-primary/10" 
+                              : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
+                          )}
+                        >
+                          {active && (
+                            <motion.div
+                              layoutId="rail-footer-active-indicator"
+                              className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
+                              initial={false}
+                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
+                          )}
+                          <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
+                          <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.title}</span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+                 </>
+                )}
               </div>
             </aside>
           </TooltipProvider>
@@ -282,10 +294,10 @@ export function AppSidebar() {
           <header className="h-16 flex items-center px-5 border-b border-sidebar-border shrink-0">
              <div className="flex items-baseline gap-2 min-w-0 max-w-full">
               <span className="font-logo font-black text-sm leading-none tracking-tight text-foreground uppercase truncate shrink-0">
-                {institution?.short_name || institution?.name || "PDS Education"}
+                {isSuperAdmin ? "Super Admin Console" : (institution?.short_name || institution?.name || "PDS Education")}
               </span>
               <span className="text-[10px] font-medium text-muted-foreground/40 italic leading-none truncate border-l border-sidebar-border/50 pl-2">
-                {institution?.motto || getDailySlogan()}
+                {isSuperAdmin ? "Control Center" : (institution?.motto || getDailySlogan())}
               </span>
             </div>
           </header>
@@ -297,6 +309,43 @@ export function AppSidebar() {
                    of={PORTAL_NAVIGATION}
                    render={(item: SidebarNavItem) => <NavMenuItem key={item.href} item={item} url={url} />}
                 />
+              </SidebarMenu>
+            ) : isSuperAdmin ? (
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === "/super-admin"}
+                    className={cn(
+                      "h-9 px-3 rounded-lg font-medium transition-all",
+                      url === "/super-admin"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground/80 hover:bg-sidebar-accent hover:text-foreground"
+                    )}
+                  >
+                    <Link href="/super-admin" className="flex items-center gap-3 w-full">
+                      <LayoutGrid className="size-4" />
+                      <span className="text-[13px] font-display">Overview</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === "/admin/audit-logs"}
+                    className={cn(
+                      "h-9 px-3 rounded-lg font-medium transition-all",
+                      url === "/admin/audit-logs"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground/80 hover:bg-sidebar-accent hover:text-foreground"
+                    )}
+                  >
+                    <Link href="/admin/audit-logs" className="flex items-center gap-3 w-full">
+                      <History className="size-4" />
+                      <span className="text-[13px] font-display">Audit Logs</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             ) : activeModule === "dashboard" ? (
               <SidebarMenu>

@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
 export const show = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
 show.url = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions) => {
@@ -39,7 +39,7 @@ show.url = (args: { id: string | number, allocationId: string | number } | [id: 
 }
 
 /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
 show.get = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -47,7 +47,7 @@ show.get = (args: { id: string | number, allocationId: string | number } | [id: 
     method: 'get',
 })
 /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
 show.head = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -56,7 +56,7 @@ show.head = (args: { id: string | number, allocationId: string | number } | [id:
 })
 
     /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
     const showForm = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ show.head = (args: { id: string | number, allocationId: string | number } | [id:
     })
 
             /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
         showForm.get = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ show.head = (args: { id: string | number, allocationId: string | number } | [id:
             method: 'get',
         })
             /**
- * @see routes/web.php:486
+ * @see routes/web.php:490
  * @route '/lms/classes/{id}/subjects/{allocationId}'
  */
         showForm.head = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

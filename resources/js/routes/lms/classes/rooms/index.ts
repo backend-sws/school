@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
 export const show = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ show.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
 show.url = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions) => {
@@ -39,7 +39,7 @@ show.url = (args: { id: string | number, roomId: string | number } | [id: string
 }
 
 /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
 show.get = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -47,7 +47,7 @@ show.get = (args: { id: string | number, roomId: string | number } | [id: string
     method: 'get',
 })
 /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
 show.head = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -56,7 +56,7 @@ show.head = (args: { id: string | number, roomId: string | number } | [id: strin
 })
 
     /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
     const showForm = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ show.head = (args: { id: string | number, roomId: string | number } | [id: strin
     })
 
             /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
         showForm.get = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ show.head = (args: { id: string | number, roomId: string | number } | [id: strin
             method: 'get',
         })
             /**
- * @see routes/web.php:487
+ * @see routes/web.php:491
  * @route '/lms/classes/{id}/rooms/{roomId}'
  */
         showForm.head = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

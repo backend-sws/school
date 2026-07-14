@@ -193,6 +193,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(config('route_permissions.middleware.super_admin_only'))
         ->name('admin.super-admin-landing');
 
+    Route::post('/super-admin/onboard', [\App\Http\Controllers\Web\SuperAdminLandingController::class, 'onboard'])
+        ->middleware(config('route_permissions.middleware.super_admin_only'))
+        ->name('admin.super-admin.onboard');
+
     // Admin panel: role (admin) + permission groups from config/route_permissions.php.
     // Shared with frontend via auth.permissions; same keys gate these routes (EnsurePermissionGroup).
     // Groups used here: academic_setup, accounts_room, office_registry, admission_cell, service_branch, info_pr_hub, redressal_cell, my_organisation, system_console.

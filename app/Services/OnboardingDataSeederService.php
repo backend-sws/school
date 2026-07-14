@@ -281,6 +281,7 @@ class OnboardingDataSeederService
                 'main_stream_id' => $mainStream?->id,
                 'name'           => $item['name'],
                 'code'           => $item['code'] ?? null,
+                'duration_years' => $item['duration_years'] ?? ($type === 'school' || $type === 'coaching' ? 1 : 3),
                 'status'         => 1,
             ]);
             $created++;

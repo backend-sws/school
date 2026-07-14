@@ -200,6 +200,16 @@ class UserRedirectResolver
      */
     private static function resolveTargetRoute(User $user): string
     {
+        // If the user has global super admin role, redirect them directly to the super admin control center
+        $isSuperAdmin = $user->roles()
+            ->withoutGlobalScope('institution_scope')
+            ->where('key', 'super_admin')
+            ->exists();
+
+        if ($isSuperAdmin) {
+            return 'admin.super-admin-landing';
+        }
+
         $institutionId = InstitutionContext::getActiveInstitutionId($user);
 
         foreach (config('route_permissions.landing_pages', []) as $permission => $route) {

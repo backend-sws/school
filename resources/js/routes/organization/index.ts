@@ -4,7 +4,7 @@ import mainStreams35ff4f from './main-streams'
 import streams3c515f from './streams'
 import sessions2b6d10 from './sessions'
 /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
 export const departments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -18,7 +18,7 @@ departments.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
 departments.url = (options?: RouteQueryOptions) => {
@@ -26,7 +26,7 @@ departments.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
 departments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ departments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
 departments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -43,7 +43,7 @@ departments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
     const departmentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -52,7 +52,7 @@ departments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
         departmentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -60,7 +60,7 @@ departments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:206
+ * @see routes/web.php:210
  * @route '/organization/departments'
  */
         departmentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ departments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     departments.form = departmentsForm
 /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
 export const mainStreams = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -89,7 +89,7 @@ mainStreams.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
 mainStreams.url = (options?: RouteQueryOptions) => {
@@ -97,7 +97,7 @@ mainStreams.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
 mainStreams.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -105,7 +105,7 @@ mainStreams.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
 mainStreams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -114,7 +114,7 @@ mainStreams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
     const mainStreamsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -123,7 +123,7 @@ mainStreams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
         mainStreamsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -131,7 +131,7 @@ mainStreams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:211
+ * @see routes/web.php:215
  * @route '/organization/main-streams'
  */
         mainStreamsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ mainStreams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     mainStreams.form = mainStreamsForm
 /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
 export const streams = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -160,7 +160,7 @@ streams.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
 streams.url = (options?: RouteQueryOptions) => {
@@ -168,7 +168,7 @@ streams.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
 streams.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -176,7 +176,7 @@ streams.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
 streams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -185,7 +185,7 @@ streams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
     const streamsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -194,7 +194,7 @@ streams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
         streamsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -202,7 +202,7 @@ streams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:215
+ * @see routes/web.php:219
  * @route '/organization/streams'
  */
         streamsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -217,7 +217,7 @@ streams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     streams.form = streamsForm
 /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
 export const sessions = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -231,7 +231,7 @@ sessions.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
 sessions.url = (options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ sessions.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
 sessions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -247,7 +247,7 @@ sessions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
 sessions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -256,7 +256,7 @@ sessions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
     const sessionsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -265,7 +265,7 @@ sessions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
         sessionsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -273,7 +273,7 @@ sessions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:219
+ * @see routes/web.php:223
  * @route '/organization/sessions'
  */
         sessionsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ sessions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     sessions.form = sessionsForm
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
 export const subjectCategory = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -302,7 +302,7 @@ subjectCategory.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
 subjectCategory.url = (options?: RouteQueryOptions) => {
@@ -310,7 +310,7 @@ subjectCategory.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
 subjectCategory.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -318,7 +318,7 @@ subjectCategory.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
     method: 'get',
 })
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
 subjectCategory.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -327,7 +327,7 @@ subjectCategory.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 })
 
     /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
     const subjectCategoryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -336,7 +336,7 @@ subjectCategory.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
     })
 
             /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
         subjectCategoryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -344,7 +344,7 @@ subjectCategory.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
             method: 'get',
         })
             /**
- * @see routes/web.php:223
+ * @see routes/web.php:227
  * @route '/organization/subject-category'
  */
         subjectCategoryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -359,7 +359,7 @@ subjectCategory.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
     
     subjectCategory.form = subjectCategoryForm
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
 export const subjectGroups = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -373,7 +373,7 @@ subjectGroups.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
 subjectGroups.url = (options?: RouteQueryOptions) => {
@@ -381,7 +381,7 @@ subjectGroups.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
 subjectGroups.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -389,7 +389,7 @@ subjectGroups.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
 subjectGroups.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -398,7 +398,7 @@ subjectGroups.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 })
 
     /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
     const subjectGroupsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -407,7 +407,7 @@ subjectGroups.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     })
 
             /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
         subjectGroupsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -415,7 +415,7 @@ subjectGroups.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
             method: 'get',
         })
             /**
- * @see routes/web.php:224
+ * @see routes/web.php:228
  * @route '/organization/subject-groups'
  */
         subjectGroupsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -430,7 +430,7 @@ subjectGroups.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     
     subjectGroups.form = subjectGroupsForm
 /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
 export const subject = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -444,7 +444,7 @@ subject.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
 subject.url = (options?: RouteQueryOptions) => {
@@ -452,7 +452,7 @@ subject.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
 subject.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -460,7 +460,7 @@ subject.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
 subject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -469,7 +469,7 @@ subject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
     const subjectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -478,7 +478,7 @@ subject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
         subjectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -486,7 +486,7 @@ subject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:225
+ * @see routes/web.php:229
  * @route '/organization/subject'
  */
         subjectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -501,7 +501,7 @@ subject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     subject.form = subjectForm
 /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
 export const subjectCategoryMapping = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -515,7 +515,7 @@ subjectCategoryMapping.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
 subjectCategoryMapping.url = (options?: RouteQueryOptions) => {
@@ -523,7 +523,7 @@ subjectCategoryMapping.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
 subjectCategoryMapping.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -531,7 +531,7 @@ subjectCategoryMapping.get = (options?: RouteQueryOptions): RouteDefinition<'get
     method: 'get',
 })
 /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
 subjectCategoryMapping.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -540,7 +540,7 @@ subjectCategoryMapping.head = (options?: RouteQueryOptions): RouteDefinition<'he
 })
 
     /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
     const subjectCategoryMappingForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -549,7 +549,7 @@ subjectCategoryMapping.head = (options?: RouteQueryOptions): RouteDefinition<'he
     })
 
             /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
         subjectCategoryMappingForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -557,7 +557,7 @@ subjectCategoryMapping.head = (options?: RouteQueryOptions): RouteDefinition<'he
             method: 'get',
         })
             /**
- * @see routes/web.php:226
+ * @see routes/web.php:230
  * @route '/organization/subject-category-mapping'
  */
         subjectCategoryMappingForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

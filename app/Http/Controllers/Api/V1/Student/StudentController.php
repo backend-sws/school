@@ -114,7 +114,8 @@ class StudentController extends BaseController
     {
         $student->load(['user', 'user.documents', 'stream', 'session']);
 
-        $transport = \App\Models\TransportAssignment::where('user_id', $student->user_id)
+        $transport = \App\Models\TransportAssignment::with(['transportRoute', 'transportStop'])
+            ->where('user_id', $student->user_id)
             ->where('institution_id', $student->institution_id)
             ->whereNull('effective_until')
             ->first();
@@ -127,6 +128,41 @@ class StudentController extends BaseController
 
         $student->setAttribute('transport_id', $transport ? $transport->id : null);
         $student->setAttribute('hostel_id', $hostel ? $hostel->id : null);
+
+        $hasTransportHistory = \App\Models\TransportAssignment::where('user_id', $student->user_id)->exists();
+        $isTransportStoppable = $transport !== null;
+        $student->setAttribute('is_transport_stoppable', $isTransportStoppable);
+        $student->setAttribute('transport_status_text', $hasTransportHistory 
+            ? ($isTransportStoppable ? 'Active' : 'Stopped') 
+            : null
+        );
+
+        if ($transport) {
+            $routeName = $transport->transportRoute?->name;
+            $stopName  = $transport->transportStop?->name;
+            $parts = array_filter([$routeName, $stopName]);
+            $student->setAttribute('transport_detail', implode(' → ', $parts) ?: null);
+            
+            $amount = (float) ($transport->monthly_amount ?? 0);
+            if ($amount === 0.0) {
+                $routeStop = \App\Models\TransportRouteStop::where('transport_route_id', $transport->transport_route_id)
+                    ->where('transport_stop_id', $transport->transport_stop_id)
+                    ->first();
+                $amount = $routeStop ? (float) $routeStop->fare : 0.00;
+            }
+            $student->setAttribute('transport_monthly_amount', $amount);
+        } else {
+            $student->setAttribute('transport_detail', null);
+            $student->setAttribute('transport_monthly_amount', null);
+        }
+
+        $hasHostelHistory = \App\Models\HostelAllocation::where('user_id', $student->user_id)->exists();
+        $isHostelStoppable = $hostel !== null;
+        $student->setAttribute('is_hostel_stoppable', $isHostelStoppable);
+        $student->setAttribute('hostel_status_text', $hasHostelHistory 
+            ? ($isHostelStoppable ? 'Active' : 'Stopped') 
+            : null
+        );
 
         return $this->successWithMap($student, 'passthrough');
     }

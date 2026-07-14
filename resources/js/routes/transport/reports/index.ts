@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
 export const manifest = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ manifest.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
 manifest.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ manifest.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
 manifest.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ manifest.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
 manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
     const manifestForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
         manifestForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:430
+ * @see routes/web.php:434
  * @route '/transport/reports/manifest'
  */
         manifestForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     manifest.form = manifestForm
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
 export const occupancy = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ occupancy.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
 occupancy.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ occupancy.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
 occupancy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ occupancy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
 occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
     const occupancyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
         occupancyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:431
+ * @see routes/web.php:435
  * @route '/transport/reports/occupancy'
  */
         occupancyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

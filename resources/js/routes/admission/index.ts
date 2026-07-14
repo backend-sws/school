@@ -4,7 +4,7 @@ import applications17f98b from './applications'
 import readmissions9e9812 from './readmissions'
 import analytics from './analytics'
 /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
 export const stats = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -18,7 +18,7 @@ stats.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
 stats.url = (options?: RouteQueryOptions) => {
@@ -26,7 +26,7 @@ stats.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
 stats.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ stats.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
 stats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -43,7 +43,7 @@ stats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
     const statsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -52,7 +52,7 @@ stats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
         statsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -60,7 +60,7 @@ stats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:315
+ * @see routes/web.php:319
  * @route '/admission/stats'
  */
         statsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ stats.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     stats.form = statsForm
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
 export const manageCourse = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -89,7 +89,7 @@ manageCourse.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
 manageCourse.url = (options?: RouteQueryOptions) => {
@@ -97,7 +97,7 @@ manageCourse.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
 manageCourse.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -105,7 +105,7 @@ manageCourse.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
 manageCourse.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -114,7 +114,7 @@ manageCourse.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
     const manageCourseForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -123,7 +123,7 @@ manageCourse.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
         manageCourseForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -131,7 +131,7 @@ manageCourse.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:316
+ * @see routes/web.php:320
  * @route '/admission/manage-course'
  */
         manageCourseForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ manageCourse.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     manageCourse.form = manageCourseForm
 /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
 export const heads = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -160,7 +160,7 @@ heads.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
 heads.url = (options?: RouteQueryOptions) => {
@@ -168,7 +168,7 @@ heads.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
 heads.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -176,7 +176,7 @@ heads.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
 heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -185,7 +185,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
     const headsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -194,7 +194,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
         headsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -202,7 +202,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:318
+ * @see routes/web.php:322
  * @route '/admission/heads'
  */
         headsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -217,7 +217,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     heads.form = headsForm
 /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
 export const applications = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -231,7 +231,7 @@ applications.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
 applications.url = (options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ applications.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
 applications.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -247,7 +247,7 @@ applications.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
 applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -256,7 +256,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
     const applicationsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -265,7 +265,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
         applicationsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -273,7 +273,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:323
+ * @see routes/web.php:327
  * @route '/admission/applications'
  */
         applicationsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ applications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     applications.form = applicationsForm
 /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
 export const promotions = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -302,7 +302,7 @@ promotions.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
 promotions.url = (options?: RouteQueryOptions) => {
@@ -310,7 +310,7 @@ promotions.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
 promotions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -318,7 +318,7 @@ promotions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
 promotions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -327,7 +327,7 @@ promotions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
     const promotionsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -336,7 +336,7 @@ promotions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
         promotionsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -344,7 +344,7 @@ promotions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:330
+ * @see routes/web.php:334
  * @route '/admission/promotions'
  */
         promotionsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -359,7 +359,7 @@ promotions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     promotions.form = promotionsForm
 /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
 export const readmissions = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -373,7 +373,7 @@ readmissions.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
 readmissions.url = (options?: RouteQueryOptions) => {
@@ -381,7 +381,7 @@ readmissions.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
 readmissions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -389,7 +389,7 @@ readmissions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
 readmissions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -398,7 +398,7 @@ readmissions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
     const readmissionsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -407,7 +407,7 @@ readmissions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
         readmissionsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -415,7 +415,7 @@ readmissions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:331
+ * @see routes/web.php:335
  * @route '/admission/readmissions'
  */
         readmissionsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

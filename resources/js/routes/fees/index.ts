@@ -3,7 +3,7 @@ import headsC7aea8 from './heads'
 import fees from './fees'
 import payments4e2b3d from './payments'
 /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
 export const feeParticulars = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ feeParticulars.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
 feeParticulars.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ feeParticulars.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
 feeParticulars.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -33,7 +33,7 @@ feeParticulars.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
 feeParticulars.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -42,7 +42,7 @@ feeParticulars.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 })
 
     /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
     const feeParticularsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -51,7 +51,7 @@ feeParticulars.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
     })
 
             /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
         feeParticularsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -59,7 +59,7 @@ feeParticulars.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
             method: 'get',
         })
             /**
- * @see routes/web.php:239
+ * @see routes/web.php:243
  * @route '/fees/fee-particulars'
  */
         feeParticularsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -74,7 +74,7 @@ feeParticulars.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
     
     feeParticulars.form = feeParticularsForm
 /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
 export const heads = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -88,7 +88,7 @@ heads.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
 heads.url = (options?: RouteQueryOptions) => {
@@ -96,7 +96,7 @@ heads.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
 heads.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -104,7 +104,7 @@ heads.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
 heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -113,7 +113,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
     const headsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -122,7 +122,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
         headsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -130,7 +130,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:240
+ * @see routes/web.php:244
  * @route '/fees/heads'
  */
         headsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -145,7 +145,7 @@ heads.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     heads.form = headsForm
 /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
 export const payments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ payments.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
 payments.url = (options?: RouteQueryOptions) => {
@@ -167,7 +167,7 @@ payments.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
 payments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -175,7 +175,7 @@ payments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
 payments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -184,7 +184,7 @@ payments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
     const paymentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -193,7 +193,7 @@ payments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
         paymentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -201,7 +201,7 @@ payments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:244
+ * @see routes/web.php:248
  * @route '/fees/payments'
  */
         paymentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

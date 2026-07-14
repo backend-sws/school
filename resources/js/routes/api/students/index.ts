@@ -236,7 +236,7 @@ show.head = (args: { student: number | { id: number } } | [student: number | { i
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
 export const update = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
 update.url = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -279,7 +279,7 @@ update.url = (args: { student: string | number } | [student: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
 update.put = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -288,7 +288,7 @@ update.put = (args: { student: string | number } | [student: string | number ] |
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
 update.patch = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -298,7 +298,7 @@ update.patch = (args: { student: string | number } | [student: string | number ]
 
     /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
     const updateForm = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -313,7 +313,7 @@ update.patch = (args: { student: string | number } | [student: string | number ]
 
             /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
         updateForm.put = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -327,7 +327,7 @@ update.patch = (args: { student: string | number } | [student: string | number ]
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::update
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:224
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:260
  * @route '/api/v1/students/{student}'
  */
         updateForm.patch = (args: { student: string | number } | [student: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -343,7 +343,7 @@ update.patch = (args: { student: string | number } | [student: string | number ]
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::destroy
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:400
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:436
  * @route '/api/v1/students/{student}'
  */
 export const destroy = (args: { student: number | { id: number } } | [student: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -358,7 +358,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::destroy
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:400
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:436
  * @route '/api/v1/students/{student}'
  */
 destroy.url = (args: { student: number | { id: number } } | [student: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -391,7 +391,7 @@ destroy.url = (args: { student: number | { id: number } } | [student: number | {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::destroy
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:400
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:436
  * @route '/api/v1/students/{student}'
  */
 destroy.delete = (args: { student: number | { id: number } } | [student: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -401,7 +401,7 @@ destroy.delete = (args: { student: number | { id: number } } | [student: number 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::destroy
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:400
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:436
  * @route '/api/v1/students/{student}'
  */
     const destroyForm = (args: { student: number | { id: number } } | [student: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -416,7 +416,7 @@ destroy.delete = (args: { student: number | { id: number } } | [student: number 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::destroy
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:400
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:436
  * @route '/api/v1/students/{student}'
  */
         destroyForm.delete = (args: { student: number | { id: number } } | [student: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
