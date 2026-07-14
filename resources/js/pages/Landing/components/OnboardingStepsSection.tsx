@@ -90,7 +90,7 @@ export default function OnboardingStepsSection({ steps }: OnboardingStepsSection
                 </div>
 
                 {/* CTA */}
-                <div className="text-center mt-12">
+                {/* <div className="text-center mt-12">
                     <a
                         href="/register"
                         className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-sm l-bg-primary text-white hover:opacity-90 transition-opacity shadow-lg shadow-(--l-primary)/20"
@@ -98,7 +98,7 @@ export default function OnboardingStepsSection({ steps }: OnboardingStepsSection
                         <LucideIcons.Rocket className="w-4 h-4" />
                         Start Free — No Credit Card Required
                     </a>
-                </div>
+                </div> */}
             </div>
         </section>
     );

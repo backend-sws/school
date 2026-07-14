@@ -82,7 +82,7 @@ listExams.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-export const index = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -97,7 +97,7 @@ index.definition = {
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-index.url = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+index.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { exam: args }
     }
@@ -130,7 +130,7 @@ index.url = (args: { exam: string | number | { id: string | number } } | [exam: 
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-index.get = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -139,7 +139,7 @@ index.get = (args: { exam: string | number | { id: string | number } } | [exam: 
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-index.head = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -149,7 +149,7 @@ index.head = (args: { exam: string | number | { id: string | number } } | [exam:
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-    const indexForm = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const indexForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: index.url(args, options),
         method: 'get',
     })
@@ -159,7 +159,7 @@ index.head = (args: { exam: string | number | { id: string | number } } | [exam:
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-        indexForm.get = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.get = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, options),
             method: 'get',
         })
@@ -168,7 +168,7 @@ index.head = (args: { exam: string | number | { id: string | number } } | [exam:
  * @see app/Http/Controllers/Examination/ExamResultController.php:35
  * @route '/examination/exams/{exam}/results'
  */
-        indexForm.head = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.head = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -184,7 +184,7 @@ index.head = (args: { exam: string | number | { id: string | number } } | [exam:
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-export const bulkPrint = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const bulkPrint = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: bulkPrint.url(args, options),
     method: 'post',
 })
@@ -199,7 +199,7 @@ bulkPrint.definition = {
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-bulkPrint.url = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+bulkPrint.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { exam: args }
     }
@@ -232,7 +232,7 @@ bulkPrint.url = (args: { exam: string | number | { id: string | number } } | [ex
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-bulkPrint.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+bulkPrint.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: bulkPrint.url(args, options),
     method: 'post',
 })
@@ -242,7 +242,7 @@ bulkPrint.post = (args: { exam: string | number | { id: string | number } } | [e
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-    const bulkPrintForm = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const bulkPrintForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: bulkPrint.url(args, options),
         method: 'post',
     })
@@ -252,7 +252,7 @@ bulkPrint.post = (args: { exam: string | number | { id: string | number } } | [e
  * @see app/Http/Controllers/Examination/ExamResultController.php:84
  * @route '/examination/exams/{exam}/marksheets/bulk-print'
  */
-        bulkPrintForm.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        bulkPrintForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: bulkPrint.url(args, options),
             method: 'post',
         })
@@ -263,7 +263,7 @@ bulkPrint.post = (args: { exam: string | number | { id: string | number } } | [e
  * @see app/Http/Controllers/Examination/ExamResultController.php:112
  * @route '/examination/exams/{exam}/results/print-summary'
  */
-export const printSummary = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const printSummary = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: printSummary.url(args, options),
     method: 'post',
 })
@@ -278,7 +278,7 @@ printSummary.definition = {
  * @see app/Http/Controllers/Examination/ExamResultController.php:112
  * @route '/examination/exams/{exam}/results/print-summary'
  */
-printSummary.url = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+printSummary.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { exam: args }
     }
@@ -311,7 +311,7 @@ printSummary.url = (args: { exam: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Examination/ExamResultController.php:112
  * @route '/examination/exams/{exam}/results/print-summary'
  */
-printSummary.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+printSummary.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: printSummary.url(args, options),
     method: 'post',
 })
@@ -321,7 +321,7 @@ printSummary.post = (args: { exam: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/ExamResultController.php:112
  * @route '/examination/exams/{exam}/results/print-summary'
  */
-    const printSummaryForm = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const printSummaryForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: printSummary.url(args, options),
         method: 'post',
     })
@@ -331,7 +331,7 @@ printSummary.post = (args: { exam: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/ExamResultController.php:112
  * @route '/examination/exams/{exam}/results/print-summary'
  */
-        printSummaryForm.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        printSummaryForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: printSummary.url(args, options),
             method: 'post',
         })
@@ -342,7 +342,7 @@ printSummary.post = (args: { exam: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/ExamResultController.php:154
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
-export const printBroadsheet = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const printBroadsheet = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: printBroadsheet.url(args, options),
     method: 'post',
 })
@@ -357,7 +357,7 @@ printBroadsheet.definition = {
  * @see app/Http/Controllers/Examination/ExamResultController.php:154
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
-printBroadsheet.url = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+printBroadsheet.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { exam: args }
     }
@@ -390,7 +390,7 @@ printBroadsheet.url = (args: { exam: string | number | { id: string | number } }
  * @see app/Http/Controllers/Examination/ExamResultController.php:154
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
-printBroadsheet.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+printBroadsheet.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: printBroadsheet.url(args, options),
     method: 'post',
 })
@@ -400,7 +400,7 @@ printBroadsheet.post = (args: { exam: string | number | { id: string | number } 
  * @see app/Http/Controllers/Examination/ExamResultController.php:154
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
-    const printBroadsheetForm = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const printBroadsheetForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: printBroadsheet.url(args, options),
         method: 'post',
     })
@@ -410,7 +410,7 @@ printBroadsheet.post = (args: { exam: string | number | { id: string | number } 
  * @see app/Http/Controllers/Examination/ExamResultController.php:154
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
-        printBroadsheetForm.post = (args: { exam: string | number | { id: string | number } } | [exam: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        printBroadsheetForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: printBroadsheet.url(args, options),
             method: 'post',
         })

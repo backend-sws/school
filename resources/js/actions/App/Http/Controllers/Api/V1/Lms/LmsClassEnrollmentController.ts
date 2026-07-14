@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-export const availableStudents = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const availableStudents = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: availableStudents.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ availableStudents.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-availableStudents.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+availableStudents.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -52,7 +52,7 @@ availableStudents.url = (args: { lms_class: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-availableStudents.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+availableStudents.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: availableStudents.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ availableStudents.get = (args: { lms_class: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-availableStudents.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+availableStudents.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: availableStudents.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ availableStudents.head = (args: { lms_class: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-    const availableStudentsForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const availableStudentsForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: availableStudents.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ availableStudents.head = (args: { lms_class: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-        availableStudentsForm.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        availableStudentsForm.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: availableStudents.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ availableStudents.head = (args: { lms_class: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:106
  * @route '/api/v1/lms/classes/{lms_class}/available-students'
  */
-        availableStudentsForm.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        availableStudentsForm.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: availableStudents.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -106,7 +106,7 @@ availableStudents.head = (args: { lms_class: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-export const index = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -121,7 +121,7 @@ index.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-index.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+index.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -154,7 +154,7 @@ index.url = (args: { lms_class: string | number | { id: string | number } } | [l
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-index.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -163,7 +163,7 @@ index.get = (args: { lms_class: string | number | { id: string | number } } | [l
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-index.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -173,7 +173,7 @@ index.head = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-    const indexForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const indexForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: index.url(args, options),
         method: 'get',
     })
@@ -183,7 +183,7 @@ index.head = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-        indexForm.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, options),
             method: 'get',
         })
@@ -192,7 +192,7 @@ index.head = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-        indexForm.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        indexForm.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: index.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -208,7 +208,7 @@ index.head = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:48
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-export const store = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -223,7 +223,7 @@ store.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:48
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-store.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+store.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -256,7 +256,7 @@ store.url = (args: { lms_class: string | number | { id: string | number } } | [l
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:48
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-store.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -266,7 +266,7 @@ store.post = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:48
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-    const storeForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: store.url(args, options),
         method: 'post',
     })
@@ -276,7 +276,7 @@ store.post = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:48
  * @route '/api/v1/lms/classes/{lms_class}/enrollments'
  */
-        storeForm.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForm.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: store.url(args, options),
             method: 'post',
         })
@@ -287,7 +287,7 @@ store.post = (args: { lms_class: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:88
  * @route '/api/v1/lms/classes/{lms_class}/enrollments/{user_id}'
  */
-export const destroy = (args: { lms_class: string | number | { id: string | number }, user_id: string | number } | [lms_class: string | number | { id: string | number }, user_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { lms_class: number | { id: number }, user_id: string | number } | [lms_class: number | { id: number }, user_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -302,7 +302,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:88
  * @route '/api/v1/lms/classes/{lms_class}/enrollments/{user_id}'
  */
-destroy.url = (args: { lms_class: string | number | { id: string | number }, user_id: string | number } | [lms_class: string | number | { id: string | number }, user_id: string | number ], options?: RouteQueryOptions) => {
+destroy.url = (args: { lms_class: number | { id: number }, user_id: string | number } | [lms_class: number | { id: number }, user_id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
                     lms_class: args[0],
@@ -330,7 +330,7 @@ destroy.url = (args: { lms_class: string | number | { id: string | number }, use
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:88
  * @route '/api/v1/lms/classes/{lms_class}/enrollments/{user_id}'
  */
-destroy.delete = (args: { lms_class: string | number | { id: string | number }, user_id: string | number } | [lms_class: string | number | { id: string | number }, user_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { lms_class: number | { id: number }, user_id: string | number } | [lms_class: number | { id: number }, user_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -340,7 +340,7 @@ destroy.delete = (args: { lms_class: string | number | { id: string | number }, 
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:88
  * @route '/api/v1/lms/classes/{lms_class}/enrollments/{user_id}'
  */
-    const destroyForm = (args: { lms_class: string | number | { id: string | number }, user_id: string | number } | [lms_class: string | number | { id: string | number }, user_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { lms_class: number | { id: number }, user_id: string | number } | [lms_class: number | { id: number }, user_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -355,7 +355,7 @@ destroy.delete = (args: { lms_class: string | number | { id: string | number }, 
  * @see app/Http/Controllers/Api/V1/Lms/LmsClassEnrollmentController.php:88
  * @route '/api/v1/lms/classes/{lms_class}/enrollments/{user_id}'
  */
-        destroyForm.delete = (args: { lms_class: string | number | { id: string | number }, user_id: string | number } | [lms_class: string | number | { id: string | number }, user_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { lms_class: number | { id: number }, user_id: string | number } | [lms_class: number | { id: number }, user_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

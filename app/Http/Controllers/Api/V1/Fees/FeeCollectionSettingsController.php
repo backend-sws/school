@@ -52,6 +52,7 @@ class FeeCollectionSettingsController extends BaseController
             'late_fee_value' => 'nullable|numeric|min:0',
             'reminder_send_email' => 'nullable|boolean',
             'receipt_send_email' => 'nullable|boolean',
+            'charge_fees_from_admission_month' => 'nullable|boolean',
         ]);
 
         $keys = array_keys($validated);

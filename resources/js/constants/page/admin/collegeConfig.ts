@@ -420,10 +420,38 @@ export const ADMISSION_NEW_ADMISSION_GROUP = [
     },
 ];
 
+export const ADMISSION_REGISTRATION_NUMBER_GROUP = [
+    {
+        name: "reg_no_prefix",
+        label: "Registration Number Prefix",
+        type: FORM_TYPE.TEXT,
+        placeholder: "e.g., REG-, DEMO_SCH-, or leave blank for Institution Code",
+        tooltip: "Prefix for generating student registration numbers. If left blank, defaults to the Institution Code.",
+    },
+    {
+        name: "reg_no_include_year",
+        label: "Include Session Start Year",
+        type: FORM_TYPE.RADIO,
+        options: [
+            { key: "yes", text: "Yes, Include Year (e.g. 2026)", value: "1" },
+            { key: "no", text: "No, Sequence Only", value: "0" },
+        ],
+        tooltip: "If enabled, the start year of the current session will be included in the registration number prefix (e.g. DEMO_SCH2026).",
+    },
+    {
+        name: "reg_no_sequence_padding",
+        label: "Sequence Number Digits Padding",
+        type: FORM_TYPE.NUMBER,
+        placeholder: "e.g., 6",
+        tooltip: "Number of digits to pad the sequence counter. (e.g. padding of 6 results in 000001, padding of 4 results in 0001). Min 3, max 10.",
+    },
+];
+
 export const ADMISSION_FORM_LAYOUT = [
     ...ADMISSION_SETTINGS_CONTROL_GROUP,
     ...ADMISSION_RE_ADMISSION_GROUP,
     ...ADMISSION_NEW_ADMISSION_GROUP,
+    ...ADMISSION_REGISTRATION_NUMBER_GROUP,
 ];
 
 // ============================================================================

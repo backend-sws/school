@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { Head, Link, usePage } from "@inertiajs/react";
-import { Pencil, Eye, Users, UserPlus, Copy, Mail, Download, UserCheck, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Pencil, Eye, Users, UserPlus, Copy, Mail, Download, UserCheck, ShieldAlert, CheckCircle2, Receipt } from "lucide-react";
 import { useNavigation } from "@/hooks/use-navigation";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
@@ -318,6 +318,19 @@ const ManageStudent = () => {
                               </Button>
                             </Link>
                           </TooltipWrapper>
+                          <PermissionGate can="view_fee_particulars">
+                            <TooltipWrapper content="View Fee Ledger">
+                              <Link href={`/accounts/fee-hub/students?student=${val.id}`}>
+                                <Button
+                                  size="icon-sm"
+                                  variant="ghost"
+                                  className="text-muted-foreground hover:text-primary"
+                                >
+                                  <Receipt className="size-4" />
+                                </Button>
+                              </Link>
+                            </TooltipWrapper>
+                          </PermissionGate>
                           <PermissionGate can="update_users">
                             {!(val.effective_email_verified ?? val.email_verified) && (
                               <>

@@ -254,9 +254,9 @@ export const SETTINGS_NAVIGATION: SidebarNavGroup[] = [
     {
         label: "Operational Rules",
         items: [
-            //             { title: "Admission Policy", href: "/settings/admission", icon: SlidersHorizontal, permission: "update_settings" },
-            //             { title: "Admission Verification", href: "/settings/admission-verification", icon: VerifiedIcon, permission: "manage_admission_verification" },
-            //             { title: "Student Verification", href: "/settings/student-verification", icon: User2, permission: "manage_student_verification" },
+            { title: "Admission Policy", href: "/settings/admission", icon: SlidersHorizontal, permission: "update_settings" },
+            // { title: "Admission Verification", href: "/settings/admission-verification", icon: UserCheck, permission: "manage_admission_verification" },
+            // { title: "Student Verification", href: "/settings/student-verification", icon: User, permission: "manage_student_verification" },
             { title: "Collection settings", href: "/accounts/fee-hub/collection-settings", icon: Settings, permission: "view_fee_collection_settings" },
             { title: "Academic Calendar", href: "/settings/academic-calendar", icon: Calendar, permission: "view_academic_calendar_settings" },
         ],

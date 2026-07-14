@@ -931,6 +931,11 @@ export function buildStudentEditPayload(formData: Record<string, unknown>): Reco
     ),
     (v) => v === undefined
   ) as Record<string, unknown>;
+
+  if (typeof profile.dob === "string" && profile.dob) {
+    profile.dob = profile.dob.split("T")[0];
+  }
+
   const docsObject = (formData.documents ?? {}) as Record<string, string>;
   const documentsArray = Object.entries(docsObject)
       .filter(([, path]) => path)

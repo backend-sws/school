@@ -85,14 +85,14 @@ export default function FinalCTASection() {
                             viewport={{ once: true }}
                             className="flex flex-col sm:flex-row items-center gap-4"
                         >
-                            <CoolMode>
+                            {/* <CoolMode>
                                 <Button asChild size="lg" className="h-14 px-10 rounded-xl font-bold l-bg-primary text-white hover:opacity-90 hover:-translate-y-0.5 transition-all duration-300 l-shimmer cursor-pointer">
                                     <a href="/register">
                                         Get Started Free
                                         <ArrowRight className="ml-2 w-5 h-5" />
                                     </a>
                                 </Button>
-                            </CoolMode>
+                            </CoolMode> */}
                             <Button asChild variant="outline" size="lg" className="h-14 px-10 rounded-xl font-bold text-white border-white/20 hover:bg-white hover:text-black bg-transparent transition-all hover:-translate-y-0.5 duration-300 cursor-pointer">
                                 <a href="/login">
                                     Request Demo

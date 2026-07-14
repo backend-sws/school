@@ -215,7 +215,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-export const edit = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -230,7 +230,7 @@ edit.definition = {
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-edit.url = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+edit.url = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { scale: args }
     }
@@ -263,7 +263,7 @@ edit.url = (args: { scale: string | number | { id: string | number } } | [scale:
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-edit.get = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -272,7 +272,7 @@ edit.get = (args: { scale: string | number | { id: string | number } } | [scale:
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-edit.head = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -282,7 +282,7 @@ edit.head = (args: { scale: string | number | { id: string | number } } | [scale
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-    const editForm = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const editForm = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: edit.url(args, options),
         method: 'get',
     })
@@ -292,7 +292,7 @@ edit.head = (args: { scale: string | number | { id: string | number } } | [scale
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-        editForm.get = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.get = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, options),
             method: 'get',
         })
@@ -301,7 +301,7 @@ edit.head = (args: { scale: string | number | { id: string | number } } | [scale
  * @see app/Http/Controllers/Examination/GradingScaleController.php:53
  * @route '/examination/grading-scales/{scale}/edit'
  */
-        editForm.head = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.head = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -317,7 +317,7 @@ edit.head = (args: { scale: string | number | { id: string | number } } | [scale
  * @see app/Http/Controllers/Examination/GradingScaleController.php:59
  * @route '/examination/grading-scales/{scale}'
  */
-export const update = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -332,7 +332,7 @@ update.definition = {
  * @see app/Http/Controllers/Examination/GradingScaleController.php:59
  * @route '/examination/grading-scales/{scale}'
  */
-update.url = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { scale: args }
     }
@@ -365,7 +365,7 @@ update.url = (args: { scale: string | number | { id: string | number } } | [scal
  * @see app/Http/Controllers/Examination/GradingScaleController.php:59
  * @route '/examination/grading-scales/{scale}'
  */
-update.put = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -375,7 +375,7 @@ update.put = (args: { scale: string | number | { id: string | number } } | [scal
  * @see app/Http/Controllers/Examination/GradingScaleController.php:59
  * @route '/examination/grading-scales/{scale}'
  */
-    const updateForm = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -390,7 +390,7 @@ update.put = (args: { scale: string | number | { id: string | number } } | [scal
  * @see app/Http/Controllers/Examination/GradingScaleController.php:59
  * @route '/examination/grading-scales/{scale}'
  */
-        updateForm.put = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -406,7 +406,7 @@ update.put = (args: { scale: string | number | { id: string | number } } | [scal
  * @see app/Http/Controllers/Examination/GradingScaleController.php:96
  * @route '/examination/grading-scales/{scale}'
  */
-export const destroy = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -421,7 +421,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Examination/GradingScaleController.php:96
  * @route '/examination/grading-scales/{scale}'
  */
-destroy.url = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { scale: args }
     }
@@ -454,7 +454,7 @@ destroy.url = (args: { scale: string | number | { id: string | number } } | [sca
  * @see app/Http/Controllers/Examination/GradingScaleController.php:96
  * @route '/examination/grading-scales/{scale}'
  */
-destroy.delete = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -464,7 +464,7 @@ destroy.delete = (args: { scale: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Examination/GradingScaleController.php:96
  * @route '/examination/grading-scales/{scale}'
  */
-    const destroyForm = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -479,7 +479,7 @@ destroy.delete = (args: { scale: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Examination/GradingScaleController.php:96
  * @route '/examination/grading-scales/{scale}'
  */
-        destroyForm.delete = (args: { scale: string | number | { id: string | number } } | [scale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { scale: number | { id: number } } | [scale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

@@ -15,13 +15,32 @@ class StudentIdentifierService
      */
     public function generateRegNumber(int $institutionId, int $sessionId): string
     {
-        $institution = Institution::find($institutionId);
-        $code = $this->resolveInstitutionCode($institution);
+        $rows = \App\Models\Setting::withoutGlobalScope('institution_scope')
+            ->where('institution_id', $institutionId)
+            ->where('setting_group', 'admission')
+            ->pluck('setting_value', 'setting_key');
+
+        $customPrefix = $rows->get('reg_no_prefix');
+        $includeYear = filter_var($rows->get('reg_no_include_year', '1'), FILTER_VALIDATE_BOOLEAN);
+        $padding = (int) $rows->get('reg_no_sequence_padding', 6);
+        if ($padding < 3 || $padding > 10) {
+            $padding = 6;
+        }
+
+        if (is_null($customPrefix) || $customPrefix === '') {
+            $institution = Institution::find($institutionId);
+            $code = $this->resolveInstitutionCode($institution);
+        } else {
+            $code = $customPrefix;
+        }
         
-        $session = Session::withoutGlobalScopes()->find($sessionId);
-        $year = $session?->start_year ?? now()->year;
-        
-        $prefix = $code . $year;
+        if ($includeYear) {
+            $session = Session::withoutGlobalScopes()->find($sessionId);
+            $year = $session?->start_year ?? now()->year;
+            $prefix = $code . $year;
+        } else {
+            $prefix = $code;
+        }
 
         $lastRegNo = StudentProfile::where('institution_id', $institutionId)
             ->where('reg_no', 'like', $prefix . '%')
@@ -36,7 +55,7 @@ class StudentIdentifierService
             $nextSequence = 1;
         }
 
-        return $prefix . str_pad($nextSequence, 6, '0', STR_PAD_LEFT);
+        return $prefix . str_pad($nextSequence, $padding, '0', STR_PAD_LEFT);
     }
 
     /**

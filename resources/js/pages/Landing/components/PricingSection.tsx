@@ -153,7 +153,7 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                                             </ul>
                                         </div>
 
-                                        <Button
+                                        {/* <Button
                                             asChild
                                             className={cn(
                                                 'w-full h-12 rounded-xl font-black uppercase tracking-widest text-xs transition-all duration-300 hover:-translate-y-0.5 cursor-pointer',
@@ -163,7 +163,7 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                                             )}
                                         >
                                             <a href="/register">Select Plan</a>
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                 </div>
                             );

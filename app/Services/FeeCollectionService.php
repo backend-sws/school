@@ -70,6 +70,7 @@ class FeeCollectionService
             'late_fee_value' => (float) ($rows->get('late_fee_value') ?? $defaults['late_fee']['value'] ?? 0),
             'reminder_send_email' => filter_var($rows->get('reminder_send_email', $defaults['notifications']['send_email_reminder'] ?? true), FILTER_VALIDATE_BOOLEAN),
             'receipt_send_email' => filter_var($rows->get('receipt_send_email', $defaults['notifications']['send_email_receipt'] ?? true), FILTER_VALIDATE_BOOLEAN),
+            'charge_fees_from_admission_month' => filter_var($rows->get('charge_fees_from_admission_month', $defaults['charge_fees_from_admission_month'] ?? false), FILTER_VALIDATE_BOOLEAN),
         ];
 
         self::$settingsCache[$institutionId] = $settings;
@@ -338,6 +339,25 @@ class FeeCollectionService
         $academicStartMonth = app(AcademicCalendarService::class)->getStartMonth($institutionId);
         $startDate = Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay();
 
+        $admissionDate = $profile->admission_date ?? $student->created_at ?? null;
+
+        // Find the index of the first period that is at or after the admission date
+        $admissionPeriodIndex = 0;
+        if ($admissionDate) {
+            $admMonthKey = $admissionDate->format('Y-m');
+            for ($k = 0; $k < $periodCount; $k++) {
+                $checkDate = $startDate->copy();
+                $checkDate = $frequency === 'quarterly' ? $checkDate->addMonths($k * 3) : $checkDate->addMonths($k);
+                $periodEndCheck = $frequency === 'quarterly' 
+                    ? $checkDate->copy()->addMonths(2)->endOfMonth() 
+                    : $checkDate->copy()->endOfMonth();
+                if ($periodEndCheck->format('Y-m') >= $admMonthKey) {
+                    $admissionPeriodIndex = $k;
+                    break;
+                }
+            }
+        }
+
         $matrix = [];
         // Admission dues are no longer seeded into accumulatedArrears because admission
         // payments are now included in the payment query and will be matched to their
@@ -357,11 +377,11 @@ class FeeCollectionService
 
             $dueDate = $this->getDueDateForPeriod($institutionId, $monthKey, $frequency);
 
-            $monthPayments = $payments->filter(function ($p) use ($monthKey, $i) {
+            $monthPayments = $payments->filter(function ($p) use ($monthKey, $i, $admissionPeriodIndex) {
                 if ($p->for_month === $monthKey) return true;
                 if (!$p->for_month && $p->payment_date) {
                     if ($p->payable_entity_type === 'admission_application' || str_starts_with($p->payment_id ?? '', 'PAY-ADM-')) {
-                        return $i === 0;
+                        return $i === $admissionPeriodIndex;
                     }
                     return $p->payment_date->format('Y-m') === $monthKey;
                 }
@@ -375,20 +395,28 @@ class FeeCollectionService
             $monthlyConcession = (float) $concessionPayments->sum('amount');
             $recordedLateFee = (float) $actualPayments->sum('late_fee_applied');
 
-            // Late fee: use recorded value if paid, else calculate for overdue
-            $lateFee = $recordedLateFee;
-            if ($paidInMonth <= 0 && now()->startOfDay()->gt($dueDate->copy()->addDays($institutionSettings['late_fee_after_days']))) {
-                $lateFee = $this->engine->calculateLateFee($institutionSettings, $periodExpected);
-            }
-
             // --- Dynamic Services (Transport & Hostel) for this month ---
             $monthStart = $current->copy()->startOfMonth();
             $monthEnd = $current->copy()->endOfMonth();
 
-            $monthExpected = $periodExpected;
-            $monthGross = $grossExpected;
-            $monthParticulars = $allParticulars;
-            $monthDiscount = $totalDiscount;
+            // Skip monthly recurring fees if the setting is enabled and the period ends before the admission date's month
+            $skipRecurring = false;
+            if (($institutionSettings['charge_fees_from_admission_month'] ?? false) && $admissionDate) {
+                if ($monthEnd->format('Y-m') < $admissionDate->format('Y-m')) {
+                    $skipRecurring = true;
+                }
+            }
+
+            $monthExpected = $skipRecurring ? 0.0 : $periodExpected;
+            $monthGross = $skipRecurring ? 0.0 : $grossExpected;
+            $monthParticulars = $skipRecurring ? [] : $allParticulars;
+            $monthDiscount = $skipRecurring ? 0.0 : $totalDiscount;
+
+            // Late fee: use recorded value if paid, else calculate for overdue
+            $lateFee = $recordedLateFee;
+            if ($paidInMonth <= 0 && now()->startOfDay()->gt($dueDate->copy()->addDays($institutionSettings['late_fee_after_days']))) {
+                $lateFee = $this->engine->calculateLateFee($institutionSettings, $monthExpected);
+            }
 
             $monthsInPeriod = match($frequency) {
                 'annual' => 12,
@@ -405,8 +433,8 @@ class FeeCollectionService
             })->first();
 
             if ($transport) {
-                // To avoid double charging the first month, we skip if $i === 0 AND admission paid it.
-                $skipTransport = ($i === 0 && ($admissionSummary['transport_amount'] ?? 0) > 0);
+                // To avoid double charging the first month, we skip if $i === $admissionPeriodIndex AND admission paid it.
+                $skipTransport = ($i === $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0);
                 if (!$skipTransport) {
                     $monthlyTransport = (float) $transport->monthly_amount > 0 
                         ? (float) $transport->monthly_amount 
@@ -417,7 +445,7 @@ class FeeCollectionService
                 }
             } 
             
-            if ($tAmount <= 0 && $i > 0 && ($admissionSummary['transport_amount'] ?? 0) > 0) {
+            if ($tAmount <= 0 && $i > $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0) {
                 // Fallback: only if no assignment record has ever been created for this student
                 if ($studentTransports->isEmpty()) {
                     $tAmount = (float) $admissionSummary['transport_amount'] * $monthsInPeriod;
@@ -433,7 +461,7 @@ class FeeCollectionService
             })->first();
 
             if ($hostel) {
-                $skipHostel = ($i === 0 && ($admissionSummary['hostel_amount'] ?? 0) > 0);
+                $skipHostel = ($i === $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0);
                 if (!$skipHostel) {
                     $monthlyHostel = (float) $hostel->monthly_amount > 0 
                         ? (float) $hostel->monthly_amount 
@@ -444,7 +472,7 @@ class FeeCollectionService
                 }
             }
             
-            if ($hAmount <= 0 && $i > 0 && ($admissionSummary['hostel_amount'] ?? 0) > 0) {
+            if ($hAmount <= 0 && $i > $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0) {
                 // Fallback: only if no allocation record has ever been created for this student
                 if ($studentHostels->isEmpty()) {
                     $hAmount = (float) $admissionSummary['hostel_amount'] * $monthsInPeriod;
@@ -480,10 +508,10 @@ class FeeCollectionService
             // Admission fee columns only appear on the first row to avoid visual duplication.
             // A separate Admission Fee Summary card already provides the full breakdown.
             // We map the recurring Transport and Hostel amounts to their respective static columns.
-            $rowAdmissionFee  = $i === 0 ? $admissionFeeDisplay['admission_fee'] : 0.0;
-            $rowTransportFee  = ($i === 0 ? $admissionFeeDisplay['transport_fee'] : 0.0) + $tAmount;
-            $rowHostelFee     = ($i === 0 ? $admissionFeeDisplay['hostel_fee']    : 0.0) + $hAmount;
-            $rowOtherFees     = ($i === 0 ? $admissionFeeDisplay['other_fees']    : 0.0) + $adHocTotal;
+            $rowAdmissionFee  = $i === $admissionPeriodIndex ? $admissionFeeDisplay['admission_fee'] : 0.0;
+            $rowTransportFee  = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['transport_fee'] : 0.0) + $tAmount;
+            $rowHostelFee     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['hostel_fee']    : 0.0) + $hAmount;
+            $rowOtherFees     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['other_fees']    : 0.0) + $adHocTotal;
 
             $totalPayable = $accumulatedArrears + $monthExpected + $lateFee;
             if ($monthlyConcession > 0) {
@@ -491,7 +519,7 @@ class FeeCollectionService
                 $totalPayable -= $monthlyConcession;
                 $monthDiscount += $monthlyConcession;
             }
-            if ($i === 0) {
+            if ($i === $admissionPeriodIndex) {
                 $totalPayable += (
                     $admissionFeeDisplay['admission_fee'] + 
                     $admissionFeeDisplay['transport_fee'] + 

@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-export const storeForClass = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const storeForClass = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeForClass.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ storeForClass.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-storeForClass.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+storeForClass.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -52,7 +52,7 @@ storeForClass.url = (args: { lms_class: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-storeForClass.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+storeForClass.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeForClass.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ storeForClass.post = (args: { lms_class: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-    const storeForClassForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForClassForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: storeForClass.url(args, options),
         method: 'post',
     })
@@ -72,7 +72,7 @@ storeForClass.post = (args: { lms_class: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-        storeForClassForm.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForClassForm.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: storeForClass.url(args, options),
             method: 'post',
         })

@@ -37,6 +37,7 @@ const defaultSettings: FeeCollectionSettings = {
     late_fee_value: 0,
     reminder_send_email: true,
     receipt_send_email: true,
+    charge_fees_from_admission_month: false,
 };
 
 export default function FeeCollectionSettingsPage() {
@@ -63,6 +64,7 @@ useRegisterGuide(COLLECTION_SETTINGS_GUIDE);
                 late_fee_value: Number(settings.late_fee_value) ?? 0,
                 reminder_send_email: settings.reminder_send_email !== false,
                 receipt_send_email: settings.receipt_send_email !== false,
+                charge_fees_from_admission_month: !!settings.charge_fees_from_admission_month,
             });
         }
     }, [settings]);
@@ -302,6 +304,27 @@ useRegisterGuide(COLLECTION_SETTINGS_GUIDE);
                                         checked={form.receipt_send_email}
                                         onCheckedChange={(v) =>
                                             setForm((f) => ({ ...f, receipt_send_email: v }))
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Mid-Session Admission Dues */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60 border-b pb-1.5">
+                                    Mid-Session Admission Dues
+                                </h3>
+                                <div className="flex items-center justify-between rounded-lg border p-4">
+                                    <div>
+                                        <p className="font-medium">Charge fees from admission month only</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            If enabled, students who take admission in the middle of a session will only be charged monthly/quarterly recurring fees starting from their admission month. Prior months' fees will not be charged.
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        checked={form.charge_fees_from_admission_month}
+                                        onCheckedChange={(v) =>
+                                            setForm((f) => ({ ...f, charge_fees_from_admission_month: v }))
                                         }
                                     />
                                 </div>

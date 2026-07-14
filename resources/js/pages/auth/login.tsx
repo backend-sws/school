@@ -145,14 +145,14 @@ export default function Login({
           </TextLink>
         </div>
         
-        {canRegister && (
+        {/* {canRegister && (
           <div>
             Don&apos;t have an account?{" "}
             <TextLink href={register()} className="font-semibold text-primary hover:underline">
               Create an account
             </TextLink>
           </div>
-        )}
+        )} */}
       </div>
     </AuthLayout>
   );

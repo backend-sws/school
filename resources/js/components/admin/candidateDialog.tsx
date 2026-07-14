@@ -47,16 +47,24 @@ const transformApiData = (data: any): Partial<CandidateFormData> | undefined => 
 };
 
 // Transform form data back to API structure
-const transformFormData = (formData: CandidateFormData) => ({
-  name: formData.name,
-  email: formData.email,
-  mobile: formData.mobile,
-  student_profile: {
+const transformFormData = (formData: CandidateFormData) => {
+  const profile = {
     ...pick(PROFILE_FIELDS, formData),
     permanent_address: formData.permanent_address || {},
     correspondence_address: formData.correspondence_address || {},
-  },
-});
+  } as Record<string, any>;
+
+  if (typeof profile.dob === "string" && profile.dob) {
+    profile.dob = profile.dob.split("T")[0];
+  }
+
+  return {
+    name: formData.name,
+    email: formData.email,
+    mobile: formData.mobile,
+    student_profile: profile,
+  };
+};
 
 // Memoized field sections from layout
 const { basicFields, permanentAddressFields, correspondenceAddressFields } = (() => {

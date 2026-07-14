@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-export const showGrid = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const showGrid = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: showGrid.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ showGrid.definition = {
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-showGrid.url = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+showGrid.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { schedule: args }
     }
@@ -52,7 +52,7 @@ showGrid.url = (args: { schedule: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-showGrid.get = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+showGrid.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: showGrid.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ showGrid.get = (args: { schedule: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-showGrid.head = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+showGrid.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: showGrid.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ showGrid.head = (args: { schedule: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-    const showGridForm = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showGridForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: showGrid.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ showGrid.head = (args: { schedule: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-        showGridForm.get = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showGridForm.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: showGrid.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ showGrid.head = (args: { schedule: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/MarksEntryController.php:18
  * @route '/examination/schedules/{schedule}/marks'
  */
-        showGridForm.head = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showGridForm.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: showGrid.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -106,7 +106,7 @@ showGrid.head = (args: { schedule: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/MarksEntryController.php:55
  * @route '/examination/schedules/{schedule}/marks'
  */
-export const saveBatch = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const saveBatch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveBatch.url(args, options),
     method: 'post',
 })
@@ -121,7 +121,7 @@ saveBatch.definition = {
  * @see app/Http/Controllers/Examination/MarksEntryController.php:55
  * @route '/examination/schedules/{schedule}/marks'
  */
-saveBatch.url = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+saveBatch.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { schedule: args }
     }
@@ -154,7 +154,7 @@ saveBatch.url = (args: { schedule: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Examination/MarksEntryController.php:55
  * @route '/examination/schedules/{schedule}/marks'
  */
-saveBatch.post = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+saveBatch.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveBatch.url(args, options),
     method: 'post',
 })
@@ -164,7 +164,7 @@ saveBatch.post = (args: { schedule: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Examination/MarksEntryController.php:55
  * @route '/examination/schedules/{schedule}/marks'
  */
-    const saveBatchForm = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const saveBatchForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: saveBatch.url(args, options),
         method: 'post',
     })
@@ -174,7 +174,7 @@ saveBatch.post = (args: { schedule: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Examination/MarksEntryController.php:55
  * @route '/examination/schedules/{schedule}/marks'
  */
-        saveBatchForm.post = (args: { schedule: string | number | { id: string | number } } | [schedule: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        saveBatchForm.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: saveBatch.url(args, options),
             method: 'post',
         })

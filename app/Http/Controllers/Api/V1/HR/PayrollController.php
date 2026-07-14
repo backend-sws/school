@@ -93,7 +93,8 @@ class PayrollController extends BaseController
 
         $this->optimizeForExport('512M', 300); // Dynamic limits for PDF generation
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip'));
+        $logoDataUri = app(\App\Services\IdCardService::class)->getInstitutionLogoDataUri($payslip->payroll->institution_id);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip', 'logoDataUri'));
         
         $monthStr = \Carbon\Carbon::createFromDate($payslip->payroll->year, $payslip->payroll->month, 1)->format('M_Y');
         $fileName = "Payslip_{$payslip->user->name}_{$monthStr}.pdf";
@@ -114,7 +115,8 @@ class PayrollController extends BaseController
         $this->optimizeForExport('512M', 300); // Dynamic limits for PDF generation
 
         try {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip'));
+            $logoDataUri = app(\App\Services\IdCardService::class)->getInstitutionLogoDataUri($payslip->payroll->institution_id);
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.payslip', compact('payslip', 'logoDataUri'));
             $pdfData = $pdf->output();
 
             \Illuminate\Support\Facades\Mail::to($payslip->user->email)

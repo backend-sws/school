@@ -104,12 +104,12 @@ export default function Navbar() {
                     <a href="/login" className="text-sm font-semibold l-text-muted hover:l-fg transition-colors hidden sm:inline-block">
                         Sign In
                     </a>
-                    <Button size="sm" className="rounded-full font-bold l-bg-primary text-white shadow-lg shadow-[var(--l-primary)]/15 hover:shadow-xl hover:shadow-[var(--l-primary)]/25 hover:-translate-y-0.5 transition-all duration-300 px-5 gap-1.5" asChild>
+                    {/* <Button size="sm" className="rounded-full font-bold l-bg-primary text-white shadow-lg shadow-[var(--l-primary)]/15 hover:shadow-xl hover:shadow-[var(--l-primary)]/25 hover:-translate-y-0.5 transition-all duration-300 px-5 gap-1.5" asChild>
                         <a href="/register">
                             Get Started
                             <ArrowRight className="w-3.5 h-3.5" />
                         </a>
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
         </motion.nav>

@@ -11,7 +11,7 @@ const platformLinks = [
 ];
 
 const governanceLinks = [
-    { label: 'Get Started', href: '/register' },
+    // { label: 'Get Started', href: '/register' },
     { label: 'Sign In', href: '/login' },
     { label: 'Privacy Policy', href: '#' },
 ];

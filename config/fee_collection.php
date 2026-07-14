@@ -24,6 +24,8 @@ return [
         'value' => (float) env('FEE_LATE_FEE_VALUE', 0),
     ],
 
+    'charge_fees_from_admission_month' => env('FEE_CHARGE_FROM_ADMISSION_MONTH', false),
+
     'notifications' => [
         'send_email_reminder' => env('FEE_SEND_EMAIL_REMINDER', true),
         'send_email_receipt' => env('FEE_SEND_EMAIL_RECEIPT', true),

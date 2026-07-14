@@ -1,6 +1,6 @@
 import HeadingSmall from "@/components/heading-small";
-import { type BreadcrumbItem } from "@/types";
-import { Head } from "@inertiajs/react";
+import { type BreadcrumbItem, type SharedData } from "@/types";
+import { Head, usePage } from "@inertiajs/react";
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +8,8 @@ import SettingApi from "@/lib/api/settingApi";
 import { processSettingsPayload } from "@/lib/uploadSettingsPayload";
 import {
   ADMISSION_RE_ADMISSION_GROUP,
-  ADMISSION_NEW_ADMISSION_GROUP
+  ADMISSION_NEW_ADMISSION_GROUP,
+  ADMISSION_REGISTRATION_NUMBER_GROUP
 } from "@/constants/page/admin/collegeConfig";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { ADMISSION_POLICY_GUIDE } from "@/constants/guides/settings";
@@ -16,7 +17,7 @@ import Each from "@/components/Each";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { RefreshCw, UserPlus, Loader2 } from "lucide-react";
+import { RefreshCw, UserPlus, Loader2, Fingerprint } from "lucide-react";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import { admissionSettingsSchema, type AdmissionSettingsFormValues } from "@/lib/validations/settings";
 import SettingsFooter from "@/components/shared/SettingsFooter";
@@ -31,11 +32,23 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const AdmissionSetting = () => {
   useRegisterGuide(ADMISSION_POLICY_GUIDE);
+  const { institution } = usePage<SharedData>().props;
   const queryClient = useQueryClient();
-  const { control, handleSubmit, reset, formState: { isDirty, errors } } = useForm<AdmissionSettingsFormValues>({
+  const { control, handleSubmit, reset, watch, formState: { isDirty, errors } } = useForm<AdmissionSettingsFormValues>({
     mode: "onChange",
     resolver: zodResolver(admissionSettingsSchema),
   });
+
+  const regNoPrefix = watch("reg_no_prefix");
+  const regNoIncludeYear = watch("reg_no_include_year");
+  const regNoSequencePadding = watch("reg_no_sequence_padding");
+
+  // Generate preview registration number
+  const prefix = typeof regNoPrefix === "string" ? regNoPrefix : (institution?.code || "INST");
+  const year = regNoIncludeYear !== "0" ? new Date().getFullYear().toString() : "";
+  const paddingLength = parseInt(String(regNoSequencePadding), 10) || 6;
+  const sampleSeq = "1".padStart(paddingLength, "0");
+  const previewRegNo = `${prefix}${year}${sampleSeq}`;
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings", "admission"],
@@ -130,6 +143,42 @@ const AdmissionSetting = () => {
                   />
                 )}
               />
+            </div>
+          </SettingsSection>
+
+          <SettingsSection
+            title="Registration Number Policy"
+            description="Configure custom formatting and sequence options for generated student registration numbers."
+            icon={Fingerprint}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <Each
+                of={ADMISSION_REGISTRATION_NUMBER_GROUP}
+                render={(field) => (
+                  <ControlledFormComponent
+                    key={field.name}
+                    control={control}
+                    {...field}
+                    className={field.type === 'title' || field.type === 'editor' ? "col-span-full" : ""}
+                  />
+                )}
+              />
+
+              {/* Registration Number Live Preview */}
+              <div className="col-span-full mt-4 p-4 rounded-xl border bg-primary/5 border-primary/20 space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-primary/80">Live Preview</span>
+                <div className="flex items-center gap-3">
+                  <div className="font-mono text-xl md:text-2xl font-black text-primary tracking-wide">
+                    {previewRegNo}
+                  </div>
+                  <span className="text-xs text-muted-foreground bg-background border px-2 py-0.5 rounded-full font-medium shadow-sm">
+                    Sample #1
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  This is how the registration number will look for the first student admitted in this session.
+                </p>
+              </div>
             </div>
           </SettingsSection>
 

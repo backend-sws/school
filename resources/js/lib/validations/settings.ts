@@ -103,6 +103,9 @@ export const admissionSettingsSchema = z.object({
   admission_re_tc: safeOptionalString(5000, "Terms"),
   admission_new_instruction: safeOptionalString(5000, "Instruction"),
   admission_new_tc: safeOptionalString(5000, "Terms"),
+  reg_no_prefix: safeOptionalString(50, "Prefix"),
+  reg_no_include_year: safeOptionalString(10, "Include Year"),
+  reg_no_sequence_padding: z.union([z.number(), z.string(), z.undefined(), z.null()]),
 });
 
 export type AdmissionSettingsFormValues = z.infer<

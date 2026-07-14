@@ -86,14 +86,14 @@ export default function Hero({ data }: HeroProps) {
                             transition={{ duration: 0.6, delay: 0.3 }}
                             className="flex flex-col sm:flex-row items-center gap-4"
                         >
-                            <CoolMode>
+                            {/* <CoolMode>
                                 <Button asChild size="lg" className="h-14 px-10 rounded-xl font-bold l-bg-primary text-white shadow-xl shadow-(--l-primary)/20 hover:shadow-2xl hover:shadow-(--l-primary)/30 hover:-translate-y-0.5 transition-all duration-300 l-shimmer">
                                     <a href="/register">
                                         {data.cta_primary}
                                         <ArrowRight className="ml-2 w-5 h-5" />
                                     </a>
                                 </Button>
-                            </CoolMode>
+                            </CoolMode> */}
                             <Button asChild variant="outline" size="lg" className="h-14 px-10 rounded-xl font-bold border-(--l-border) l-bg-surface hover:l-bg-surface/80 hover:-translate-y-0.5 transition-all duration-300">
                                 <a href="/login">
                                     {data.cta_secondary}

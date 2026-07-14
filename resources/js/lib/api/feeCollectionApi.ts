@@ -13,6 +13,7 @@ export type FeeCollectionSettings = {
   late_fee_value: number;
   reminder_send_email: boolean;
   receipt_send_email: boolean;
+  charge_fees_from_admission_month: boolean;
 };
 
 export const feeCollectionApi = {
