@@ -41,10 +41,38 @@ trait NotifiesViaChannelMatrix
             return match ($channel) {
                 'sms'      => SmsService::isConfigured(),
                 'whatsapp' => WhatsappService::isConfigured(),
-                default    => true, // database, broadcast, push, mail — always available
+                'broadcast' => $this->isBroadcastConfigured(),
+                'push'     => $this->isWebPushConfigured(),
+                default    => true, // database, mail — always available
             };
         });
 
         return ChannelMap::resolveMany(array_values($channels));
+    }
+
+    private function isBroadcastConfigured(): bool
+    {
+        $driver = config('broadcasting.default', 'null');
+        if ($driver === 'null' || empty($driver)) {
+            return false;
+        }
+
+        if ($driver === 'pusher') {
+            $key = config('broadcasting.connections.pusher.key');
+            return !empty($key) && $key !== 'your_pusher_key' && $key !== 'your_pusher_app_key';
+        }
+
+        if ($driver === 'reverb') {
+            $key = config('broadcasting.connections.reverb.key');
+            return !empty($key);
+        }
+
+        return true;
+    }
+
+    private function isWebPushConfigured(): bool
+    {
+        $pubKey = config('webpush.vapid.public_key');
+        return !empty($pubKey);
     }
 }
