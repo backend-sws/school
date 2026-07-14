@@ -82,6 +82,8 @@ class FeedbackController extends BaseController
             'message' => 'required|string',
         ]);
 
+        $validated['institution_id'] = $validated['institution_id'] ?? config('ems.default_institution_id');
+
         $feedback = Feedback::create($validated);
 
         return $this->successWithMap($feedback, 'passthrough', 'Thank you for your feedback!', 201);

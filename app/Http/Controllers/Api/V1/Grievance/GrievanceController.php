@@ -137,6 +137,9 @@ class GrievanceController extends BaseController
         // Default values
         $validated['status'] = 'open';
         $validated['priority'] = $validated['priority'] ?? 'medium';
+        $validated['institution_id'] = $request->input('institution_id') 
+            ?: \App\Support\InstitutionContext::getActiveInstitutionId() 
+            ?: config('ems.default_institution_id');
 
         return $this->created(Grievance::create($validated));
     }
@@ -168,6 +171,8 @@ class GrievanceController extends BaseController
         // Default values
         $validated['status'] = 'open';
         $validated['priority'] = $validated['priority'] ?? 'medium';
+        $validated['institution_id'] = $request->input('institution_id') 
+            ?: config('ems.default_institution_id');
 
         return $this->created(Grievance::create($validated));
     }

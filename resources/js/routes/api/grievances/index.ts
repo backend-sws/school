@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
 export const show = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
 show.url = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { grievance: number | { id: number } } | [grievance: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
 show.get = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { grievance: number | { id: number } } | [grievance: number | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
 show.head = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { grievance: number | { id: number } } | [grievance: number |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
     const showForm = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { grievance: number | { id: number } } | [grievance: number |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
         showForm.get = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { grievance: number | { id: number } } | [grievance: number |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::show
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:185
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:190
  * @route '/api/v1/grievances/{grievance}'
  */
         showForm.head = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { grievance: number | { id: number } } | [grievance: number |
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
 export const update = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
 update.url = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { grievance: number | { id: number } } | [grievance: number 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
 update.put = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { grievance: number | { id: number } } | [grievance: number 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
 update.patch = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { grievance: number | { id: number } } | [grievance: numbe
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
     const updateForm = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { grievance: number | { id: number } } | [grievance: numbe
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
         updateForm.put = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { grievance: number | { id: number } } | [grievance: numbe
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::update
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:201
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:206
  * @route '/api/v1/grievances/{grievance}'
  */
         updateForm.patch = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { grievance: number | { id: number } } | [grievance: numbe
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:255
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:260
  * @route '/api/v1/grievances/{grievance}'
  */
 export const destroy = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:255
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:260
  * @route '/api/v1/grievances/{grievance}'
  */
 destroy.url = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { grievance: number | { id: number } } | [grievance: number
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:255
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:260
  * @route '/api/v1/grievances/{grievance}'
  */
 destroy.delete = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { grievance: number | { id: number } } | [grievance: num
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:255
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:260
  * @route '/api/v1/grievances/{grievance}'
  */
     const destroyForm = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { grievance: number | { id: number } } | [grievance: num
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\GrievanceController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:255
+ * @see app/Http/Controllers/Api/V1/Grievance/GrievanceController.php:260
  * @route '/api/v1/grievances/{grievance}'
  */
         destroyForm.delete = (args: { grievance: number | { id: number } } | [grievance: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

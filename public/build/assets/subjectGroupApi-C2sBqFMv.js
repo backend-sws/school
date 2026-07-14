@@ -1,1 +1,0 @@
-import{a as t}from"./api-C_Z9bWsU.js";const u="/subject-groups",r={getSubjectGroup:e=>t.get(`${u}`,{params:e}),createSubjectGroup:e=>t.post(`${u}`,e),getSubjectGroupById:e=>t.get(`${u}/${e}`),updateSubjectGroup:(e,p)=>t.put(`${u}/${e}`,p),deleteSubjectGroup:e=>t.delete(`${u}/${e}`)};export{r as S};
