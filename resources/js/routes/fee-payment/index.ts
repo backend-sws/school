@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ dashboard.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:223
+ * @see routes/web.php:224
  * @route '/fee-payment/dashboard'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dashboard.form = dashboardForm
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
 export const manageFeeHead = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ manageFeeHead.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
 manageFeeHead.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ manageFeeHead.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
 manageFeeHead.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ manageFeeHead.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
 manageFeeHead.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ manageFeeHead.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 })
 
     /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
     const manageFeeHeadForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ manageFeeHead.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     })
 
             /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
         manageFeeHeadForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ manageFeeHead.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
             method: 'get',
         })
             /**
- * @see routes/web.php:224
+ * @see routes/web.php:225
  * @route '/fee-payment/manage-fee-head'
  */
         manageFeeHeadForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

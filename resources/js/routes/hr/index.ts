@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import payroll from './payroll'
 /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
 export const attendance = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,7 +15,7 @@ attendance.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
 attendance.url = (options?: RouteQueryOptions) => {
@@ -23,7 +23,7 @@ attendance.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
 attendance.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ attendance.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
 attendance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ attendance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
     const attendanceForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ attendance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
         attendanceForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ attendance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:263
+ * @see routes/web.php:264
  * @route '/hr/attendance'
  */
         attendanceForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -72,7 +72,7 @@ attendance.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     attendance.form = attendanceForm
 /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
 export const leaveTypes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -86,7 +86,7 @@ leaveTypes.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
 leaveTypes.url = (options?: RouteQueryOptions) => {
@@ -94,7 +94,7 @@ leaveTypes.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
 leaveTypes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ leaveTypes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
 leaveTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -111,7 +111,7 @@ leaveTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
     const leaveTypesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -120,7 +120,7 @@ leaveTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
         leaveTypesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -128,7 +128,7 @@ leaveTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:264
+ * @see routes/web.php:265
  * @route '/hr/leave-types'
  */
         leaveTypesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -143,7 +143,7 @@ leaveTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     leaveTypes.form = leaveTypesForm
 /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
 export const leaveRequests = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ leaveRequests.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
 leaveRequests.url = (options?: RouteQueryOptions) => {
@@ -165,7 +165,7 @@ leaveRequests.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
 leaveRequests.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -173,7 +173,7 @@ leaveRequests.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
 leaveRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -182,7 +182,7 @@ leaveRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 })
 
     /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
     const leaveRequestsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -191,7 +191,7 @@ leaveRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     })
 
             /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
         leaveRequestsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -199,7 +199,7 @@ leaveRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
             method: 'get',
         })
             /**
- * @see routes/web.php:265
+ * @see routes/web.php:266
  * @route '/hr/leave-requests'
  */
         leaveRequestsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

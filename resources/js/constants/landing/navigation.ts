@@ -332,23 +332,25 @@ export const TOP_BAR_TAG: Record<InstitutionType, string> = {
 
 export const PUBLIC_UTILITY_LINKS: Record<InstitutionType, UtilityLink[]> = {
     school: [
-        { icon: Users, href: "#", label: "Parent Login" },
-        { icon: ExternalLink, href: "#", label: "ERP Login" },
+        { icon: Users, href: "/login", label: "Parent Login" },
+        { icon: ExternalLink, href: "/login", label: "ERP Login" },
+        { icon: MessageSquare, href: "/contact", label: "Feedback" },
+        { icon: AlertCircle, href: "/contact", label: "Grievance" },
     ],
     college: [
-        { icon: MessageSquare, href: "#", label: "Feedback" },
-        { icon: AlertCircle, href: "#", label: "Grievance" },
-        { icon: HelpCircle, href: "#", label: "Enquire" },
+        { icon: MessageSquare, href: "/contact", label: "Feedback" },
+        { icon: AlertCircle, href: "/contact", label: "Grievance" },
+        { icon: HelpCircle, href: "/contact", label: "Enquire" },
     ],
     coaching: [
         { icon: BookOpen, href: "#", label: "Study Material" },
-        { icon: HelpCircle, href: "#", label: "Enquire" },
+        { icon: HelpCircle, href: "/contact", label: "Enquire" },
     ],
     university: [
-        { icon: MessageSquare, href: "#", label: "Feedback" },
-        { icon: AlertCircle, href: "#", label: "Grievance" },
+        { icon: MessageSquare, href: "/contact", label: "Feedback" },
+        { icon: AlertCircle, href: "/contact", label: "Grievance" },
         { icon: Newspaper, href: "#", label: "RTI" },
-        { icon: HelpCircle, href: "#", label: "Enquire" },
+        { icon: HelpCircle, href: "/contact", label: "Enquire" },
     ],
 };
 

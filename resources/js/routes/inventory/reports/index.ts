@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
 export const lowStock = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ lowStock.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
 lowStock.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ lowStock.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
 lowStock.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ lowStock.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
 lowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ lowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
     const lowStockForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ lowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
         lowStockForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ lowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:398
+ * @see routes/web.php:399
  * @route '/inventory/reports/low-stock'
  */
         lowStockForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -30,11 +30,14 @@ export function CommandPalette({
     open: boolean;
     setOpen: (open: boolean) => void;
 }) {
-    const { name: appName } = usePage<SharedData>().props;
+    const { name: appName, auth } = usePage<SharedData>().props;
     const { config, settingsNav } = useNavConfig();
     const isMobile = useIsMobile();
 
+    const isPortal = auth?.role === 'student' || auth?.role === 'parent' || auth?.role === 'candidate';
+
     React.useEffect(() => {
+        if (isPortal) return;
         const down = (e: KeyboardEvent) => {
             if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
@@ -43,7 +46,9 @@ export function CommandPalette({
         };
         document.addEventListener("keydown", down);
         return () => document.removeEventListener("keydown", down);
-    }, [open, setOpen]);
+    }, [open, setOpen, isPortal]);
+
+    if (isPortal) return null;
 
     const suggestions = [
         { title: "Dashboard", href: "/dashboard", icon: LayoutGrid, tag: "Navigate" },

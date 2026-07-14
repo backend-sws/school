@@ -1190,7 +1190,7 @@ notifications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     
     notifications.form = notificationsForm
 /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
 export const noticeManagement = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1204,7 +1204,7 @@ noticeManagement.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
 noticeManagement.url = (options?: RouteQueryOptions) => {
@@ -1212,7 +1212,7 @@ noticeManagement.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
 noticeManagement.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1220,7 +1220,7 @@ noticeManagement.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
     method: 'get',
 })
 /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
 noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1229,7 +1229,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 })
 
     /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
     const noticeManagementForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1238,7 +1238,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     })
 
             /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
         noticeManagementForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1246,7 +1246,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
             method: 'get',
         })
             /**
- * @see routes/web.php:367
+ * @see routes/web.php:368
  * @route '/notice-management'
  */
         noticeManagementForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1261,7 +1261,7 @@ noticeManagement.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     
     noticeManagement.form = noticeManagementForm
 /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
 export const analytics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1275,7 +1275,7 @@ analytics.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
 analytics.url = (options?: RouteQueryOptions) => {
@@ -1283,7 +1283,7 @@ analytics.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
 analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1291,7 +1291,7 @@ analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
 analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1300,7 +1300,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
     const analyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1309,7 +1309,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
         analyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1317,7 +1317,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:541
+ * @see routes/web.php:542
  * @route '/analytics'
  */
         analyticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

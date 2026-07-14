@@ -1,1 +1,0 @@
-import{a as o}from"./api-0bYhVjdy.js";const s="/institutions",n={index:t=>o.get(s,{params:t}),store:t=>o.post(s,t),show:t=>o.get(`${s}/${t}`),update:(t,e)=>o.put(`${s}/${t}`,e),destroy:t=>o.delete(`${s}/${t}`)};export{n as I};

@@ -11,6 +11,7 @@ import { PoweredByFooter } from "@/components/powered-by-footer";
 
 import { PermissionGate } from "@/components/PermissionGate";
 import { useNavConfig } from "@/hooks/useNavConfig";
+import { PORTAL_NAVIGATION } from "@/constants/navigation";
 
 type DrillState =
     | { level: "closed" }
@@ -23,6 +24,7 @@ export function MobileNav() {
     const { url, props } = usePage<SharedData>();
     const institution = props.institution;
     const branding = props.branding;
+    const isPortal = ["student", "parent", "candidate"].includes(props.auth?.role || "");
     const { setOpenMobile } = useSidebar();
     const [searchOpen, setSearchOpen] = useState(false);
     const [drill, setDrill] = useState<DrillState>({ level: "closed" });
@@ -144,53 +146,107 @@ export function MobileNav() {
                                         </span>
                                     ) : (
                                         <span className="text-sm font-bold text-foreground tracking-tight">
-                                            Modules
+                                            {isPortal ? "Menu" : "Modules"}
                                         </span>
                                     )}
                                 </div>
-
-                                {/* Sheet Content */}
-                                <div className="overflow-y-auto max-h-[calc(60vh-56px)] overscroll-contain">
-                                    <AnimatePresence mode="wait">
-                                        {drill.level === "groups" && (
-                                            <motion.div
-                                                key="groups"
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                transition={{ duration: 0.15 }}
-                                                className="py-2 px-3"
-                                            >
-                                                {allGroups.map((group) => {
-                                                    const GroupIcon = group.icon;
-                                                    const permissions = group.items
-                                                        .map((i: any) => i.permission)
-                                                        .filter((p: any): p is string => !!p);
-
-                                                    return (
-                                                        <PermissionGate key={group.label} canAny={permissions}>
-                                                            <button
-                                                                onClick={() => setDrill({ level: "items", groupLabel: group.label })}
-                                                                className="flex items-center gap-3.5 w-full px-3 py-3 rounded-xl text-left transition-colors hover:bg-muted/50 active:bg-muted/70 group"
-                                                            >
-                                                                <div className="flex items-center justify-center size-9 rounded-lg bg-primary/5 text-primary/70 group-hover:bg-primary/10 transition-colors">
-                                                                    <GroupIcon className="size-4.5" />
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <span className="text-[14px] font-semibold text-foreground tracking-tight">
-                                                                        {group.label}
-                                                                    </span>
-                                                                    <p className="text-[11px] text-muted-foreground/50 mt-0.5">
-                                                                        {group.items.length} items
-                                                                    </p>
-                                                                </div>
-                                                                <ChevronLeft className="size-4 text-muted-foreground/30 rotate-180" />
-                                                            </button>
-                                                        </PermissionGate>
-                                                    );
-                                                })}
-                                            </motion.div>
-                                        )}
+ 
+                                 {/* Sheet Content */}
+                                 <div className="overflow-y-auto max-h-[calc(60vh-56px)] overscroll-contain">
+                                     <AnimatePresence mode="wait">
+                                         {drill.level === "groups" && (
+                                             <motion.div
+                                                 key="groups"
+                                                 initial={{ opacity: 0, x: -20 }}
+                                                 animate={{ opacity: 1, x: 0 }}
+                                                 exit={{ opacity: 0, x: -20 }}
+                                                 transition={{ duration: 0.15 }}
+                                                 className="py-2 px-3"
+                                             >
+                                                 {isPortal ? (
+                                                     PORTAL_NAVIGATION.map((item: any) => {
+                                                         const ItemIcon = item.icon ?? Layers;
+                                                         const isActive = isSameUrl(currentPath, item.href);
+                                                         const isComingSoon = item.comingSoon;
+ 
+                                                         if (isComingSoon) {
+                                                             return (
+                                                                 <PermissionGate key={item.href} can={item.permission} feature={item.feature}>
+                                                                     <div className="flex items-center gap-3.5 px-3 py-3 rounded-xl opacity-40 cursor-not-allowed">
+                                                                         <div className="flex items-center justify-center size-9 rounded-lg bg-muted/40">
+                                                                             <ItemIcon className="size-4.5 text-muted-foreground/50" />
+                                                                         </div>
+                                                                         <span className="text-[14px] font-medium text-muted-foreground">{item.title}</span>
+                                                                         <span className="ml-auto text-[9px] font-bold bg-muted/60 px-1.5 py-0.5 rounded uppercase tracking-wider">Soon</span>
+                                                                     </div>
+                                                                 </PermissionGate>
+                                                             );
+                                                         }
+ 
+                                                         return (
+                                                             <PermissionGate key={item.href} can={item.permission} feature={item.feature}>
+                                                                 <Link
+                                                                     href={item.href}
+                                                                     className={cn(
+                                                                         "flex items-center gap-3.5 px-3 py-3 rounded-xl transition-all relative",
+                                                                         isActive
+                                                                             ? "bg-primary/8 text-primary"
+                                                                             : "hover:bg-muted/50 active:bg-muted/70"
+                                                                     )}
+                                                                 >
+                                                                     <div className={cn(
+                                                                         "flex items-center justify-center size-9 rounded-lg transition-colors",
+                                                                         isActive
+                                                                             ? "bg-primary text-primary-foreground shadow-sm"
+                                                                             : "bg-muted/40 text-muted-foreground/70"
+                                                                     )}>
+                                                                         <ItemIcon className="size-4.5" />
+                                                                     </div>
+                                                                     <span className={cn(
+                                                                         "text-[14px] font-medium tracking-tight",
+                                                                         isActive ? "font-semibold" : ""
+                                                                     )}>
+                                                                         {item.title}
+                                                                     </span>
+                                                                     {isActive && (
+                                                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-full" />
+                                                                     )}
+                                                                 </Link>
+                                                             </PermissionGate>
+                                                         );
+                                                     })
+                                                 ) : (
+                                                     allGroups.map((group) => {
+                                                         const GroupIcon = group.icon;
+                                                         const permissions = group.items
+                                                             .map((i: any) => i.permission)
+                                                             .filter((p: any): p is string => !!p);
+ 
+                                                         return (
+                                                             <PermissionGate key={group.label} canAny={permissions}>
+                                                                 <button
+                                                                     onClick={() => setDrill({ level: "items", groupLabel: group.label })}
+                                                                     className="flex items-center gap-3.5 w-full px-3 py-3 rounded-xl text-left transition-colors hover:bg-muted/50 active:bg-muted/70 group"
+                                                                 >
+                                                                     <div className="flex items-center justify-center size-9 rounded-lg bg-primary/5 text-primary/70 group-hover:bg-primary/10 transition-colors">
+                                                                         <GroupIcon className="size-4.5" />
+                                                                     </div>
+                                                                     <div className="flex-1 min-w-0">
+                                                                         <span className="text-[14px] font-semibold text-foreground tracking-tight">
+                                                                             {group.label}
+                                                                         </span>
+                                                                         <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                                                                             {group.items.length} items
+                                                                         </p>
+                                                                     </div>
+                                                                     <ChevronLeft className="size-4 text-muted-foreground/30 rotate-180" />
+                                                                 </button>
+                                                             </PermissionGate>
+                                                         );
+                                                     })
+                                                 )}
+                                             </motion.div>
+                                         )}
 
                                         {(drill.level === "items" || drill.level === "settings-items") && drilledGroup && (
                                             <motion.div

@@ -375,6 +375,7 @@ export const PORTAL_NAVIGATION: SidebarNavItem[] = [
     ].filter(
         (item) => item.href.startsWith("/student-portal/") && item.href !== "/student-portal/dashboard"
     ),
+    { title: "Notices", href: "/student-portal/notices", icon: Megaphone, permission: "view_notices" },
 ];
 export const HOSTEL_NAVIGATION: SidebarNavGroup[] = [
     {

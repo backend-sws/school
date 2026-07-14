@@ -1,1 +1,0 @@
-import{a as e}from"./api-0bYhVjdy.js";const s="/streams",g={index:t=>e.get(s,{params:t}),getStreams:t=>e.get(s,{params:t}),getPublicStreams:t=>e.get("/public/streams",{params:t}),show:t=>e.get(`${s}/${t}`),store:t=>e.post(s,t),update:(t,a)=>e.put(`${s}/${t}`,a),destroy:t=>e.delete(`${s}/${t}`),toggleStatus:t=>e.patch(`${s}/${t}/toggle-status`)};export{g as s};

@@ -141,6 +141,30 @@ class GrievanceController extends BaseController
         return $this->created(Grievance::create($validated));
     }
 
+    public function publicStore(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'email' => 'nullable|email|max:150',
+            'mobile' => 'nullable|string|max:15',
+            'category' => 'nullable|string|max:100',
+            'subject' => 'required|string|max:300',
+            'description' => 'required|string',
+            'priority' => 'nullable|string|in:low,medium,high',
+        ]);
+
+        $validated['user_id'] = null;
+        
+        // Generate Ticket No: GRV-YYYYMMDD-XXXXX
+        $validated['ticket_no'] = 'GRV' . date('Ymd') . str_pad(Grievance::count() + 1, 5, '0', STR_PAD_LEFT);
+        
+        // Default values
+        $validated['status'] = 'open';
+        $validated['priority'] = $validated['priority'] ?? 'medium';
+
+        return $this->created(Grievance::create($validated));
+    }
+
     /**
      * @OA\Get(
      * path="/grievances/{id}",

@@ -81,7 +81,7 @@ superAdminLanding.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
     
     superAdminLanding.form = superAdminLandingForm
 /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
 export const users = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -95,7 +95,7 @@ users.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
 users.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ users.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
 users.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -111,7 +111,7 @@ users.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
 users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -120,7 +120,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
     const usersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -129,7 +129,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
         usersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -137,7 +137,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:292
+ * @see routes/web.php:293
  * @route '/admin/users'
  */
         usersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -152,7 +152,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     users.form = usersForm
 /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
 export const auditLogs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -166,7 +166,7 @@ auditLogs.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
 auditLogs.url = (options?: RouteQueryOptions) => {
@@ -174,7 +174,7 @@ auditLogs.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
 auditLogs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -182,7 +182,7 @@ auditLogs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
 auditLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ auditLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
     const auditLogsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -200,7 +200,7 @@ auditLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
         auditLogsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -208,7 +208,7 @@ auditLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:542
+ * @see routes/web.php:543
  * @route '/admin/audit-logs'
  */
         auditLogsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -223,7 +223,7 @@ auditLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     auditLogs.form = auditLogsForm
 /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
 export const importLogs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -237,7 +237,7 @@ importLogs.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
 importLogs.url = (options?: RouteQueryOptions) => {
@@ -245,7 +245,7 @@ importLogs.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
 importLogs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -253,7 +253,7 @@ importLogs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
 importLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -262,7 +262,7 @@ importLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
     const importLogsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -271,7 +271,7 @@ importLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
         importLogsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -279,7 +279,7 @@ importLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:543
+ * @see routes/web.php:544
  * @route '/admin/analytics/import-logs'
  */
         importLogsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -294,7 +294,7 @@ importLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     importLogs.form = importLogsForm
 /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
 export const dataImport = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -308,7 +308,7 @@ dataImport.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
 dataImport.url = (options?: RouteQueryOptions) => {
@@ -316,7 +316,7 @@ dataImport.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
 dataImport.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -324,7 +324,7 @@ dataImport.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
 dataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -333,7 +333,7 @@ dataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
     const dataImportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -342,7 +342,7 @@ dataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
         dataImportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -350,7 +350,7 @@ dataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:544
+ * @see routes/web.php:545
  * @route '/admin/data-import'
  */
         dataImportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -365,7 +365,7 @@ dataImport.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     dataImport.form = dataImportForm
 /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
 export const roles = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -379,7 +379,7 @@ roles.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
 roles.url = (options?: RouteQueryOptions) => {
@@ -387,7 +387,7 @@ roles.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
 roles.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -395,7 +395,7 @@ roles.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
 roles.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -404,7 +404,7 @@ roles.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
     const rolesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -413,7 +413,7 @@ roles.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
         rolesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -421,7 +421,7 @@ roles.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:576
+ * @see routes/web.php:577
  * @route '/admin/roles'
  */
         rolesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -436,7 +436,7 @@ roles.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     roles.form = rolesForm
 /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
 export const workflows = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -450,7 +450,7 @@ workflows.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
 workflows.url = (options?: RouteQueryOptions) => {
@@ -458,7 +458,7 @@ workflows.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
 workflows.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -466,7 +466,7 @@ workflows.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
 workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -475,7 +475,7 @@ workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
     const workflowsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -484,7 +484,7 @@ workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
         workflowsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -492,7 +492,7 @@ workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:580
+ * @see routes/web.php:581
  * @route '/admin/workflows'
  */
         workflowsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

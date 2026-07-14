@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/use-can";
 import type { SidebarNavItem } from "@/types/navigation";
 import { PermissionGate } from "@/components/PermissionGate";
 import { useNavConfig } from "@/hooks/useNavConfig";
+import { PORTAL_NAVIGATION } from "@/constants/navigation";
 import { getDailySlogan } from "@/constants/content/slogans";
 import Each from "@/components/Each";
 import {
@@ -155,125 +156,128 @@ export function AppSidebar() {
 
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const isPortal = ["student", "parent", "candidate"].includes(auth.auth?.role || "");
 
   return (
     <Sidebar
       collapsible="none"
       className={cn(
         "bg-sidebar border-r border-sidebar-border overflow-hidden transition-[width] duration-300 ease-in-out hidden md:block",
-        isCollapsed ? "w-[72px]" : "w-[310px]"
+        isPortal ? "w-[240px]" : (isCollapsed ? "w-[72px]" : "w-[310px]")
       )}
     >
       <SidebarContent className="flex flex-row p-0 scrollbar-none overflow-hidden h-full">
 
-        <TooltipProvider delayDuration={100}>
-          {/* ─── Layer 1: Left Rail (Icons Only) ─── */}
-          <aside className="w-[72px] flex flex-col border-r border-sidebar-border bg-sidebar-accent/5 shrink-0 h-full">
-            {/* Logo Section - Height matched with Detail Pane Header */}
-            <div className="h-16 flex items-center justify-center border-b border-sidebar-border shrink-0">
-              <Link
-                href={config.homePath}
-                className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 transition-all hover:bg-primary/20 shadow-sm"
-              >
-                {institution?.logo_url ? (
-                   <img
-                   src={institution.logo_url}
-                   alt={institution.short_name || institution.name}
-                   className="size-5 object-contain"
-                 />
-                ) : (
-                  <span className="text-primary font-black text-lg leading-none font-logo">
-                    {(institution?.short_name || institution?.name || "V").charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </Link>
-            </div>
+        {!isPortal && (
+          <TooltipProvider delayDuration={100}>
+            {/* ─── Layer 1: Left Rail (Icons Only) ─── */}
+            <aside className="w-[72px] flex flex-col border-r border-sidebar-border bg-sidebar-accent/5 shrink-0 h-full">
+              {/* Logo Section - Height matched with Detail Pane Header */}
+              <div className="h-16 flex items-center justify-center border-b border-sidebar-border shrink-0">
+                <Link
+                  href={config.homePath}
+                  className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 transition-all hover:bg-primary/20 shadow-sm"
+                >
+                  {institution?.logo_url ? (
+                     <img
+                     src={institution.logo_url}
+                     alt={institution.short_name || institution.name}
+                     className="size-5 object-contain"
+                   />
+                  ) : (
+                    <span className="text-primary font-black text-lg leading-none font-logo">
+                      {(institution?.short_name || institution?.name || "V").charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </Link>
+              </div>
 
-            <div className="flex-1 flex flex-col items-center py-4 overflow-hidden">
-              {/* Primary Nav Items */}
-              <nav className="flex-1 flex flex-col gap-1 px-1 overflow-y-auto scrollbar-none w-full items-center">
-                <Each 
-                   of={railItems}
-                  render={(item: { id: string; label: string; icon: LucideIcon; href?: string }) => {
-                    const active = activeModule === item.id;
-                    const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.id}
-                        href={item.href || "/dashboard"}
-                        onClick={() => setActiveModule(item.id)}
-                        className={cn(
-                          "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full no-underline",
-                          active 
-                            ? "text-primary bg-primary/10" 
-                            : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
-                        )}
-                      >
-                        {active && (
-                          <motion.div
-                            layoutId="rail-active-indicator"
-                            className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
-                            initial={false}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          />
-                        )}
-                        <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
-                        <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.label}</span>
-                      </Link>
-                    );
-                  }}
-                />
-              </nav>
-
-              {/* Rail Footer Items (Settings, etc.) */}
-              <div className="w-8 h-px bg-sidebar-border mx-auto my-4 shrink-0" />
-              <nav className="flex flex-col gap-1 px-1 pb-2 items-center w-full">
-              {config.footerItems?.map((item) => {
-                const isSettings = item.title === "Settings";
-                const active = isSettings ? activeModule === "settings" : isActive(item.href);
-                const Icon = item.icon || LayoutGrid;
-                
-                return (
-                  <button
-                    key={item.title}
-                    onClick={() => {
-                      if (isSettings) {
-                        setActiveModule("settings");
-                        // Flatten all settings groups, find first permitted
-                        const allSettingsItems = permittedSettingsNav.flatMap(g => g.items);
-                        const href = firstPermittedHref(allSettingsItems);
-                        if (href) router.visit(href);
-                      }
+              <div className="flex-1 flex flex-col items-center py-4 overflow-hidden">
+                {/* Primary Nav Items */}
+                <nav className="flex-1 flex flex-col gap-1 px-1 overflow-y-auto scrollbar-none w-full items-center">
+                  <Each 
+                     of={railItems}
+                    render={(item: { id: string; label: string; icon: LucideIcon; href?: string }) => {
+                      const active = activeModule === item.id;
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.href || "/dashboard"}
+                          onClick={() => setActiveModule(item.id)}
+                          className={cn(
+                            "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full no-underline",
+                            active 
+                              ? "text-primary bg-primary/10" 
+                              : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
+                          )}
+                        >
+                          {active && (
+                            <motion.div
+                              layoutId="rail-active-indicator"
+                              className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
+                              initial={false}
+                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
+                          )}
+                          <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
+                          <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.label}</span>
+                        </Link>
+                      );
                     }}
-                    className={cn(
-                      "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full",
-                      active 
-                        ? "text-primary bg-primary/10" 
-                        : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
-                    )}
-                  >
-                    {active && (
-                      <motion.div
-                        layoutId="rail-footer-active-indicator"
-                        className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                    <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
-                    <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.title}</span>
-                  </button>
-                );
-              })}
-            </nav>
-            </div>
-          </aside>
-        </TooltipProvider>
+                  />
+                </nav>
+
+                {/* Rail Footer Items (Settings, etc.) */}
+                <div className="w-8 h-px bg-sidebar-border mx-auto my-4 shrink-0" />
+                <nav className="flex flex-col gap-1 px-1 pb-2 items-center w-full">
+                {config.footerItems?.map((item) => {
+                  const isSettings = item.title === "Settings";
+                  const active = isSettings ? activeModule === "settings" : isActive(item.href);
+                  const Icon = item.icon || LayoutGrid;
+                  
+                  return (
+                    <button
+                      key={item.title}
+                      onClick={() => {
+                        if (isSettings) {
+                          setActiveModule("settings");
+                          // Flatten all settings groups, find first permitted
+                          const allSettingsItems = permittedSettingsNav.flatMap(g => g.items);
+                          const href = firstPermittedHref(allSettingsItems);
+                          if (href) router.visit(href);
+                        }
+                      }}
+                      className={cn(
+                        "relative flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg transition-all group/rail-item w-full",
+                        active 
+                          ? "text-primary bg-primary/10" 
+                          : "text-muted-foreground/80 hover:text-foreground hover:bg-sidebar-accent/50"
+                      )}
+                    >
+                      {active && (
+                        <motion.div
+                          layoutId="rail-footer-active-indicator"
+                          className="absolute left-0 top-1/4 bottom-1/4 w-[3px] rounded-r-full bg-primary"
+                          initial={false}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                      <Icon className={cn("size-5 relative z-10", active ? "fill-primary/20 stroke-2" : "stroke-[1.5]")} />
+                      <span className="text-[10px] font-medium tracking-tight text-center leading-none px-0.5 truncate w-full">{item.title}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+              </div>
+            </aside>
+          </TooltipProvider>
+        )}
 
         {/* ─── Layer 2: Detail Pane (Sub-items) ─── */}
         <div className={cn(
           "flex flex-col bg-sidebar overflow-hidden h-full transition-all duration-300 ease-in-out",
-          isCollapsed ? "w-0 opacity-0 pointer-events-none" : "flex-1 opacity-100"
+          isPortal ? "flex-1 opacity-100" : (isCollapsed ? "w-0 opacity-0 pointer-events-none" : "flex-1 opacity-100")
         )}>
           <header className="h-16 flex items-center px-5 border-b border-sidebar-border shrink-0">
              <div className="flex items-baseline gap-2 min-w-0 max-w-full">
@@ -287,7 +291,14 @@ export function AppSidebar() {
           </header>
 
           <div className="flex-1 overflow-y-auto px-3 py-4 scrollbar-none">
-            {activeModule === "dashboard" ? (
+            {isPortal ? (
+              <SidebarMenu className="gap-0.5">
+                <Each 
+                   of={PORTAL_NAVIGATION}
+                   render={(item: SidebarNavItem) => <NavMenuItem key={item.href} item={item} url={url} />}
+                />
+              </SidebarMenu>
+            ) : activeModule === "dashboard" ? (
               <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton

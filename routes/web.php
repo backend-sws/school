@@ -164,6 +164,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Notifications (all authenticated users)
     Route::get('/notifications', fn() => Inertia::render('notifications/index'))->name('notifications');
+    Route::get('/student-portal/notices', fn() => Inertia::render('student-portal/notices/index'))->name('student-portal.notices');
 
     // Documentation Guides
     // Route::get('/admin/guides', [\App\Http\Controllers\Web\DocumentationController::class, 'index'])->name('admin.guides.index');
@@ -589,3 +590,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__ . '/settings.php';
 
 require __DIR__ . '/student.php';
+

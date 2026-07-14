@@ -84,6 +84,9 @@ export function HeaderActions({ compact = false, hideSearch = false }: HeaderAct
   const displayEmail = canSwitchAccount ? auth?.user?.email : displayUser?.email;
 
 
+  const isPortal = auth?.role === 'student' || auth?.role === 'parent' || auth?.role === 'candidate';
+  const shouldHideSearch = hideSearch || isPortal;
+
   const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
@@ -94,7 +97,7 @@ export function HeaderActions({ compact = false, hideSearch = false }: HeaderAct
     <>
       <div className="flex items-center gap-1.5 sm:gap-3">
         {/* Desktop search trigger (Full Mode) */}
-        {!hideSearch && !compact && (
+        {!shouldHideSearch && !compact && (
           <button
             onClick={() => setSearchOpen(true)}
             className="hidden md:flex items-center gap-3 h-10 w-64 lg:w-80 px-4 rounded-xl border border-border/40 bg-muted/30 text-muted-foreground/50 hover:bg-muted/50 hover:border-primary/20 hover:text-muted-foreground transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-primary/10"
@@ -108,7 +111,7 @@ export function HeaderActions({ compact = false, hideSearch = false }: HeaderAct
         )}
 
         {/* Compact Search Trigger */}
-        {!hideSearch && (compact || true) && (
+        {!shouldHideSearch && (compact || true) && (
           <div className={!compact ? "md:hidden" : ""}>
             <Tooltip>
               <TooltipTrigger asChild>
