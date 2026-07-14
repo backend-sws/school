@@ -18,11 +18,13 @@ class TransportAssignment extends Model
         'effective_from',
         'effective_until',
         'remarks',
+        'monthly_amount',
     ];
 
     protected $casts = [
-        'effective_from' => 'date',
+        'effective_from'  => 'date',
         'effective_until' => 'date',
+        'monthly_amount'  => 'decimal:2',
     ];
 
     public function institution(): BelongsTo
@@ -43,5 +45,11 @@ class TransportAssignment extends Model
     public function transportStop(): BelongsTo
     {
         return $this->belongsTo(TransportStop::class, 'transport_stop_id');
+    }
+
+    public function routeStop(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TransportRouteStop::class, 'transport_route_id', 'transport_route_id')
+            ->where('transport_stop_id', $this->transport_stop_id);
     }
 }

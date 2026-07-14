@@ -42,9 +42,18 @@ class ProcessBulkImportJob implements ShouldQueue
     public function __construct(
         public ImportLog $importLog
     ) {
-        // Force Redis connection if available — imports MUST run async via Horizon in production.
-        // On environments without Redis (like local development), fallback to the default queue connection.
-        $hasRedis = class_exists(\Redis::class) || class_exists(\Predis\Client::class);
+        // Safely check if Redis is responsive before forcing the redis queue connection.
+        // If Redis connection is refused or offline, fallback to the default queue connection.
+        $hasRedis = false;
+        if (class_exists(\Redis::class) || class_exists(\Predis\Client::class)) {
+            try {
+                \Illuminate\Support\Facades\Redis::connection()->ping();
+                $hasRedis = true;
+            } catch (\Throwable $e) {
+                $hasRedis = false;
+            }
+        }
+
         if ($hasRedis && config('queue.connections.redis')) {
             $this->onConnection('redis');
         } else {

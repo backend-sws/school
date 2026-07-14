@@ -293,7 +293,7 @@ class StudentDashboardService
             'transportAssignments' => function ($q) {
                 $q->where(function($query) {
                     $query->whereNull('effective_until')->orWhere('effective_until', '>=', now());
-                });
+                })->with(['transportRoute:id,name,code', 'transportStop:id,name,code']);
             },
             'hostelAllocations' => function ($q) {
                 $q->where('status', 'active');
@@ -311,7 +311,8 @@ class StudentDashboardService
         }
         
         if ($user->studentProfile) {
-            $user->studentProfile->transport_id = $user->transportAssignments->first()?->id;
+            $activeTransport = $user->transportAssignments->first();
+            $user->studentProfile->transport_id = $activeTransport?->id;
             $user->studentProfile->hostel_id = $user->hostelAllocations->first()?->id;
             
             $user->studentProfile->has_transport_history = \App\Models\TransportAssignment::where('user_id', $user->id)->exists();
@@ -327,6 +328,18 @@ class StudentDashboardService
             $user->studentProfile->hostel_status_text = $user->studentProfile->has_hostel_history 
                 ? ($user->studentProfile->is_hostel_stoppable ? 'Active' : 'Stopped') 
                 : null;
+
+            // Expose active transport route/stop detail
+            if ($activeTransport) {
+                $routeName = $activeTransport->transportRoute?->name;
+                $stopName  = $activeTransport->transportStop?->name;
+                $parts = array_filter([$routeName, $stopName]);
+                $user->studentProfile->transport_detail = implode(' → ', $parts) ?: null;
+                $user->studentProfile->transport_monthly_amount = (float) ($activeTransport->monthly_amount ?? 0);
+            } else {
+                $user->studentProfile->transport_detail = null;
+                $user->studentProfile->transport_monthly_amount = null;
+            }
         }
         
         if ($user->studentProfile && $user->studentProfile->mainStream) {

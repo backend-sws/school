@@ -240,6 +240,22 @@ export function getAcademicFields(displayConfig: ScopeTypeDisplayConfig): FieldC
         formatStudentProfileFieldValue(scopeType, "current_semester", value),
     },
     { key: "admission_date", label: "Admission Date", icon: Calendar, path: "profile.admission_date", format: (v) => formatDateValue(v) },
+    {
+      key: "transport_detail",
+      label: "Transport Route → Stop",
+      icon: Bus,
+      path: "profile.transport_detail",
+      showWhen: (v) => !!v,
+      fullWidth: true,
+    },
+    {
+      key: "transport_monthly_amount",
+      label: "Transport Monthly Fare",
+      icon: Bus,
+      path: "profile.transport_monthly_amount",
+      showWhen: (v) => v != null && v > 0,
+      format: (v) => v != null ? `₹${Number(v).toLocaleString("en-IN")}` : "—",
+    },
   ];
 }
 
