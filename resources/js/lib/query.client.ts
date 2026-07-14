@@ -43,7 +43,7 @@ export const queryClient = new QueryClient({
             refetchOnWindowFocus: false,
             refetchOnMount: true,
             refetchOnReconnect: true,
-            staleTime: 5 * 60 * 1000, // 5 minutes
+            staleTime: 0, // Disable caching so data refetches on every mount/navigation
             retry: (failureCount, error: any) => {
                 // Don't retry on specific error codes
                 const status = error?.response?.status || error?.code;

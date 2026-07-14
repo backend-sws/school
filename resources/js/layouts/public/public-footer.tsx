@@ -2,6 +2,8 @@ import { useLayoutContext } from "@/lib/layout-resolver";
 import { useInstitution } from "@/hooks/use-institution";
 import AppLogoIcon from "@/components/app-logo-icon";
 import { Building, Phone, Mail, ExternalLink, ArrowRight } from "lucide-react";
+import { usePage } from "@inertiajs/react";
+import { type SharedData } from "@/types";
 
 /**
  * Public Footer — shared across all public/website pages.
@@ -14,6 +16,8 @@ import { Building, Phone, Mail, ExternalLink, ArrowRight } from "lucide-react";
  */
 export function PublicFooter() {
     const { name, locationLine, contact } = useInstitution();
+    const { props } = usePage<SharedData>();
+    const branding = props.branding;
     const {
         footerSections,
         importantLinks,
@@ -26,7 +30,7 @@ export function PublicFooter() {
     const description = footerDescription || `${name} — committed to revolutionizing education through technology, innovation, and academic excellence.`;
 
     return (
-        <footer className="relative bg-card text-foreground mt-10 pt-10 sm:mt-16 sm:pt-16 md:mt-20 md:pt-20 pb-8 sm:pb-12 overflow-hidden border-t border-border transition-colors duration-500">
+        <footer className="relative bg-card text-foreground mt-10 pt-10 sm:mt-16 sm:pt-16 md:mt-20 md:pt-20 pb-8 sm:pb-12  border-t border-border transition-colors duration-500">
             <div className="mx-auto max-w-[1440px] px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-14 md:mb-16 pb-10 sm:pb-14 md:pb-16 border-b border-border/60">
                     {/* Brand Info */}
@@ -152,6 +156,34 @@ export function PublicFooter() {
                 <div className="pt-6 sm:pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6 text-[8px] sm:text-[9px] text-muted-foreground font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center md:text-left">
                     <p>
                         © {new Date().getFullYear()} {name}. All Rights Reserved.
+                        {branding?.powered_by && (
+                            <>
+                                <span className="mx-2 text-border/40">|</span>
+                                <span>Powered by </span>
+                                <a
+                                    href={branding.powered_by_url || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-primary hover:underline transition-colors"
+                                >
+                                    {branding.powered_by}
+                                </a>
+                            </>
+                        )}
+                        {branding?.designed_by && (
+                            <>
+                                <span className="mx-2 text-border/40">|</span>
+                                <span>Designed by </span>
+                                <a
+                                    href={branding.designed_by_url || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-primary hover:underline transition-colors"
+                                >
+                                    {branding.designed_by}
+                                </a>
+                            </>
+                        )}
                     </p>
                     <div className="flex flex-wrap justify-center gap-8">
                         <a href={privacyPolicyUrl} className="hover:text-primary transition-colors">

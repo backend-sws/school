@@ -190,11 +190,11 @@
     }
 
     html {
-        @apply min-h-full;
+        @apply h-full min-h-full;
     }
 
     body {
-        @apply bg-background text-foreground min-h-full w-full;
+        @apply bg-background text-foreground h-full min-h-full w-full;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
         
         /* Global Theme-Aware Scrollbars */
@@ -203,7 +203,7 @@
     }
 
     #app {
-        @apply min-h-full;
+        @apply h-full min-h-full flex flex-col;
     }
 
     /* Webkit Scrollbar Styling */

@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Plus, Pencil, Trash } from "lucide-react";
+import { Calendar, Plus, Pencil, Trash, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 
 interface Schedule {
   id: number;
@@ -29,16 +31,64 @@ interface SchedulesIndexProps {
   schedules: Schedule[];
   exams: Exam[];
   selectedExamId?: string;
+  search?: string;
 }
 
-export default function SchedulesIndex({ schedules, exams, selectedExamId }: SchedulesIndexProps) {
+export default function SchedulesIndex({ schedules, exams, selectedExamId, search }: SchedulesIndexProps) {
+  const [searchTerm, setSearchTerm] = useState(search || "");
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm !== (search || "")) {
+        router.get(
+          "/examination/schedules",
+          { exam_id: selectedExamId || "", search: searchTerm },
+          { preserveState: true, replace: true }
+        );
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   const handleExamChange = (value: string) => {
     const examId = value === "all" ? "" : value;
     router.get(
       "/examination/schedules",
-      { exam_id: examId },
+      { exam_id: examId, search: searchTerm },
       { preserveState: true }
     );
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      return date.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const formatTime = (timeStr?: string) => {
+    if (!timeStr) return "—";
+    try {
+      const parts = timeStr.split(':');
+      if (parts.length < 2) return timeStr;
+      let hours = parseInt(parts[0], 10);
+      const minutes = parts[1];
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${hours}:${minutes} ${ampm}`;
+    } catch (e) {
+      return timeStr;
+    }
   };
 
   return (
@@ -53,25 +103,41 @@ export default function SchedulesIndex({ schedules, exams, selectedExamId }: Sch
         />
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <div className="w-1/3">
-              <Select value={selectedExamId || "all"} onValueChange={handleExamChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by Exam" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Exams</SelectItem>
-                  {exams.map((exam) => (
-                    <SelectItem key={exam.id} value={exam.id ? exam.id.toString() : `exam-${exam.name}`}>
-                      {exam.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto flex-1 max-w-xl">
+              {/* Filter Dropdown */}
+              <div className="w-full sm:w-48">
+                <Select value={selectedExamId || "all"} onValueChange={handleExamChange}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Filter by Exam" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Exams</SelectItem>
+                    {exams.map((exam) => (
+                      <SelectItem key={exam.id} value={exam.id ? exam.id.toString() : `exam-${exam.name}`}>
+                        {exam.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Search Box */}
+              <div className="relative w-full flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search class or subject..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 h-10 w-full bg-background"
+                />
+              </div>
             </div>
-            <div className="flex justify-end">
+
+            {/* Actions */}
+            <div className="w-full sm:w-auto flex justify-end">
               <Link href={`/examination/schedules/create${selectedExamId ? `?exam_id=${selectedExamId}` : ''}`}>
-                <Button variant="default">
+                <Button variant="default" className="h-10">
                   <Plus className="size-4 mr-2" />
                   Add Schedule
                 </Button>
@@ -104,13 +170,13 @@ export default function SchedulesIndex({ schedules, exams, selectedExamId }: Sch
                       <TableCell>{schedule.subject?.name ?? "—"}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-medium">
                             <Calendar className="size-3 text-muted-foreground" />
-                            {schedule.exam_date ?? "—"}
+                            {formatDate(schedule.exam_date)}
                           </span>
                           {(schedule.start_time || schedule.end_time) && (
                             <span className="text-xs text-muted-foreground mt-0.5">
-                              {schedule.start_time ?? "—"} to {schedule.end_time ?? "—"}
+                              {formatTime(schedule.start_time)} to {formatTime(schedule.end_time)}
                             </span>
                           )}
                         </div>

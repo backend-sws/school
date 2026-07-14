@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
 export const show = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
 show.url = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { contact: string | number } | [contact: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
 show.get = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { contact: string | number } | [contact: string | number ] | s
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
 show.head = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { contact: string | number } | [contact: string | number ] | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
     const showForm = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { contact: string | number } | [contact: string | number ] | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
         showForm.get = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { contact: string | number } | [contact: string | number ] | 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::show
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:102
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:104
  * @route '/api/v1/contacts/{contact}'
  */
         showForm.head = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ show.head = (args: { contact: string | number } | [contact: string | number ] | 
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:124
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:126
  * @route '/api/v1/contacts/{contact}'
  */
 export const destroy = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -191,7 +191,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:124
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:126
  * @route '/api/v1/contacts/{contact}'
  */
 destroy.url = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ destroy.url = (args: { contact: string | number } | [contact: string | number ] 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:124
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:126
  * @route '/api/v1/contacts/{contact}'
  */
 destroy.delete = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -229,7 +229,7 @@ destroy.delete = (args: { contact: string | number } | [contact: string | number
 
     /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:124
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:126
  * @route '/api/v1/contacts/{contact}'
  */
     const destroyForm = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -244,7 +244,7 @@ destroy.delete = (args: { contact: string | number } | [contact: string | number
 
             /**
 * @see \App\Http\Controllers\Api\V1\Grievance\ContactController::destroy
- * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:124
+ * @see app/Http/Controllers/Api/V1/Grievance/ContactController.php:126
  * @route '/api/v1/contacts/{contact}'
  */
         destroyForm.delete = (args: { contact: string | number } | [contact: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

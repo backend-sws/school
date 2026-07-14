@@ -48,6 +48,28 @@ function ThemeRoot({
   const brandFont = institution?.brand_font;
   const brandMotif = institution?.brand_motif;
 
+  const [showGlobalFooter, setShowGlobalFooter] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkPath = () => {
+      const path = window.location.pathname;
+      // Hide on public landing/website/auth pages since they render layout-specific footers
+      const isAdministrative = path.startsWith('/dashboard') || 
+                               path.startsWith('/students') || 
+                               path.startsWith('/staff') || 
+                               path.startsWith('/accounts') || 
+                               path.startsWith('/hr') || 
+                               path.startsWith('/academic') ||
+                               path.startsWith('/settings');
+      setShowGlobalFooter(isAdministrative);
+    };
+
+    checkPath();
+    // Listen to Inertia navigate events to update footer visibility
+    document.addEventListener('inertia:navigate', checkPath);
+    return () => document.removeEventListener('inertia:navigate', checkPath);
+  }, []);
+
   // Sync brand attributes to <html> so ALL elements — including
   // React Portals (tooltip, dialog, select, etc.) — inherit the
   // correct palette from a single source of truth.
@@ -65,7 +87,7 @@ function ThemeRoot({
       <div className="flex-1 min-h-0 overflow-hidden">
         {children}
       </div>
-      <PoweredByFooter branding={branding} />
+      {showGlobalFooter && <PoweredByFooter branding={branding} />}
     </div>
   );
 }

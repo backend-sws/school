@@ -32,6 +32,7 @@ export const PAGE_LAYOUT_MAP: Record<string, LayoutKey> = {
     "about-us":             "public",
     "contact":              "public",
     "gallery":              "public",
+    "academics/index":      "public",
 
     // ── Legal / Policy ───────────────────────────────
     "Legal/":               "legal",

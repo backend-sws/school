@@ -34,12 +34,24 @@ class ExamScheduleController extends Controller
             $query->where('exam_id', $request->exam_id);
         }
 
+        if ($request->has('search') && $request->search) {
+            $search = strtolower($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('lmsClass', function ($classQ) use ($search) {
+                    $classQ->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                })->orWhereHas('subject', function ($subjQ) use ($search) {
+                    $subjQ->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                });
+            });
+        }
+
         $schedules = $query->get();
 
         return Inertia::render('examination/schedules/index', [
             'schedules' => $schedules,
             'exams' => $exams,
             'selectedExamId' => $request->exam_id,
+            'search' => $request->search,
         ]);
     }
 

@@ -17,13 +17,18 @@ class ExaminationService
 
         $gradingRules = $exam->gradingScale ? $exam->gradingScale->rules->sortByDesc('min_percentage') : collect();
 
+        $classIds = $student->currentEnrollments()->pluck('lms_class_id')->toArray();
+        $schedules = count($classIds) > 0
+            ? $exam->schedules->whereIn('lms_class_id', $classIds)
+            : $exam->schedules;
+
         $subjectsData = [];
         $totalObtained = 0;
         $totalFullMarks = 0;
         $allPassed = true;
         $hasMissingMarks = false;
 
-        foreach ($exam->schedules as $schedule) {
+        foreach ($schedules as $schedule) {
             $mark = $schedule->marks->where('student_profile_id', $student->id)->first();
             
             $obtained = $mark ? ($mark->is_absent ? 0 : $mark->marks_obtained) : null;
@@ -89,7 +94,7 @@ class ExaminationService
         }
 
         $resultStatus = '—';
-        if ($exam->schedules->count() > 0) {
+        if ($schedules->count() > 0) {
             if ($hasMissingMarks) {
                 $resultStatus = '—';
             } else {

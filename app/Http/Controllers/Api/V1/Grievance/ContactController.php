@@ -83,6 +83,8 @@ class ContactController extends BaseController
             'message' => 'required|string',
         ]);
 
+        $validated['institution_id'] = $validated['institution_id'] ?? config('ems.default_institution_id');
+
         // Status default migration mein 'new' hai
         $submission = Contact::create($validated);
 

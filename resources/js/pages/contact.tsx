@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 interface CollegeDetails {
     name: string;
@@ -43,25 +45,42 @@ export default function Contact() {
         location: institution.location,
         contact: { ...institution.contact, ...collegeDetails?.contact },
     };
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, reset } = useForm({
         name: '',
         email: '',
         phone: '',
         subject: '',
         message: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/api/v1/public/contact', {
-            onSuccess: () => {
+        setIsSubmitting(true);
+        setFormErrors({});
+
+        axios.post('/api/v1/public/contact', data)
+            .then(() => {
                 toast.success('Message sent successfully! We will get back to you soon.');
                 reset();
-            },
-            onError: () => {
-                toast.error('Failed to send message. Please check the form for errors.');
-            },
-        });
+            })
+            .catch((err) => {
+                const responseErrors = err.response?.data?.errors || {};
+                const formattedErrors: Record<string, string> = {};
+                Object.keys(responseErrors).forEach((key) => {
+                    if (Array.isArray(responseErrors[key])) {
+                        formattedErrors[key] = responseErrors[key][0];
+                    } else {
+                        formattedErrors[key] = responseErrors[key];
+                    }
+                });
+                setFormErrors(formattedErrors);
+                toast.error(err.response?.data?.message || 'Failed to send message. Please check the form for errors.');
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     const contactCards = [
@@ -209,12 +228,12 @@ export default function Contact() {
                                         <div className="space-y-2">
                                             <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Full Name</Label>
                                             <Input id="name" placeholder="John Doe" className="bg-background/50 border-border focus:ring-primary h-12 rounded-xl" value={data.name} onChange={e => setData('name', e.target.value)} required />
-                                            {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
+                                            {formErrors.name && <p className="text-xs text-destructive mt-1">{formErrors.name}</p>}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Email Address</Label>
                                             <Input id="email" type="email" placeholder="john@example.com" className="bg-background/50 border-border focus:ring-primary h-12 rounded-xl" value={data.email} onChange={e => setData('email', e.target.value)} required />
-                                            {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
+                                            {formErrors.email && <p className="text-xs text-destructive mt-1">{formErrors.email}</p>}
                                         </div>
                                     </div>
 
@@ -222,24 +241,24 @@ export default function Contact() {
                                         <div className="space-y-2">
                                             <Label htmlFor="phone" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Phone Number</Label>
                                             <Input id="phone" placeholder="+91 0000 000 000" className="bg-background/50 border-border focus:ring-primary h-12 rounded-xl" value={data.phone} onChange={e => setData('phone', e.target.value)} />
-                                            {errors.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
+                                            {formErrors.phone && <p className="text-xs text-destructive mt-1">{formErrors.phone}</p>}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="subject" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Subject</Label>
                                             <Input id="subject" placeholder="How can we help?" className="bg-background/50 border-border focus:ring-primary h-12 rounded-xl" value={data.subject} onChange={e => setData('subject', e.target.value)} />
-                                            {errors.subject && <p className="text-xs text-destructive mt-1">{errors.subject}</p>}
+                                            {formErrors.subject && <p className="text-xs text-destructive mt-1">{formErrors.subject}</p>}
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your Message</Label>
                                         <Textarea id="message" placeholder="Type your message here..." className="min-h-[150px] bg-background/50 border-border focus:ring-primary rounded-xl p-4" value={data.message} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData('message', e.target.value)} required />
-                                        {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
+                                        {formErrors.message && <p className="text-xs text-destructive mt-1">{formErrors.message}</p>}
                                     </div>
 
-                                    <Button type="submit" disabled={processing} className="w-full h-14 rounded-xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn relative overflow-hidden transition-all active:scale-[0.98]">
+                                    <Button type="submit" disabled={isSubmitting} className="w-full h-14 rounded-xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 group/btn relative overflow-hidden transition-all active:scale-[0.98]">
                                         <span className="relative z-10 flex items-center gap-2">
-                                            {processing ? (
+                                            {isSubmitting ? (
                                                 <Loader2 className="w-5 h-5 animate-spin" />
                                             ) : (
                                                 <>
