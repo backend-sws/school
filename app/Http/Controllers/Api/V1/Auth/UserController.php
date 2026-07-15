@@ -30,16 +30,16 @@ class UserController extends BaseController
 
         $query = User::with(['roles', 'studentProfile.stream']);
 
-        // 0. Scope to current institution via user_roles.institution_id
+        // 0. Scope to current institution via users.institution_id
         $institutionId = $request->input('institution_id', config('ems.default_institution_id'));
         if ($institutionId) {
-            $query->whereHas('roles', function ($q) use ($institutionId, $request) {
-                $q->where('user_roles.institution_id', $institutionId);
-                // If a role filter is also given, combine them in the same subquery
-                if ($request->filled('role')) {
+            $query->where('users.institution_id', $institutionId);
+            
+            if ($request->filled('role')) {
+                $query->whereHas('roles', function ($q) use ($request) {
                     $q->where('roles.key', $request->role);
-                }
-            });
+                });
+            }
         } elseif ($request->filled('role')) {
             // No institution scope — just filter by role (fallback for super-admin views)
             $roleKey = $request->role;

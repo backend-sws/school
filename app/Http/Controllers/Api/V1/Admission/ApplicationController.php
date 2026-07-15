@@ -450,6 +450,7 @@ class ApplicationController extends BaseController
                     'name' => $validated['applicant_name'],
                     'email' => $email,
                     'contact_email' => $validated['email'] ?? $email,
+                    'institution_id' => $validated['institution_id'] ?? null,
                     // Only set mobile if it's not already taken by another user
                     'mobile' => $existingMobileUser ? null : ($validated['mobile'] ?? null),
                     'password' => Hash::make($validated['mobile'] ?? 'password123'),

@@ -55,6 +55,7 @@ class StaffService
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => $password,
+                'institution_id' => $collegeId,
                 'mobile' => $data['mobile'] ?? null,
                 'photo_url' => $data['photo_url'] ?? null,
                 'status' => $sendInvitation ? 2 : (isset($data['status']) ? (int) $data['status'] : 1),

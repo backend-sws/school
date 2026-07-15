@@ -141,6 +141,7 @@ class StudentAuthController extends BaseController
                 'name' => $excel->student_name,
                 'email' => $excel->email,
                 'mobile' => $excel->mobile_number,
+                'institution_id' => $excel->institution_id,
                 'password' => Hash::make($request->password),
                 'email_verified_at' => now(),
                 'status' => 1, // active

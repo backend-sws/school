@@ -233,6 +233,7 @@ class InventorySaleService
         return User::create([
             'email' => $email,
             'name' => 'Walk-in Buyer',
+            'institution_id' => $institutionId,
             'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(32)),
         ]);
     }

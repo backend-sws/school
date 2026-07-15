@@ -166,7 +166,7 @@ register.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     register.form = registerForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::login
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:257
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:258
  * @route '/api/v1/student-auth/login'
  */
 export const login = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -181,7 +181,7 @@ login.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::login
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:257
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:258
  * @route '/api/v1/student-auth/login'
  */
 login.url = (options?: RouteQueryOptions) => {
@@ -190,7 +190,7 @@ login.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::login
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:257
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:258
  * @route '/api/v1/student-auth/login'
  */
 login.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -200,7 +200,7 @@ login.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::login
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:257
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:258
  * @route '/api/v1/student-auth/login'
  */
     const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -210,7 +210,7 @@ login.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::login
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:257
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:258
  * @route '/api/v1/student-auth/login'
  */
         loginForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -221,7 +221,7 @@ login.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     login.form = loginForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::forgotPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:185
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:186
  * @route '/api/v1/student-auth/forgot-password'
  */
 export const forgotPassword = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -236,7 +236,7 @@ forgotPassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::forgotPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:185
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:186
  * @route '/api/v1/student-auth/forgot-password'
  */
 forgotPassword.url = (options?: RouteQueryOptions) => {
@@ -245,7 +245,7 @@ forgotPassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::forgotPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:185
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:186
  * @route '/api/v1/student-auth/forgot-password'
  */
 forgotPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -255,7 +255,7 @@ forgotPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::forgotPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:185
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:186
  * @route '/api/v1/student-auth/forgot-password'
  */
     const forgotPasswordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -265,7 +265,7 @@ forgotPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::forgotPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:185
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:186
  * @route '/api/v1/student-auth/forgot-password'
  */
         forgotPasswordForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -276,7 +276,7 @@ forgotPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     forgotPassword.form = forgotPasswordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::resetPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:208
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:209
  * @route '/api/v1/student-auth/reset-password'
  */
 export const resetPassword = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -291,7 +291,7 @@ resetPassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::resetPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:208
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:209
  * @route '/api/v1/student-auth/reset-password'
  */
 resetPassword.url = (options?: RouteQueryOptions) => {
@@ -300,7 +300,7 @@ resetPassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::resetPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:208
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:209
  * @route '/api/v1/student-auth/reset-password'
  */
 resetPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -310,7 +310,7 @@ resetPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::resetPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:208
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:209
  * @route '/api/v1/student-auth/reset-password'
  */
     const resetPasswordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -320,7 +320,7 @@ resetPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::resetPassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:208
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:209
  * @route '/api/v1/student-auth/reset-password'
  */
         resetPasswordForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -331,7 +331,7 @@ resetPassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
     resetPassword.form = resetPasswordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::requestOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:304
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:305
  * @route '/api/v1/student-auth/request-otp-login'
  */
 export const requestOtpLogin = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -346,7 +346,7 @@ requestOtpLogin.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::requestOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:304
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:305
  * @route '/api/v1/student-auth/request-otp-login'
  */
 requestOtpLogin.url = (options?: RouteQueryOptions) => {
@@ -355,7 +355,7 @@ requestOtpLogin.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::requestOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:304
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:305
  * @route '/api/v1/student-auth/request-otp-login'
  */
 requestOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -365,7 +365,7 @@ requestOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::requestOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:304
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:305
  * @route '/api/v1/student-auth/request-otp-login'
  */
     const requestOtpLoginForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -375,7 +375,7 @@ requestOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::requestOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:304
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:305
  * @route '/api/v1/student-auth/request-otp-login'
  */
         requestOtpLoginForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -386,7 +386,7 @@ requestOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
     requestOtpLogin.form = requestOtpLoginForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::verifyOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:343
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:344
  * @route '/api/v1/student-auth/verify-otp-login'
  */
 export const verifyOtpLogin = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -401,7 +401,7 @@ verifyOtpLogin.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::verifyOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:343
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:344
  * @route '/api/v1/student-auth/verify-otp-login'
  */
 verifyOtpLogin.url = (options?: RouteQueryOptions) => {
@@ -410,7 +410,7 @@ verifyOtpLogin.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::verifyOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:343
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:344
  * @route '/api/v1/student-auth/verify-otp-login'
  */
 verifyOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -420,7 +420,7 @@ verifyOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::verifyOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:343
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:344
  * @route '/api/v1/student-auth/verify-otp-login'
  */
     const verifyOtpLoginForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -430,7 +430,7 @@ verifyOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::verifyOtpLogin
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:343
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:344
  * @route '/api/v1/student-auth/verify-otp-login'
  */
         verifyOtpLoginForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -441,7 +441,7 @@ verifyOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     verifyOtpLogin.form = verifyOtpLoginForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::changePassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:385
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:386
  * @route '/api/v1/student-auth/change-password'
  */
 export const changePassword = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -456,7 +456,7 @@ changePassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::changePassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:385
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:386
  * @route '/api/v1/student-auth/change-password'
  */
 changePassword.url = (options?: RouteQueryOptions) => {
@@ -465,7 +465,7 @@ changePassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::changePassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:385
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:386
  * @route '/api/v1/student-auth/change-password'
  */
 changePassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -475,7 +475,7 @@ changePassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::changePassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:385
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:386
  * @route '/api/v1/student-auth/change-password'
  */
     const changePasswordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -485,7 +485,7 @@ changePassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::changePassword
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:385
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:386
  * @route '/api/v1/student-auth/change-password'
  */
         changePasswordForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -496,7 +496,7 @@ changePassword.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     changePassword.form = changePasswordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:422
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:423
  * @route '/api/v1/student-auth/logout'
  */
 export const logout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -511,7 +511,7 @@ logout.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:422
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:423
  * @route '/api/v1/student-auth/logout'
  */
 logout.url = (options?: RouteQueryOptions) => {
@@ -520,7 +520,7 @@ logout.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:422
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:423
  * @route '/api/v1/student-auth/logout'
  */
 logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -530,7 +530,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:422
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:423
  * @route '/api/v1/student-auth/logout'
  */
     const logoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -540,7 +540,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\StudentAuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:422
+ * @see app/Http/Controllers/Api/V1/Auth/StudentAuthController.php:423
  * @route '/api/v1/student-auth/logout'
  */
         logoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -55,6 +55,7 @@ class StaffBulkImport implements ToModel, WithHeadingRow, WithBatchInserts, With
                 'name' => $name,
                 'email' => $email,
                 'mobile' => $row['mobile'] ?? null,
+                'institution_id' => $this->institutionId,
                 'password' => Hash::make(bin2hex(random_bytes(16))), // random unusable password
                 'email_verified_at' => null,
                 'status' => 1,

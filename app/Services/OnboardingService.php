@@ -57,9 +57,10 @@ class OnboardingService
             // 6. Seed mandatory institution defaults (fee types, sessions, classes, etc.)
             app(OnboardingDataSeederService::class)->seedMandatory($institution);
 
-            // 7. Activate user
+            // 7. Activate user and link to institution
             $user->update([
                 'status' => 1,
+                'institution_id' => $institution->id,
                 'onboarding_data' => $validated,
             ]);
         });
