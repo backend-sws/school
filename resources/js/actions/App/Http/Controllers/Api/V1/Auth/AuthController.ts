@@ -221,7 +221,7 @@ verifyOtpLogin.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     verifyOtpLogin.form = verifyOtpLoginForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::verifyOtp
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:302
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:303
  * @route '/api/v1/auth/verify-otp'
  */
 export const verifyOtp = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -236,7 +236,7 @@ verifyOtp.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::verifyOtp
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:302
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:303
  * @route '/api/v1/auth/verify-otp'
  */
 verifyOtp.url = (options?: RouteQueryOptions) => {
@@ -245,7 +245,7 @@ verifyOtp.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::verifyOtp
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:302
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:303
  * @route '/api/v1/auth/verify-otp'
  */
 verifyOtp.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -255,7 +255,7 @@ verifyOtp.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::verifyOtp
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:302
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:303
  * @route '/api/v1/auth/verify-otp'
  */
     const verifyOtpForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -265,7 +265,7 @@ verifyOtp.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::verifyOtp
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:302
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:303
  * @route '/api/v1/auth/verify-otp'
  */
         verifyOtpForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -331,7 +331,7 @@ verifyOtpAndSetPassword.post = (options?: RouteQueryOptions): RouteDefinition<'p
     verifyOtpAndSetPassword.form = verifyOtpAndSetPasswordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::setPasswordWithToken
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:386
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:387
  * @route '/api/v1/auth/set-password-with-token'
  */
 export const setPasswordWithToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -346,7 +346,7 @@ setPasswordWithToken.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::setPasswordWithToken
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:386
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:387
  * @route '/api/v1/auth/set-password-with-token'
  */
 setPasswordWithToken.url = (options?: RouteQueryOptions) => {
@@ -355,7 +355,7 @@ setPasswordWithToken.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::setPasswordWithToken
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:386
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:387
  * @route '/api/v1/auth/set-password-with-token'
  */
 setPasswordWithToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -365,7 +365,7 @@ setPasswordWithToken.post = (options?: RouteQueryOptions): RouteDefinition<'post
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::setPasswordWithToken
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:386
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:387
  * @route '/api/v1/auth/set-password-with-token'
  */
     const setPasswordWithTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -375,7 +375,7 @@ setPasswordWithToken.post = (options?: RouteQueryOptions): RouteDefinition<'post
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::setPasswordWithToken
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:386
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:387
  * @route '/api/v1/auth/set-password-with-token'
  */
         setPasswordWithTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -386,7 +386,7 @@ setPasswordWithToken.post = (options?: RouteQueryOptions): RouteDefinition<'post
     setPasswordWithToken.form = setPasswordWithTokenForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:276
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:277
  * @route '/api/v1/auth/logout'
  */
 export const logout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -401,7 +401,7 @@ logout.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:276
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:277
  * @route '/api/v1/auth/logout'
  */
 logout.url = (options?: RouteQueryOptions) => {
@@ -410,7 +410,7 @@ logout.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:276
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:277
  * @route '/api/v1/auth/logout'
  */
 logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -420,7 +420,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:276
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:277
  * @route '/api/v1/auth/logout'
  */
     const logoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -430,7 +430,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::logout
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:276
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:277
  * @route '/api/v1/auth/logout'
  */
         logoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -441,7 +441,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     logout.form = logoutForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
 export const me = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -456,7 +456,7 @@ me.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
 me.url = (options?: RouteQueryOptions) => {
@@ -465,7 +465,7 @@ me.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
 me.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -474,7 +474,7 @@ me.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
 me.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -484,7 +484,7 @@ me.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
     const meForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -494,7 +494,7 @@ me.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
         meForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -503,7 +503,7 @@ me.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\AuthController::me
- * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:348
+ * @see app/Http/Controllers/Api/V1/Auth/AuthController.php:349
  * @route '/api/v1/auth/me'
  */
         meForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

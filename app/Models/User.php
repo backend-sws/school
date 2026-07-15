@@ -25,7 +25,7 @@ use App\Notifications\Auth\ResetPasswordNotification as CustomResetPasswordNotif
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, NotifiableRealtime, TwoFactorAuthenticatable, Auditable, ResolvesUserContext, \App\Traits\AutoFillsInstitutionId;
+    use HasFactory, Notifiable, NotifiableRealtime, TwoFactorAuthenticatable, Auditable, ResolvesUserContext;
 
     /**
      * The attributes that are mass assignable.

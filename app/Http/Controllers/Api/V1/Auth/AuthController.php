@@ -251,6 +251,7 @@ class AuthController extends BaseController
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'institution_id' => config('ems.default_institution_id'),
             'mobile' => $validated['mobile'] ?? null,
             'status' => 2, // pending_verification
         ]);
