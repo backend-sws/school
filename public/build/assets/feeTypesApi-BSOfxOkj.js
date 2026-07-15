@@ -1,1 +1,0 @@
-import{a as t}from"./api-C9G8Uql5.js";const s="/fee-types",r={index:e=>t.get(s,{params:e}),show:e=>t.get(`${s}/${e}`),store:e=>t.post(s,e),update:(e,o)=>t.put(`${s}/${e}`,o),destroy:e=>t.delete(`${s}/${e}`),restoreDefaults:()=>t.post(`${s}/restore-defaults`)};export{r as f};
