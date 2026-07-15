@@ -234,7 +234,7 @@ show.head = (args: { stream: string | number } | [stream: string | number ] | st
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-export const update = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -249,7 +249,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-update.url = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { stream: args }
     }
@@ -282,7 +282,7 @@ update.url = (args: { stream: number | { id: number } } | [stream: number | { id
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-update.put = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -291,7 +291,7 @@ update.put = (args: { stream: number | { id: number } } | [stream: number | { id
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-update.patch = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -301,7 +301,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-    const updateForm = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -316,7 +316,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-        updateForm.put = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -330,7 +330,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
  * @route '/api/v1/streams/{stream}'
  */
-        updateForm.patch = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -346,7 +346,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
  * @route '/api/v1/streams/{stream}'
  */
-export const destroy = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -361,7 +361,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
  * @route '/api/v1/streams/{stream}'
  */
-destroy.url = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { stream: args }
     }
@@ -394,7 +394,7 @@ destroy.url = (args: { stream: number | { id: number } } | [stream: number | { i
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
  * @route '/api/v1/streams/{stream}'
  */
-destroy.delete = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -404,7 +404,7 @@ destroy.delete = (args: { stream: number | { id: number } } | [stream: number | 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
  * @route '/api/v1/streams/{stream}'
  */
-    const destroyForm = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -419,7 +419,7 @@ destroy.delete = (args: { stream: number | { id: number } } | [stream: number | 
  * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
  * @route '/api/v1/streams/{stream}'
  */
-        destroyForm.delete = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { stream: string | number | { id: string | number } } | [stream: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

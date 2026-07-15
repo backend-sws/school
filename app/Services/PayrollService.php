@@ -158,7 +158,7 @@ class PayrollService
                 'expense_category_id' => $category->id,
                 'title' => "Payroll - {$payroll->month}/{$payroll->year}",
                 'amount' => $payroll->total_amount,
-                'expense_date' => now(),
+                'date' => now()->toDateString(),
                 'payment_mode' => 'bank_transfer',
                 'status' => 'approved',
                 'description' => "Automated expense log for Payroll {$payroll->month}/{$payroll->year}"

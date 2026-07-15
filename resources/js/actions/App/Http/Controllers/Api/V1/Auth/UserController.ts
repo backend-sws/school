@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-export const show = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-show.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { user: number | { id: number } } | [user: number | { id: numb
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-show.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { user: number | { id: number } } | [user: number | { id: numb
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-show.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-    const showForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-        showForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:119
  * @route '/api/v1/users/{user}'
  */
-        showForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-export const update = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-update.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { user: number | { id: number } } | [user: number | { id: nu
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-update.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { user: number | { id: number } } | [user: number | { id: nu
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-update.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-    const updateForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-        updateForm.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:144
  * @route '/api/v1/users/{user}'
  */
-        updateForm.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:173
  * @route '/api/v1/users/{user}'
  */
-export const destroy = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:173
  * @route '/api/v1/users/{user}'
  */
-destroy.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { user: number | { id: number } } | [user: number | { id: n
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:173
  * @route '/api/v1/users/{user}'
  */
-destroy.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:173
  * @route '/api/v1/users/{user}'
  */
-    const destroyForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:173
  * @route '/api/v1/users/{user}'
  */
-        destroyForm.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -440,7 +440,7 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:217
  * @route '/api/v1/users/{user}/roles'
  */
-export const assignRole = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const assignRole = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: assignRole.url(args, options),
     method: 'post',
 })
@@ -455,7 +455,7 @@ assignRole.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:217
  * @route '/api/v1/users/{user}/roles'
  */
-assignRole.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+assignRole.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -488,7 +488,7 @@ assignRole.url = (args: { user: number | { id: number } } | [user: number | { id
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:217
  * @route '/api/v1/users/{user}/roles'
  */
-assignRole.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+assignRole.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: assignRole.url(args, options),
     method: 'post',
 })
@@ -498,7 +498,7 @@ assignRole.post = (args: { user: number | { id: number } } | [user: number | { i
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:217
  * @route '/api/v1/users/{user}/roles'
  */
-    const assignRoleForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const assignRoleForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: assignRole.url(args, options),
         method: 'post',
     })
@@ -508,7 +508,7 @@ assignRole.post = (args: { user: number | { id: number } } | [user: number | { i
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:217
  * @route '/api/v1/users/{user}/roles'
  */
-        assignRoleForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        assignRoleForm.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: assignRole.url(args, options),
             method: 'post',
         })
@@ -519,7 +519,7 @@ assignRole.post = (args: { user: number | { id: number } } | [user: number | { i
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
  * @route '/api/v1/users/{user}/roles/{role}'
  */
-export const removeRole = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const removeRole = (args: { user: string | number | { id: string | number }, role: string | number } | [user: string | number | { id: string | number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeRole.url(args, options),
     method: 'delete',
 })
@@ -534,7 +534,7 @@ removeRole.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
  * @route '/api/v1/users/{user}/roles/{role}'
  */
-removeRole.url = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions) => {
+removeRole.url = (args: { user: string | number | { id: string | number }, role: string | number } | [user: string | number | { id: string | number }, role: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
                     user: args[0],
@@ -562,7 +562,7 @@ removeRole.url = (args: { user: number | { id: number }, role: string | number }
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
  * @route '/api/v1/users/{user}/roles/{role}'
  */
-removeRole.delete = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+removeRole.delete = (args: { user: string | number | { id: string | number }, role: string | number } | [user: string | number | { id: string | number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeRole.url(args, options),
     method: 'delete',
 })
@@ -572,7 +572,7 @@ removeRole.delete = (args: { user: number | { id: number }, role: string | numbe
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
  * @route '/api/v1/users/{user}/roles/{role}'
  */
-    const removeRoleForm = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const removeRoleForm = (args: { user: string | number | { id: string | number }, role: string | number } | [user: string | number | { id: string | number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: removeRole.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -587,7 +587,7 @@ removeRole.delete = (args: { user: number | { id: number }, role: string | numbe
  * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
  * @route '/api/v1/users/{user}/roles/{role}'
  */
-        removeRoleForm.delete = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        removeRoleForm.delete = (args: { user: string | number | { id: string | number }, role: string | number } | [user: string | number | { id: string | number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: removeRole.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

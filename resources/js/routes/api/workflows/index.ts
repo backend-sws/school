@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-export const show = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-show.url = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { workflow: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { workflow: number | { id: number } } | [workflow: number | { 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-show.get = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { workflow: number | { id: number } } | [workflow: number | { 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-show.head = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { workflow: number | { id: number } } | [workflow: number | {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-    const showForm = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { workflow: number | { id: number } } | [workflow: number | {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-        showForm.get = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { workflow: number | { id: number } } | [workflow: number | {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:77
  * @route '/api/v1/workflows/{workflow}'
  */
-        showForm.head = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { workflow: number | { id: number } } | [workflow: number | {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-export const update = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-update.url = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { workflow: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { workflow: number | { id: number } } | [workflow: number | 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-update.put = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { workflow: number | { id: number } } | [workflow: number | 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-update.patch = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { workflow: number | { id: number } } | [workflow: number 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-    const updateForm = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { workflow: number | { id: number } } | [workflow: number 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-        updateForm.put = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { workflow: number | { id: number } } | [workflow: number 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:89
  * @route '/api/v1/workflows/{workflow}'
  */
-        updateForm.patch = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { workflow: number | { id: number } } | [workflow: number 
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:108
  * @route '/api/v1/workflows/{workflow}'
  */
-export const destroy = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:108
  * @route '/api/v1/workflows/{workflow}'
  */
-destroy.url = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { workflow: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { workflow: number | { id: number } } | [workflow: number |
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:108
  * @route '/api/v1/workflows/{workflow}'
  */
-destroy.delete = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { workflow: number | { id: number } } | [workflow: numbe
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:108
  * @route '/api/v1/workflows/{workflow}'
  */
-    const destroyForm = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { workflow: number | { id: number } } | [workflow: numbe
  * @see app/Http/Controllers/Api/V1/Auth/WorkflowController.php:108
  * @route '/api/v1/workflows/{workflow}'
  */
-        destroyForm.delete = (args: { workflow: number | { id: number } } | [workflow: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { workflow: string | number | { id: string | number } } | [workflow: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
