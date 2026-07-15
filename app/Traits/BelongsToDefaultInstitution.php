@@ -226,6 +226,11 @@ trait BelongsToDefaultInstitution
             $model = $builder->getModel();
             $table = $model->getTable();
 
+            // Prevent infinite recursion during Auth user resolution
+            if ($table === 'users' && !auth()->hasUser()) {
+                return;
+            }
+
             $user = request()->user() ?? auth()->user();
             if ($user !== null) {
                 $isGlobal = $user->roles()->withoutGlobalScope('institution_scope')->whereHas('roleScopes', fn($q) => $q->where('scope_type', 'global'))->exists();
