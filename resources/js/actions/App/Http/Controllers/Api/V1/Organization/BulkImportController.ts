@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
 export const modules = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ modules.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
 modules.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ modules.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
 modules.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ modules.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
 modules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ modules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
     const modulesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ modules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
         modulesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ modules.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::modules
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:136
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:139
  * @route '/api/v1/import/modules'
  */
         modulesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ downloadTemplate.head = (args: { module: string | number } | [module: string | n
     downloadTemplate.form = downloadTemplateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::upload
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:41
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:44
  * @route '/api/v1/import/{module}/upload'
  */
 export const upload = (args: { module: string | number } | [module: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::upload
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:41
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:44
  * @route '/api/v1/import/{module}/upload'
  */
 upload.url = (args: { module: string | number } | [module: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ upload.url = (args: { module: string | number } | [module: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::upload
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:41
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:44
  * @route '/api/v1/import/{module}/upload'
  */
 upload.post = (args: { module: string | number } | [module: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -229,7 +229,7 @@ upload.post = (args: { module: string | number } | [module: string | number ] | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::upload
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:41
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:44
  * @route '/api/v1/import/{module}/upload'
  */
     const uploadForm = (args: { module: string | number } | [module: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -239,7 +239,7 @@ upload.post = (args: { module: string | number } | [module: string | number ] | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::upload
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:41
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:44
  * @route '/api/v1/import/{module}/upload'
  */
         uploadForm.post = (args: { module: string | number } | [module: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -250,7 +250,7 @@ upload.post = (args: { module: string | number } | [module: string | number ] | 
     upload.form = uploadForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
 export const history = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -265,7 +265,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
 history.url = (options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ history.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
 history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -283,7 +283,7 @@ history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
 history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -293,7 +293,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
     const historyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -303,7 +303,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
         historyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -312,7 +312,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::history
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:116
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:119
  * @route '/api/v1/import/history'
  */
         historyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -328,7 +328,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     history.form = historyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
 export const status = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -343,7 +343,7 @@ status.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
 status.url = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -371,7 +371,7 @@ status.url = (args: { importLogId: string | number } | [importLogId: string | nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
 status.get = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -380,7 +380,7 @@ status.get = (args: { importLogId: string | number } | [importLogId: string | nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
 status.head = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -390,7 +390,7 @@ status.head = (args: { importLogId: string | number } | [importLogId: string | n
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
     const statusForm = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -400,7 +400,7 @@ status.head = (args: { importLogId: string | number } | [importLogId: string | n
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
         statusForm.get = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -409,7 +409,7 @@ status.head = (args: { importLogId: string | number } | [importLogId: string | n
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\BulkImportController::status
- * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:81
+ * @see app/Http/Controllers/Api/V1/Organization/BulkImportController.php:84
  * @route '/api/v1/import/{importLogId}/status'
  */
         statusForm.head = (args: { importLogId: string | number } | [importLogId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

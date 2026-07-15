@@ -89,7 +89,7 @@ return [
         'students' => [
             ['⚠️ IMPORT INSTRUCTIONS', 'DO NOT delete these rows. Start entering data from the row below the GREY header row.'],
             ['class (required)', 'Use Roman numerals only: NUR, LKG, UKG, I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, NC (NOT 1, 2, 3...)'],
-            ['gender', 'BOY, GIRL, Male, Female'],
+            ['gender', 'Male, Female'],
             ['session_name (required)', 'Format: 2025-26 or 2025-2026'],
             ['dob (date of birth)', 'Format: 8/15/19 or 2019-08-15 or 15-Aug-2019'],
             ['mobile', '10-digit number (e.g. 9876543210)'],
@@ -102,7 +102,7 @@ return [
             ['students (required)', 'Full name of the student'],
             ['class (required)', 'Use Roman numerals only: NUR, LKG, UKG, I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, NC (NOT 1, 2, 3...)'],
             ['section', 'A, B, C, D (default: A if empty)'],
-            ['gender', 'BOY, GIRL, Male, Female'],
+            ['gender', 'Male, Female'],
             ['session_name (required)', 'Format: 2025-26 or 2025-2026'],
             ['dob (date of birth)', 'Format: 8/15/19 or 2019-08-15 or 15-Aug-2019'],
             ['mobile (nullable)', 'Parent mobile (for account reset). Siblings can leave this blank if sharing with a brother/sister.'],
@@ -134,7 +134,7 @@ return [
         'students' => [
             'class (use one)'        => ['NUR', 'LKG', 'UKG', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'NC'],
             'section (use one)'      => ['A', 'B', 'C', 'D'],
-            'gender (use one)'       => ['BOY', 'GIRL', 'Male', 'Female'],
+            'gender (use one)'       => ['Male', 'Female'],
             'session_name (format)'  => ['2025-26', '2026-27'],
             'category (use one)'     => ['General', 'OBC', 'SC', 'ST', 'EWS'],
             'religion (use one)'     => ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Other'],
@@ -143,7 +143,7 @@ return [
         'existing_students' => [
             'class (use one)'             => ['NUR', 'LKG', 'UKG', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'NC'],
             'section (use one)'           => ['A', 'B', 'C', 'D'],
-            'gender (use one)'            => ['BOY', 'GIRL', 'Male', 'Female'],
+            'gender (use one)'            => ['Male', 'Female'],
             'session_name (format)'       => ['2025-26', '2026-27'],
             'category (use one)'          => ['General', 'OBC', 'SC', 'ST', 'EWS'],
             'religion (use one)'          => ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Other'],

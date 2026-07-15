@@ -399,9 +399,10 @@ class FeeCollectionService
             $monthStart = $current->copy()->startOfMonth();
             $monthEnd = $current->copy()->endOfMonth();
 
-            // Skip monthly recurring fees if the setting is enabled and the period ends before the admission date's month
+            // Skip monthly recurring fees if the setting is enabled or this is a direct enrollment/imported student (no admission app)
             $skipRecurring = false;
-            if (($institutionSettings['charge_fees_from_admission_month'] ?? false) && $admissionDate) {
+            $isDirectEnrollment = !$admissionApp;
+            if ($admissionDate && (($institutionSettings['charge_fees_from_admission_month'] ?? false) || $isDirectEnrollment)) {
                 if ($monthEnd->format('Y-m') < $admissionDate->format('Y-m')) {
                     $skipRecurring = true;
                 }

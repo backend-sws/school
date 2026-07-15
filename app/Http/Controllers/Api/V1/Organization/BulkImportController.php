@@ -16,14 +16,17 @@ class BulkImportController extends BaseController
     /**
      * Download an Excel template for a given module.
      */
-    public function downloadTemplate(string $module)
+    public function downloadTemplate(Request $request, string $module)
     {
         if (!ImportTemplateExport::isValidModule($module)) {
             return ApiErrorMap::respond('import.invalid_module');
         }
 
+        $user = $request->user();
+        $institutionId = $this->resolveInstitutionId($user);
+
         $fileName = "import_template_{$module}.xlsx";
-        return Excel::download(new ImportTemplateExport($module), $fileName);
+        return Excel::download(new ImportTemplateExport($module, $institutionId), $fileName);
     }
 
     /**

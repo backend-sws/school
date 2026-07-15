@@ -82,7 +82,7 @@ eligible.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-export const prefill = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const prefill = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: prefill.url(args, options),
     method: 'get',
 })
@@ -97,7 +97,7 @@ prefill.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-prefill.url = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+prefill.url = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { studentProfile: args }
     }
@@ -130,7 +130,7 @@ prefill.url = (args: { studentProfile: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-prefill.get = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+prefill.get = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: prefill.url(args, options),
     method: 'get',
 })
@@ -139,7 +139,7 @@ prefill.get = (args: { studentProfile: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-prefill.head = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+prefill.head = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: prefill.url(args, options),
     method: 'head',
 })
@@ -149,7 +149,7 @@ prefill.head = (args: { studentProfile: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-    const prefillForm = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const prefillForm = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: prefill.url(args, options),
         method: 'get',
     })
@@ -159,7 +159,7 @@ prefill.head = (args: { studentProfile: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-        prefillForm.get = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        prefillForm.get = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: prefill.url(args, options),
             method: 'get',
         })
@@ -168,7 +168,7 @@ prefill.head = (args: { studentProfile: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:48
  * @route '/api/v1/readmissions/prefill/{studentProfile}'
  */
-        prefillForm.head = (args: { studentProfile: string | number | { id: string | number } } | [studentProfile: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        prefillForm.head = (args: { studentProfile: number | { id: number } } | [studentProfile: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: prefill.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -391,7 +391,7 @@ bulk.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
-export const rollback = (args: { transition: string | number | { id: string | number } } | [transition: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const rollback = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: rollback.url(args, options),
     method: 'post',
 })
@@ -406,7 +406,7 @@ rollback.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
-rollback.url = (args: { transition: string | number | { id: string | number } } | [transition: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+rollback.url = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { transition: args }
     }
@@ -439,7 +439,7 @@ rollback.url = (args: { transition: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
-rollback.post = (args: { transition: string | number | { id: string | number } } | [transition: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+rollback.post = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: rollback.url(args, options),
     method: 'post',
 })
@@ -449,7 +449,7 @@ rollback.post = (args: { transition: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
-    const rollbackForm = (args: { transition: string | number | { id: string | number } } | [transition: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const rollbackForm = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: rollback.url(args, options),
         method: 'post',
     })
@@ -459,7 +459,7 @@ rollback.post = (args: { transition: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
-        rollbackForm.post = (args: { transition: string | number | { id: string | number } } | [transition: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        rollbackForm.post = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: rollback.url(args, options),
             method: 'post',
         })

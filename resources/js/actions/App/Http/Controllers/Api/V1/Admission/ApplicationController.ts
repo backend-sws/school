@@ -160,7 +160,7 @@ previewFees.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-export const invoice = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const invoice = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: invoice.url(args, options),
     method: 'get',
 })
@@ -175,7 +175,7 @@ invoice.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-invoice.url = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+invoice.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { application: args }
     }
@@ -208,7 +208,7 @@ invoice.url = (args: { application: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-invoice.get = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+invoice.get = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: invoice.url(args, options),
     method: 'get',
 })
@@ -217,7 +217,7 @@ invoice.get = (args: { application: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-invoice.head = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+invoice.head = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: invoice.url(args, options),
     method: 'head',
 })
@@ -227,7 +227,7 @@ invoice.head = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-    const invoiceForm = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const invoiceForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: invoice.url(args, options),
         method: 'get',
     })
@@ -237,7 +237,7 @@ invoice.head = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-        invoiceForm.get = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        invoiceForm.get = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: invoice.url(args, options),
             method: 'get',
         })
@@ -246,7 +246,7 @@ invoice.head = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1205
  * @route '/api/v1/applications/{application}/invoice'
  */
-        invoiceForm.head = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        invoiceForm.head = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: invoice.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -395,7 +395,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-export const show = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -410,7 +410,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-show.url = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { application: args }
     }
@@ -443,7 +443,7 @@ show.url = (args: { application: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-show.get = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -452,7 +452,7 @@ show.get = (args: { application: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-show.head = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -462,7 +462,7 @@ show.head = (args: { application: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-    const showForm = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -472,7 +472,7 @@ show.head = (args: { application: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-        showForm.get = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -481,7 +481,7 @@ show.head = (args: { application: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1239
  * @route '/api/v1/applications/{application}'
  */
-        showForm.head = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -604,7 +604,7 @@ update.patch = (args: { application: string | number } | [application: string | 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1406
  * @route '/api/v1/applications/{application}'
  */
-export const destroy = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -619,7 +619,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1406
  * @route '/api/v1/applications/{application}'
  */
-destroy.url = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { application: args }
     }
@@ -652,7 +652,7 @@ destroy.url = (args: { application: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1406
  * @route '/api/v1/applications/{application}'
  */
-destroy.delete = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -662,7 +662,7 @@ destroy.delete = (args: { application: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1406
  * @route '/api/v1/applications/{application}'
  */
-    const destroyForm = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -677,7 +677,7 @@ destroy.delete = (args: { application: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1406
  * @route '/api/v1/applications/{application}'
  */
-        destroyForm.delete = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -693,7 +693,7 @@ destroy.delete = (args: { application: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1278
  * @route '/api/v1/applications/{application}/process'
  */
-export const process = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const process = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: process.url(args, options),
     method: 'post',
 })
@@ -708,7 +708,7 @@ process.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1278
  * @route '/api/v1/applications/{application}/process'
  */
-process.url = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+process.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { application: args }
     }
@@ -741,7 +741,7 @@ process.url = (args: { application: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1278
  * @route '/api/v1/applications/{application}/process'
  */
-process.post = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+process.post = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: process.url(args, options),
     method: 'post',
 })
@@ -751,7 +751,7 @@ process.post = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1278
  * @route '/api/v1/applications/{application}/process'
  */
-    const processForm = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const processForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: process.url(args, options),
         method: 'post',
     })
@@ -761,7 +761,7 @@ process.post = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1278
  * @route '/api/v1/applications/{application}/process'
  */
-        processForm.post = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        processForm.post = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: process.url(args, options),
             method: 'post',
         })
@@ -772,7 +772,7 @@ process.post = (args: { application: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1326
  * @route '/api/v1/applications/{application}/record-payment'
  */
-export const recordPayment = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const recordPayment = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordPayment.url(args, options),
     method: 'post',
 })
@@ -787,7 +787,7 @@ recordPayment.definition = {
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1326
  * @route '/api/v1/applications/{application}/record-payment'
  */
-recordPayment.url = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+recordPayment.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { application: args }
     }
@@ -820,7 +820,7 @@ recordPayment.url = (args: { application: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1326
  * @route '/api/v1/applications/{application}/record-payment'
  */
-recordPayment.post = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+recordPayment.post = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordPayment.url(args, options),
     method: 'post',
 })
@@ -830,7 +830,7 @@ recordPayment.post = (args: { application: string | number | { id: string | numb
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1326
  * @route '/api/v1/applications/{application}/record-payment'
  */
-    const recordPaymentForm = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const recordPaymentForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: recordPayment.url(args, options),
         method: 'post',
     })
@@ -840,7 +840,7 @@ recordPayment.post = (args: { application: string | number | { id: string | numb
  * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1326
  * @route '/api/v1/applications/{application}/record-payment'
  */
-        recordPaymentForm.post = (args: { application: string | number | { id: string | number } } | [application: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        recordPaymentForm.post = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: recordPayment.url(args, options),
             method: 'post',
         })

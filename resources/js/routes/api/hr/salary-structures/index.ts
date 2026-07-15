@@ -82,7 +82,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-export const store = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -97,7 +97,7 @@ store.definition = {
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-store.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+store.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -130,7 +130,7 @@ store.url = (args: { user: string | number | { id: string | number } } | [user: 
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-store.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -140,7 +140,7 @@ store.post = (args: { user: string | number | { id: string | number } } | [user:
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-    const storeForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: store.url(args, options),
         method: 'post',
     })
@@ -150,7 +150,7 @@ store.post = (args: { user: string | number | { id: string | number } } | [user:
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-        storeForm.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: store.url(args, options),
             method: 'post',
         })

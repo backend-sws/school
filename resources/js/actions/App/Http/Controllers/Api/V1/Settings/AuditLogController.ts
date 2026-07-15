@@ -82,7 +82,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-export const show = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -97,7 +97,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-show.url = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { auditLog: args }
     }
@@ -130,7 +130,7 @@ show.url = (args: { auditLog: string | number | { id: string | number } } | [aud
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-show.get = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -139,7 +139,7 @@ show.get = (args: { auditLog: string | number | { id: string | number } } | [aud
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-show.head = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -149,7 +149,7 @@ show.head = (args: { auditLog: string | number | { id: string | number } } | [au
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-    const showForm = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -159,7 +159,7 @@ show.head = (args: { auditLog: string | number | { id: string | number } } | [au
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-        showForm.get = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -168,7 +168,7 @@ show.head = (args: { auditLog: string | number | { id: string | number } } | [au
  * @see app/Http/Controllers/Api/V1/Settings/AuditLogController.php:71
  * @route '/api/v1/audit-logs/{auditLog}'
  */
-        showForm.head = (args: { auditLog: string | number | { id: string | number } } | [auditLog: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { auditLog: number | { id: number } } | [auditLog: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

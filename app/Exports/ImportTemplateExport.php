@@ -18,10 +18,12 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class ImportTemplateExport implements WithMultipleSheets
 {
     protected string $module;
+    protected ?int $institutionId;
 
-    public function __construct(string $module)
+    public function __construct(string $module, ?int $institutionId = null)
     {
         $this->module = $module;
+        $this->institutionId = $institutionId;
     }
 
     public function sheets(): array
@@ -30,7 +32,41 @@ class ImportTemplateExport implements WithMultipleSheets
         $notes = config("import_templates.validation_notes.{$this->module}", []);
         $validValues = config("import_templates.valid_values.{$this->module}");
 
-        $sheets = [new ImportDataSheet($this->module, $template, $notes)];
+        if ($this->module === 'existing_students' && $this->institutionId) {
+            // Load sessions from database
+            $sessions = \App\Models\Session::where('institution_id', $this->institutionId)->pluck('name')->toArray();
+            if (!empty($sessions)) {
+                $validValues['session_name (format)'] = $sessions;
+            }
+
+            // Load streams/classes from database + config class_aliases
+            $standardClasses = ['NUR', 'LKG', 'UKG', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'NC'];
+            $streams = \App\Models\Stream::where('institution_id', $this->institutionId)->pluck('name')->toArray();
+            
+            // Only add stream names if they are not numeric and not already represented by standard classes (case-insensitive check)
+            $standardLower = array_map('strtolower', $standardClasses);
+            foreach ($streams as $streamName) {
+                $trimmedName = trim($streamName);
+                if (is_numeric($trimmedName)) {
+                    continue;
+                }
+                if (!in_array(strtolower($trimmedName), $standardLower)) {
+                    $standardClasses[] = $trimmedName;
+                }
+            }
+            $validValues['class (use one)'] = $standardClasses;
+
+            // Load fee profiles and append to notes
+            $profiles = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                ->get()
+                ->map(fn($p) => "{$p->name}" . ($p->is_default ? ' (Default)' : ''))
+                ->toArray();
+            if (!empty($profiles)) {
+                $notes[] = ['fee_profile (auto-assign)', 'Will resolve based on class: ' . implode(', ', $profiles)];
+            }
+        }
+
+        $sheets = [new ImportDataSheet($this->module, $template, $notes, $validValues)];
 
         if (!empty($validValues)) {
             $sheets[] = new ImportReferenceSheet($validValues);
@@ -74,6 +110,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class ImportDataSheet implements FromArray, WithTitle, WithEvents
 {
@@ -81,6 +118,7 @@ class ImportDataSheet implements FromArray, WithTitle, WithEvents
         protected string $module,
         protected array $template,
         protected array $notes = [],
+        protected array $validValues = [],
     ) {
     }
 
@@ -243,6 +281,7 @@ class ImportDataSheet implements FromArray, WithTitle, WithEvents
                     $sheet->freezePane("A{$dataStart}");
                 } else {
                     // No notes — Standard Table styling
+                    $dataStart = 2;
                     $sheet->getRowDimension(1)->setRowHeight(32);
                     $sheet->getStyle("A1:{$lastCol}1")->applyFromArray([
                         'font' => ['bold' => true, 'size' => 11, 'color' => ['argb' => 'FF000000']],
@@ -269,6 +308,95 @@ class ImportDataSheet implements FromArray, WithTitle, WithEvents
                             ],
                         ],
                     ]);
+                }
+
+                // Add data validations for dropdowns
+                $genderCol = null;
+                $classCol = null;
+                $sectionCol = null;
+                $sessionCol = null;
+
+                foreach ($headings as $index => $heading) {
+                    $colLetter = $this->colLetter($index + 1);
+                    if ($heading === 'gender') {
+                        $genderCol = $colLetter;
+                    } elseif ($heading === 'class') {
+                        $classCol = $colLetter;
+                    } elseif ($heading === 'section') {
+                        $sectionCol = $colLetter;
+                    } elseif ($heading === 'session_name') {
+                        $sessionCol = $colLetter;
+                    }
+                }
+
+                if (!empty($this->validValues)) {
+                    if ($classCol && !empty($this->validValues['class (use one)'])) {
+                        $count = count($this->validValues['class (use one)']);
+                        $validation = new DataValidation();
+                        $validation->setType(DataValidation::TYPE_LIST);
+                        $validation->setErrorStyle(DataValidation::STYLE_STOP);
+                        $validation->setAllowBlank(true);
+                        $validation->setShowInputMessage(true);
+                        $validation->setShowErrorMessage(true);
+                        $validation->setShowDropDown(true);
+                        $validation->setErrorTitle('Invalid Class');
+                        $validation->setError('Please select a class from the dropdown list.');
+                        $validation->setPromptTitle('Select Class');
+                        $validation->setPrompt('Choose a valid class.');
+                        $validation->setFormula1('\'Valid Values\'!$A$2:$A$' . ($count + 1));
+                        
+                        for ($row = $dataStart; $row <= 500; $row++) {
+                            $sheet->getCell("{$classCol}{$row}")->setDataValidation(clone $validation);
+                        }
+                    }
+
+                    if ($sectionCol && !empty($this->validValues['section (use one)'])) {
+                        $count = count($this->validValues['section (use one)']);
+                        $validation = new DataValidation();
+                        $validation->setType(DataValidation::TYPE_LIST);
+                        $validation->setErrorStyle(DataValidation::STYLE_STOP);
+                        $validation->setAllowBlank(true);
+                        $validation->setShowDropDown(true);
+                        $validation->setErrorTitle('Invalid Section');
+                        $validation->setError('Please select a section from the dropdown list.');
+                        $validation->setFormula1('\'Valid Values\'!$B$2:$B$' . ($count + 1));
+                        
+                        for ($row = $dataStart; $row <= 500; $row++) {
+                            $sheet->getCell("{$sectionCol}{$row}")->setDataValidation(clone $validation);
+                        }
+                    }
+
+                    if ($genderCol && !empty($this->validValues['gender (use one)'])) {
+                        $count = count($this->validValues['gender (use one)']);
+                        $validation = new DataValidation();
+                        $validation->setType(DataValidation::TYPE_LIST);
+                        $validation->setErrorStyle(DataValidation::STYLE_STOP);
+                        $validation->setAllowBlank(true);
+                        $validation->setShowDropDown(true);
+                        $validation->setErrorTitle('Invalid Gender');
+                        $validation->setError('Please select a gender from the dropdown list.');
+                        $validation->setFormula1('\'Valid Values\'!$C$2:$C$' . ($count + 1));
+                        
+                        for ($row = $dataStart; $row <= 500; $row++) {
+                            $sheet->getCell("{$genderCol}{$row}")->setDataValidation(clone $validation);
+                        }
+                    }
+
+                    if ($sessionCol && !empty($this->validValues['session_name (format)'])) {
+                        $count = count($this->validValues['session_name (format)']);
+                        $validation = new DataValidation();
+                        $validation->setType(DataValidation::TYPE_LIST);
+                        $validation->setErrorStyle(DataValidation::STYLE_STOP);
+                        $validation->setAllowBlank(true);
+                        $validation->setShowDropDown(true);
+                        $validation->setErrorTitle('Invalid Session');
+                        $validation->setError('Please select a session from the dropdown list.');
+                        $validation->setFormula1('\'Valid Values\'!$D$2:$D$' . ($count + 1));
+                        
+                        for ($row = $dataStart; $row <= 500; $row++) {
+                            $sheet->getCell("{$sessionCol}{$row}")->setDataValidation(clone $validation);
+                        }
+                    }
                 }
             },
         ];

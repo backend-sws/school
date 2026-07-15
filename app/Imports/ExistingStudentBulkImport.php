@@ -215,6 +215,58 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             $profileData = $this->buildProfileData($row, $user, $stream, $sessionId, $mobile);
             $profileData['reg_no']  = $regNo;
             $profileData['roll_no'] = $rollNo;
+
+            // Auto-resolve Fee Profile based on class/stream, category, and gender
+            $feeProfileId = null;
+            if ($stream) {
+                $feeEngine = app(\App\Services\FeeCalculationEngine::class);
+                $resolvedProfile = $feeEngine->resolveProfile(
+                    $this->institutionId,
+                    $stream->name,
+                    $row['category'] ?? null,
+                    $row['gender'] ?? null
+                );
+                if (!$resolvedProfile && isset($row['class'])) {
+                    $resolvedProfile = $feeEngine->resolveProfile(
+                        $this->institutionId,
+                        $row['class'],
+                        $row['category'] ?? null,
+                        $row['gender'] ?? null
+                    );
+                }
+                // Fallback: match by profile name (contains stream name)
+                if (!$resolvedProfile) {
+                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                        ->where('name', 'LIKE', "%{$stream->name}%")
+                        ->first();
+                }
+                // Fallback: match by profile name (contains original class name)
+                if (!$resolvedProfile && isset($row['class'])) {
+                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                        ->where('name', 'LIKE', "%{$row['class']}%")
+                        ->first();
+                }
+                if (!$resolvedProfile) {
+                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                        ->where('is_default', true)
+                        ->first();
+                }
+                $feeProfileId = $resolvedProfile?->id;
+            }
+            $profileData['fee_regulation_profile_id'] = $feeProfileId;
+            
+            // Set admission date: use today for current session, session start date for historical sessions
+            $resolvedSession = \App\Models\Session::find($sessionId);
+            if ($resolvedSession) {
+                if ($resolvedSession->is_current) {
+                    $profileData['admission_date'] = now()->toDateString();
+                } else {
+                    $profileData['admission_date'] = "{$resolvedSession->start_year}-04-01"; // start of session
+                }
+            } else {
+                $profileData['admission_date'] = now()->toDateString();
+            }
+
             StudentProfile::create($profileData);
 
             // ── 5. Enroll in LmsClass ──
@@ -228,8 +280,8 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             // ── 6. Create Guardian ──
             $this->createGuardianIfAvailable($row, $user, $email, $mobile);
 
-            // ── 7. Fee Ledger ──
-            $this->createFeeLedger($row, $user->id);
+            // ── 7. Fee Ledger (Handled dynamically via FeeProfile, past payments skipped) ──
+            // $this->createFeeLedger($row, $user->id);
 
             // ── 8. Notification (includes default password) ──
             try {
@@ -469,8 +521,6 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             'section.in'                 => 'Invalid section ":input". Valid: A, B, C, D.',
             'gender.in'                  => 'Invalid gender ":input". Valid: BOY, GIRL, Male, Female.',
             'mobile.min'                 => 'Mobile must be at least 10 digits.',
-            'fee_paid_amount.numeric'    => 'Fee amount must be a number.',
-            'fee_payment_mode.in'        => 'Invalid payment mode ":input". Valid: cash, upi, bank_transfer, cheque, online.',
             'email.required_without'     => 'At least one contact method (Email or Mobile) must be provided.',
             'mobile.required_without'    => 'At least one contact method (Email or Mobile) must be provided.',
         ];

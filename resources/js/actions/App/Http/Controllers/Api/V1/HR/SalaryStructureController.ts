@@ -82,7 +82,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-export const storeOrUpdate = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const storeOrUpdate = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeOrUpdate.url(args, options),
     method: 'post',
 })
@@ -97,7 +97,7 @@ storeOrUpdate.definition = {
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-storeOrUpdate.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+storeOrUpdate.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -130,7 +130,7 @@ storeOrUpdate.url = (args: { user: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-storeOrUpdate.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+storeOrUpdate.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeOrUpdate.url(args, options),
     method: 'post',
 })
@@ -140,7 +140,7 @@ storeOrUpdate.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-    const storeOrUpdateForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeOrUpdateForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: storeOrUpdate.url(args, options),
         method: 'post',
     })
@@ -150,7 +150,7 @@ storeOrUpdate.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
  * @route '/api/v1/hr/salary-structures/{user}'
  */
-        storeOrUpdateForm.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeOrUpdateForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: storeOrUpdate.url(args, options),
             method: 'post',
         })
