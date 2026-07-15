@@ -21,6 +21,7 @@ export const useCollegeStreams = ({
     queryFn: () =>
       StreamApi.getStreams({
         main_stream_id,
+        all: true,
         ...(params ?? {}),
       }),
     enabled,
@@ -52,6 +53,7 @@ export const useCollegePublicStreams = ({
     queryFn: () =>
       StreamApi.getPublicStreams({
         main_stream_id,
+        all: true,
         ...(params ?? {}),
       }),
     enabled,

@@ -101,11 +101,10 @@ const Subjects = () => {
   const { items, meta } = parsePaginatedResponse<SubjectRow>(rawData);
 
   // ─── Filter Options ──────────────────────────────────
-  const { data: StreamResponse } = useCollegeStreams();
-  const streams = StreamResponse?.data || [];
+  const { streams } = useCollegeStreams();
   const streamOptions = [
-    { value: null, label: CONTENT.filterStreamAll },
-    ...streams.map((s: any) => ({ value: s.id.toString(), label: s.name })),
+    { value: null, text: CONTENT.filterStreamAll },
+    ...streams.map((s) => ({ value: s.value, text: s.text })),
   ];
 
   const { data: subjectGroupData } = useQuery({
@@ -115,10 +114,10 @@ const Subjects = () => {
   });
   const subjectGroups = subjectGroupData?.data || [];
   const subjectGroupOptions = [
-    { value: null, label: CONTENT.filterGroupAll },
+    { value: null, text: CONTENT.filterGroupAll },
     ...subjectGroups.map((s: any) => ({
       value: s.id.toString(),
-      label: s.name,
+      text: s.name,
     })),
   ];
 
@@ -196,21 +195,21 @@ const Subjects = () => {
             <Card>
               <CardHeader className="pb-4">
                 <FilterBar values={filter} onChange={handleFilterChange}>
-                <FilterBar.Renderer config={{
-                  filters: [
-                    { name: "stream_id", type: "select", label: CONTENT.filterStreamPlaceholder, placeholder: CONTENT.filterStreamPlaceholder, options: streamOptions },
-                    ...(canViewSubjectGroups ? [{ name: "subject_group_id", type: "select", label: CONTENT.filterGroupPlaceholder, placeholder: CONTENT.filterGroupPlaceholder, options: subjectGroupOptions }] : []),
-                  ],
-                  searchGroup: {
-                    selectName: "search_by",
-                    searchName: "search",
-                    options: [
-                      { value: "name", label: "Name" },
-                      { value: "code", label: "Code" },
+                  <FilterBar.Renderer config={{
+                    filters: [
+                      { name: "stream_id", type: "select", label: CONTENT.filterStreamPlaceholder, placeholder: CONTENT.filterStreamPlaceholder, options: streamOptions },
+                      ...(canViewSubjectGroups ? [{ name: "subject_group_id", type: "select", label: CONTENT.filterGroupPlaceholder, placeholder: CONTENT.filterGroupPlaceholder, options: subjectGroupOptions }] : []),
                     ],
-                    placeholder: CONTENT.searchPlaceholder,
-                  },
-                }} />
+                    searchGroup: {
+                      selectName: "search_by",
+                      searchName: "search",
+                      options: [
+                        { value: "name", label: "Name" },
+                        { value: "code", label: "Code" },
+                      ],
+                      placeholder: CONTENT.searchPlaceholder,
+                    },
+                  }} />
                 </FilterBar>
               </CardHeader>
               <CardContent className="pt-0" id="subjects-table">

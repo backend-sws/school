@@ -6,10 +6,15 @@ export const subjectDialogFormSchema = z.object({
   code: safeRequiredString(100, "Code is required"),
 
   stream_id: z
-    .string("Stream is required")
-    .min(1, "Stream is required")
-    .transform((val) => Number(val))
-    .refine((val) => !isNaN(val) && val > 0, "Stream must be selected"),
+    .union([z.string(), z.array(z.string()), z.number(), z.array(z.number())])
+    .transform((val) => {
+      if (Array.isArray(val)) {
+        return val.map((v) => Number(v)).filter((n) => !isNaN(n) && n > 0);
+      }
+      const num = Number(val);
+      return !isNaN(num) && num > 0 ? [num] : [];
+    })
+    .refine((val) => val.length > 0, "Stream is required"),
 
   subject_group_id: z
     .string()

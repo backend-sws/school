@@ -86,7 +86,7 @@ export function SubjectDialog({ open, onClose, data }: SubjectDialogProps) {
       reset({
         name: fullData?.name,
         code: fullData?.code,
-        stream_id: String(fullData?.stream_id),
+        stream_id: [String(fullData?.stream_id)],
         is_practical: fullData?.is_practical,
       } as any);
     }

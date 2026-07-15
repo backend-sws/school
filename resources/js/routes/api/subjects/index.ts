@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
 export const show = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
 show.url = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { subject: number | { id: number } } | [subject: number | { id
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
 show.get = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { subject: number | { id: number } } | [subject: number | { id
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
 show.head = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { subject: number | { id: number } } | [subject: number | { i
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
     const showForm = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { subject: number | { id: number } } | [subject: number | { i
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
         showForm.get = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { subject: number | { id: number } } | [subject: number | { i
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::show
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:108
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:128
  * @route '/api/v1/subjects/{subject}'
  */
         showForm.head = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { subject: number | { id: number } } | [subject: number | { i
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
 export const update = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
 update.url = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { subject: number | { id: number } } | [subject: number | { 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
 update.put = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { subject: number | { id: number } } | [subject: number | { 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
 update.patch = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { subject: number | { id: number } } | [subject: number | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
     const updateForm = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { subject: number | { id: number } } | [subject: number | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
         updateForm.put = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { subject: number | { id: number } } | [subject: number | 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::update
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:141
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:161
  * @route '/api/v1/subjects/{subject}'
  */
         updateForm.patch = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { subject: number | { id: number } } | [subject: number | 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:169
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:189
  * @route '/api/v1/subjects/{subject}'
  */
 export const destroy = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:169
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:189
  * @route '/api/v1/subjects/{subject}'
  */
 destroy.url = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { subject: number | { id: number } } | [subject: number | {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:169
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:189
  * @route '/api/v1/subjects/{subject}'
  */
 destroy.delete = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { subject: number | { id: number } } | [subject: number 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:169
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:189
  * @route '/api/v1/subjects/{subject}'
  */
     const destroyForm = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { subject: number | { id: number } } | [subject: number 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\SubjectController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:169
+ * @see app/Http/Controllers/Api/V1/Organization/SubjectController.php:189
  * @route '/api/v1/subjects/{subject}'
  */
         destroyForm.delete = (args: { subject: number | { id: number } } | [subject: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

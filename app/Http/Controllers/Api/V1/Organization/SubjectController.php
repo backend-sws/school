@@ -81,9 +81,16 @@ class SubjectController extends BaseController
      */
     public function store(Request $request)
     {
+        $streamIds = is_array($request->input('stream_id')) 
+            ? $request->input('stream_id') 
+            : ($request->filled('stream_id') ? [$request->input('stream_id')] : []);
+
+        $request->merge(['stream_ids' => $streamIds]);
+
         $validated = $request->validate([
             'name' => 'required|string|max:150',
-            'stream_id' => 'required|exists:streams,id',
+            'stream_ids' => 'required|array|min:1',
+            'stream_ids.*' => 'exists:streams,id',
             'subject_group_id' => 'nullable|exists:subject_groups,id',
             'parent_id' => 'nullable|exists:subjects,id',
             'code' => 'nullable|string|max:50',
@@ -91,7 +98,20 @@ class SubjectController extends BaseController
             'status' => 'integer|in:0,1'
         ]);
 
-        return $this->created(Subject::create($validated));
+        $subjects = [];
+        foreach ($validated['stream_ids'] as $streamId) {
+            $subjects[] = Subject::create([
+                'name' => $validated['name'],
+                'stream_id' => $streamId,
+                'subject_group_id' => $validated['subject_group_id'] ?? null,
+                'parent_id' => $validated['parent_id'] ?? null,
+                'code' => $validated['code'] ?? null,
+                'is_practical' => $validated['is_practical'] ?? false,
+                'status' => $validated['status'] ?? 1,
+            ]);
+        }
+
+        return $this->created(reset($subjects));
     }
     /**
      * Display the specified resource.
@@ -168,7 +188,15 @@ class SubjectController extends BaseController
      */
     public function destroy(Subject $subject)
     {
-        if ($subject->applications()->exists() || $subject->academicInfo()->exists()) {
+        $hasApplications = \Illuminate\Support\Facades\DB::table('admission_application_subjects')
+            ->where('subject_id', $subject->id)
+            ->exists();
+
+        $hasAdmissionHeads = \Illuminate\Support\Facades\DB::table('admission_heads')
+            ->where('major_subject_id', $subject->id)
+            ->exists();
+
+        if ($hasApplications || $hasAdmissionHeads) {
             return $this->error('Cannot delete: This subject is already linked to student applications or records.', 422);
         }
         $subject->delete();

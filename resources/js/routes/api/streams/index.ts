@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::store
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:34
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:46
  * @route '/api/v1/streams'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::store
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:34
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:46
  * @route '/api/v1/streams'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::store
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:34
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:46
  * @route '/api/v1/streams'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::store
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:34
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:46
  * @route '/api/v1/streams'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::store
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:34
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:46
  * @route '/api/v1/streams'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
 export const show = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
 show.url = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +177,7 @@ show.url = (args: { stream: string | number } | [stream: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
 show.get = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +186,7 @@ show.get = (args: { stream: string | number } | [stream: string | number ] | str
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
 show.head = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +196,7 @@ show.head = (args: { stream: string | number } | [stream: string | number ] | st
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
     const showForm = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ show.head = (args: { stream: string | number } | [stream: string | number ] | st
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
         showForm.get = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +215,7 @@ show.head = (args: { stream: string | number } | [stream: string | number ] | st
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::show
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:55
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:67
  * @route '/api/v1/streams/{stream}'
  */
         showForm.head = (args: { stream: string | number } | [stream: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -231,7 +231,7 @@ show.head = (args: { stream: string | number } | [stream: string | number ] | st
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
 export const update = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +246,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
 update.url = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -279,7 +279,7 @@ update.url = (args: { stream: number | { id: number } } | [stream: number | { id
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
 update.put = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -288,7 +288,7 @@ update.put = (args: { stream: number | { id: number } } | [stream: number | { id
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
 update.patch = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -298,7 +298,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
     const updateForm = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -313,7 +313,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
         updateForm.put = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -327,7 +327,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::update
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:61
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:73
  * @route '/api/v1/streams/{stream}'
  */
         updateForm.patch = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -343,7 +343,7 @@ update.patch = (args: { stream: number | { id: number } } | [stream: number | { 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:87
  * @route '/api/v1/streams/{stream}'
  */
 export const destroy = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -358,7 +358,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:87
  * @route '/api/v1/streams/{stream}'
  */
 destroy.url = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -391,7 +391,7 @@ destroy.url = (args: { stream: number | { id: number } } | [stream: number | { i
 
 /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:87
  * @route '/api/v1/streams/{stream}'
  */
 destroy.delete = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -401,7 +401,7 @@ destroy.delete = (args: { stream: number | { id: number } } | [stream: number | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:87
  * @route '/api/v1/streams/{stream}'
  */
     const destroyForm = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -416,7 +416,7 @@ destroy.delete = (args: { stream: number | { id: number } } | [stream: number | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Organization\StreamController::destroy
- * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:75
+ * @see app/Http/Controllers/Api/V1/Organization/StreamController.php:87
  * @route '/api/v1/streams/{stream}'
  */
         destroyForm.delete = (args: { stream: number | { id: number } } | [stream: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -33,7 +33,7 @@ export const SUBJECT_FORM_FIELDS: readonly FormFieldConfig[] = [
   {
     name: "stream_id",
     label: "Stream",
-    type: FORM_TYPE.DROPDOWN,
+    type: FORM_TYPE.MULTI_SELECT,
     placeholder: "",
     required: true,
     permission: "field_subject_stream_id",
@@ -54,7 +54,7 @@ export const SUBJECT_FORM_FIELDS: readonly FormFieldConfig[] = [
 export const SUBJECT_DEFAULT_VALUES = {
   name: "",
   code: "",
-  stream_id: "",
+  stream_id: [],
   is_practical: false,
 };
 

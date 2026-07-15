@@ -25,6 +25,18 @@ class StreamController extends BaseController
             $query->where('main_stream_id', $request->main_stream_id);
         }
 
+        if ($request->boolean('all')) {
+            $data = app(\App\Services\ApiResponseMapService::class)->filterCollection(
+                $query->orderBy('name', 'asc')->get(),
+                'passthrough'
+            );
+            return response()->json([
+                'success' => true,
+                'message' => 'Success',
+                'data' => $data,
+            ]);
+        }
+
         return $this->paginatedWithMap(
             $query->orderBy('name', 'asc')->paginate($request->input('per_page', 15)),
             'passthrough'
