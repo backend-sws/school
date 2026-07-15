@@ -1,10 +1,11 @@
 import React, { useMemo, useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ModalDialog } from "../shared/Modal";
 import Each from "../Each";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
 import { Button } from "@/components/ui/button";
+import { SearchableSelectField } from "@/components/searchableSelectInput";
 import {
   Table,
   TableBody,
@@ -367,20 +368,36 @@ export function InventorySaleDialog({
             />
           </div>
 
-          {/* Item + Qty + Unit price + Add button */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_80px_100px_auto] sm:items-end">
+            <div className="form-field-container w-full min-w-[200px]">
+              <label className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1 block">Item</label>
+              <Controller
+                control={control}
+                name="new_item_id"
+                render={({ field }) => (
+                  <SearchableSelectField
+                    value={field.value}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      const item = items.find((i) => String(i.id) === String(val));
+                      if (item) {
+                        setValue("new_unit_price", resolveUnitPrice(item, gstInclusive));
+                      }
+                    }}
+                    options={itemSelectOptions.filter((o) => o.value !== "")}
+                    placeholder="Select item"
+                    className="w-full"
+                  />
+                )}
+              />
+            </div>
             <Each
-              of={INVENTORY_SALE_LINE_ADD_LAYOUT.slice(1)}
+              of={INVENTORY_SALE_LINE_ADD_LAYOUT.slice(2)}
               keyExtractor={(f) => f.name}
               render={(form) => (
                 <ControlledFormComponent<InventorySaleFormInputValues>
                   {...form}
                   control={control}
-                  options={
-                    form.name === "new_item_id"
-                      ? itemSelectOptions
-                      : form.options
-                  }
                 />
               )}
             />
