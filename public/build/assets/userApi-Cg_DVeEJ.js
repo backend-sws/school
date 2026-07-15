@@ -1,0 +1,1 @@
+import{a as t}from"./api-C9G8Uql5.js";const s="/users",p={getUser:e=>t.get(s,{params:e}),getUserById:e=>t.get(`${s}/${e}`),createUser:e=>t.post(s,e),updateUser:(e,r)=>t.put(`${s}/${e}`,r),deleteUser:e=>t.delete(`${s}/${e}`)};export{p as U};

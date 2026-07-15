@@ -570,16 +570,45 @@ export default function SuperAdminLandingPage({
                       render={(inst) => (
                         <tr key={inst.id} className="hover:bg-muted/20 transition-colors group">
                           <td className="px-4 py-4 font-bold text-foreground">{inst.name}</td>
-                          <td className="px-4 py-4">
-                            <a
-                              href={`http://${inst.domain}.localhost:8000`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-medium text-primary hover:underline flex items-center gap-1.5"
-                            >
-                              <Globe className="h-3.5 w-3.5" />
-                              {inst.domain}.localhost:8000
-                            </a>
+                           <td className="px-4 py-4">
+                            {(() => {
+                              if (!inst.domain || inst.domain === 'N/A') return <span className="text-muted-foreground">N/A</span>;
+                              
+                              const isCustomDomain = inst.domain.includes('.');
+                              const currentHost = window.location.host;
+                              let url = '';
+                              let label = '';
+
+                              if (isCustomDomain) {
+                                url = window.location.protocol + '//' + inst.domain;
+                                label = inst.domain;
+                              } else {
+                                let baseDomain = currentHost;
+                                if (currentHost.includes('localhost')) {
+                                  url = `http://${inst.domain}.localhost:8000`;
+                                  label = `${inst.domain}.localhost:8000`;
+                                } else {
+                                  const parts = currentHost.split('.');
+                                  if (parts.length > 2) {
+                                    baseDomain = parts.slice(-2).join('.');
+                                  }
+                                  url = `${window.location.protocol}//${inst.domain}.${baseDomain}`;
+                                  label = `${inst.domain}.${baseDomain}`;
+                                }
+                              }
+
+                              return (
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="font-medium text-primary hover:underline flex items-center gap-1.5"
+                                >
+                                  <Globe className="h-3.5 w-3.5" />
+                                  {label}
+                                </a>
+                              );
+                            })()}
                           </td>
                           <td className="px-4 py-4">
                             <Badge variant="outline" className="capitalize text-[10px] tracking-tight font-semibold">

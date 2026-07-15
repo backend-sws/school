@@ -1,0 +1,1 @@
+import{a as t}from"./api-C9G8Uql5.js";const o="/fee-regulation-profiles",p={index:e=>t.get(o,{params:e}),show:e=>t.get(`${o}/${e}`).then(s=>s?.data??s),store:e=>t.post(o,e),update:(e,s)=>t.put(`${o}/${e}`,s),destroy:e=>t.delete(`${o}/${e}`)};export{p as f};
