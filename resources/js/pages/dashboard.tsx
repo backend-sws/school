@@ -95,7 +95,7 @@ export default function Dashboard() {
   // ─── Quick Actions (Only verified working links) ───────────────────────────
   const quickActions = [
     { title: "Add Student", href: "/students/candidate", icon: UserPlus, color: "text-blue-500", bg: "bg-blue-500/10" },
-    { title: "Collect Fee", href: "/accounts/fee-hub/students", icon: IndianRupee, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { title: "Collect Fee", href: "/students/manage", icon: IndianRupee, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     { title: "Post Notice", href: "/notice-management", icon: Megaphone, color: "text-amber-500", bg: "bg-amber-500/10" },
     { title: "Manage Staff", href: "/settings/staff-directory", icon: Users, color: "text-purple-500", bg: "bg-purple-500/10" },
   ];

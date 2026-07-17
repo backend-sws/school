@@ -618,6 +618,8 @@ export const INITIAL_STUDENT_FILTERS = {
   abc_status: "all",
   hostel_status: "all",
   transport_status: "all",
+  gender: "",
+  category: "",
   page: 1,
   perPage: 10,
   searchType: "email",
@@ -633,6 +635,8 @@ export const STUDENT_FILTER_MAPPING: FilterParamMapping = {
   abc_status: { paramName: "abc_status", skipValues: ["all"] },
   hostel_status: { paramName: "hostel_status", skipValues: ["all"] },
   transport_status: { paramName: "transport_status", skipValues: ["all"] },
+  gender: { paramName: "gender", skipValues: ["", "all"] },
+  category: { paramName: "category", skipValues: ["", "all"] },
 };
 
 export const STUDENT_COLUMNS = [
