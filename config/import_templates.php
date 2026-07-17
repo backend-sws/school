@@ -69,13 +69,13 @@ return [
             'headings' => [
                 'students', 'email', 'mobile', 'gender', 'dob', 'class', 'section',
                 'session_name', 'roll_no', 'father_name', 'father_mobile', 'mother_name',
-                'category', 'religion', 'aadhar_no', 'address', 'city', 'state', 'pincode',
+                'category', 'religion', 'aadhar_no', 'address', 'city', 'state', 'pincode', 'previous_dues',
             ],
             'sample' => [
                 'Sonu Kumar', 'rahul@mail.com', '7761809386', 'BOY', '8/15/19',
                 'LKG', 'A', '2025-26', '', 'SAURAV KUMAR YADAV', '9876543211',
                 'ROJI KUMARI', 'General', 'Hindu', '1234-5678-9012', 'KHIRADIH',
-                'Lucknow', 'Uttar Pradesh', '226001',
+                'Lucknow', 'Uttar Pradesh', '226001', '500',
             ],
         ],
     ],
@@ -107,6 +107,7 @@ return [
             ['dob (date of birth)', 'Format: 8/15/19 or 2019-08-15 or 15-Aug-2019'],
             ['mobile (nullable)', 'Parent mobile (for account reset). Siblings can leave this blank if sharing with a brother/sister.'],
             ['roll_no (optional)', 'Academic roll number (e.g. 101). Will be auto-generated if left empty.'],
+            ['previous_dues (optional)', 'Previous pending fee amount to be added as opening balance (e.g. 500).'],
             ['category', 'General, OBC, SC, ST, EWS'],
             ['religion', 'Hindu, Muslim, Christian, Sikh, Buddhist, Jain, Other'],
         ],

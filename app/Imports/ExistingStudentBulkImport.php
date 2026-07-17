@@ -281,7 +281,30 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             $this->createGuardianIfAvailable($row, $user, $email, $mobile);
 
             // ── 7. Fee Ledger (Handled dynamically via FeeProfile, past payments skipped) ──
-            // $this->createFeeLedger($row, $user->id);
+            $rawDues = $row['previous_dues'] ?? $row['previous_due'] ?? $row['arrears'] ?? $row['opening_balance'] ?? null;
+            if ($rawDues !== null) {
+                $cleanDues = preg_replace('/[^0-9.]/', '', (string) $rawDues);
+                $duesAmount = $cleanDues !== '' ? (float) $cleanDues : 0;
+            } else {
+                $duesAmount = 0;
+            }
+
+            if ($duesAmount > 0) {
+                // Seed this directly into the ledger using a special period key 'arrears'
+                // The FeeCollectionService will read this to initialize the matrix.
+                \App\Models\StudentFeePeriodBalance::updateOrCreate([
+                    'institution_id' => $this->institutionId,
+                    'user_id' => $user->id,
+                    'session_id' => $sessionId,
+                    'period_key' => 'arrears',
+                ], [
+                    'frequency' => 'annual',
+                    'opening_balance' => $duesAmount,
+                    'total_payable' => $duesAmount,
+                    'closing_balance' => $duesAmount,
+                    'version_hash' => md5($duesAmount),
+                ]);
+            }
 
             // ── 8. Notification (includes default password) ──
             try {
@@ -509,6 +532,7 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             'email'            => 'required_without:mobile|nullable|email',
             'mobile'           => 'required_without:email|nullable|string|min:10|max:15',
             'dob'              => 'nullable',
+            'previous_dues'    => 'nullable',
         ];
     }
 

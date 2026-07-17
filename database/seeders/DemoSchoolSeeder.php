@@ -263,38 +263,8 @@ class DemoSchoolSeeder extends Seeder
                 );
             }
 
-            // Seed 5 students per class
-            for ($i = 1; $i <= 5; $i++) {
-                $studentUser = \App\Models\User::updateOrCreate(
-                    ['email' => "student{$studentCounter}@demo.com"],
-                    [
-                        'name' => "Demo Student {$studentCounter}",
-                        'institution_id' => $institution->id,
-                        'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                        'email_verified_at' => now(),
-                        'status' => 1,
-                    ]
-                );
-
-                \App\Models\StudentProfile::withoutGlobalScope('institution_scope')->updateOrCreate(
-                    ['user_id' => $studentUser->id, 'institution_id' => $institution->id],
-                    [
-                        'stream_id' => $stream->id,
-                        'session_id' => $session->id,
-                        'admission_date' => now(),
-                        'enrollment_status' => 'active',
-                        'reg_no' => "REG202500" . str_pad($studentCounter, 3, '0', STR_PAD_LEFT),
-                        'roll_no' => $i,
-                    ]
-                );
-
-                \App\Models\LmsClassEnrollment::updateOrCreate(
-                    ['lms_class_id' => $lmsClass->id, 'user_id' => $studentUser->id],
-                    ['role' => 'student', 'status' => 'active', 'enrolled_at' => now()]
-                );
-
-                $studentCounter++;
-            }
+            // Removed Demo Student seeding as per user request
+            // for ($i = 1; $i <= 5; $i++) { ... }
         }
 
         $this->command->info('Demo School and Admin User (school@demo.com / 1234567890) seeded successfully with full workflow access!');

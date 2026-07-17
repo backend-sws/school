@@ -362,7 +362,13 @@ class FeeCollectionService
         // Admission dues are no longer seeded into accumulatedArrears because admission
         // payments are now included in the payment query and will be matched to their
         // respective month automatically. The admission summary card handles the rest.
-        $accumulatedArrears = 0.0;
+        
+        // Fetch manually imported arrears from the ledger
+        $importedArrearsRow = \App\Models\StudentFeePeriodBalance::where('user_id', $student->id)
+            ->where('institution_id', $institutionId)
+            ->where('period_key', 'arrears')
+            ->first();
+        $accumulatedArrears = $importedArrearsRow ? (float) $importedArrearsRow->opening_balance : 0.0;
         $current = $startDate->copy();
 
         $studentTransports = collect(self::$bulkTransportAssignments[$student->id] ?? []);
