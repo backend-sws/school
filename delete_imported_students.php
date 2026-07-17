@@ -25,9 +25,13 @@ echo "Found " . count($userIds) . " students imported today.\n";
 
 if(count($userIds) > 0) {
     DB::transaction(function() use ($userIds) {
-        // Delete fee payments
+        // Disable constraints temporarily
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Delete fee payments & transactions
         $fp = FeePayment::whereIn('user_id', $userIds)->delete();
-        echo "Deleted $fp fee payments.\n";
+        $tr = DB::table('transactions')->whereIn('user_id', $userIds)->delete();
+        echo "Deleted $fp fee payments and $tr transactions.\n";
 
         // Delete period balances
         $pb = StudentFeePeriodBalance::whereIn('user_id', $userIds)->delete();
@@ -45,13 +49,16 @@ if(count($userIds) > 0) {
         $ur = DB::table('user_roles')->whereIn('user_id', $userIds)->delete();
         echo "Deleted $ur user role assignments.\n";
 
-        // Delete admission applications if any
+        // Delete admission applications
         $aa = DB::table('admission_applications')->whereIn('user_id', $userIds)->delete();
         echo "Deleted $aa admission applications.\n";
 
         // Delete the users
         $u = User::whereIn('id', $userIds)->delete();
         echo "Deleted $u users.\n";
+        
+        // Re-enable constraints
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     });
 }
 
