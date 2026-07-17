@@ -13,12 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 $today = now()->toDateString();
 
-// Find users who are students and were created in the last 48 hours
-$userIds = User::whereHas('roles', function($q) {
-        $q->where('key', 'student');
-    })
-    ->where('created_at', '>=', now()->subDays(2))
-    ->pluck('id')
+// Find users who have a student profile created in the last 7 days
+$userIds = StudentProfile::where('created_at', '>=', now()->subDays(7))
+    ->pluck('user_id')
     ->toArray();
 
 echo "Found " . count($userIds) . " students imported today.\n";
