@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 $today = now()->toDateString();
 
-// Find users who are students and were created today
+// Find users who are students and were created in the last 48 hours
 $userIds = User::whereHas('roles', function($q) {
         $q->where('key', 'student');
     })
-    ->whereDate('created_at', $today)
+    ->where('created_at', '>=', now()->subDays(2))
     ->pluck('id')
     ->toArray();
 
