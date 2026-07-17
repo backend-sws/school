@@ -529,8 +529,8 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             'class'            => "required|string|in:{$validClasses}",
             'section'          => 'nullable|string|in:A,B,C,D',
             'gender'           => 'nullable|string',
-            'email'            => 'required_without:*.mobile|nullable|email',
-            'mobile'           => 'required_without:*.email|nullable|string|min:10|max:15',
+            'email'            => 'nullable|email',
+            'mobile'           => 'nullable|string|min:10|max:15',
             'dob'              => 'nullable',
             'previous_dues'    => 'nullable',
         ];

@@ -422,9 +422,9 @@ trait StudentImportHelpers
             return $wordOrdinals[$v];
         }
 
-        // ── "CLASS/STD/GRADE/CLS" prefix + number or roman ──────
-        //    Matches: "CLASS 1", "CLASS-I", "CLS-1", "STD 3", "GRADE-5", "CLASS IV", etc.
-        if (preg_match('/^(?:CLASS|CLS|STD|GRADE|STANDARD)[.\-\s]*(\w+)$/i', $v, $m)) {
+        // ── "CLASS/STD/GRADE/CLS" prefix + number or roman + optional extra text ──────
+        //    Matches: "CLASS 1", "CLASS-I", "CLS-1", "STD 3", "GRADE-5", "CLASS IV HINDI", etc.
+        if (preg_match('/^(?:CLASS|CLS|STD|GRADE|STANDARD)[.\-\s]*(\w+)/i', $v, $m)) {
             $part = strtoupper(trim($m[1]));
 
             // Roman numeral
