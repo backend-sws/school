@@ -217,42 +217,44 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             $profileData['roll_no'] = $rollNo;
 
             // Auto-resolve Fee Profile based on class/stream, category, and gender
-            $feeProfileId = null;
+            $feeEngine = app(\App\Services\FeeCalculationEngine::class);
+            $resolvedProfile = null;
+            
             if ($stream) {
-                $feeEngine = app(\App\Services\FeeCalculationEngine::class);
                 $resolvedProfile = $feeEngine->resolveProfile(
                     $this->institutionId,
                     $stream->name,
                     $row['category'] ?? null,
                     $row['gender'] ?? null
                 );
-                if (!$resolvedProfile && isset($row['class'])) {
-                    $resolvedProfile = $feeEngine->resolveProfile(
-                        $this->institutionId,
-                        $row['class'],
-                        $row['category'] ?? null,
-                        $row['gender'] ?? null
-                    );
-                }
-                // Fallback: match by profile name (contains stream name)
-                if (!$resolvedProfile) {
-                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
-                        ->where('name', 'LIKE', "%{$stream->name}%")
-                        ->first();
-                }
-                // Fallback: match by profile name (contains original class name)
-                if (!$resolvedProfile && isset($row['class'])) {
-                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
-                        ->where('name', 'LIKE', "%{$row['class']}%")
-                        ->first();
-                }
-                if (!$resolvedProfile) {
-                    $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
-                        ->where('is_default', true)
-                        ->first();
-                }
-                $feeProfileId = $resolvedProfile?->id;
             }
+            if (!$resolvedProfile && isset($row['class'])) {
+                $resolvedProfile = $feeEngine->resolveProfile(
+                    $this->institutionId,
+                    $row['class'],
+                    $row['category'] ?? null,
+                    $row['gender'] ?? null
+                );
+            }
+            // Fallback: match by profile name (contains stream name)
+            if (!$resolvedProfile && $stream) {
+                $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                    ->where('name', 'LIKE', "%{$stream->name}%")
+                    ->first();
+            }
+            // Fallback: match by profile name (contains original class name)
+            if (!$resolvedProfile && isset($row['class'])) {
+                $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                    ->where('name', 'LIKE', "%{$row['class']}%")
+                    ->first();
+            }
+            if (!$resolvedProfile) {
+                $resolvedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $this->institutionId)
+                    ->where('is_default', true)
+                    ->first();
+            }
+            $feeProfileId = $resolvedProfile?->id;
+            
             $profileData['fee_regulation_profile_id'] = $feeProfileId;
             
             // Set admission date: use today for current session, session start date for historical sessions
