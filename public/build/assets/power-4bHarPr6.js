@@ -1,0 +1,1 @@
+import{b as o}from"./app-Bsii5FL9.js";const e=[["path",{d:"M12 2v10",key:"mnfbl"}],["path",{d:"M18.4 6.6a9 9 0 1 1-12.77.04",key:"obofu9"}]],a=o("Power",e);export{a as P};

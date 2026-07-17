@@ -1,0 +1,1 @@
+import{a as i}from"./api-DQaN4-6Y.js";const o="/organizations",n={index:t=>i.get(o,{params:t}),store:t=>i.post(o,t),show:t=>i.get(`${o}/${t}`),update:(t,s)=>i.put(`${o}/${t}`,s),destroy:t=>i.delete(`${o}/${t}`),institutions:(t,s)=>i.get(`${o}/${t}/institutions`,{params:s})};export{n as O};

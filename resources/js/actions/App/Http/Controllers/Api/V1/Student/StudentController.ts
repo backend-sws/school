@@ -267,7 +267,7 @@ getStudents.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     getStudents.form = getStudentsForm
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -282,7 +282,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -291,7 +291,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -300,7 +300,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -310,7 +310,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -320,7 +320,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -329,7 +329,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Student\StudentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Student/StudentController.php:933
+ * @see app/Http/Controllers/Api/V1/Student/StudentController.php:943
  * @route '/api/v1/students/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

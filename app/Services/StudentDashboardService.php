@@ -192,6 +192,18 @@ class StudentDashboardService
             });
         }
 
+        if (!empty($filters['gender'])) {
+            $query->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
+                $q->where('student_profiles.institution_id', $collegeId)->whereRaw('LOWER(gender) = ?', [strtolower($filters['gender'])]);
+            });
+        }
+
+        if (!empty($filters['category'])) {
+            $query->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
+                $q->where('student_profiles.institution_id', $collegeId)->whereRaw('LOWER(category) = ?', [strtolower($filters['category'])]);
+            });
+        }
+
         if (!empty($filters['lms_class_id'])) {
             $query->whereIn('id', function ($q) use ($filters) {
                 $q->select('user_id')

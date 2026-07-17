@@ -1,1 +1,0 @@
-import{a as o}from"./api-DP2giCtE.js";const s="/student-auth",i={Login:t=>o.post(`${s}/login`,t),Register:t=>o.post(`${s}/register`,t),FindApplication:t=>o.post(`${s}/find-application`,{app_no:t}),SendOtp:t=>o.post(`${s}/send-otp`,t),ChangePassword:t=>o.post(`${s}/change-password`,t)};export{i as A};

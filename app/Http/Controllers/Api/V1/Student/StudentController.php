@@ -813,7 +813,7 @@ class StudentController extends BaseController
         $filters = $request->only([
             'academic_session_id', 'stream_id', 'status', 'name', 'email', 
             'mobile', 'per_page', 'is_verified', 'reg_no', 'lms_class_id',
-            'abc_status', 'hostel_status', 'transport_status'
+            'abc_status', 'hostel_status', 'transport_status', 'gender', 'category'
         ]);
         $collegeId = InstitutionContext::getActiveInstitutionId($request->user());
         $paginator = $this->dashboardService->getStudentsList($filters, $collegeId);
@@ -848,6 +848,16 @@ class StudentController extends BaseController
         if (!empty($filters['stream_id'])) {
             $statsQuery->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
                 $q->where('student_profiles.institution_id', $collegeId)->where('stream_id', $filters['stream_id']);
+            });
+        }
+        if (!empty($filters['gender'])) {
+            $statsQuery->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
+                $q->where('student_profiles.institution_id', $collegeId)->whereRaw('LOWER(gender) = ?', [strtolower($filters['gender'])]);
+            });
+        }
+        if (!empty($filters['category'])) {
+            $statsQuery->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
+                $q->where('student_profiles.institution_id', $collegeId)->whereRaw('LOWER(category) = ?', [strtolower($filters['category'])]);
             });
         }
         if (!empty($filters['lms_class_id'])) {

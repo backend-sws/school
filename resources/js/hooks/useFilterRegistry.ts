@@ -118,6 +118,8 @@ export function useFilterRegistry(type: FilterRegistryType): FilterBarConfig {
                 { name: "abc_status", type: FORM_TYPE.SELECT, label: "Government Portal", placeholder: "Select portal status", options: toFieldOptions(STUDENT_ABC_OPTIONS), tooltip: "Filter by ABC registration status" },
                 { name: "hostel_status", type: FORM_TYPE.SELECT, label: "Hostel Facility", placeholder: "Select hostel status", options: toFieldOptions(STUDENT_HOSTEL_OPTIONS), tooltip: "Filter by Hostel facility status" },
                 { name: "transport_status", type: FORM_TYPE.SELECT, label: "Transport Facility", placeholder: "Select transport status", options: toFieldOptions(STUDENT_TRANSPORT_OPTIONS), tooltip: "Filter by Transport facility status" },
+                { name: "gender", type: FORM_TYPE.SELECT, label: "Gender", placeholder: "Select gender", options: [{ key: "Male", text: "Male", value: "Male" }, { key: "Female", text: "Female", value: "Female" }, { key: "Other", text: "Other", value: "Other" }], tooltip: "Filter by student gender" },
+                { name: "category", type: FORM_TYPE.SELECT, label: "Category", placeholder: "Select category", options: [{ key: "general", text: "General", value: "general" }, { key: "sc", text: "SC", value: "sc" }, { key: "st", text: "ST", value: "st" }, { key: "bc", text: "BC", value: "bc" }, { key: "obc", text: "OBC", value: "obc" }, { key: "ews", text: "EWS", value: "ews" }], tooltip: "Filter by social category" },
             ],
             searchGroup: {
                 selectName: "searchType",

@@ -33,8 +33,7 @@ class ExistingStudentExport implements FromQuery, WithHeadings, WithMapping, Sho
                     ]);
                 },
                 'stream',
-                'session',
-                'currentClass'
+                'session'
             ])
             ->where('institution_id', $this->institutionId);
 
@@ -165,7 +164,7 @@ class ExistingStudentExport implements FromQuery, WithHeadings, WithMapping, Sho
             $student->gender,
             $student->dob,
             $student->stream?->name,
-            $student->currentClass?->section ?? 'A',
+            '', // section column
             $student->session?->name,
             $student->roll_no,
             $student->father_name,
