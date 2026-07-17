@@ -1,0 +1,1 @@
+import{a as t}from"./api-Quygqoqc.js";const a="/main-streams",m={getMainStreams:e=>t.get(a,{params:e}),getMainStreamById:e=>t.get(`${a}/${e}`),createMainStream:e=>t.post(a,e),updateMainStream:(e,r)=>t.put(`${a}/${e}`,r),deleteMainStream:e=>t.delete(`${a}/${e}`)};export{m as M};

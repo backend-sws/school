@@ -1,1 +1,0 @@
-import{a as e}from"./api-6tXQMlyJ.js";const a="/staff",i={listStaff:t=>e.get(a,{params:t}),getStaffById:t=>e.get(`${a}/${t}`),createStaff:t=>e.post(a,t),updateStaff:(t,f)=>e.put(`${a}/${t}`,f),deleteStaff:t=>e.delete(`${a}/${t}`),resendInvitation:t=>e.post(`${a}/${t}/resend-invitation`)};export{i as S};

@@ -1,0 +1,1 @@
+import{a as t}from"./api-Quygqoqc.js";const r="/promotions",i={eligible:o=>t.get(r+"/eligible",{params:o}),promote:o=>t.post(r+"/promote",o),bulkPromote:o=>t.post(r+"/bulk-promote",o),history:o=>t.get(r+"/history",{params:o}),rollback:o=>t.post(`${r}/${o}/rollback`)};export{i as P};

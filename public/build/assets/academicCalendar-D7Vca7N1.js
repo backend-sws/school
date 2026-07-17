@@ -1,1 +1,0 @@
-import{a as e}from"./api-6tXQMlyJ.js";const t="/academic-calendar/settings",s={getSettings:a=>e.get(t,{params:a}),updateSettings:a=>e.patch(t,a)},i={all:["academic-calendar-settings"],settings:a=>["academic-calendar-settings",a??1]};export{i as A,s as a};
