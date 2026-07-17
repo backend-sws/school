@@ -41,6 +41,8 @@ export const collegeProfileSchema = z.object({
     ),
   established_year: numericStringOptional(),
   college_logo: z.any().optional(),
+  receipt_header: z.any().optional(),
+  receipt_footer: z.any().optional(),
 });
 
 export type CollegeProfileFormValues = z.infer<typeof collegeProfileSchema>;

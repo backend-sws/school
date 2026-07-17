@@ -62,6 +62,20 @@ export const COLLEGE_PROFILE_IDENTITY_GROUP = [
         accept: "image/*",
         tooltip: "Official crest or logo of the college (Transparent PNG recommended)",
     },
+    {
+        name: "receipt_header",
+        label: "Receipt Header Image",
+        type: FORM_TYPE.FILE,
+        accept: "image/*",
+        tooltip: "Header image for printed receipts and invoices (replaces default text header)",
+    },
+    {
+        name: "receipt_footer",
+        label: "Receipt Footer Image",
+        type: FORM_TYPE.FILE,
+        accept: "image/*",
+        tooltip: "Footer image for printed receipts and invoices",
+    },
 ];
 
 export const COLLEGE_PROFILE_FORM_LAYOUT = [

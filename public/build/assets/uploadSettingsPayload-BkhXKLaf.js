@@ -1,1 +1,0 @@
-import{R as o}from"./r2Api-W4D1a6lv.js";async function l(n){const t={};for(const[i,e]of Object.entries(n))e instanceof File?t[i]=await o.uploadFile(e):typeof e=="object"&&e!==null?t[i]=JSON.stringify(e):t[i]=e!=null?String(e):"";return t}export{l as p};

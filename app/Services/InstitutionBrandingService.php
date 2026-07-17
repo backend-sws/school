@@ -15,56 +15,67 @@ class InstitutionBrandingService
         $institution = $institutionId ? Institution::find($institutionId) : null;
 
         $rawLogoPath = $institution?->logo_url;
-        $logoBase64 = null;
-
-        if (!empty($rawLogoPath)) {
-            $isFullUrl = str_starts_with($rawLogoPath, 'http://') || str_starts_with($rawLogoPath, 'https://');
-
-            if ($isFullUrl) {
-                // If it is a local storage path, read it directly from disk to bypass single-threaded server locking
-                $urlPath = parse_url($rawLogoPath, PHP_URL_PATH);
-                if ($urlPath && str_starts_with($urlPath, '/storage/')) {
-                    $localPath = public_path(substr($urlPath, 1));
-                    if (file_exists($localPath)) {
-                        $mimeType = @mime_content_type($localPath) ?: 'image/png';
-                        $logoBase64 = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($localPath));
-                    }
-                }
-
-                // If not resolved locally, fetch via stream context to bypass self-request SSL verification blocks
-                if (empty($logoBase64)) {
-                    try {
-                        $ctx = stream_context_create([
-                            "ssl" => [
-                                "verify_peer" => false,
-                                "verify_peer_name" => false,
-                            ],
-                        ]);
-                        $imgData = @file_get_contents($rawLogoPath, false, $ctx);
-                        if ($imgData !== false) {
-                            $logoBase64 = 'data:image/png;base64,' . base64_encode($imgData);
-                        } else {
-                            $logoBase64 = $rawLogoPath;
-                        }
-                    } catch (\Throwable $e) {
-                        $logoBase64 = $rawLogoPath;
-                    }
-                }
-            } else {
-                // R2 path — compress and embed as base64 via ImageCompressionService
-                $logoBase64 = app(ImageCompressionService::class)->compressForPdf($rawLogoPath);
-            }
-        }
+        $rawHeaderPath = Setting::where('setting_group', 'general')->where('setting_key', 'receipt_header')->value('setting_value');
+        $rawFooterPath = Setting::where('setting_group', 'general')->where('setting_key', 'receipt_footer')->value('setting_value');
 
         return [
             'name' => $institution?->name ?? config('app.name', 'PDS Education'),
             'address' => $this->formatAddress($institution),
             'phone' => $institution?->phone ?? '',
             'email' => $institution?->email ?? '',
-            'logo' => $logoBase64,
+            'logo' => $this->processImageToUrlOrBase64($rawLogoPath, 300),
+            'receipt_header' => $this->processImageToUrlOrBase64($rawHeaderPath, 1200),
+            'receipt_footer' => $this->processImageToUrlOrBase64($rawFooterPath, 1200),
             'brand_color' => Setting::getBranding('brand_color') ?? '#4F46E5',
             'brand_theme' => Setting::getBranding('brand_theme') ?? 'royal',
         ];
+    }
+
+    private function processImageToUrlOrBase64(?string $rawPath, int $maxWidth = 300): ?string
+    {
+        if (empty($rawPath)) {
+            return null;
+        }
+
+        $imageBase64 = null;
+        $isFullUrl = str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://');
+
+        if ($isFullUrl) {
+            // If it is a local storage path, read it directly from disk to bypass single-threaded server locking
+            $urlPath = parse_url($rawPath, PHP_URL_PATH);
+            if ($urlPath && str_starts_with($urlPath, '/storage/')) {
+                $localPath = public_path(substr($urlPath, 1));
+                if (file_exists($localPath)) {
+                    $mimeType = @mime_content_type($localPath) ?: 'image/png';
+                    $imageBase64 = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($localPath));
+                }
+            }
+
+            // If not resolved locally, fetch via stream context to bypass self-request SSL verification blocks
+            if (empty($imageBase64)) {
+                try {
+                    $ctx = stream_context_create([
+                        "ssl" => [
+                            "verify_peer" => false,
+                            "verify_peer_name" => false,
+                        ],
+                    ]);
+                    $imgData = @file_get_contents($rawPath, false, $ctx);
+                    if ($imgData !== false) {
+                        $imageBase64 = 'data:image/png;base64,' . base64_encode($imgData);
+                    } else {
+                        $imageBase64 = $rawPath;
+                    }
+                } catch (\Throwable $e) {
+                    $imageBase64 = $rawPath;
+                }
+            }
+        } else {
+            // R2 path — compress and embed as base64 via ImageCompressionService
+            $imageBase64 = app(ImageCompressionService::class)->compressForPdf($rawPath, $maxWidth);
+        }
+
+        return $imageBase64;
     }
 
     /**
