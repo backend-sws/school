@@ -135,8 +135,8 @@ class StudentBulkImport implements ToModel, WithHeadingRow, WithValidation, With
 
         return [
             'name'         => 'required|string|max:200',
-            'email'        => 'required_without:mobile|nullable|email',
-            'mobile'       => 'required_without:email|nullable|string|min:10|max:15',
+            'email'        => 'required_without:*.mobile|nullable|email',
+            'mobile'       => 'required_without:*.email|nullable|string|min:10|max:15',
             'class'        => "nullable|string|in:{$validClasses}",
             'stream_code'  => 'nullable|string|max:30',
             'gender'       => 'nullable|string|in:Male,Female,Other',
