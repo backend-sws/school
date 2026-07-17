@@ -45,6 +45,10 @@ if(count($userIds) > 0) {
         $ur = DB::table('user_roles')->whereIn('user_id', $userIds)->delete();
         echo "Deleted $ur user role assignments.\n";
 
+        // Delete admission applications if any
+        $aa = DB::table('admission_applications')->whereIn('user_id', $userIds)->delete();
+        echo "Deleted $aa admission applications.\n";
+
         // Delete the users
         $u = User::whereIn('id', $userIds)->delete();
         echo "Deleted $u users.\n";
