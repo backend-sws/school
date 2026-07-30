@@ -91,6 +91,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
                 $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+                $statusCode = (int) ($statusCode ?: 500);
 
                 // Set status code for specific exceptions if not default
                 if ($e instanceof \Illuminate\Auth\AuthenticationException) {

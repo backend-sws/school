@@ -260,7 +260,7 @@ bulkPrint.post = (args: { exam: number | { id: number } } | [exam: number | { id
     bulkPrint.form = bulkPrintForm
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printSummary
- * @see app/Http/Controllers/Examination/ExamResultController.php:112
+ * @see app/Http/Controllers/Examination/ExamResultController.php:143
  * @route '/examination/exams/{exam}/results/print-summary'
  */
 export const printSummary = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -275,7 +275,7 @@ printSummary.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printSummary
- * @see app/Http/Controllers/Examination/ExamResultController.php:112
+ * @see app/Http/Controllers/Examination/ExamResultController.php:143
  * @route '/examination/exams/{exam}/results/print-summary'
  */
 printSummary.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -308,7 +308,7 @@ printSummary.url = (args: { exam: number | { id: number } } | [exam: number | { 
 
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printSummary
- * @see app/Http/Controllers/Examination/ExamResultController.php:112
+ * @see app/Http/Controllers/Examination/ExamResultController.php:143
  * @route '/examination/exams/{exam}/results/print-summary'
  */
 printSummary.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -318,7 +318,7 @@ printSummary.post = (args: { exam: number | { id: number } } | [exam: number | {
 
     /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printSummary
- * @see app/Http/Controllers/Examination/ExamResultController.php:112
+ * @see app/Http/Controllers/Examination/ExamResultController.php:143
  * @route '/examination/exams/{exam}/results/print-summary'
  */
     const printSummaryForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -328,7 +328,7 @@ printSummary.post = (args: { exam: number | { id: number } } | [exam: number | {
 
             /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printSummary
- * @see app/Http/Controllers/Examination/ExamResultController.php:112
+ * @see app/Http/Controllers/Examination/ExamResultController.php:143
  * @route '/examination/exams/{exam}/results/print-summary'
  */
         printSummaryForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -339,7 +339,7 @@ printSummary.post = (args: { exam: number | { id: number } } | [exam: number | {
     printSummary.form = printSummaryForm
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printBroadsheet
- * @see app/Http/Controllers/Examination/ExamResultController.php:154
+ * @see app/Http/Controllers/Examination/ExamResultController.php:185
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
 export const printBroadsheet = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -354,7 +354,7 @@ printBroadsheet.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printBroadsheet
- * @see app/Http/Controllers/Examination/ExamResultController.php:154
+ * @see app/Http/Controllers/Examination/ExamResultController.php:185
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
 printBroadsheet.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -387,7 +387,7 @@ printBroadsheet.url = (args: { exam: number | { id: number } } | [exam: number |
 
 /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printBroadsheet
- * @see app/Http/Controllers/Examination/ExamResultController.php:154
+ * @see app/Http/Controllers/Examination/ExamResultController.php:185
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
 printBroadsheet.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -397,7 +397,7 @@ printBroadsheet.post = (args: { exam: number | { id: number } } | [exam: number 
 
     /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printBroadsheet
- * @see app/Http/Controllers/Examination/ExamResultController.php:154
+ * @see app/Http/Controllers/Examination/ExamResultController.php:185
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
     const printBroadsheetForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -407,7 +407,7 @@ printBroadsheet.post = (args: { exam: number | { id: number } } | [exam: number 
 
             /**
 * @see \App\Http\Controllers\Examination\ExamResultController::printBroadsheet
- * @see app/Http/Controllers/Examination/ExamResultController.php:154
+ * @see app/Http/Controllers/Examination/ExamResultController.php:185
  * @route '/examination/exams/{exam}/results/print-broadsheet'
  */
         printBroadsheetForm.post = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
