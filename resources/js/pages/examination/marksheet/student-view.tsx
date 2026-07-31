@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Head } from "@inertiajs/react";
 import { STUDENT_PORTAL_BREADCRUMBS } from "@/constants/examination/breadcrumbs";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { Button } from "@/components/ui/button";
-import { Download, Award } from "lucide-react";
+import { Printer, Award, FileText } from "lucide-react";
 import { GurukulReportCard } from "@/components/examination/GurukulReportCard";
 
 interface StudentMarksheetViewProps {
@@ -14,6 +15,7 @@ interface StudentMarksheetViewProps {
 }
 
 export default function StudentMarksheetView({ marksheet, exam, student, reportCardInstitution, institution }: StudentMarksheetViewProps) {
+  const [reportType, setReportType] = useState<"half_yearly" | "final">("final");
   const studentName = student?.name || student?.user?.name || "RAJVEER KUMAR GUPTA";
   const inst = reportCardInstitution || institution;
 
@@ -33,7 +35,7 @@ export default function StudentMarksheetView({ marksheet, exam, student, reportC
             print-color-adjust: exact !important;
             color-adjust: exact !important;
           }
-          aside, nav, header, button, [data-sidebar], .no-print, .MainPageHeader {
+          aside, nav, header, button, [data-sidebar], .no-print, .MainPageHeader, .no-print-bar {
             display: none !important;
           }
           html, body, #theme-root, #app, main, .space-y-6 {
@@ -75,16 +77,48 @@ export default function StudentMarksheetView({ marksheet, exam, student, reportC
           subtitle={`Annual Evaluation Report Card`}
         />
 
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => window.print()}>
-            <Download className="size-4 mr-2" />
-            Print / Download Report Card
+        {/* Report Card Type Selector & Action Bar */}
+        <div className="no-print-bar flex flex-wrap items-center justify-between gap-4 bg-card p-3 rounded-xl border shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+              <FileText className="size-4" /> Report Card Format:
+            </span>
+            <div className="inline-flex items-center p-1 rounded-lg bg-muted border">
+              <button
+                type="button"
+                onClick={() => setReportType("half_yearly")}
+                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  reportType === "half_yearly"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                }`}
+              >
+                Half Yearly Evaluation
+              </button>
+              <button
+                type="button"
+                onClick={() => setReportType("final")}
+                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  reportType === "final"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                }`}
+              >
+                Annual / Final Evaluation
+              </button>
+            </div>
+          </div>
+
+          <Button variant="default" onClick={() => window.print()} className="h-9 px-4 font-semibold shadow-sm">
+            <Printer className="size-4 mr-2" />
+            Print {reportType === "half_yearly" ? "Half Yearly" : "Annual"} Report Card
           </Button>
         </div>
 
         <div className="printable-marksheet-wrapper flex justify-center w-full">
           <div className="max-w-5xl w-full mx-auto">
             <GurukulReportCard
+              reportType={reportType}
               institution={inst}
               student={student}
               exam={exam}

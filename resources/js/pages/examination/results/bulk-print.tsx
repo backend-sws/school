@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GurukulReportCard } from "@/components/examination/GurukulReportCard";
 
 interface BulkPrintProps {
@@ -8,11 +8,22 @@ interface BulkPrintProps {
     marksheet: any;
     student: any;
     institution?: any;
+    reportCardInstitution?: any;
   }[];
 }
 
 export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
+  const [reportType, setReportType] = useState<"half_yearly" | "final">("final");
+
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const rType = urlParams.get("report_type") || urlParams.get("type");
+      if (rType === "half_yearly" || rType === "half") {
+        setReportType("half_yearly");
+      }
+    }
+
     const timer = setTimeout(() => {
       window.print();
     }, 600);
@@ -21,7 +32,7 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
 
   return (
     <>
-      <Head title={`Bulk Print: ${exam.name}`} />
+      <Head title={`Bulk Print (${reportType === "half_yearly" ? "Half Yearly" : "Annual"}): ${exam.name}`} />
       
       <style dangerouslySetInnerHTML={{__html: `
         @page {
@@ -51,8 +62,9 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
 
       <div className="bg-white min-h-screen text-black print:bg-transparent p-4">
         {marksheets.map((item, index) => (
-          <div key={item.student.id || index} className="page-break max-w-5xl mx-auto mb-10 print:mb-0">
+          <div key={item.student?.id || index} className="page-break max-w-5xl mx-auto mb-10 print:mb-0">
             <GurukulReportCard
+              reportType={reportType}
               institution={item.reportCardInstitution || item.institution}
               student={item.student}
               exam={exam}
