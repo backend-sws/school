@@ -1,5 +1,27 @@
 import React from "react";
 
+export interface GurukulSubject {
+  subject_name: string;
+  full_marks: number;
+  pass_marks: number;
+  is_absent: boolean;
+  marks_obtained?: number;
+  grade?: string;
+  is_pass: boolean;
+  fa1?: number;
+  fa2?: number;
+  sa1?: number;
+  term1_total?: number;
+  grade1?: string;
+  fa3?: number;
+  fa4?: number;
+  sa2?: number;
+  term2_total?: number;
+  grade2?: string;
+  final_marks?: number;
+  final_grade?: string;
+}
+
 export interface GurukulReportCardProps {
   institution?: {
     name?: string;
@@ -30,20 +52,18 @@ export interface GurukulReportCardProps {
     term?: { name?: string };
   };
   marksheet: {
-    subjects: Array<{
-      subject_name: string;
-      full_marks: number;
-      pass_marks: number;
-      is_absent: boolean;
-      marks_obtained?: number;
-      grade?: string;
-      is_pass: boolean;
-    }>;
+    subjects: GurukulSubject[];
     result_status: string;
     total_full_marks: number;
     total_obtained: number;
     overall_percentage: number;
     overall_grade: string;
+    rank?: number | string;
+    total_working_days?: number | string;
+    total_attendance?: number | string;
+    teacher_remarks?: string;
+    drawing_grade?: string;
+    cleanliness_grade?: string;
   };
 }
 
@@ -74,9 +94,9 @@ export function GurukulReportCard({
       : "SUJANPUR,PO: BADIHAN SHANKARPURI, DEHRI ON SONE, ROHTAS, PIN: 821308";
   const schoolTrust =
     inst.trust || "(Managed By Gurukul Managing Committee, Trust)";
-  const contactNo = inst.contact || "6205401993";
-  const website = inst.website || "gurukuldehri.com";
-  const email = inst.email || "gitdehri@gmail.com";
+  const contactNo = inst.contact || "";
+  const website = "gurukul.ojasvidya.com";
+  const email = inst.email || "";
   const logoUrl = inst.logo_url || "/images/gurukul-logo.png";
 
   const studentName = stud.name || "RAJVEER KUMAR GUPTA";
@@ -91,60 +111,76 @@ export function GurukulReportCard({
 
   const sessionName = ex.session?.name || "2025-26";
 
-  // Calculate subjects formatted for Term I (700) & Term II (700)
+  const getCBSEGrade = (pct: number) => {
+    if (pct >= 90) return "A1";
+    if (pct >= 80) return "A2";
+    if (pct >= 70) return "B1";
+    if (pct >= 60) return "B2";
+    if (pct >= 50) return "C1";
+    if (pct >= 40) return "C2";
+    if (pct >= 33) return "D";
+    return "E";
+  };
+
+  // Use backend data directly. If dummy fallback is needed, provide realistic dummy values.
   const subjectsList = Array.isArray(ms.subjects) ? ms.subjects : [];
   const formattedSubjects = (subjectsList.length > 0 ? subjectsList : [
-    { subject_name: "English", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 91, grade: "A1", is_pass: true },
-    { subject_name: "Hindi", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 95, grade: "A1", is_pass: true },
-    { subject_name: "Sanskrit", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 94, grade: "A1", is_pass: true },
-    { subject_name: "Science", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 87, grade: "A2", is_pass: true },
-    { subject_name: "Social Science", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 90, grade: "A2", is_pass: true },
-    { subject_name: "Mathematics", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 90, grade: "A2", is_pass: true },
-    { subject_name: "Computer/G.K", full_marks: 100, pass_marks: 33, is_absent: false, marks_obtained: 96, grade: "A1", is_pass: true },
+    { subject_name: "English", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 9, fa2: 9, sa1: 30, fa3: 9, fa4: 8, sa2: 26, grade: "A1", is_pass: true },
+    { subject_name: "Hindi", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 10, fa2: 9, sa1: 31, fa3: 9, fa4: 9, sa2: 27, grade: "A1", is_pass: true },
+    { subject_name: "Sanskrit", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 9, fa2: 10, sa1: 30, fa3: 9, fa4: 9, sa2: 27, grade: "A1", is_pass: true },
+    { subject_name: "Science", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 8, fa2: 8, sa1: 28, fa3: 9, fa4: 8, sa2: 26, grade: "A2", is_pass: true },
+    { subject_name: "Social Science", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 9, fa2: 8, sa1: 29, fa3: 8, fa4: 9, sa2: 27, grade: "A2", is_pass: true },
+    { subject_name: "Mathematics", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 9, fa2: 9, sa1: 28, fa3: 9, fa4: 8, sa2: 27, grade: "A2", is_pass: true },
+    { subject_name: "Computer/G.K", full_marks: 100, pass_marks: 33, is_absent: false, fa1: 10, fa2: 9, sa1: 32, fa3: 9, fa4: 10, sa2: 26, grade: "A1", is_pass: true },
   ]).map((sub) => {
-    const obtained = sub.is_absent ? 0 : sub.marks_obtained ?? 0;
-    const full = sub.full_marks || 100;
+    // Retrieve actual values from backend response (falling back to 0 if not provided)
+    const fa1 = sub.is_absent ? 0 : (sub.fa1 ?? 0);
+    const fa2 = sub.is_absent ? 0 : (sub.fa2 ?? 0);
+    const sa1 = sub.is_absent ? 0 : (sub.sa1 ?? 0);
+    const term1Total = sub.is_absent ? 0 : (sub.term1_total ?? (fa1 + fa2 + sa1));
 
-    // Estimate split for FA-I, FA-II, SA-I (Term 1) and FA-III, FA-IV, SA-II (Term 2)
-    const ratio = full > 0 ? obtained / full : 0;
-    const term1Total = Math.round(obtained * 0.49);
-    const term2Total = Math.round(obtained * 0.51);
+    const fa3 = sub.is_absent ? 0 : (sub.fa3 ?? 0);
+    const fa4 = sub.is_absent ? 0 : (sub.fa4 ?? 0);
+    const sa2 = sub.is_absent ? 0 : (sub.sa2 ?? 0);
+    const term2Total = sub.is_absent ? 0 : (sub.term2_total ?? (fa3 + fa4 + sa2));
 
-    const fa1 = Math.min(10, Math.round(ratio * 9.5));
-    const fa2 = Math.min(10, Math.round(ratio * 9.0));
-    const sa1 = Math.max(0, term1Total - fa1 - fa2);
-
-    const fa3 = Math.min(10, Math.round(ratio * 9.8));
-    const fa4 = Math.min(10, Math.round(ratio * 9.5));
-    const sa2 = Math.max(0, term2Total - fa3 - fa4);
-
-    const finalMarks = obtained * 2; // out of 200 per subject
-    const grade = sub.grade || (ratio >= 0.9 ? "A1" : ratio >= 0.8 ? "A2" : ratio >= 0.7 ? "B1" : ratio >= 0.6 ? "B2" : "C1");
+    const finalMarks = sub.final_marks ?? (term1Total + term2Total);
+    
+    // Use grades provided by backend dynamically or compute from percentage
+    const grade1 = sub.grade1 || (sub.grade ? sub.grade : getCBSEGrade(term1Total));
+    const grade2 = sub.grade2 || (sub.grade ? sub.grade : getCBSEGrade(term2Total));
+    const finalGrade = sub.final_grade || (sub.grade ? sub.grade : getCBSEGrade((finalMarks / 200) * 100));
 
     return {
       name: sub.subject_name,
+      fullMarks: sub.full_marks || 100,
       fa1,
       fa2,
       sa1,
       term1Total,
-      grade1: grade,
+      grade1,
       fa3,
       fa4,
       sa2,
       term2Total,
-      grade2: grade,
+      grade2,
       finalMarks,
-      finalGrade: grade,
+      finalGrade,
     };
   });
 
   const totalTerm1 = formattedSubjects.reduce((acc, curr) => acc + curr.term1Total, 0);
   const totalTerm2 = formattedSubjects.reduce((acc, curr) => acc + curr.term2Total, 0);
-  const finalTotalObtained = marksheet.total_obtained ? marksheet.total_obtained * 2 : totalTerm1 + totalTerm2;
-  const finalTotalFull = marksheet.total_full_marks ? marksheet.total_full_marks * 2 : 1400;
+  const finalTotalObtained = formattedSubjects.reduce((acc, curr) => acc + curr.finalMarks, 0);
+  const finalTotalFull = formattedSubjects.reduce((acc, curr) => acc + (curr.fullMarks ? curr.fullMarks * 2 : 200), 0);
+  const overallPercentage = finalTotalFull > 0 ? (finalTotalObtained / finalTotalFull) * 100 : (ms.overall_percentage || 0);
+  const overallGrade = ms.overall_grade || getCBSEGrade(overallPercentage);
+  const rankDisplay = ms.rank !== undefined && ms.rank !== null ? String(ms.rank) : "—";
+  const workingDaysDisplay = ms.total_working_days !== undefined && ms.total_working_days !== null ? String(ms.total_working_days) : "—";
+  const attendanceDisplay = ms.total_attendance !== undefined && ms.total_attendance !== null ? String(ms.total_attendance) : "—";
 
   return (
-    <div className="w-full bg-white text-black p-4 md:p-6 rounded-none border border-black font-serif shadow-sm printable-marksheet text-xs select-none">
+    <div className="w-full bg-white dark:bg-white text-black dark:text-black p-4 md:p-6 rounded-none border border-black dark:border-black font-serif shadow-sm printable-marksheet text-xs select-none [&_th]:text-black [&_th]:dark:text-black [&_td]:text-black [&_td]:dark:text-black [&_div]:text-black [&_div]:dark:text-black [&_span]:text-black [&_span]:dark:text-black [&_p]:text-black [&_p]:dark:text-black [&_table]:bg-white [&_table]:dark:bg-white">
       {/* Top Red Header */}
       <div className="flex justify-between items-baseline font-bold text-xs mb-1" style={{ color: "#D32F2F" }}>
         <div className="font-extrabold">School Code : {schoolCode}</div>
@@ -193,7 +229,7 @@ export function GurukulReportCard({
 
       {/* Student Details Grid */}
       <div className="border border-black p-2 mb-2 bg-white">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 font-bold text-xs">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-1 font-bold text-xs">
           <div className="space-y-1">
             <div className="flex">
               <span className="w-36">STUDENT NAME</span>
@@ -251,10 +287,10 @@ export function GurukulReportCard({
                 <div className="text-[10px] font-normal">Subject Name</div>
               </th>
               <th className="border border-black p-1" colSpan={5}>
-                Term I (700 Marks)
+                Term I ({formattedSubjects.length * 100} Marks)
               </th>
               <th className="border border-black p-1" colSpan={5}>
-                Term II (700 Marks)
+                Term II ({formattedSubjects.length * 100} Marks)
               </th>
               <th className="border border-black p-1" colSpan={2}>
                 Final Marks & Grade
@@ -311,7 +347,7 @@ export function GurukulReportCard({
               <td className="border border-black p-1"></td>
 
               <td className="border border-black p-1 text-center">{finalTotalObtained}</td>
-              <td className="border border-black p-1 text-center">{ms.overall_grade || "A1"}</td>
+              <td className="border border-black p-1 text-center">{overallGrade}</td>
             </tr>
           </tbody>
         </table>
@@ -336,7 +372,7 @@ export function GurukulReportCard({
             OVERALL PERCENTAGE
           </div>
           <div className="w-1/2 p-2 flex items-center justify-center bg-white border-l border-black text-sm font-extrabold">
-            {ms.overall_percentage?.toFixed(2) || "91.57"} %
+            {overallPercentage.toFixed(2)} %
           </div>
         </div>
 
@@ -346,7 +382,7 @@ export function GurukulReportCard({
             OVERALL GRADE
           </div>
           <div className="w-1/2 p-2 flex items-center justify-center bg-white border-l border-black text-lg font-black">
-            {ms.overall_grade || "A1"}
+            {overallGrade}
           </div>
         </div>
       </div>
@@ -358,7 +394,7 @@ export function GurukulReportCard({
             RANK IN CLASS
           </div>
           <div className="w-1/2 p-2 flex items-center justify-center bg-white border-l border-black text-sm font-extrabold">
-            8
+            {rankDisplay}
           </div>
         </div>
 
@@ -367,7 +403,7 @@ export function GurukulReportCard({
             TOTAL WORKING DAYS
           </div>
           <div className="w-1/2 p-2 flex items-center justify-center bg-white border-l border-black text-sm font-extrabold">
-            243
+            {workingDaysDisplay}
           </div>
         </div>
 
@@ -376,7 +412,7 @@ export function GurukulReportCard({
             TOTAL ATTENDANCE
           </div>
           <div className="w-1/2 p-2 flex items-center justify-center bg-white border-l border-black text-sm font-extrabold">
-            240
+            {attendanceDisplay}
           </div>
         </div>
       </div>
@@ -388,7 +424,7 @@ export function GurukulReportCard({
             CLASS TEACHER REMARKS:
           </div>
           <div className="w-1/2 p-1.5 flex items-center bg-white border-l border-black font-semibold text-[11px]">
-            Outstanding Performance
+            {ms.teacher_remarks || "Outstanding Performance"}
           </div>
         </div>
 
@@ -397,7 +433,7 @@ export function GurukulReportCard({
             DRAWING
           </div>
           <div className="w-1/2 p-1.5 flex items-center justify-center bg-white border-l border-black font-extrabold text-sm">
-            A1
+            {ms.drawing_grade || "A1"}
           </div>
         </div>
 
@@ -406,7 +442,7 @@ export function GurukulReportCard({
             CLEANLINESS
           </div>
           <div className="w-1/2 p-1.5 flex items-center justify-center bg-white border-l border-black font-semibold text-[11px]">
-            Very Neat & Clean
+            {ms.cleanliness_grade || "Very Neat & Clean"}
           </div>
         </div>
       </div>

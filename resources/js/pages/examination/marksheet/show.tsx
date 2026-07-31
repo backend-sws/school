@@ -23,7 +23,16 @@ export default function MarksheetShow({ marksheet, exam, student, reportCardInst
       
       {/* Print Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
+        @page {
+          size: A4 portrait;
+          margin: 4mm 6mm;
+        }
         @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
           aside, nav, header, button, [data-sidebar], .no-print, .MainPageHeader {
             display: none !important;
           }
@@ -41,6 +50,16 @@ export default function MarksheetShow({ marksheet, exam, student, reportCardInst
             width: 100% !important;
             padding: 0 !important;
             margin: 0 !important;
+          }
+          .printable-marksheet {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 10px !important;
+            margin: 0 auto !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}} />

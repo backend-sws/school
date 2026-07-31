@@ -53,7 +53,7 @@ class MarksheetController extends Controller
                 'address' => ($institution && $institution->address !== 'Demo Address') ? $institution->address : 'SUJANPUR,PO: BADIHAN SHANKARPURI, DEHRI ON SONE, ROHTAS, PIN: 821308',
                 'trust' => '(Managed By Gurukul Managing Committee, Trust)',
                 'contact' => '6205401993',
-                'website' => 'gurukuldehri.com',
+                'website' => 'gurukul.ojasvidya.com',
                 'email' => 'gitdehri@gmail.com',
                 'logo_url' => '/images/gurukul-logo.png',
             ]
@@ -101,7 +101,7 @@ class MarksheetController extends Controller
                 'address' => ($institution && $institution->address !== 'Demo Address') ? $institution->address : 'SUJANPUR,PO: BADIHAN SHANKARPURI, DEHRI ON SONE, ROHTAS, PIN: 821308',
                 'trust' => '(Managed By Gurukul Managing Committee, Trust)',
                 'contact' => '6205401993',
-                'website' => 'gurukuldehri.com',
+                'website' => 'gurukul.ojasvidya.com',
                 'email' => 'gitdehri@gmail.com',
                 'logo_url' => '/images/gurukul-logo.png',
             ]

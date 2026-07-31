@@ -103,7 +103,7 @@ show.head = (args: { schedule: number | { id: number } } | [schedule: number | {
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::save
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 export const save = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -118,7 +118,7 @@ save.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::save
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 save.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -151,7 +151,7 @@ save.url = (args: { schedule: number | { id: number } } | [schedule: number | { 
 
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::save
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 save.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -161,7 +161,7 @@ save.post = (args: { schedule: number | { id: number } } | [schedule: number | {
 
     /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::save
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
     const saveForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -171,7 +171,7 @@ save.post = (args: { schedule: number | { id: number } } | [schedule: number | {
 
             /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::save
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
         saveForm.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

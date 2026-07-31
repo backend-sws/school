@@ -18,6 +18,12 @@ interface MarksEntryGridProps {
     admission_no: string;
     name: string;
     marks_obtained?: number | string;
+    fa1?: number | string;
+    fa2?: number | string;
+    sa1?: number | string;
+    fa3?: number | string;
+    fa4?: number | string;
+    sa2?: number | string;
     is_absent: boolean;
     remarks?: string;
   })[];
@@ -29,6 +35,12 @@ export default function MarksEntryGrid({ schedule, gridData }: MarksEntryGridPro
       student_profile_id: d.student_profile_id,
       user_id: d.user_id,
       marks_obtained: d.marks_obtained,
+      fa1: d.fa1,
+      fa2: d.fa2,
+      sa1: d.sa1,
+      fa3: d.fa3,
+      fa4: d.fa4,
+      sa2: d.sa2,
       is_absent: d.is_absent,
       remarks: d.remarks ?? "",
     }))
@@ -76,31 +88,38 @@ export default function MarksEntryGrid({ schedule, gridData }: MarksEntryGridPro
                 <Button type="submit" disabled={processing}>Save Marks</Button>
               </div>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Admission No</TableHead>
-                    <TableHead>Student Name</TableHead>
-                    <TableHead className="w-32">Absent?</TableHead>
-                    <TableHead className="w-32">Marks Obtained</TableHead>
-                    <TableHead>Remarks</TableHead>
-                  </TableRow>
-                </TableHeader>
+            <CardContent className="p-4">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-2 py-2 text-xs font-semibold whitespace-nowrap">Admission No</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold whitespace-nowrap">Student Name</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-12">Absent?</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">FA 1</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">FA 2</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">SA 1</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">FA 3</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">FA 4</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-14">SA 2</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold text-center w-16">Total</TableHead>
+                      <TableHead className="px-2 py-2 text-xs font-semibold">Remarks</TableHead>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {gridData.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                         No students enrolled in this class.
                       </TableCell>
                     </TableRow>
                   ) : (
                     gridData.map((student, index) => (
                       <TableRow key={student.student_profile_id}>
-                        <TableCell className="font-medium">{student.admission_no}</TableCell>
-                        <TableCell>{student.name}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
+                        <TableCell className="px-2 py-1.5 text-xs font-medium whitespace-nowrap">{student.admission_no}</TableCell>
+                        <TableCell className="px-2 py-1.5 text-xs whitespace-nowrap">{student.name}</TableCell>
+                        <TableCell className="px-2 py-1.5 text-center">
+                          <div className="flex items-center justify-center">
                             <Checkbox 
                               id={`absent-${index}`} 
                               checked={data.marks[index].is_absent}
@@ -108,23 +127,97 @@ export default function MarksEntryGrid({ schedule, gridData }: MarksEntryGridPro
                             />
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].fa1 ?? ""}
+                            onChange={(e) => updateMark(index, 'fa1', e.target.value)}
+                            placeholder="FA1"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].fa2 ?? ""}
+                            onChange={(e) => updateMark(index, 'fa2', e.target.value)}
+                            placeholder="FA2"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].sa1 ?? ""}
+                            onChange={(e) => updateMark(index, 'sa1', e.target.value)}
+                            placeholder="SA1"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].fa3 ?? ""}
+                            onChange={(e) => updateMark(index, 'fa3', e.target.value)}
+                            placeholder="FA3"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].fa4 ?? ""}
+                            onChange={(e) => updateMark(index, 'fa4', e.target.value)}
+                            placeholder="FA4"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            disabled={data.marks[index].is_absent}
+                            value={data.marks[index].sa2 ?? ""}
+                            onChange={(e) => updateMark(index, 'sa2', e.target.value)}
+                            placeholder="SA2"
+                            className="w-14 h-8 text-xs px-2 text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </TableCell>
+                        <TableCell className="px-2 py-1.5">
                           <Input
                             type="number"
                             min="0"
                             max={schedule.full_marks}
                             step="0.01"
                             disabled={data.marks[index].is_absent}
-                            value={data.marks[index].marks_obtained}
+                            value={data.marks[index].marks_obtained ?? ""}
                             onChange={(e) => updateMark(index, 'marks_obtained', e.target.value)}
-                            placeholder="Score"
+                            placeholder="Total"
+                            className="w-16 h-8 text-xs px-2 text-center font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2 py-1.5">
                           <Input
                             value={data.marks[index].remarks}
                             onChange={(e) => updateMark(index, 'remarks', e.target.value)}
-                            placeholder="Optional remarks..."
+                            placeholder="Remarks..."
+                            className="h-8 text-xs px-2 w-32 md:w-40"
                           />
                         </TableCell>
                       </TableRow>
@@ -132,6 +225,7 @@ export default function MarksEntryGrid({ schedule, gridData }: MarksEntryGridPro
                   )}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
           </Card>
         </form>

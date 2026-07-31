@@ -103,7 +103,7 @@ showGrid.head = (args: { schedule: number | { id: number } } | [schedule: number
     showGrid.form = showGridForm
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::saveBatch
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 export const saveBatch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -118,7 +118,7 @@ saveBatch.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::saveBatch
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 saveBatch.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -151,7 +151,7 @@ saveBatch.url = (args: { schedule: number | { id: number } } | [schedule: number
 
 /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::saveBatch
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
 saveBatch.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -161,7 +161,7 @@ saveBatch.post = (args: { schedule: number | { id: number } } | [schedule: numbe
 
     /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::saveBatch
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
     const saveBatchForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -171,7 +171,7 @@ saveBatch.post = (args: { schedule: number | { id: number } } | [schedule: numbe
 
             /**
 * @see \App\Http\Controllers\Examination\MarksEntryController::saveBatch
- * @see app/Http/Controllers/Examination/MarksEntryController.php:55
+ * @see app/Http/Controllers/Examination/MarksEntryController.php:61
  * @route '/examination/schedules/{schedule}/marks'
  */
         saveBatchForm.post = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

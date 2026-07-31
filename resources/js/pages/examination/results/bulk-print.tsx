@@ -24,11 +24,28 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
       <Head title={`Bulk Print: ${exam.name}`} />
       
       <style dangerouslySetInnerHTML={{__html: `
+        @page {
+          size: A4 portrait;
+          margin: 4mm 6mm;
+        }
         @media print {
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
-          .page-break { page-break-after: always; break-after: page; }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          body { background: white !important; }
+          .page-break { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; }
           .page-break:last-child { page-break-after: auto; break-after: auto; }
           #theme-root > div:last-child { display: none !important; }
+          .printable-marksheet {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 10px !important;
+            margin: 0 auto !important;
+          }
         }
       `}} />
 
