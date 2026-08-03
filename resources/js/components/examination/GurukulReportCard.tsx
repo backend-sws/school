@@ -93,12 +93,12 @@ export function GurukulReportCard({
     (ex.term?.name?.toLowerCase().includes("half") && reportType !== "final" && reportType !== "annual");
 
   const schoolCode = (inst.code && inst.code !== "DEMO_SCH") ? inst.code : "10321110102";
-  const affiliationNo = inst.affiliation_no || "2341473202173014591703";
+  const affiliationNo = inst.affiliation_no || "23414752026325123543";
   const schoolName = (inst.name && inst.name !== "Demo School" && inst.name !== "Demo Organization") ? inst.name : "GURUKUL SCHOOL";
   const schoolAddress =
     (inst.address && inst.address !== "Demo Address")
       ? inst.address
-      : "SUJANPUR,PO: BADIHAN SHANKARPURI, DEHRI ON SONE, ROHTAS, PIN: 821308";
+      : "SUNDARGANJ, BAKNAURA, PO: ROHTAS, BIHAR, PIN:821311";
   const schoolTrust =
     inst.trust || "(Managed By Gurukul Managing Committee, Trust)";
   const contactNo = inst.contact || "";
