@@ -19,6 +19,12 @@ export const GRADING_SCALES_BREADCRUMBS: BreadcrumbItem[] = [
   { title: "Grading Scales", href: "/examination/grading-scales" },
 ];
 
+export const ADMIT_CARDS_BREADCRUMBS: BreadcrumbItem[] = [
+  ...EXAM_BASE_BREADCRUMBS,
+  { title: "Admit Cards", href: "/examination/admit-cards" },
+];
+
 export const STUDENT_PORTAL_BREADCRUMBS: BreadcrumbItem[] = [
   { title: "Student Portal", href: "#" },
 ];
+

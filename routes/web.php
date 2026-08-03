@@ -546,6 +546,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/exams/{exam}/marksheets/bulk-print', [\App\Http\Controllers\Examination\ExamResultController::class, 'bulkPrint'])->name('marksheets.bulk-print');
                 Route::post('/exams/{exam}/results/print-summary', [\App\Http\Controllers\Examination\ExamResultController::class, 'printSummary'])->name('results.print-summary');
                 Route::post('/exams/{exam}/results/print-broadsheet', [\App\Http\Controllers\Examination\ExamResultController::class, 'printBroadsheet'])->name('results.print-broadsheet');
+
+                // Admit Cards
+                Route::get('/admit-cards', [\App\Http\Controllers\Examination\ExamAdmitCardController::class, 'index'])->name('admit-cards.index');
+                Route::match(['get', 'post'], '/admit-cards/bulk-print', [\App\Http\Controllers\Examination\ExamAdmitCardController::class, 'bulkPrint'])->name('admit-cards.bulk-print');
             });
         });
 
