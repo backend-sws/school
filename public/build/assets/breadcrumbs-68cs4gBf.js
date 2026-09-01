@@ -1,1 +1,0 @@
-const t=[{title:"Examination",href:"#"}],a=[...t,{title:"Exams",href:"/examination/exams"}],e=[...t,{title:"Schedules",href:"/examination/schedules"}],s=[...t,{title:"Grading Scales",href:"/examination/grading-scales"}],i=[...t,{title:"Admit Cards",href:"/examination/admit-cards"}],n=[{title:"Student Portal",href:"#"}];export{i as A,a as E,s as G,n as S,t as a,e as b};
