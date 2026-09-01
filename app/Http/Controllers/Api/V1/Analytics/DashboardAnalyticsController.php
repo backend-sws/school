@@ -4,8 +4,17 @@ namespace App\Http\Controllers\Api\V1\Analytics;
 
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\AdmissionApplication;
+use App\Models\AttendanceRecord;
 use App\Models\CertificateApplication;
+use App\Models\Expense;
 use App\Models\FeePayment;
+use App\Models\LmsClass;
+use App\Models\LmsClassEnrollment;
+use App\Models\MainStream;
+use App\Models\Notice;
+use App\Models\StaffProfile;
+use App\Models\StudentProfile;
+use App\Models\Stream;
 use App\Models\User;
 use App\Support\InstitutionContext;
 use Illuminate\Http\JsonResponse;
@@ -38,60 +47,7 @@ class DashboardAnalyticsController extends BaseController
      * ),
      * @OA\Response(
      * response=200,
-     * description="Successful analytics retrieval",
-     * @OA\JsonContent(
-     * @OA\Property(property="success", type="boolean", example=true),
-     * @OA\Property(
-     * property="data",
-     * type="object",
-     * @OA\Property(
-     * property="widgets",
-     * type="object",
-     * @OA\Property(property="total_students", type="integer", example=2450),
-     * @OA\Property(
-     * property="admission_stats",
-     * type="object",
-     * @OA\Property(property="total", type="integer", example=342),
-     * @OA\Property(property="new_admission", type="integer", example=200),
-     * @OA\Property(property="re_admission", type="integer", example=142)
-     * ),
-     * @OA\Property(property="total_fee_collection", type="number", format="float", example=2450000.50),
-     * @OA\Property(property="pending_tasks", type="integer", example=18)
-     * ),
-     * @OA\Property(
-     * property="admission_breakdown_chart",
-     * type="array",
-     * @OA\Items(
-     * @OA\Property(property="month", type="string", example="Jan"),
-     * @OA\Property(property="new_admissions", type="integer", example=45),
-     * @OA\Property(property="re_admissions", type="integer", example=20),
-     * @OA\Property(property="month_num", type="integer", example=1)
-     * )
-     * ),
-     * @OA\Property(
-     * property="fee_by_category",
-     * type="object",
-     * @OA\Property(property="admission_fees", type="number", example=1500000),
-     * @OA\Property(property="certificate_fees", type="number", example=50000),
-     * @OA\Property(property="general_fees", type="number", example=900000)
-     * ),
-     * @OA\Property(
-     * property="fee_trend_chart",
-     * type="array",
-     * @OA\Items(
-     * @OA\Property(property="month", type="string", example="Feb"),
-     * @OA\Property(property="total", type="number", example=450000),
-     * @OA\Property(property="month_num", type="integer", example=2)
-     * )
-     * ),
-     * @OA\Property(
-     * property="date_range",
-     * type="object",
-     * @OA\Property(property="from", type="string", example="2026-01-01"),
-     * @OA\Property(property="to", type="string", example="2026-02-12")
-     * )
-     * )
-     * )
+     * description="Successful analytics retrieval"
      * ),
      * @OA\Response(response=401, description="Unauthenticated"),
      * @OA\Response(response=500, description="Internal Server Error")
@@ -106,46 +62,192 @@ class DashboardAnalyticsController extends BaseController
         $totalStudents = User::whereHas('roles', function ($q) {
             $q->where('key', 'student');
         })->count();
-        // 1. TOP WIDGETS (With Breakdown)
+
+        // ─── Total Staff ─────────────────────────────────────────────────────
+        $totalStaff = StaffProfile::where('status', 1)->count();
+
+        // ─── Total Active Classes ────────────────────────────────────────────
+        $totalClasses = LmsClass::where('status', 1)->count();
+
+        // ─── Admission Stats ─────────────────────────────────────────────────
+        $admissionTotal = AdmissionApplication::whereBetween('created_at', [$startDate, $endDate])->count();
+        $admissionNew = AdmissionApplication::where('application_type', 'new')->whereBetween('created_at', [$startDate, $endDate])->count();
+        $admissionRe = AdmissionApplication::where('application_type', 're-admission')->whereBetween('created_at', [$startDate, $endDate])->count();
+
+        // ─── Fee Collection Stats ────────────────────────────────────────────
+        $totalFeeCollection = $this->calculateTotalRevenue($startDate, $endDate);
+        $pendingFee = FeePayment::where('payment_status', 'pending')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('total_amount');
+        
+        // Fee paid count & total for rate
+        $paidFeeCount = FeePayment::whereIn('payment_status', ['paid', 'success'])->count();
+        $totalFeeCount = FeePayment::whereIn('payment_status', ['paid', 'success', 'pending'])->count();
+        $feeCollectionRate = $totalFeeCount > 0 ? round(($paidFeeCount / $totalFeeCount) * 100, 1) : 0;
+
+        // ─── Attendance Rate (Last 30 Days) ──────────────────────────────────
+        $attendanceFrom = now()->subDays(30)->toDateString();
+        $totalAttendance = AttendanceRecord::whereBetween('date', [$attendanceFrom, $endDate])->count();
+        $presentAttendance = AttendanceRecord::whereBetween('date', [$attendanceFrom, $endDate])
+            ->where('status', 'present')->count();
+        $attendanceRate = $totalAttendance > 0 ? round(($presentAttendance / $totalAttendance) * 100, 1) : 0;
+
+        // ─── Expenses ────────────────────────────────────────────────────────
+        $totalExpenses = Expense::where('status', 'approved')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+        $netRevenue = $totalFeeCollection - $totalExpenses;
+
+        // ─── Pending Tasks ───────────────────────────────────────────────────
+        $pendingTasks = $this->calculatePendingTasks();
+
+        // 1. TOP WIDGETS
         $stats = [
             'total_students' => $totalStudents,
+            'total_staff' => $totalStaff,
+            'total_classes' => $totalClasses,
             'admission_stats' => [
-                'total' => AdmissionApplication::whereBetween('created_at', [$startDate, $endDate])->count(),
-                'new_admission' => AdmissionApplication::where('application_type', 'new')->whereBetween('created_at', [$startDate, $endDate])->count(),
-                're_admission' => AdmissionApplication::where('application_type', 're-admission')->whereBetween('created_at', [$startDate, $endDate])->count(),
+                'total' => $admissionTotal,
+                'new_admission' => $admissionNew,
+                're_admission' => $admissionRe,
             ],
-            'total_fee_collection' => $this->calculateTotalRevenue($startDate, $endDate),
-            'pending_tasks' => $this->calculatePendingTasks(),
+            'total_fee_collection' => $totalFeeCollection,
+            'pending_fee' => $pendingFee,
+            'fee_collection_rate' => $feeCollectionRate,
+            'attendance_rate' => $attendanceRate,
+            'total_expenses' => $totalExpenses,
+            'net_revenue' => $netRevenue,
+            'pending_tasks' => $pendingTasks,
         ];
 
-        $monthExpr = DB::connection()->getDriverName() === 'pgsql' ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
+        // 2. GENDER DISTRIBUTION
+        $genderDistribution = StudentProfile::select('gender', DB::raw('count(*) as count'))
+            ->whereNotNull('gender')
+            ->where('gender', '!=', '')
+            ->groupBy('gender')
+            ->get()
+            ->map(function ($item) {
+                $label = match (strtolower($item->gender)) {
+                    'male', 'm' => 'Male',
+                    'female', 'f' => 'Female',
+                    default => 'Other',
+                };
+                return ['name' => $label, 'value' => (int) $item->count, 'fill' => match ($label) {
+                    'Male' => 'hsl(221, 83%, 53%)',
+                    'Female' => 'hsl(330, 81%, 60%)',
+                    default => 'hsl(45, 93%, 47%)',
+                }];
+            })
+            ->values();
 
-        // 2. ADMISSION TYPE BREAKDOWN (Monthly Comparison Chart)
-        $admissionBreakdownChart = AdmissionApplication::select(
-            DB::raw("{$monthExpr} as month"),
-            DB::raw("SUM(CASE WHEN application_type = 'new' THEN 1 ELSE 0 END) as new_admissions"),
-            DB::raw("SUM(CASE WHEN application_type = 'readmission' THEN 1 ELSE 0 END) as re_admissions"),
-            DB::raw("extract(month from created_at) as month_num")
-        )
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('month', 'month_num')
-            ->orderBy('month_num')
-            ->get();
+        // 3. FEE COLLECTION BY MODE
+        $feeByMode = FeePayment::select('payment_mode', DB::raw('SUM(total_amount) as total'))
+            ->whereIn('payment_status', ['paid', 'success'])
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->whereNotNull('payment_mode')
+            ->groupBy('payment_mode')
+            ->get()
+            ->map(function ($item) {
+                $label = ucfirst($item->payment_mode ?? 'Other');
+                $colors = [
+                    'Cash' => 'hsl(142, 71%, 45%)',
+                    'Online' => 'hsl(221, 83%, 53%)',
+                    'Cheque' => 'hsl(45, 93%, 47%)',
+                    'Upi' => 'hsl(262, 83%, 58%)',
+                    'Card' => 'hsl(0, 84%, 60%)',
+                ];
+                return [
+                    'name' => $label,
+                    'value' => round((float) $item->total, 2),
+                    'fill' => $colors[$label] ?? 'hsl(200, 18%, 46%)',
+                ];
+            })
+            ->values();
 
-        // 3. FEE COLLECTION BY CATEGORY (For specific breakdown)
+        // 4. FEE COLLECTION BY CATEGORY
         $feeByCategory = [
-            'admission_fees' => AdmissionApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$startDate, $endDate])->sum('amount'),
-            'certificate_fees' => CertificateApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$startDate, $endDate])->sum('amount'),
-            'general_fees' => FeePayment::whereIn('payment_status', ['success', 'paid'])->whereBetween('payment_date', [$startDate, $endDate])->sum('total_amount'),
+            ['name' => 'Admission Fees', 'value' => round((float) AdmissionApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$startDate, $endDate])->sum('amount'), 2), 'fill' => 'hsl(221, 83%, 53%)'],
+            ['name' => 'Certificate Fees', 'value' => round((float) CertificateApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$startDate, $endDate])->sum('amount'), 2), 'fill' => 'hsl(142, 71%, 45%)'],
+            ['name' => 'General Fees', 'value' => round((float) FeePayment::whereIn('payment_status', ['success', 'paid'])->whereBetween('payment_date', [$startDate, $endDate])->sum('total_amount'), 2), 'fill' => 'hsl(45, 93%, 47%)'],
         ];
+        // Filter out zero-value categories
+        $feeByCategory = collect($feeByCategory)->filter(fn($c) => $c['value'] > 0)->values();
+
+        // 5. STUDENTS PER CLASS (Top 12)
+        $studentsPerClass = LmsClassEnrollment::select('lms_class_id', DB::raw('count(*) as student_count'))
+            ->where('status', 'active')
+            ->groupBy('lms_class_id')
+            ->orderByDesc('student_count')
+            ->limit(12)
+            ->get()
+            ->map(function ($item) {
+                $class = LmsClass::withoutGlobalScopes()->find($item->lms_class_id);
+                return [
+                    'name' => $class ? $class->name : "Class #{$item->lms_class_id}",
+                    'students' => (int) $item->student_count,
+                ];
+            })
+            ->values();
+
+        // 6. ADMISSION BY STREAM / MAIN STREAM
+        $admissionByStream = StudentProfile::select('stream_id', DB::raw('count(*) as count'))
+            ->whereNotNull('stream_id')
+            ->groupBy('stream_id')
+            ->get()
+            ->map(function ($item) {
+                $stream = Stream::withoutGlobalScope('institution_scope')->find($item->stream_id);
+                $mainStreamName = null;
+                if ($stream && $stream->main_stream_id) {
+                    $mainStream = MainStream::withoutGlobalScope('institution_scope')->find($stream->main_stream_id);
+                    $mainStreamName = $mainStream?->name;
+                }
+                return [
+                    'stream' => $stream?->name ?? 'Unknown',
+                    'main_stream' => $mainStreamName ?? 'Other',
+                    'count' => (int) $item->count,
+                ];
+            })
+            ->values();
+
+        // Aggregate by main stream for chart
+        $admissionByMainStream = $admissionByStream->groupBy('main_stream')->map(function ($items, $key) {
+            return ['name' => $key, 'students' => $items->sum('count')];
+        })->values();
+
+        // 7. MONTHLY REVENUE VS EXPENSES (Last 6 months)
+        $revenueVsExpenses = $this->getRevenueVsExpenses();
+
+        // 8. ATTENDANCE TREND (Last 7 days)
+        $attendanceTrend = $this->getAttendanceTrend();
+
+        // 9. RECENT NOTICES (Last 5)
+        $recentNotices = Notice::select('id', 'title', 'created_at', 'is_published')
+            ->where('is_published', true)
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get()
+            ->map(function ($notice) {
+                return [
+                    'id' => $notice->id,
+                    'title' => $notice->title,
+                    'time' => \Carbon\Carbon::parse($notice->created_at)->diffForHumans(),
+                ];
+            });
 
         return $this->success([
             'widgets' => $stats,
-            'admission_breakdown_chart' => $admissionBreakdownChart,
+            'gender_distribution' => $genderDistribution,
+            'fee_by_mode' => $feeByMode,
             'fee_by_category' => $feeByCategory,
+            'students_per_class' => $studentsPerClass,
+            'admission_by_stream' => $admissionByStream,
+            'admission_by_main_stream' => $admissionByMainStream,
+            'revenue_vs_expenses' => $revenueVsExpenses,
+            'attendance_trend' => $attendanceTrend,
             'fee_trend_chart' => $this->getAggregatedFeeTrends($startDate, $endDate),
             'recent_activity' => $this->getRecentActivity(),
-            'date_range' => ['from' => $startDate, 'to' => $endDate]
+            'recent_notices' => $recentNotices,
+            'date_range' => ['from' => $startDate, 'to' => $endDate],
         ]);
     }
 
@@ -162,6 +264,60 @@ class DashboardAnalyticsController extends BaseController
     {
         return AdmissionApplication::where('process_status', 'pending')->count() +
             CertificateApplication::where('process_status', 'pending')->count();
+    }
+
+    private function getRevenueVsExpenses()
+    {
+        $months = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthStart = $date->copy()->startOfMonth()->toDateString();
+            $monthEnd = $date->copy()->endOfMonth()->toDateString();
+            $monthLabel = $date->format('M');
+
+            // Revenue from all sources
+            $admissionRev = (float) AdmissionApplication::whereIn('payment_status', ['paid', 'success'])
+                ->whereBetween('updated_at', [$monthStart, $monthEnd])->sum('amount');
+            $certRev = (float) CertificateApplication::whereIn('payment_status', ['paid', 'success'])
+                ->whereBetween('submitted_at', [$monthStart, $monthEnd])->sum('amount');
+            $generalRev = (float) FeePayment::whereIn('payment_status', ['success', 'paid'])
+                ->whereBetween('payment_date', [$monthStart, $monthEnd])->sum('total_amount');
+            $totalRev = $admissionRev + $certRev + $generalRev;
+
+            // Expenses
+            $totalExp = (float) Expense::where('status', 'approved')
+                ->whereBetween('date', [$monthStart, $monthEnd])->sum('amount');
+
+            $months->push([
+                'month' => $monthLabel,
+                'revenue' => round($totalRev, 2),
+                'expenses' => round($totalExp, 2),
+            ]);
+        }
+        return $months;
+    }
+
+    private function getAttendanceTrend()
+    {
+        $trend = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->toDateString();
+            $dayLabel = now()->subDays($i)->format('D');
+
+            $total = AttendanceRecord::whereDate('date', $date)->count();
+            $present = AttendanceRecord::whereDate('date', $date)->where('status', 'present')->count();
+
+            $rate = $total > 0 ? round(($present / $total) * 100, 1) : 0;
+
+            $trend->push([
+                'day' => $dayLabel,
+                'date' => $date,
+                'rate' => $rate,
+                'present' => $present,
+                'total' => $total,
+            ]);
+        }
+        return $trend;
     }
 
     private function getAggregatedFeeTrends($start, $end)
