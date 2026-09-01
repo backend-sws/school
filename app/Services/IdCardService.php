@@ -296,7 +296,7 @@ class IdCardService
                     $this->buildSnapshot($card->user, $card->card_type),
                     $card->template ?? IdCardTemplate::findOrFail($card->template_id),
                 ),
-                'photo_url'     => $card->user->photo_url,
+                'photo_url'     => $card->user->photo_url ?? $card->photo_url,
                 'generated_at'  => now(),
                 'status'        => 'generated',
             ]);
@@ -502,6 +502,19 @@ class IdCardService
                     $mime = mime_content_type($absolute) ?: 'image/jpeg';
                     return 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($absolute));
                 }
+            }
+
+            // Try R2 direct fetch first
+            try {
+                $r2 = app(\App\Services\R2Service::class);
+                $obj = $r2->getObject($path);
+                if ($obj && isset($obj['Body'])) {
+                    $contents = (string) $obj['Body'];
+                    $mime = $obj['ContentType'] ?? 'image/jpeg';
+                    return 'data:' . $mime . ';base64,' . base64_encode($contents);
+                }
+            } catch (\Throwable) {
+                // ignore
             }
 
             try {

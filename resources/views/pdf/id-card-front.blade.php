@@ -34,7 +34,7 @@
             left: 0;
             width: 53.98mm;
             height: 22.3mm;
-            background-color: {{ $template->background_color ?? '#1a237e' }};
+            background-color: {{ $template->color_scheme['primary'] ?? $template->background_color ?? '#1a237e' }};
             color: {{ $template->color_scheme['text'] ?? '#ffffff' }};
             text-align: center;
             padding-top: 3mm;
@@ -49,6 +49,18 @@
             height: 8.5mm;
             object-fit: contain;
             display: inline-block;
+        }
+        .logo-placeholder {
+            width: 8.5mm;
+            height: 8.5mm;
+            background-color: #ffffff;
+            color: {{ $template->color_scheme['primary'] ?? $template->background_color ?? '#1a237e' }};
+            display: inline-block;
+            border-radius: 1.5mm;
+            line-height: 8.5mm;
+            font-size: 6pt;
+            font-weight: 900;
+            text-align: center;
         }
         .institution-name {
             font-size: 5.5pt;
@@ -137,7 +149,7 @@
 
         /* Back Design */
         .back-card {
-            background-color: #ffffff;
+            background-color: {{ $template->color_scheme['bg'] ?? '#f8fafc' }};
         }
         .back-header {
             position: absolute;
@@ -145,7 +157,7 @@
             left: 0;
             width: 53.98mm;
             height: 11mm;
-            background-color: {{ $template->background_color ?? '#1a237e' }};
+            background-color: {{ $template->color_scheme['primary'] ?? $template->background_color ?? '#1a237e' }};
             color: {{ $template->color_scheme['text'] ?? '#ffffff' }};
             text-align: center;
             line-height: 11mm;
@@ -211,13 +223,18 @@
     <div class="card">
         {{-- Header --}}
         <div class="header">
-            @if(!empty($showInstitutionLogo) && !empty($institutionLogo))
+            @if(!empty($showInstitutionLogo))
                 <div class="logo-container">
-                    <img src="{{ $institutionLogo }}" class="logo" alt="Logo">
-                </div>
-            @elseif(!empty($snapshot['institution_logo']))
-                <div class="logo-container">
-                    <img src="{{ $snapshot['institution_logo'] }}" class="logo" alt="Logo">
+                    @if(!empty($institutionLogo))
+                        <img src="{{ $institutionLogo }}" class="logo" alt="Logo">
+                    @elseif(!empty($snapshot['institution_logo']))
+                        <img src="{{ $snapshot['institution_logo'] }}" class="logo" alt="Logo">
+                    @else
+                        @php
+                            $init = strtoupper(substr($snapshot['institution_name'] ?? $institutionName ?? 'I', 0, 1));
+                        @endphp
+                        <div class="logo-placeholder">{{ $init }}</div>
+                    @endif
                 </div>
             @endif
             @if(!empty($showInstitutionName))
@@ -230,9 +247,7 @@
             @if(!empty($photoDataUri))
                 <img src="{{ $photoDataUri }}" class="photo" alt="Photo">
             @else
-                <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width: 70%; height: 70%; margin-top: 15%; display: inline-block;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
+                <div class="no-photo">PHOTO</div>
             @endif
         </div>
 
