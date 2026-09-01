@@ -1,25 +1,20 @@
 import { ChartLineDefault } from "@/components/charts/line-chart";
-import { ChartBarDefault } from "@/components/charts/bar-chart";
 import { ChartDonut } from "@/components/charts/pie-chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, StatCard } from "@/components/ui/card";
-import { type BreadcrumbItem, type SharedData } from "@/types";
+import { type SharedData } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
 import {
   GraduationCap,
   Users,
   IndianRupee,
-  ClipboardList,
   LayoutGrid,
   UserPlus,
   Megaphone,
   TrendingUp,
-  TrendingDown,
   Clock,
   CheckCircle2,
-  Wallet,
   BookOpen,
   BarChart3,
-  PieChart,
   Activity,
   Bell,
   ArrowUpRight,
@@ -70,7 +65,7 @@ export default function Dashboard() {
   const firstName = auth.user?.name?.split(" ")[0] || "Administrator";
 
   // ─── Data Fetching ────────────────────────────────────────────────────────
-  const { data: analytics, isLoading } = useQuery({
+  const { data: analytics } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
       const res = await api.get<{ data: any }>("/dashboard-stats");
@@ -92,65 +87,71 @@ export default function Dashboard() {
 
   const formatCurrency = (n: number) => {
     if (n >= 1_00_00_000) return `₹${(n / 1_00_00_000).toFixed(1)}Cr`;
-    if (n >= 1_00_000) return `₹${(n / 1_00_000).toFixed(1)}L`;
+    if (n >= 1_00_00_000) return `₹${(n / 1_00_000).toFixed(1)}L`;
     if (n >= 1_000) return `₹${(n / 1_000).toFixed(1)}K`;
     return `₹${n.toLocaleString("en-IN")}`;
   };
 
-  // ─── Stats Config ──────────────────────────────────────────────────────────
+  // ─── Stats Config (All with Clickable Routes) ──────────────────────────────
   const stats = [
     {
       title: "Active Students",
       value: widgets != null ? String(widgets.total_students ?? 0) : "—",
-      description: "Across all departments",
+      description: "Manage student registry",
       icon: <Users />,
       trend: "up" as const,
       trendValue: widgets?.total_students > 0 ? `${widgets.total_students}` : undefined,
       iconColor: "bg-blue-500/10 text-blue-500 border-blue-500/10",
+      href: "/students/manage",
     },
     {
       title: "Total Staff",
       value: widgets != null ? String(widgets.total_staff ?? 0) : "—",
-      description: "Active members",
+      description: "View staff directory",
       icon: <Building2 />,
       trend: "neutral" as const,
       iconColor: "bg-purple-500/10 text-purple-500 border-purple-500/10",
+      href: "/settings/staff-directory",
     },
     {
       title: "Total Revenue",
       value: widgets != null ? formatCurrency(Number(widgets.total_fee_collection ?? 0)) : "—",
-      description: "Fee collections",
+      description: "View fee analytics",
       icon: <IndianRupee />,
       trend: "up" as const,
-      trendValue: Number(widgets?.total_fee_collection ?? 0) > 0 ? "Collections" : undefined,
+      trendValue: Number(widgets?.total_fee_collection ?? 0) > 0 ? "Collected" : undefined,
       iconColor: "bg-emerald-500/10 text-emerald-500 border-emerald-500/10",
+      href: "/accounts/fee-hub/analytics",
     },
     {
       title: "Pending Fees",
       value: widgets != null ? formatCurrency(Number(widgets.pending_fee ?? 0)) : "—",
-      description: "Outstanding amount",
+      description: "View dues & overdues",
       icon: <Clock />,
       trend: Number(widgets?.pending_fee ?? 0) > 0 ? "down" as const : "neutral" as const,
       trendValue: Number(widgets?.pending_fee ?? 0) > 0 ? "Pending" : undefined,
       iconColor: "bg-amber-500/10 text-amber-500 border-amber-500/10",
+      href: "/accounts/fee-hub/dues",
     },
     {
       title: "Collection Rate",
       value: widgets != null ? `${widgets.fee_collection_rate ?? 0}%` : "—",
-      description: "Paid vs Total",
+      description: "View payment history",
       icon: <CheckCircle2 />,
       trend: Number(widgets?.fee_collection_rate ?? 0) >= 70 ? "up" as const : "down" as const,
       trendValue: Number(widgets?.fee_collection_rate ?? 0) >= 70 ? "Healthy" : "Low",
       iconColor: "bg-cyan-500/10 text-cyan-500 border-cyan-500/10",
+      href: "/fees/payments",
     },
     {
       title: "Attendance Rate",
       value: widgets != null ? `${widgets.attendance_rate ?? 0}%` : "—",
-      description: "Last 30 days avg",
+      description: "Daily attendance logs",
       icon: <CalendarDays />,
       trend: Number(widgets?.attendance_rate ?? 0) >= 75 ? "up" as const : "down" as const,
       trendValue: Number(widgets?.attendance_rate ?? 0) >= 75 ? "Good" : "Needs attention",
       iconColor: "bg-indigo-500/10 text-indigo-500 border-indigo-500/10",
+      href: "/attendance",
     },
   ];
 
@@ -207,17 +208,19 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 size-60 rounded-full bg-violet-500/10 blur-[80px] pointer-events-none" />
         </section>
 
-        {/* ─── Stats Cards Row (6 cards) ─── */}
+        {/* ─── Stats Cards Row (6 Clickable Cards) ─── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <Each
             of={stats}
             render={(stat, index) => (
-              <StatCard
-                {...stat}
-                delay={index * 0.08}
-                variant="metrics"
-                className="border-sidebar-border/50 bg-card hover:border-primary/30 transition-all shadow-sm group"
-              />
+              <Link key={stat.title} href={stat.href} className="group block focus:outline-none">
+                <StatCard
+                  {...stat}
+                  delay={index * 0.08}
+                  variant="metrics"
+                  className="border-sidebar-border/50 bg-card group-hover:border-primary/50 group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-200 shadow-sm cursor-pointer relative"
+                />
+              </Link>
             )}
           />
         </div>
@@ -229,15 +232,20 @@ export default function Dashboard() {
           <div className="lg:col-span-8 flex flex-col gap-6">
 
             {/* Revenue vs Expenses (Stacked Bar) */}
-            <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden">
+            <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden group/card hover:border-primary/30 transition-all">
               <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sidebar-border/30">
                 <div>
                   <CardTitle className="text-lg font-black tracking-tight">Revenue vs Expenses</CardTitle>
                   <CardDescription>Monthly comparison over last 6 months</CardDescription>
                 </div>
-                <div className="p-2 bg-emerald-500/10 rounded-lg">
-                  <BarChart3 className="size-5 text-emerald-600" />
-                </div>
+                <Link
+                  href="/accounts/expenses"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 transition-colors text-xs font-semibold"
+                >
+                  <BarChart3 className="size-4" />
+                  <span>Expenses Hub</span>
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="h-[300px] w-full p-4">
@@ -276,14 +284,14 @@ export default function Dashboard() {
                 </div>
                 {/* Legend */}
                 <div className="flex items-center justify-center gap-6 pb-4">
-                  <div className="flex items-center gap-1.5">
+                  <Link href="/accounts/fee-hub/analytics" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                     <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                    <span className="text-[11px] font-medium text-muted-foreground">Revenue</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-medium text-muted-foreground hover:text-foreground">Revenue (View Analytics)</span>
+                  </Link>
+                  <Link href="/accounts/expenses" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                     <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                    <span className="text-[11px] font-medium text-muted-foreground">Expenses</span>
-                  </div>
+                    <span className="text-[11px] font-medium text-muted-foreground hover:text-foreground">Expenses (View Records)</span>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -291,18 +299,23 @@ export default function Dashboard() {
             {/* Fee Trend + Attendance Trend Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Fee Collection Trend */}
-              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden flex flex-col">
+              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden flex flex-col group/card hover:border-primary/30 transition-all">
                 <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sidebar-border/30">
                   <div>
                     <CardTitle className="text-sm font-black tracking-tight">Fee Collection Trend</CardTitle>
                     <CardDescription className="text-xs">Monthly fee collection</CardDescription>
                   </div>
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <TrendingUp className="size-4 text-primary" />
-                  </div>
+                  <Link
+                    href="/fees/payments"
+                    className="inline-flex items-center gap-1 p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors text-xs font-semibold"
+                    title="View Payments"
+                  >
+                    <TrendingUp className="size-4" />
+                    <ArrowUpRight className="size-3" />
+                  </Link>
                 </CardHeader>
                 <CardContent className="p-0 flex-1 min-h-[250px]">
-                  <div className="h-full w-full p-4">
+                  <Link href="/fees/payments" className="block h-full w-full p-4 cursor-pointer">
                     <ChartLineDefault
                       chartData={feeTrendChart}
                       xAxisKey="month"
@@ -310,23 +323,28 @@ export default function Dashboard() {
                       title=""
                       subText=""
                     />
-                  </div>
+                  </Link>
                 </CardContent>
               </Card>
 
               {/* Attendance Trend (7 days) */}
-              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden flex flex-col">
+              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden flex flex-col group/card hover:border-primary/30 transition-all">
                 <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sidebar-border/30">
                   <div>
                     <CardTitle className="text-sm font-black tracking-tight">Attendance Trend</CardTitle>
                     <CardDescription className="text-xs">Last 7 days rate</CardDescription>
                   </div>
-                  <div className="p-2 bg-indigo-500/10 rounded-lg">
-                    <Activity className="size-4 text-indigo-500" />
-                  </div>
+                  <Link
+                    href="/attendance"
+                    className="inline-flex items-center gap-1 p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 transition-colors text-xs font-semibold"
+                    title="View Attendance"
+                  >
+                    <Activity className="size-4" />
+                    <ArrowUpRight className="size-3" />
+                  </Link>
                 </CardHeader>
                 <CardContent className="p-0 flex-1 min-h-[250px]">
-                  <div className="h-full w-full p-4">
+                  <Link href="/attendance" className="block h-full w-full p-4 cursor-pointer">
                     {attendanceTrend.length === 0 || attendanceTrend.every((d: any) => d.total === 0) ? (
                       <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2 border-2 border-dashed border-border/30 rounded-xl bg-muted/5">
                         <Activity className="h-8 w-8 opacity-20" />
@@ -362,7 +380,7 @@ export default function Dashboard() {
                         </ResponsiveContainer>
                       </ChartContainer>
                     )}
-                  </div>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
@@ -370,10 +388,20 @@ export default function Dashboard() {
             {/* Students per Class + Admission by Stream Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Students per Class */}
-              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden">
-                <CardHeader className="pb-2 border-b border-sidebar-border/30">
-                  <CardTitle className="text-sm font-black tracking-tight">Students per Class</CardTitle>
-                  <CardDescription className="text-xs">Top classes by enrollment</CardDescription>
+              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden group/card hover:border-primary/30 transition-all">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sidebar-border/30">
+                  <div>
+                    <CardTitle className="text-sm font-black tracking-tight">Students per Class</CardTitle>
+                    <CardDescription className="text-xs">Top classes by enrollment</CardDescription>
+                  </div>
+                  <Link
+                    href="/lms/classes"
+                    className="inline-flex items-center gap-1 p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 transition-colors text-xs font-semibold"
+                    title="View Classes"
+                  >
+                    <BookOpen className="size-4" />
+                    <ArrowUpRight className="size-3" />
+                  </Link>
                 </CardHeader>
                 <CardContent className="p-4">
                   {studentsPerClass.length === 0 ? (
@@ -387,9 +415,9 @@ export default function Dashboard() {
                         const maxStudents = Math.max(...studentsPerClass.map((s: any) => s.students), 1);
                         const percentage = (item.students / maxStudents) * 100;
                         return (
-                          <div key={idx} className="space-y-1">
+                          <Link key={idx} href="/lms/classes" className="block space-y-1 group/item hover:opacity-80 transition-opacity">
                             <div className="flex items-center justify-between">
-                              <span className="text-[11px] font-semibold text-foreground/80 truncate max-w-[70%]">{item.name}</span>
+                              <span className="text-[11px] font-semibold text-foreground/80 group-hover/item:text-primary transition-colors truncate max-w-[70%]">{item.name}</span>
                               <span className="text-[11px] font-black text-foreground">{item.students}</span>
                             </div>
                             <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
@@ -400,7 +428,7 @@ export default function Dashboard() {
                                 className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"
                               />
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -409,10 +437,20 @@ export default function Dashboard() {
               </Card>
 
               {/* Admission by Main Stream */}
-              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden">
-                <CardHeader className="pb-2 border-b border-sidebar-border/30">
-                  <CardTitle className="text-sm font-black tracking-tight">Students by Section</CardTitle>
-                  <CardDescription className="text-xs">Distribution across streams</CardDescription>
+              <Card className="border-sidebar-border/50 bg-card shadow-sm overflow-hidden group/card hover:border-primary/30 transition-all">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sidebar-border/30">
+                  <div>
+                    <CardTitle className="text-sm font-black tracking-tight">Students by Section</CardTitle>
+                    <CardDescription className="text-xs">Distribution across streams</CardDescription>
+                  </div>
+                  <Link
+                    href="/organization/streams"
+                    className="inline-flex items-center gap-1 p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 transition-colors text-xs font-semibold"
+                    title="View Streams"
+                  >
+                    <GraduationCap className="size-4" />
+                    <ArrowUpRight className="size-3" />
+                  </Link>
                 </CardHeader>
                 <CardContent className="p-4">
                   {admissionByMainStream.length === 0 ? (
@@ -427,9 +465,9 @@ export default function Dashboard() {
                         const percentage = (item.students / maxStudents) * 100;
                         const streamColors = ['from-violet-500 to-purple-500', 'from-emerald-500 to-teal-500', 'from-amber-500 to-orange-500', 'from-blue-500 to-cyan-500', 'from-pink-500 to-rose-500'];
                         return (
-                          <div key={idx} className="space-y-1">
+                          <Link key={idx} href="/organization/streams" className="block space-y-1 group/item hover:opacity-80 transition-opacity">
                             <div className="flex items-center justify-between">
-                              <span className="text-[11px] font-semibold text-foreground/80 truncate max-w-[70%]">{item.name}</span>
+                              <span className="text-[11px] font-semibold text-foreground/80 group-hover/item:text-primary transition-colors truncate max-w-[70%]">{item.name}</span>
                               <span className="text-[11px] font-black text-foreground">{item.students}</span>
                             </div>
                             <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
@@ -440,7 +478,7 @@ export default function Dashboard() {
                                 className={cn("h-full rounded-full bg-gradient-to-r", streamColors[idx % streamColors.length])}
                               />
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -453,7 +491,7 @@ export default function Dashboard() {
           {/* ─── Right Sidebar ─── */}
           <div className="lg:col-span-4 flex flex-col gap-6 text-display">
 
-            {/* Quick Actions */}
+            {/* Quick Actions (Command Center) */}
             <section className="space-y-4">
               <div className="flex items-center gap-2 border-b border-sidebar-border/50 pb-2 mb-2 px-1">
                 <LayoutGrid className="size-4 text-primary" />
@@ -477,118 +515,163 @@ export default function Dashboard() {
               </div>
             </section>
 
-            {/* Fee by Category Donut */}
-            <ChartDonut
-              chartData={feeByCategory}
-              title="Fee by Category"
-              description="Revenue breakdown"
-              isCurrency
-              centerLabel="Total"
-              centerValue={widgets ? formatCurrency(Number(widgets.total_fee_collection ?? 0)) : "—"}
-              className="border-sidebar-border/50 shadow-sm"
-            />
+            {/* Fee by Category Donut (Clickable) */}
+            <Link href="/accounts/fee-hub/fee-types" className="block group focus:outline-none">
+              <ChartDonut
+                chartData={feeByCategory}
+                title="Fee by Category"
+                description="Revenue breakdown • Click to manage"
+                isCurrency
+                centerLabel="Total"
+                centerValue={widgets ? formatCurrency(Number(widgets.total_fee_collection ?? 0)) : "—"}
+                className="border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md transition-all cursor-pointer"
+              />
+            </Link>
 
-            {/* Gender Distribution Donut */}
-            <ChartDonut
-              chartData={genderDistribution}
-              title="Gender Distribution"
-              description="Student demographics"
-              centerLabel="Students"
-              centerValue={widgets ? String(widgets.total_students ?? 0) : "—"}
-              className="border-sidebar-border/50 shadow-sm"
-            />
+            {/* Gender Distribution Donut (Clickable) */}
+            <Link href="/students/analytics" className="block group focus:outline-none">
+              <ChartDonut
+                chartData={genderDistribution}
+                title="Gender Distribution"
+                description="Student demographics • Click for details"
+                centerLabel="Students"
+                centerValue={widgets ? String(widgets.total_students ?? 0) : "—"}
+                className="border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md transition-all cursor-pointer"
+              />
+            </Link>
 
-            {/* Fee by Payment Mode */}
-            <ChartDonut
-              chartData={feeByMode}
-              title="Collection by Mode"
-              description="Payment method breakdown"
-              isCurrency
-              className="border-sidebar-border/50 shadow-sm"
-            />
+            {/* Fee by Payment Mode (Clickable) */}
+            <Link href="/fees/payments" className="block group focus:outline-none">
+              <ChartDonut
+                chartData={feeByMode}
+                title="Collection by Mode"
+                description="Payment methods • Click to view log"
+                isCurrency
+                className="border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md transition-all cursor-pointer"
+              />
+            </Link>
 
-            {/* Summary Cards */}
+            {/* Summary Cards (All 4 Clickable) */}
             <div className="grid grid-cols-2 gap-3">
-              <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">New Admissions</p>
-                  <p className="text-2xl font-black tracking-tight">{widgets?.admission_stats?.total ?? 0}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground/80">This session</p>
-                </div>
-              </Card>
-              <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Total Expenses</p>
-                  <p className="text-2xl font-black tracking-tight">{widgets ? formatCurrency(Number(widgets.total_expenses ?? 0)) : "—"}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground/80">Approved</p>
-                </div>
-              </Card>
-              <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Net Revenue</p>
-                  <p className={cn("text-2xl font-black tracking-tight", Number(widgets?.net_revenue ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
-                    {widgets ? formatCurrency(Math.abs(Number(widgets.net_revenue ?? 0))) : "—"}
-                  </p>
-                  <p className="text-[10px] font-medium text-muted-foreground/80">Revenue - Expenses</p>
-                </div>
-              </Card>
-              <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Active Classes</p>
-                  <p className="text-2xl font-black tracking-tight">{widgets?.total_classes ?? 0}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground/80">Current session</p>
-                </div>
-              </Card>
+              <Link href="/admission/applications" className="group focus:outline-none">
+                <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md group-hover:-translate-y-0.5 transition-all cursor-pointer">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">New Admissions</p>
+                      <ArrowUpRight className="size-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                    </div>
+                    <p className="text-2xl font-black tracking-tight">{widgets?.admission_stats?.total ?? 0}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/80">This session</p>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link href="/accounts/expenses" className="group focus:outline-none">
+                <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md group-hover:-translate-y-0.5 transition-all cursor-pointer">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Total Expenses</p>
+                      <ArrowUpRight className="size-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                    </div>
+                    <p className="text-2xl font-black tracking-tight">{widgets ? formatCurrency(Number(widgets.total_expenses ?? 0)) : "—"}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/80">Approved</p>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link href="/accounts/expenses/records" className="group focus:outline-none">
+                <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md group-hover:-translate-y-0.5 transition-all cursor-pointer">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Net Revenue</p>
+                      <ArrowUpRight className="size-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                    </div>
+                    <p className={cn("text-2xl font-black tracking-tight", Number(widgets?.net_revenue ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
+                      {widgets ? formatCurrency(Math.abs(Number(widgets.net_revenue ?? 0))) : "—"}
+                    </p>
+                    <p className="text-[10px] font-medium text-muted-foreground/80">Revenue - Expenses</p>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link href="/lms/classes" className="group focus:outline-none">
+                <Card variant="metrics" className="p-4 border-sidebar-border/50 shadow-sm group-hover:border-primary/50 group-hover:shadow-md group-hover:-translate-y-0.5 transition-all cursor-pointer">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Active Classes</p>
+                      <ArrowUpRight className="size-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                    </div>
+                    <p className="text-2xl font-black tracking-tight">{widgets?.total_classes ?? 0}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/80">Current session</p>
+                  </div>
+                </Card>
+              </Link>
             </div>
 
-            {/* Recent Notices */}
+            {/* Recent Notices (Clickable) */}
             {recentNotices.length > 0 && (
               <section className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-sidebar-border/50 pb-2 mb-2 px-1">
-                  <Bell className="size-4 text-amber-500" />
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                    Recent Notices
-                  </h3>
+                <div className="flex items-center justify-between border-b border-sidebar-border/50 pb-2 mb-2 px-1">
+                  <div className="flex items-center gap-2">
+                    <Bell className="size-4 text-amber-500" />
+                    <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                      Recent Notices
+                    </h3>
+                  </div>
+                  <Link href="/notice-management" className="text-[11px] font-bold text-primary hover:underline flex items-center gap-0.5">
+                    View all <ArrowUpRight className="size-3" />
+                  </Link>
                 </div>
                 <Card className="border-sidebar-border/50 bg-card p-0 shadow-sm overflow-hidden">
                   <div className="flex flex-col divide-y divide-sidebar-border/50">
                     {recentNotices.map((notice: any) => (
-                      <div key={notice.id} className="flex items-center gap-3 p-3.5 hover:bg-sidebar-accent/30 transition-colors cursor-default">
-                        <div className="size-7 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500 shrink-0">
+                      <Link key={notice.id} href="/notice-management" className="flex items-center gap-3 p-3.5 hover:bg-sidebar-accent/30 transition-colors cursor-pointer group/notice">
+                        <div className="size-7 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500 shrink-0 group-hover/notice:scale-105 transition-transform">
                           <Megaphone className="size-3.5" />
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-[12px] font-bold text-foreground truncate">{notice.title}</span>
+                          <span className="text-[12px] font-bold text-foreground group-hover/notice:text-primary transition-colors truncate">{notice.title}</span>
                           <span className="text-[10px] font-medium text-muted-foreground/60">{notice.time}</span>
                         </div>
-                      </div>
+                        <ArrowUpRight className="size-3.5 text-muted-foreground/30 group-hover/notice:text-primary transition-colors" />
+                      </Link>
                     ))}
                   </div>
                 </Card>
               </section>
             )}
 
-            {/* Recent Activity */}
+            {/* Recent Activity (Clickable) */}
             {recentActivity.length > 0 && (
               <section className="space-y-4 flex-1 flex flex-col">
-                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-sidebar-border/50 pb-2 mb-2 px-1">
-                  Recent Operations
-                </h3>
+                <div className="flex items-center justify-between border-b border-sidebar-border/50 pb-2 mb-2 px-1">
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                    Recent Operations
+                  </h3>
+                </div>
                 <Card className="border-sidebar-border/50 bg-card p-0 shadow-sm overflow-hidden flex-1 flex flex-col">
                   <div className="flex flex-col flex-1 divide-y divide-sidebar-border/50">
                     {recentActivity.map((activity: any, i: number) => {
                       const Icon = activity.icon === 'GraduationCap' ? GraduationCap : IndianRupee;
+                      const targetHref = activity.type === 'Admission' ? '/admission/applications' : '/fees/payments';
                       return (
-                        <div key={activity.type + i} className="flex items-center gap-4 p-4 hover:bg-sidebar-accent/30 transition-colors cursor-default group/act">
-                          <div className={cn("size-8 rounded-lg flex items-center justify-center bg-sidebar-accent/50 shadow-sm", activity.color)}>
+                        <Link
+                          key={activity.type + i}
+                          href={targetHref}
+                          className="flex items-center gap-4 p-4 hover:bg-sidebar-accent/30 transition-colors cursor-pointer group/act"
+                        >
+                          <div className={cn("size-8 rounded-lg flex items-center justify-center bg-sidebar-accent/50 shadow-sm group-hover/act:scale-105 transition-transform", activity.color)}>
                             <Icon className="size-4" />
                           </div>
                           <div className="flex flex-col min-w-0 flex-1">
-                            <span className="text-[13px] font-black text-foreground truncate">{activity.type}</span>
+                            <span className="text-[13px] font-black text-foreground group-hover/act:text-primary transition-colors truncate">{activity.type}</span>
                             <span className="text-[11px] font-medium text-muted-foreground/80">{activity.user}</span>
                           </div>
-                          <span className="text-[10px] font-bold text-muted-foreground/50 whitespace-nowrap">{activity.time}</span>
-                        </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] font-bold text-muted-foreground/50 whitespace-nowrap">{activity.time}</span>
+                            <ArrowUpRight className="size-3 text-muted-foreground/30 group-hover/act:text-primary transition-colors" />
+                          </div>
+                        </Link>
                       );
                     })}
                   </div>
