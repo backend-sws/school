@@ -120,6 +120,7 @@ class StudentLedgerController extends BaseController
             'admission_summary' => $result['admission_summary'],
             'one_time_charges' => $result['one_time_charges'],
             'available_sessions' => $availableSessions,
+            'reverted_history' => $result['reverted_history'] ?? [],
             'source' => $projectedRows !== [] ? 'merged' : 'computed',
             'meta' => [
                 'current_page' => $page,
@@ -247,6 +248,86 @@ class StudentLedgerController extends BaseController
         }
 
         return $this->success(null, 'Receipt sent ' . ($validated['via'] === 'email' ? 'via email' : 'via push notification') . '.');
+    }
+
+    // ─── POST /fees/ledger/revert-payment ────────────────────────────────
+
+    public function revertPayment(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'payment_id' => 'required|exists:fee_payments,id',
+            'reason' => 'required|string|min:3|max:500',
+        ]);
+
+        $institutionId = self::getActiveInstitutionId($request->user());
+        $payment = FeePayment::findOrFail($validated['payment_id']);
+
+        if ($institutionId && (int) $payment->institution_id !== (int) $institutionId) {
+            return $this->error('Unauthorized action for this institution.', 403);
+        }
+
+        if (in_array($payment->payment_status, ['cancelled', 'reversed'], true)) {
+            return $this->error('This payment has already been reverted.', 422);
+        }
+
+        $student = User::with(['studentProfile.session', 'studentProfile.stream'])->find($payment->user_id);
+        $reason = trim($validated['reason']);
+        $adminName = $request->user()->name ?? 'Admin';
+        $timestamp = now()->format('d M Y, h:i A');
+
+        DB::transaction(function () use ($payment, $reason, $adminName, $timestamp, $student, $institutionId) {
+            $auditNote = "Reverted by {$adminName} on {$timestamp}. Reason: {$reason}";
+            $newRemarks = trim(($payment->remarks ? $payment->remarks . " | " : "") . $auditNote);
+
+            $snapshot = $payment->ledger_snapshot;
+            if (is_string($snapshot)) {
+                $snapshot = json_decode($snapshot, true) ?: [];
+            }
+            if (!is_array($snapshot)) {
+                $snapshot = [];
+            }
+            $snapshot['reversal'] = [
+                'reverted_by' => $adminName,
+                'reverted_at' => now()->toIso8601String(),
+                'reverted_at_formatted' => $timestamp,
+                'reason' => $reason,
+            ];
+
+            $payment->update([
+                'payment_status' => 'cancelled',
+                'remarks' => $newRemarks,
+                'ledger_snapshot' => $snapshot,
+            ]);
+
+            // If there's an associated discount/concession payment for the same month/receipt, cancel it as well
+            if ($payment->receipt_no) {
+                $baseReceipt = preg_replace('/-D(\d+)?$/', '', $payment->receipt_no);
+                $concessionPayments = FeePayment::where('user_id', $payment->user_id)
+                    ->where('for_month', $payment->for_month)
+                    ->where('payment_mode', 'concession')
+                    ->whereIn('payment_status', ['paid', 'success'])
+                    ->where(function ($q) use ($baseReceipt) {
+                        $q->where('receipt_no', 'like', "{$baseReceipt}-D%");
+                    })
+                    ->get();
+
+                foreach ($concessionPayments as $cp) {
+                    $cp->update([
+                        'payment_status' => 'cancelled',
+                        'remarks' => trim(($cp->remarks ? $cp->remarks . " | " : "") . "Reverted with payment #{$payment->id}. Reason: {$reason}"),
+                    ]);
+                }
+            }
+
+            if ($institutionId) {
+                \App\Services\FeeCollectionService::clearCache();
+                if ($student) {
+                    $this->periodBalanceProjector->projectPeriod($student, $institutionId, $payment->for_month);
+                }
+            }
+        });
+
+        return $this->success(null, 'Payment has been reverted successfully.');
     }
 
     // ─── POST /fees/ledger/mark-as-paid ──────────────────────────────────

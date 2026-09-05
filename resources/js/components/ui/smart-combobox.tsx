@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/popover";
 
 interface SmartComboboxProps {
-    options: { key: string; text: string; value: any }[];
+    options: { key?: string; text?: string; label?: string; value: any }[];
     value?: any;
     onChange: (value: any) => void;
     placeholder?: string;
@@ -51,25 +51,30 @@ export function SmartCombobox({
     const [open, setOpen] = React.useState(false);
     const [inputValue, setInputValue] = React.useState("");
 
+    const getOptionLabel = React.useCallback(
+        (o: { text?: string; label?: string; value?: any }) => String(o?.label ?? o?.text ?? o?.value ?? ""),
+        []
+    );
+
     // Sync inputValue with value prop
     React.useEffect(() => {
         const selectedOption = options.find((o) => String(o.value) === String(value));
         if (selectedOption) {
-            setInputValue(String(selectedOption.text));
+            setInputValue(getOptionLabel(selectedOption));
         } else {
             setInputValue(value != null ? String(value) : "");
         }
-    }, [value, options]);
+    }, [value, options, getOptionLabel]);
 
     const filteredOptions = React.useMemo(() => {
         if (!inputValue.trim()) return options;
         const query = inputValue.toLowerCase();
         return options.filter(
             (o) =>
-                String(o.text).toLowerCase().includes(query) ||
+                getOptionLabel(o).toLowerCase().includes(query) ||
                 String(o.value).toLowerCase().includes(query)
         );
-    }, [options, inputValue]);
+    }, [options, inputValue, getOptionLabel]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -83,9 +88,9 @@ export function SmartCombobox({
         }
     };
 
-    const handleSelect = (option: { text: string; value: any }) => {
+    const handleSelect = (option: { key?: string; text?: string; label?: string; value: any }) => {
         onChange(option.value);
-        setInputValue(String(option.text));
+        setInputValue(getOptionLabel(option));
         setOpen(false);
     };
 
@@ -165,11 +170,11 @@ export function SmartCombobox({
                                 </CommandEmpty>
                             ) : (
                                 <CommandGroup className="p-1">
-                                    {filteredOptions.map((option) => {
+                                    {filteredOptions.map((option, idx) => {
                                         const isSelected = String(option.value) === String(value);
                                         return (
                                             <CommandItem
-                                                key={option.key}
+                                                key={option.key ?? (option.value !== undefined ? String(option.value) : idx)}
                                                 value={String(option.value)}
                                                 onSelect={() => handleSelect(option)}
                                                 className={cn(
@@ -177,7 +182,7 @@ export function SmartCombobox({
                                                     isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-accent"
                                                 )}
                                             >
-                                                <span className="truncate">{option.text}</span>
+                                                <span className="truncate">{getOptionLabel(option)}</span>
                                                 {isSelected && <Check className="size-4 shrink-0 text-primary animate-in zoom-in-50 duration-200" />}
                                             </CommandItem>
                                         );

@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { feeCollectionSchema, type FeeCollectionFormValues } from "@/lib/validations/feeCollection";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import { FORM_TYPE } from "@/constants";
-import { IndianRupee } from "lucide-react";
+import { IndianRupee, Lock } from "lucide-react";
 
 interface PaymentCollectModalProps {
     isOpen: boolean;
@@ -79,22 +79,29 @@ export default function PaymentCollectModal({
     });
 
     const onSubmit = (data: FeeCollectionFormValues) => {
+        const fixedAmount = Number(monthData.balance) || data.amount || 0;
         // Calculate final cash/online based on mode before sending
         let finalCash = data.cash_amount;
         let finalOnline = data.online_amount;
 
         if (data.payment_mode === "cash") {
-            finalCash = data.amount;
+            finalCash = fixedAmount;
             finalOnline = 0;
         } else if (data.payment_mode === "online") {
             finalCash = 0;
-            finalOnline = data.amount;
+            finalOnline = fixedAmount;
+        } else if (data.payment_mode === "split") {
+            const sum = (Number(finalCash) || 0) + (Number(finalOnline) || 0);
+            if (Math.abs(sum - fixedAmount) > 0.01) {
+                toast.error(`Cash and online split (₹${sum}) must equal the required total of ₹${fixedAmount}`);
+                return;
+            }
         }
 
         collectMutation.mutate({
             user_id: student.id,
             for_month: monthData.month_key,
-            amount: data.amount,
+            amount: fixedAmount,
             payment_mode: data.payment_mode,
             cash_amount: finalCash,
             online_amount: finalOnline,
@@ -124,8 +131,14 @@ export default function PaymentCollectModal({
                         type={FORM_TYPE.NUMBER}
                         label="Amount to record (₹)"
                         placeholder="0.00"
-                        className="h-11"
+                        className="h-11 bg-muted/50 font-bold text-base cursor-not-allowed select-none border-dashed"
+                        readOnly={true}
+                        disabled={true}
+                        onKeyDown={(e: any) => e.preventDefault()}
+                        tooltip="Amount is fixed to the full balance due for this month."
+                        helperText="Fixed amount as per month balance due (non-editable)."
                         leftElement={<IndianRupee className="w-4 h-4 text-muted-foreground" />}
+                        rightElement={<Lock className="w-4 h-4 text-muted-foreground/60 mr-2" />}
                     />
 
                     <div className="grid grid-cols-2 gap-4">

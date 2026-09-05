@@ -300,6 +300,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::post('fees/ledger/collect-advance', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'collectAdvance']);
                 Route::post('fees/ledger/resend-receipt', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'resendReceipt']);
                 Route::post('fees/ledger/mark-as-paid', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'markAsPaid']);
+                Route::post('fees/ledger/revert-payment', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'revertPayment']);
                 Route::get('fees/ledger/download-receipt/{payment}', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'downloadReceipt']);
                 Route::get('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'index']);
                 Route::post('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'store']);

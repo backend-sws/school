@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange
+    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle
 } from "lucide-react";
 import {
     Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import Each from "@/components/Each";
 import PaymentCollectModal from "@/pages/accounts/fee-hub/components/PaymentCollectModal";
 import AdvancePaymentModal from "@/pages/accounts/fee-hub/components/AdvancePaymentModal";
+import RevertPaymentModal from "@/pages/accounts/fee-hub/components/RevertPaymentModal";
 
 
 import {
@@ -117,6 +118,7 @@ interface RowActionHandlers {
     downloadReceipt: (paymentId: number) => void;
     copyLink: (studentId: number) => void;
     sendReminder: (period: string, type: "due_soon" | "overdue", via?: "email" | "push") => void;
+    revertPayment?: (row: any) => void;
 }
 
 function PaidRowActions({ row, handlers }: { row: any; handlers: RowActionHandlers }) {
@@ -125,6 +127,13 @@ function PaidRowActions({ row, handlers }: { row: any; handlers: RowActionHandle
         { key: "push", icon: Bell, tooltip: "Push Receipt", color: "hover:bg-purple-50 text-purple-600", onClick: () => handlers.resendReceipt(row.payment_id, "push") },
         { key: "download", icon: Download, tooltip: "Download PDF", color: "hover:bg-amber-50 text-amber-600", onClick: () => handlers.downloadReceipt(row.payment_id) },
         { key: "link", icon: Link2, tooltip: "Copy Receipt Link", color: "hover:bg-slate-100 text-slate-600", onClick: () => handlers.copyLink(row.payment_id) },
+        ...(handlers.revertPayment ? [{
+            key: "undo",
+            icon: RotateCcw,
+            tooltip: "Undo / Revert Payment (With Reason)",
+            color: "hover:bg-rose-50 text-rose-500 hover:text-rose-600",
+            onClick: () => handlers.revertPayment!(row),
+        }] : []),
     ];
     return (
         <Each
@@ -193,6 +202,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const [selectedMonth, setSelectedMonth] = useState<any>(null);
     const [showAdvance, setShowAdvance] = useState(false);
     const [selectedSession, setSelectedSession] = useState<string | null>(null);
+    const [revertingRow, setRevertingRow] = useState<any>(null);
 
     // ─── Data Fetching ───────────────────────────────────────────────────────
     const { data: ledgerRes, isLoading, isError } = useQuery({
@@ -235,6 +245,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const admissionSummary = data?.admission_summary || null;
     const oneTimeCharges = data?.one_time_charges || [];
     const availableSessions = data?.available_sessions || [];
+    const revertedHistory = data?.reverted_history || [];
     const contextCards = getContextCards(labels);
 
     const allParticulars = (() => {
@@ -272,6 +283,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
             toast.success("Link copied");
         },
         sendReminder: (period, type, via) => sendReminderMutation.mutate({ period, type, via }),
+        revertPayment: (row) => setRevertingRow(row),
     };
 
     // ─── Loading & Error States ──────────────────────────────────────────────
@@ -541,6 +553,42 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                     {row.due_date && (
                                                         <div className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Due: {row.due_date}</div>
                                                     )}
+                                                    {row.reverted_payments && row.reverted_payments.length > 0 && (
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <div className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-semibold tracking-wide hover:bg-rose-100 transition-colors cursor-help">
+                                                                    <RotateCcw className="size-2.5 text-rose-500 shrink-0" />
+                                                                    <span>Reverted</span>
+                                                                </div>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="right" className="max-w-xs p-3 space-y-2 bg-popover border shadow-xl text-popover-foreground">
+                                                                <div className="flex items-center gap-1.5 font-bold text-xs text-rose-600">
+                                                                    <AlertTriangle className="size-3.5" />
+                                                                    <span>Payment Reversal Audit</span>
+                                                                </div>
+                                                                {row.reverted_payments.map((rp: any, idx: number) => (
+                                                                    <div key={idx} className="text-xs space-y-1 border-t border-border/60 pt-1.5">
+                                                                        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                                                                            <span>Amount: ₹{Number(rp.amount ?? 0).toLocaleString()}</span>
+                                                                            <span>{rp.reverted_at}</span>
+                                                                        </div>
+                                                                        {rp.receipt_no && (
+                                                                            <div className="text-[10px] text-muted-foreground font-mono">
+                                                                                Receipt: <span className="line-through">{rp.receipt_no}</span>
+                                                                            </div>
+                                                                        )}
+                                                                        <div className="bg-rose-50/70 border border-rose-100 p-2 rounded-md text-[11px] space-y-0.5">
+                                                                            <span className="font-bold text-rose-800">Reason: </span>
+                                                                            <span className="text-rose-950 font-medium italic">"{rp.reason}"</span>
+                                                                        </div>
+                                                                        <div className="text-[9px] text-muted-foreground">
+                                                                            Reverted by: <span className="font-semibold">{rp.reverted_by}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    )}
                                                 </TableCell>
                                                 {/* Previous Dues */}
                                                 <TableCell className="text-right py-4 tabular-nums text-sm font-semibold text-amber-600 bg-amber-500/[0.02] border-r">
@@ -633,11 +681,41 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                                 </TooltipTrigger>
                                                                                 <TooltipContent>Quick Mark as Paid (Cash)</TooltipContent>
                                                                             </Tooltip>
+                                                                            {row.payment_id && (
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            size="icon" variant="ghost"
+                                                                                            className="size-7 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 border border-transparent hover:border-rose-100"
+                                                                                            onClick={() => setRevertingRow(row)}
+                                                                                        >
+                                                                                            <RotateCcw className="size-3.5" />
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                </Tooltip>
+                                                                            )}
                                                                         </div>
                                                                         )
                                                                     ) : (
-                                                                        <div className="size-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto border border-emerald-100 shadow-sm">
-                                                                            <Check className="size-3.5 stroke-[3.5px]" />
+                                                                        <div className="flex items-center justify-center gap-1.5">
+                                                                            <div className="size-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center border border-emerald-100 shadow-sm">
+                                                                                <Check className="size-3.5 stroke-[3.5px]" />
+                                                                            </div>
+                                                                            {!isStudentPortal && row.payment_id && (
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            size="icon" variant="ghost"
+                                                                                            className="size-7 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 border border-transparent hover:border-rose-100"
+                                                                                            onClick={() => setRevertingRow(row)}
+                                                                                        >
+                                                                                            <RotateCcw className="size-3.5" />
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                </Tooltip>
+                                                                            )}
                                                                         </div>
                                                                     )}
                                                                 </TableCell>
@@ -648,7 +726,28 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
 
                                                         const rawVal = col.rowField ? row[col.rowField] : null;
                                                         const formatter = FORMAT_DISPLAY[col.format ?? ""];
-                                                        const display = formatter ? formatter(rawVal) : (rawVal || "—");
+                                                        let display: React.ReactNode = formatter ? formatter(rawVal) : (rawVal || "—");
+
+                                                        if (col.key === "receipt_no" && !rawVal && row.reverted_payments?.length > 0) {
+                                                            const firstRev = row.reverted_payments[0];
+                                                            display = (
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <div className="inline-flex flex-col items-center cursor-help">
+                                                                            <span className="text-[11px] font-mono text-muted-foreground/70 line-through">
+                                                                                {firstRev.receipt_no || "Receipt"}
+                                                                            </span>
+                                                                            <span className="text-[8px] font-bold text-rose-500 uppercase tracking-wider">
+                                                                                Reverted
+                                                                            </span>
+                                                                        </div>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent side="top" className="max-w-xs text-xs p-2">
+                                                                        <span className="font-bold text-rose-500">Reversal Reason:</span> {firstRev.reason}
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            );
+                                                        }
 
                                                         return (
                                                             <TableCell className={cn(
@@ -750,6 +849,77 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                     </Card>
                 </div>
 
+                {/* ─── Reverted Payments Audit Log ─────────────────────────── */}
+                {revertedHistory.length > 0 && (
+                    <Card className="rounded-2xl border border-rose-200/80 bg-gradient-to-br from-rose-50/20 via-background to-amber-50/10 shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-rose-100 flex items-center justify-between bg-rose-50/40">
+                            <div className="flex items-center gap-2.5">
+                                <div className="size-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                                    <RotateCcw className="size-4" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-black tracking-tight text-foreground flex items-center gap-2">
+                                        Payment Reversals & Audit History
+                                        <Badge variant="outline" className="text-[10px] font-bold border-rose-300 bg-rose-100/50 text-rose-700">
+                                            {revertedHistory.length} {revertedHistory.length === 1 ? "reversal" : "reversals"}
+                                        </Badge>
+                                    </h3>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                        Transactions that were undone / cancelled with mandatory reason
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader className="bg-muted/40 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+                                    <TableRow>
+                                        <TableHead className="px-6 py-3">Month / Period</TableHead>
+                                        <TableHead className="py-3">Receipt No</TableHead>
+                                        <TableHead className="py-3 text-right">Amount (₹)</TableHead>
+                                        <TableHead className="py-3 text-center">Mode</TableHead>
+                                        <TableHead className="py-3">Reverted On</TableHead>
+                                        <TableHead className="py-3">Reverted By</TableHead>
+                                        <TableHead className="px-6 py-3">Reason for Reversal</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {revertedHistory.map((rev: any, idx: number) => (
+                                        <TableRow key={rev.id || idx} className="hover:bg-rose-50/20 text-xs transition-colors">
+                                            <TableCell className="px-6 py-3.5 font-bold text-foreground">
+                                                {rev.for_month || "—"}
+                                            </TableCell>
+                                            <TableCell className="py-3.5 font-mono text-[11px] text-muted-foreground">
+                                                <span className="line-through">{rev.receipt_no || "—"}</span>
+                                            </TableCell>
+                                            <TableCell className="py-3.5 text-right font-bold text-rose-600 tabular-nums">
+                                                {formatCurrency(rev.amount)}
+                                            </TableCell>
+                                            <TableCell className="py-3.5 text-center">
+                                                <Badge variant="secondary" className="text-[10px] uppercase font-bold">
+                                                    {rev.payment_mode || "—"}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="py-3.5 text-muted-foreground text-[11px]">
+                                                {rev.reverted_at || "—"}
+                                            </TableCell>
+                                            <TableCell className="py-3.5 font-medium text-foreground">
+                                                {rev.reverted_by || "Admin"}
+                                            </TableCell>
+                                            <TableCell className="px-6 py-3.5">
+                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 font-medium text-xs">
+                                                    <span className="font-bold text-rose-700">Reason:</span>
+                                                    <span>{rev.reason}</span>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </Card>
+                )}
+
                 {/* ─── Payment Modal ───────────────────────────────────────── */}
                 {selectedMonth && (
                     <PaymentCollectModal
@@ -775,6 +945,22 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                         setShowAdvance(false);
                     }}
                 />
+
+                {/* ─── Undo / Revert Payment Modal ──────────────────────── */}
+                {revertingRow && (
+                    <RevertPaymentModal
+                        isOpen={!!revertingRow}
+                        onClose={() => setRevertingRow(null)}
+                        student={student}
+                        paymentRow={revertingRow}
+                        onSuccess={() => {
+                            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+                            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+                            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+                            setRevertingRow(null);
+                        }}
+                    />
+                )}
             </div>
         </TooltipProvider>
     );

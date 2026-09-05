@@ -39,15 +39,15 @@ const INITIAL_FILTERS = {
   page: 1,
   per_page: 15,
   item_id: "",
-  type: "__all__",
+  type: "",
 };
 
 const TYPES = [
-  { value: "__all__", label: "All" },
-  { value: "issue", label: "Issue" },
-  { value: "return", label: "Return" },
-  { value: "receive", label: "Receive" },
-  { value: "adjust", label: "Adjust" },
+  { value: "", label: "All", text: "All" },
+  { value: "issue", label: "Issue", text: "Issue" },
+  { value: "return", label: "Return", text: "Return" },
+  { value: "receive", label: "Receive", text: "Receive" },
+  { value: "adjust", label: "Adjust", text: "Adjust" },
 ];
 
 const InventoryMovementsIndex = () => {
@@ -67,7 +67,7 @@ const InventoryMovementsIndex = () => {
       inventoryApi.movements.index({
         ...filter,
         item_id: filter.item_id || undefined,
-        type: filter.type === "__all__" ? undefined : filter.type || undefined,
+        type: (filter.type === "__all__" || !filter.type) ? undefined : filter.type,
       }),
   });
 
@@ -75,7 +75,8 @@ const InventoryMovementsIndex = () => {
     queryKey: ["inventory-items-list"],
     queryFn: () => inventoryApi.items.index({ per_page: 500 }),
   });
-  const items = itemsRes?.data ?? [];
+  const items = (itemsRes as any)?.data ?? itemsRes ?? [];
+  const safeItems: Array<{ id: number; name: string; code?: string }> = Array.isArray(items) ? items : [];
 
   const handleFilterChange = (updates: Record<string, unknown>) => {
     handleFilter({ ...updates, page: 1 });
@@ -91,18 +92,44 @@ const InventoryMovementsIndex = () => {
           icon={ArrowLeftRight}
           guidance={INVENTORY_MOVEMENTS_GUIDE}
         />
-          <div className="flex justify-end">
-            <PermissionGate can="create_inventory_movements">
-              <Button onClick={() => recordDisclosure.onOpen()} className="w-full sm:w-auto">
-                <Plus className="size-4" />
-                Record movement
-              </Button>
-            </PermissionGate>
-          </div>
+        <div className="flex justify-end">
+          <PermissionGate can="create_inventory_movements">
+            <Button onClick={() => recordDisclosure.onOpen()} className="w-full sm:w-auto">
+              <Plus className="size-4" />
+              Record movement
+            </Button>
+          </PermissionGate>
+        </div>
         <Card>
           <CardHeader className="pb-4">
             <FilterBar values={filter} onChange={handleFilterChange}>
-              <FilterBar.Renderer config={{ filters: [{ name: "type", type: "select", label: "Type", placeholder: "Type", options: TYPES }, { name: "item_id", type: "select", label: "Item", placeholder: "All items", options: [{ value: "", label: "All items" }, ...items.map((i: { id: number; name: string; code?: string }) => ({ value: String(i.id), label: `${i.name}${i.code ? ` (${i.code})` : ""}` }))] }] }} />
+              <FilterBar.Renderer
+                config={{
+                  filters: [
+                    {
+                      name: "type",
+                      type: "select",
+                      label: "Type",
+                      placeholder: "Type",
+                      options: TYPES,
+                    },
+                    {
+                      name: "item_id",
+                      type: "select",
+                      label: "Item",
+                      placeholder: "All items",
+                      options: [
+                        { value: "", label: "All items", text: "All items" },
+                        ...safeItems.map((i) => ({
+                          value: String(i.id),
+                          label: `${i.name}${i.code ? ` (${i.code})` : ""}`,
+                          text: `${i.name}${i.code ? ` (${i.code})` : ""}`,
+                        })),
+                      ],
+                    },
+                  ],
+                }}
+              />
             </FilterBar>
           </CardHeader>
           <CardContent className="pt-0" id="inventory-movements-table">

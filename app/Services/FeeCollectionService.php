@@ -335,6 +335,46 @@ class FeeCollectionService
         $payments = collect(self::$bulkPayments[$student->id] ?? [])
             ->sortBy('payment_date');
 
+        // Fetch cancelled/reverted payments for audit trail and reason display
+        $cancelledPayments = FeePayment::where('user_id', $student->id)
+            ->where('payment_status', 'cancelled')
+            ->orderByDesc('id')
+            ->get();
+
+        $formattedCancelled = $cancelledPayments->map(function ($cp) {
+            $snapshot = $cp->ledger_snapshot;
+            if (is_string($snapshot)) {
+                $snapshot = json_decode($snapshot, true) ?: [];
+            }
+            $reversal = is_array($snapshot) ? ($snapshot['reversal'] ?? null) : null;
+            $reason = $reversal['reason'] ?? null;
+            $revertedBy = $reversal['reverted_by'] ?? null;
+            $revertedAt = $reversal['reverted_at_formatted'] ?? null;
+
+            if (!$reason && $cp->remarks) {
+                if (preg_match('/Reason:\s*(.+)$/i', $cp->remarks, $matches)) {
+                    $reason = trim($matches[1]);
+                }
+                if (preg_match('/Reverted by\s+([^on]+)\s+on\s+([^.]+)/i', $cp->remarks, $matches)) {
+                    $revertedBy = $revertedBy ?: trim($matches[1]);
+                    $revertedAt = $revertedAt ?: trim($matches[2]);
+                }
+            }
+
+            return [
+                'id' => $cp->id,
+                'payment_id' => $cp->payment_id,
+                'receipt_no' => $cp->receipt_no,
+                'amount' => (float) ($cp->total_amount ?? $cp->amount),
+                'payment_mode' => $cp->payment_mode,
+                'for_month' => $cp->for_month ?: ($cp->payment_date ? $cp->payment_date->format('Y-m') : null),
+                'remarks' => $cp->remarks,
+                'reason' => $reason ?: ($cp->remarks ?: 'Payment reverted'),
+                'reverted_by' => $revertedBy ?: 'Admin',
+                'reverted_at' => $revertedAt ?: ($cp->updated_at ? $cp->updated_at->format('d M Y, h:i A') : ''),
+            ];
+        });
+
         // 5. Generate matrix — use the academic calendar start month, not January
         $academicStartMonth = app(AcademicCalendarService::class)->getStartMonth($institutionId);
         $startDate = Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay();
@@ -498,11 +538,9 @@ class FeeCollectionService
                 return in_array($charge->for_month, $monthKeysInPeriod);
             });
 
-            $adHocTotal = 0.0;
             foreach ($adHocCharges as $charge) {
                 $monthExpected += (float) $charge->amount;
                 $monthGross += (float) $charge->amount;
-                $adHocTotal += (float) $charge->amount;
                 $monthParticulars[] = [
                     'name' => $charge->name,
                     'amount' => (float) $charge->amount,
@@ -518,7 +556,7 @@ class FeeCollectionService
             $rowAdmissionFee  = $i === $admissionPeriodIndex ? $admissionFeeDisplay['admission_fee'] : 0.0;
             $rowTransportFee  = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['transport_fee'] : 0.0) + $tAmount;
             $rowHostelFee     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['hostel_fee']    : 0.0) + $hAmount;
-            $rowOtherFees     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['other_fees']    : 0.0) + $adHocTotal;
+            $rowOtherFees     = $i === $admissionPeriodIndex ? $admissionFeeDisplay['other_fees']    : 0.0;
 
             $totalPayable = $accumulatedArrears + $monthExpected + $lateFee;
             if ($monthlyConcession > 0) {
@@ -592,6 +630,7 @@ class FeeCollectionService
                 'payment_mode'         => $firstActualPayment?->payment_mode,
                 'payment_date'         => $firstActualPayment?->payment_date?->toDateString(),
                 'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 ? 'partial' : 'unpaid'),
+                'reverted_payments'    => $formattedCancelled->filter(fn($cp) => $cp['for_month'] === $monthKey)->values()->all(),
             ];
 
             // Carry forward balance as arrears for next row (negative means overpayment credit)
@@ -607,6 +646,7 @@ class FeeCollectionService
             'grossExpected'       => $grossExpected,
             'totalDiscount'       => $totalDiscount,
             'matrix'              => $matrix,
+            'reverted_history'    => $formattedCancelled->values()->all(),
             'total_pending'       => $accumulatedArrears,
             'admission_summary'   => $admissionSummary,
             'one_time_charges'    => $oneTimeCharges,
@@ -893,6 +933,7 @@ class FeeCollectionService
                 'due_date' => $row['due_date'] ?? $projected['due_date'] ?? null,
                 'month_name' => $row['month_name'] ?? $projected['month_name'] ?? null,
                 'expected_particulars' => $row['expected_particulars'] ?? $projected['expected_particulars'] ?? [],
+                'reverted_payments' => $row['reverted_payments'] ?? $projected['reverted_payments'] ?? [],
             ]);
         })->values()->all();
 

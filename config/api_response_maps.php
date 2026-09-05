@@ -265,6 +265,7 @@ return [
             'payment_mode',
             'payment_date',
             'status',
+            'reverted_payments',
         ],
     ],
 

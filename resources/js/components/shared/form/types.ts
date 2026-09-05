@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 
 export interface FieldOption {
-  key: string;
-  text: string;
+  key?: string;
+  text?: string;
+  label?: string;
   value: any;
 }
 

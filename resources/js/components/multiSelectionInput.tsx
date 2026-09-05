@@ -72,6 +72,8 @@ export function MultiSelectField({
   const [dropdownSearch, setDropdownSearch] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const getOptionLabel = (o: any) => String(o?.label ?? o?.text ?? o?.value ?? "");
+
   // When popover opens, sync dropdown search from trigger input; when typing in dropdown, filter
   const searchTerm = open ? dropdownSearch : inputValue;
   const filteredOptions = useMemo(() => {
@@ -80,7 +82,7 @@ export function MultiSelectField({
 
     if (!searchTerm.trim()) return availableOptions;
     return availableOptions.filter((option: any) =>
-      (option.text || option.value)
+      getOptionLabel(option)
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
@@ -147,7 +149,7 @@ export function MultiSelectField({
                     className="pl-2 pr-1 py-0 h-6 flex items-center gap-1 bg-blue-50/50 text-blue-600 border border-blue-200 hover:bg-blue-100/50 transition-colors rounded-md shadow-sm shrink-0"
                   >
                     <span className="text-[10px] font-bold uppercase tracking-tight truncate max-w-[120px]">
-                      {option?.text || getItemKey(val)}
+                      {option ? getOptionLabel(option) : getItemKey(val)}
                     </span>
                     <Button
                       type="button"
@@ -212,11 +214,11 @@ export function MultiSelectField({
               No results found
             </CommandEmpty>
             <CommandGroup>
-              {filteredOptions.map((option: any) => {
+              {filteredOptions.map((option: any, idx: number) => {
                 const selected = isSelected(option.value);
                 return (
                   <CommandItem
-                    key={option.key}
+                    key={option.key ?? (option.value !== undefined ? String(option.value) : idx)}
                     onSelect={() => handleSelect(option.value)}
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors text-sm",
@@ -233,7 +235,7 @@ export function MultiSelectField({
                     )}>
                       {selected && <Check className="size-3.5 text-white" strokeWidth={4} />}
                     </div>
-                    <span>{option.text || option.value}</span>
+                    <span>{getOptionLabel(option)}</span>
                   </CommandItem>
                 );
               })}

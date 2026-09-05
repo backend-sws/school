@@ -38,21 +38,21 @@ export const CheckboxRadioField = ({
       >
         <Each
           of={options}
-          render={({ key, text, value: optionValue }: any) => (
+          render={({ key, text, label, value: optionValue }: any, idx: number) => (
             <div
-              key={key}
+              key={key ?? (optionValue !== undefined ? String(optionValue) : idx)}
               className="group flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/5 border border-transparent"
             >
               <RadioGroupItem
                 value={optionValue}
-                id={key}
+                id={key ?? (optionValue !== undefined ? `radio-${optionValue}` : `radio-${idx}`)}
                 className="border-input text-primary focus:ring-primary/20"
               />
               <Label
-                htmlFor={key}
+                htmlFor={key ?? (optionValue !== undefined ? `radio-${optionValue}` : `radio-${idx}`)}
                 className="font-medium text-[13px] cursor-pointer text-muted-foreground group-hover:text-primary transition-colors"
               >
-                {text || optionValue}
+                {label ?? text ?? optionValue}
               </Label>
             </div>
           )}
@@ -65,13 +65,13 @@ export const CheckboxRadioField = ({
     <div className="flex flex-col gap-1">
       <Each
         of={options}
-        render={({ key, text, value: optionValue }: any) => (
+        render={({ key, text, label, value: optionValue }: any, idx: number) => (
           <div
-            key={key}
+            key={key ?? (optionValue !== undefined ? String(optionValue) : idx)}
             className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-all group cursor-pointer"
           >
             <Checkbox
-              id={key}
+              id={key ?? (optionValue !== undefined ? `chk-${optionValue}` : `chk-${idx}`)}
               checked={Array.isArray(value) ? value.includes(optionValue) : value === optionValue}
               onCheckedChange={(checked) => {
                 if (Array.isArray(value)) {
@@ -85,10 +85,10 @@ export const CheckboxRadioField = ({
               className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <Label
-              htmlFor={key}
+              htmlFor={key ?? (optionValue !== undefined ? `chk-${optionValue}` : `chk-${idx}`)}
               className="font-medium text-[13px] cursor-pointer text-muted-foreground group-hover:text-primary transition-colors"
             >
-              {text || optionValue}
+              {label ?? text ?? optionValue}
             </Label>
           </div>
         )}
@@ -138,7 +138,7 @@ export const DropdownField = ({
     }
   };
 
-  const valueKey = options.findIndex((opt: any) => opt.value === value);
+  const valueKey = options.findIndex((opt: any) => toSelectValue(opt.value) === toSelectValue(value));
   const displayValue = valueKey >= 0
     ? toSelectValue(options[valueKey].value)
     : value != null && value !== ""
@@ -158,15 +158,16 @@ export const DropdownField = ({
         <SelectContent className="max-h-[240px] rounded-2xl border-border shadow-2xl bg-card backdrop-blur-xl ring-1 ring-white/10">
           <Each
             of={options}
-            render={({ key, text, value: optionValue }: any) => {
+            render={({ key, text, label, value: optionValue }: any, idx: number) => {
               const stringValue = toSelectValue(optionValue);
+              const displayLabel = label ?? text ?? (stringValue === "EMPTY_VALUE" ? placeholder : stringValue) ?? placeholder;
               return (
-                <SelectItem 
-                  key={key} 
+                <SelectItem
+                  key={key ?? (optionValue !== undefined ? String(optionValue) : idx)}
                   value={stringValue}
                   className="text-[14px] text-muted-foreground focus:bg-accent focus:text-accent-foreground py-2.5"
                 >
-                  {text || (stringValue === "EMPTY_VALUE" ? placeholder : stringValue) || placeholder}
+                  {displayLabel}
                 </SelectItem>
               );
             }}

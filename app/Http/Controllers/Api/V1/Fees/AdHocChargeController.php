@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Fees;
 
 use App\Http\Controllers\Controller;
 use App\Models\StudentAdHocCharge;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,8 @@ class AdHocChargeController extends Controller
     {
         $validated = $request->validate([
             'institution_id' => 'required|exists:institutions,id',
-            'user_ids' => 'required|array',
+            'target_type' => 'nullable|string|in:class,all',
+            'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
             'name' => 'required|string|max:150',
             'amount' => 'required|numeric|min:0',
@@ -24,34 +26,64 @@ class AdHocChargeController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
+        $userIds = $validated['user_ids'] ?? [];
+
+        // If target_type is 'all' and no user_ids explicitly passed, fetch all active students of the institution
+        if (($validated['target_type'] ?? '') === 'all' && empty($userIds)) {
+            $userIds = User::whereHas('roles', function ($q) use ($validated) {
+                $q->where('roles.key', 'student')
+                  ->where('user_roles.institution_id', $validated['institution_id']);
+            })->where('status', 1)->pluck('id')->toArray();
+        }
+
+        if (empty($userIds)) {
+            return response()->json([
+                'message' => 'No eligible students selected or found to assign charges.',
+            ], 422);
+        }
+
+        $now = now();
+        $authUserId = $request->user()->id;
+        $institutionId = $validated['institution_id'];
+        $name = $validated['name'];
+        $amount = $validated['amount'];
+        $forMonth = $validated['for_month'];
+        $remarks = $validated['remarks'] ?? null;
+
         $charges = [];
-        foreach ($validated['user_ids'] as $userId) {
+        foreach ($userIds as $userId) {
             $charges[] = [
-                'institution_id' => $validated['institution_id'],
+                'institution_id' => $institutionId,
                 'user_id' => $userId,
-                'name' => $validated['name'],
-                'amount' => $validated['amount'],
-                'for_month' => $validated['for_month'],
-                'remarks' => $validated['remarks'] ?? null,
-                'created_by' => $request->user()->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name' => $name,
+                'amount' => $amount,
+                'for_month' => $forMonth,
+                'remarks' => $remarks,
+                'created_by' => $authUserId,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
-        StudentAdHocCharge::insert($charges);
+        DB::transaction(function () use ($charges) {
+            foreach (array_chunk($charges, 250) as $chunk) {
+                StudentAdHocCharge::insert($chunk);
+            }
+        });
 
         return response()->json([
             'message' => count($charges) . ' ad-hoc charges assigned successfully.',
         ], 201);
     }
+
     public function index(Request $request)
     {
         $request->validate(['institution_id' => 'required|exists:institutions,id']);
         
         $query = StudentAdHocCharge::with([
             'user:id,name,email',
-            'user.studentProfile:id,user_id,reg_no,roll_no',
+            'user.studentProfile:id,user_id,reg_no,roll_no,stream_id',
+            'user.studentProfile.stream:id,name',
             'creator:id,name'
         ])->where('institution_id', $request->institution_id);
 
