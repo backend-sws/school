@@ -3,8 +3,8 @@ import FullPageLayout from "@/layouts/full-page-layout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { Card, CardContent } from "@/components/ui/card";
 import Each from "@/components/Each";
-import { Users, ArrowRight, Hash, GraduationCap, Layers } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Users, ArrowRight, Hash, GraduationCap, Layers, Pencil, Trash2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import lmsApi from "@/lib/api/lmsApi";
 import streamApi from "@/lib/api/streamApi";
@@ -15,6 +15,11 @@ import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { FilterBar } from "@/components/filter-bar";
 import { DashedCard } from "@/components/shared/DashedCard";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipWrapper } from "@/components/shared/TooltipWrapper";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "sonner";
 import { CardGridEmptyState, CardGridSkeleton } from "@/components/shared/CardGridStates";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { nextSectionLabel } from "@/lib/utils";
@@ -53,6 +58,8 @@ const LmsStreamClassesIndex = () => {
     content: CONTENT,
     contentMap,
     canCreate,
+    canEdit,
+    canDelete,
   } = usePageConfig({
     permissions: LMS_CLASSES_PERMISSIONS,
     formFields: [],
@@ -70,7 +77,22 @@ const LmsStreamClassesIndex = () => {
   });
   const sessionId = filter.session_id ? Number(filter.session_id) : undefined;
 
+  const queryClient = useQueryClient();
   const dialogDisclosure = useDisclosure<LmsClassDialogData>();
+  const deleteDisclosure = useDisclosure<ClassRow>();
+
+  const destroyMutation = useMutation({
+    mutationFn: (id: number) => lmsApi.classes.destroy(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lms-classes"] });
+      deleteDisclosure.onClose();
+      toast.success("Section deleted successfully.");
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Failed to delete section.";
+      toast.error(msg);
+    },
+  });
 
   // ─── Stream detail ─────────────────────────────────
   const { data: streamRes } = useQuery({
@@ -119,9 +141,8 @@ const LmsStreamClassesIndex = () => {
     ? `${streamDetail.name} – ${CONTENT.sectionTitle}`
     : CONTENT.sectionTitle;
 
-  // ─── Render ────────────────────────────────────────
   return (
-    <>
+    <TooltipProvider>
       <Head title={pageTitle} />
       <LmsClassDialog
         open={dialogDisclosure.isOpen}
@@ -131,6 +152,25 @@ const LmsStreamClassesIndex = () => {
         defaultSessionId={sessionId ?? undefined}
         defaultStreamName={defaultStreamName ?? undefined}
         defaultSection={defaultSection}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["lms-classes"] });
+        }}
+      />
+      <ConfirmDialog
+        open={deleteDisclosure.isOpen}
+        onOpenChange={(open) => !open && deleteDisclosure.onClose()}
+        title="Delete Section"
+        description={
+          deleteDisclosure.data
+            ? `Are you sure you want to delete "${deleteDisclosure.data.name}"? This action cannot be undone.`
+            : "Are you sure you want to delete this section?"
+        }
+        onConfirm={() =>
+          deleteDisclosure.data && destroyMutation.mutate(deleteDisclosure.data.id)
+        }
+        isLoading={destroyMutation.isPending}
+        confirmText="Delete"
+        variant="danger"
       />
       <PageContainer maxWidth="2xl" className="space-y-8">
         <MainPageHeader
@@ -179,12 +219,62 @@ const LmsStreamClassesIndex = () => {
                 <Link href={`/lms/classes/${cls.id}`} className="block group h-full">
                   <Card className="h-full relative overflow-hidden rounded-3xl border-border/40 transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 bg-card">
                     <CardContent className="p-6 flex flex-col h-full space-y-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent-foreground border border-accent/10">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent-foreground border border-accent/10 shrink-0">
                           <Hash className="size-5" />
                         </div>
-                        <div className="flex size-8 items-center justify-center rounded-full bg-muted/30 opacity-0 group-hover:opacity-100 transition-all">
-                          <ArrowRight className="size-4" />
+                        <div
+                          className="flex items-center gap-1 z-10"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          {canEdit && (
+                            <TooltipWrapper content="Edit Section">
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                className="size-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  dialogDisclosure.onOpen({
+                                    id: cls.id,
+                                    name: cls.name,
+                                    code: cls.code,
+                                    section: cls.section,
+                                    status: cls.status,
+                                    stream_id: streamId,
+                                    session_id: sessionId ?? cls.session?.id ?? null,
+                                  });
+                                }}
+                              >
+                                <Pencil className="size-3.5" />
+                              </Button>
+                            </TooltipWrapper>
+                          )}
+                          {canDelete && (
+                            <TooltipWrapper content="Delete Section">
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                className="size-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  deleteDisclosure.onOpen(cls);
+                                }}
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            </TooltipWrapper>
+                          )}
+                          <div className="flex size-8 items-center justify-center rounded-full bg-muted/30 opacity-0 group-hover:opacity-100 transition-all text-muted-foreground group-hover:text-primary">
+                            <ArrowRight className="size-4" />
+                          </div>
                         </div>
                       </div>
 
@@ -237,7 +327,7 @@ const LmsStreamClassesIndex = () => {
           </div>
         </section>
       </PageContainer>
-    </>
+    </TooltipProvider>
   );
 };
 

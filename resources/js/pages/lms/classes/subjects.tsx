@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Calendar,
   Pencil,
+  Trash2,
   User2,
   School,
   ClipboardCheck,
@@ -23,9 +24,10 @@ import { Badge } from "@/components/ui/badge";
 
 import { PageContainer } from "@/components/shared/page/PageContainer";
 import { cn } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import lmsApi from "@/lib/api/lmsApi";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { LmsClassDialog, type LmsClassDialogData } from "@/components/admin/lmsClassDialog";
 import { LmsClassTeacherDialog } from "@/components/admin/lmsClassTeacherDialog";
 import { PermissionGate } from "@/components/PermissionGate";
@@ -134,9 +136,26 @@ const LmsClassSubjects = () => {
   const classId = Number(props.id);
   const queryClient = useQueryClient();
   const editDialogDisclosure = useDisclosure<boolean>();
+  const deleteDisclosure = useDisclosure<boolean>();
   const teacherDialogDisclosure = useDisclosure<boolean>();
   const attendanceDisclosure = useDisclosure<{ classId: number; allocationId?: number; mode?: "marking" | "reporting" }>();
   const subjectTeacherDisclosure = useDisclosure<boolean>();
+
+  const deleteMutation = useMutation({
+    mutationFn: () => lmsApi.classes.destroy(classId),
+    onSuccess: () => {
+      toast.success("Section deleted successfully.");
+      deleteDisclosure.onClose();
+      const backUrl = classDetail?.stream_id
+        ? `/lms/classes/stream/${classDetail.stream_id}`
+        : "/lms/classes";
+      router.visit(backUrl);
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Failed to delete section.";
+      toast.error(msg);
+    },
+  });
 
   const handleExportMonthly = () => {
     const today = new Date();
@@ -270,6 +289,21 @@ const LmsClassSubjects = () => {
           />
         </PermissionGate>
 
+        <ConfirmDialog
+          open={deleteDisclosure.isOpen}
+          onOpenChange={(open) => !open && deleteDisclosure.onClose()}
+          title="Delete Section"
+          description={
+            classDetail?.name
+              ? `Are you sure you want to delete "${classDetail.name}"? This action cannot be undone.`
+              : "Are you sure you want to delete this section?"
+          }
+          onConfirm={() => deleteMutation.mutate()}
+          isLoading={deleteMutation.isPending}
+          confirmText="Delete"
+          variant="danger"
+        />
+
         <AttendanceSheet
           key={attendanceDisclosure.isOpen ? `atnd-${attendanceDisclosure.data?.classId}-${attendanceDisclosure.data?.allocationId}-${attendanceDisclosure.data?.mode}` : 'atnd-closed'}
           open={attendanceDisclosure.isOpen}
@@ -315,6 +349,7 @@ const LmsClassSubjects = () => {
                 { label: "Mark Attendance", icon: ClipboardCheck, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "marking" }), permission: "mark_attendance", separator: true },
                 { label: "Daily Register", icon: Calendar, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "reporting" }), permission: "view_attendance" },
                 { label: "Monthly Register (Excel)", icon: Download, onClick: handleExportMonthly, permission: "view_attendance" },
+                { label: "Delete Section", icon: Trash2, onClick: () => deleteDisclosure.onOpen(true), permission: "delete_lms_classes", separator: true },
               ]}
             />
           </MainPageHeader>
