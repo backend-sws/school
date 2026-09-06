@@ -50,7 +50,7 @@ class ImportPipeline
      */
     protected static function disk(): string
     {
-        return env('FILESYSTEM_DISK', 's3');
+        return config('filesystems.default', 'local');
     }
 
     /**

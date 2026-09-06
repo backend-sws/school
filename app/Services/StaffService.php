@@ -17,7 +17,7 @@ use App\Notifications\Support\StaffInvitationNotification;
 class StaffService
 {
     /** Role keys that cannot be assigned to staff via this service. */
-    private const PROTECTED_ROLE_KEYS = ['super_admin', 'institution_admin', 'student', 'candidate'];
+    private const PROTECTED_ROLE_KEYS = ['super_admin', 'institution_admin', 'student', 'candidate', 'parent'];
 
     public function createStaff(array $data): User
     {
@@ -51,6 +51,7 @@ class StaffService
             : Hash::make(Str::random(16));
 
         $user = DB::transaction(function () use ($data, $collegeId, $isSchool, $roleId, $password, $sendInvitation) {
+            $status = isset($data['status']) ? (int) $data['status'] : ($sendInvitation ? 2 : 1);
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -58,7 +59,7 @@ class StaffService
                 'institution_id' => $collegeId,
                 'mobile' => $data['mobile'] ?? null,
                 'photo_url' => $data['photo_url'] ?? null,
-                'status' => $sendInvitation ? 2 : (isset($data['status']) ? (int) $data['status'] : 1),
+                'status' => $status,
             ]);
 
             if ($roleId > 0) {
@@ -70,7 +71,7 @@ class StaffService
                 'user_id' => $user->id,
                 'institution_id' => $collegeId,
                 'category' => $category,
-                'status' => 2,
+                'status' => $status,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -271,6 +272,9 @@ class StaffService
 
         $allowed = ['name', 'mobile', 'status', 'photo_url'];
         $update = array_intersect_key($data, array_flip($allowed));
+        if (!empty($data['password'])) {
+            $update['password'] = Hash::make($data['password']);
+        }
         if (!empty($update)) {
             $user->update($update);
         }
@@ -291,11 +295,15 @@ class StaffService
                 $institutionType = Institution::find($collegeId)?->type?->value ?? config('ems.default_institution_type');
                 $isSchool = $institutionType === 'school';
 
+                $profileUpdates = ['updated_at' => now()];
                 if (array_key_exists('category', $data)) {
-                    DB::table('staff_profiles')->where('id', $profile->id)->update([
-                        'category' => (int) $data['category'],
-                        'updated_at' => now(),
-                    ]);
+                    $profileUpdates['category'] = (int) $data['category'];
+                }
+                if (array_key_exists('status', $data)) {
+                    $profileUpdates['status'] = (int) $data['status'];
+                }
+                if (count($profileUpdates) > 1) {
+                    DB::table('staff_profiles')->where('id', $profile->id)->update($profileUpdates);
                 }
 
                 if (!$isSchool) {

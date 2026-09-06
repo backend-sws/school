@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Check, X, ClipboardList, Plus } from 'lucide-react';
+import { Check, X, ClipboardList, Plus, Undo2 } from 'lucide-react';
 import { PageContainer } from '@/components/shared/page/PageContainer';
 import { MainPageHeader } from '@/components/shared/page/MainPageHeader';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +19,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { TooltipWrapper } from '@/components/shared/TooltipWrapper';
+
+/** Required field red star indicator */
+const Req = () => <span className="text-destructive ml-0.5">*</span>;
 
 export default function LeaveRequests() {
     const [requests, setRequests] = useState<any[]>([]);
@@ -35,6 +39,7 @@ export default function LeaveRequests() {
         end_date: format(new Date(), 'yyyy-MM-dd'),
         reason: ''
     });
+    const [submitting, setSubmitting] = useState(false);
 
     const fetchRequests = async () => {
         try {
@@ -65,10 +70,11 @@ export default function LeaveRequests() {
         fetchDependencies();
     }, []);
 
-    const updateStatus = async (id: number, status: 'approved' | 'rejected') => {
+    const updateStatus = async (id: number, status: 'approved' | 'rejected' | 'pending') => {
         try {
             await axios.patch(`/api/v1/hr/leave-requests/${id}/status`, { status });
-            toast.success(`Leave request ${status}`);
+            const label = status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'reverted to pending';
+            toast.success(`Leave request ${label}`);
             fetchRequests();
         } catch (e) {
             toast.error("Failed to update status");
@@ -76,13 +82,32 @@ export default function LeaveRequests() {
     };
 
     const handleAddLeave = async () => {
+        // Frontend validation for required fields
+        if (!addForm.user_id) {
+            toast.error("Please select a staff member");
+            return;
+        }
+        if (!addForm.leave_type_id) {
+            toast.error("Please select a leave type");
+            return;
+        }
+        setSubmitting(true);
         try {
             await axios.post('/api/v1/hr/leave-requests', addForm);
             toast.success("Leave added successfully");
             setAddDialogOpen(false);
+            setAddForm({
+                user_id: '',
+                leave_type_id: '',
+                start_date: format(new Date(), 'yyyy-MM-dd'),
+                end_date: format(new Date(), 'yyyy-MM-dd'),
+                reason: ''
+            });
             fetchRequests();
         } catch (e: any) {
             toast.error(e.response?.data?.message || "Failed to add leave");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -131,7 +156,7 @@ export default function LeaveRequests() {
                             />
                         }
                         fallback={<TableSkeletonLoader columns={6} />}
-                        render={(req: any, idx: number) => (
+                        render={(req: any) => (
                             <TableRow key={req.id}>
                                 <TableCell className="font-medium">
                                     {req.user?.name}
@@ -158,17 +183,31 @@ export default function LeaveRequests() {
                                         {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-right space-x-2">
-                                    {req.status === 'pending' && (
-                                        <div className="flex justify-end gap-1">
-                                            <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50 px-2 h-8" onClick={() => updateStatus(req.id, 'approved')}>
-                                                <Check className="h-4 w-4 mr-1" /> Approve
-                                            </Button>
-                                            <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-8" onClick={() => updateStatus(req.id, 'rejected')}>
-                                                <X className="h-4 w-4 mr-1" /> Reject
-                                            </Button>
-                                        </div>
-                                    )}
+                                <TableCell className="text-right">
+                                    <div className="flex justify-end gap-1">
+                                        {req.status === 'pending' && (
+                                            <>
+                                                <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50 px-2 h-8" onClick={() => updateStatus(req.id, 'approved')}>
+                                                    <Check className="h-4 w-4 mr-1" /> Approve
+                                                </Button>
+                                                <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-8" onClick={() => updateStatus(req.id, 'rejected')}>
+                                                    <X className="h-4 w-4 mr-1" /> Reject
+                                                </Button>
+                                            </>
+                                        )}
+                                        {req.status !== 'pending' && (
+                                            <TooltipWrapper content={req.status === 'approved' ? "Revert approval — auto-marked attendance records will be removed" : "Revert rejection back to pending"}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 px-2 h-8"
+                                                    onClick={() => updateStatus(req.id, 'pending')}
+                                                >
+                                                    <Undo2 className="h-4 w-4 mr-1" /> Revert
+                                                </Button>
+                                            </TooltipWrapper>
+                                        )}
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}
@@ -182,7 +221,7 @@ export default function LeaveRequests() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                            <Label>Staff ID (User ID)</Label>
+                            <Label>Staff Member <Req /></Label>
                             <SearchableSelectField
                                 placeholder="Select Staff Member"
                                 options={users.map((u: any) => ({
@@ -195,7 +234,7 @@ export default function LeaveRequests() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>Leave Type</Label>
+                            <Label>Leave Type <Req /></Label>
                             <select 
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                                 value={addForm.leave_type_id}
@@ -209,7 +248,7 @@ export default function LeaveRequests() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
-                                <Label>Start Date</Label>
+                                <Label>Start Date <Req /></Label>
                                 <Input 
                                     type="date" 
                                     value={addForm.start_date} 
@@ -217,7 +256,7 @@ export default function LeaveRequests() {
                                 />
                             </div>
                             <div className="grid gap-2">
-                                <Label>End Date</Label>
+                                <Label>End Date <Req /></Label>
                                 <Input 
                                     type="date" 
                                     value={addForm.end_date} 
@@ -226,7 +265,7 @@ export default function LeaveRequests() {
                             </div>
                         </div>
                         <div className="grid gap-2">
-                            <Label>Reason</Label>
+                            <Label>Reason <span className="text-xs text-muted-foreground ml-1">(optional)</span></Label>
                             <Textarea 
                                 value={addForm.reason} 
                                 onChange={e => setAddForm({...addForm, reason: e.target.value})} 
@@ -235,7 +274,9 @@ export default function LeaveRequests() {
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleAddLeave}>Submit Leave</Button>
+                        <Button onClick={handleAddLeave} disabled={submitting}>
+                            {submitting ? 'Submitting...' : 'Submit Leave'}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

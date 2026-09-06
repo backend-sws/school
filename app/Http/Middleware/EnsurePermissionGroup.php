@@ -35,7 +35,16 @@ class EnsurePermissionGroup
     {
         $keys = [];
         foreach ($groupNames as $group) {
-            $groupKeys = config("route_permissions.{$group}", []);
+            $groupKeys = config("route_permissions.{$group}", null);
+
+            // Unknown group: log warning so developers can catch typos/missing config
+            if ($groupKeys === null) {
+                \Illuminate\Support\Facades\Log::warning(
+                    "EnsurePermissionGroup: unknown permission group '{$group}' — check config/route_permissions.php"
+                );
+                continue;
+            }
+
             if (is_array($groupKeys)) {
                 $keys = array_merge($keys, $groupKeys);
             }

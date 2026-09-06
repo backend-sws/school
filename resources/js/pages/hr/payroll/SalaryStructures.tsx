@@ -140,6 +140,7 @@ export default function SalaryStructures() {
                             <DataTable
                                 columns={[
                                     { key: "sno", label: "S.No" },
+                                    { key: "employee_id", label: "Emp ID" },
                                     { key: "name", label: "Staff Name" },
                                     { key: "designation", label: "Designation" },
                                     { key: "basic_salary", label: "Basic Salary" },
@@ -158,13 +159,18 @@ export default function SalaryStructures() {
                         <Each
                             of={items}
                             isLoading={isLoading}
-                            nodatafound={<TableEmptyState colSpan={7} message="No staff found." />}
-                            fallback={<TableSkeletonLoader columns={7} rows={5} />}
+                            nodatafound={<TableEmptyState colSpan={8} message="No staff found." />}
+                            fallback={<TableSkeletonLoader columns={8} rows={5} />}
                             keyExtractor={(r: any) => r.id}
                             render={(row: any, index: number) => (
                                 <TableRow>
                                     <TableCell className="w-[60px]">
                                         {getSerialNumber(meta.current_page, meta.per_page, index)}
+                                    </TableCell>
+                                    <TableCell className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                        <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                            {row.staff_profile?.employee_id || row.staffProfile?.employee_id || `EMP-${String(row.id).padStart(3, '0')}`}
+                                        </span>
                                     </TableCell>
                                     <TableCell className="font-medium">{row.name}</TableCell>
                                     <TableCell className="font-medium text-primary">

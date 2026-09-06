@@ -28,17 +28,60 @@ class PayrollService
 
             $payroll = Payroll::create([
                 'institution_id' => $institutionId,
-                'month' => $month,
-                'year' => $year,
-                'status' => 'draft',
-                'total_amount' => 0
+                'month'          => $month,
+                'year'           => $year,
+                'status'         => 'draft',
+                'total_amount'   => 0
             ]);
 
-            // Get total days in month
-            $daysInMonth = \Carbon\Carbon::createFromDate($year, $month, 1)->daysInMonth;
-            
-            // Get all staff with active salary structures
-            $staffUsers = User::whereHas('staffProfile', function($q) use ($institutionId) {
+            // ─── Working Days Calculation ────────────────────────────────
+            // Total calendar days in the month
+            $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+
+            // Count Sundays in this month (Carbon: dayOfWeek === 0 = Sunday)
+            $sundayCount = 0;
+            $cursor = Carbon::createFromDate($year, $month, 1)->startOfDay();
+            $monthEnd = $cursor->copy()->endOfMonth();
+            while ($cursor->lte($monthEnd)) {
+                if ($cursor->dayOfWeek === Carbon::SUNDAY) {
+                    $sundayCount++;
+                }
+                $cursor->addDay();
+            }
+
+            // Fetch official holidays for this month (excluding those that fall on Sunday to avoid double-deduction)
+            $holidayDates = \App\Models\HR\Holiday::where('institution_id', $institutionId)
+                ->where(function ($q) use ($month, $year) {
+                    // One-time holidays in this year+month
+                    $q->where(function ($q2) use ($month, $year) {
+                        $q2->where('is_recurring', false)
+                           ->whereYear('date', $year)
+                           ->whereMonth('date', $month);
+                    })
+                    // Recurring holidays that fall in this month (any year)
+                    ->orWhere(function ($q2) use ($month) {
+                        $q2->where('is_recurring', true)
+                           ->whereMonth('date', $month);
+                    });
+                })
+                ->get()
+                ->map(function ($h) use ($year) {
+                    // Normalize recurring holiday date to the requested year
+                    if ($h->is_recurring) {
+                        return Carbon::createFromDate($year, $h->date->month, $h->date->day);
+                    }
+                    return Carbon::parse($h->date);
+                })
+                ->filter(fn($d) => $d->dayOfWeek !== Carbon::SUNDAY) // Skip if it's already a Sunday
+                ->unique(fn($d) => $d->toDateString());
+
+            $holidayCount = $holidayDates->count();
+
+            // Actual working days for the month
+            $workingDaysInMonth = max(1, $daysInMonth - $sundayCount - $holidayCount);
+
+            // ─── Staff & Payslips ─────────────────────────────────────────
+            $staffUsers = User::whereHas('staffProfile', function ($q) use ($institutionId) {
                 $q->where('institution_id', $institutionId);
             })->whereHas('salaryStructure')->with(['salaryStructure.components.payrollComponent'])->get();
 
@@ -46,18 +89,30 @@ class PayrollService
 
             foreach ($staffUsers as $user) {
                 $structure = $user->salaryStructure;
-                
+
                 // Fetch attendance for this user for this month
                 $attendances = \App\Models\HR\StaffAttendance::where('user_id', $user->id)
                     ->whereMonth('date', $month)
                     ->whereYear('date', $year)
                     ->get();
-                    
-                // Default to all days present if no attendance marked, or calculate from records
-                $markedDays = $attendances->count();
+
+                // Count LWP (Leave Without Pay) days:
+                // absent = 1 day LWP, half_day = 0.5 LWP, unpaid on_leave = 1 day LWP
+                // Attendance records on Sundays or holidays are ignored in LWP calculation
+                $holidayDateStrings = $holidayDates->map(fn($d) => $d->toDateString())->toArray();
+
                 $lwpDays = 0;
-                
                 foreach ($attendances as $att) {
+                    $attDate = Carbon::parse($att->date);
+
+                    // Skip Sundays and official holidays — they are not working days
+                    if ($attDate->dayOfWeek === Carbon::SUNDAY) {
+                        continue;
+                    }
+                    if (in_array($attDate->toDateString(), $holidayDateStrings)) {
+                        continue;
+                    }
+
                     if ($att->status === 'absent') {
                         $lwpDays++;
                     } elseif ($att->status === 'half_day') {
@@ -68,62 +123,69 @@ class PayrollService
                         }
                     }
                 }
-                
-                $paidDays = $daysInMonth - $lwpDays;
-                $prorationFactor = $daysInMonth > 0 ? ($paidDays / $daysInMonth) : 1;
 
-                $originalBasicPay = $structure->basic_salary;
-                $basicPay = round($originalBasicPay * $prorationFactor, 2);
-                
-                $totalEarnings = 0;
+                // Paid working days = working days in month minus LWP
+                $paidWorkingDays   = max(0, $workingDaysInMonth - $lwpDays);
+                $prorationFactor   = $workingDaysInMonth > 0 ? ($paidWorkingDays / $workingDaysInMonth) : 1;
+
+                $originalBasicPay  = $structure->basic_salary;
+                $basicPay          = round($originalBasicPay * $prorationFactor, 2);
+
+                $totalEarnings   = 0;
                 $totalDeductions = 0;
-                $breakdown = [];
+                $breakdown       = [];
 
                 foreach ($structure->components as $comp) {
-                    $cType = $comp->payrollComponent->type;
-                    $cName = $comp->payrollComponent->name;
+                    $cType          = $comp->payrollComponent->type;
+                    $cName          = $comp->payrollComponent->name;
                     $originalAmount = $comp->amount;
 
                     if ($cType === 'earning') {
-                        $amount = round($originalAmount * $prorationFactor, 2);
-                        $totalEarnings += $amount;
+                        $amount          = round($originalAmount * $prorationFactor, 2);
+                        $totalEarnings  += $amount;
                     } else {
                         // Deductions are typically fixed, not prorated
-                        $amount = $originalAmount;
+                        $amount           = $originalAmount;
                         $totalDeductions += $amount;
                     }
 
                     $breakdown[] = [
-                        'name' => $cName,
-                        'type' => $cType,
-                        'amount' => $amount
-                    ];
-                }
-                
-                // If LWP days > 0, we can add a tracking element
-                if ($lwpDays > 0) {
-                    $lwpDeductionAmount = ($originalBasicPay - $basicPay);
-                    // Just informational, basicPay is already reduced
-                    $breakdown[] = [
-                        'name' => "LWP Deduction ($lwpDays days)",
-                        'type' => 'info',
-                        'amount' => -$lwpDeductionAmount
+                        'name'   => $cName,
+                        'type'   => $cType,
+                        'amount' => $amount,
                     ];
                 }
 
-                $netPay = $basicPay + $totalEarnings - $totalDeductions;
+                // Informational LWP line
+                if ($lwpDays > 0) {
+                    $lwpDeductionAmount = $originalBasicPay - $basicPay;
+                    $breakdown[]        = [
+                        'name'   => "LWP Deduction ($lwpDays days)",
+                        'type'   => 'info',
+                        'amount' => -$lwpDeductionAmount,
+                    ];
+                }
+
+                // Informational working-days summary line
+                $breakdown[] = [
+                    'name'   => "Working Days (excl. Sundays: {$sundayCount}, Holidays: {$holidayCount})",
+                    'type'   => 'info',
+                    'amount' => $workingDaysInMonth,
+                ];
+
+                $netPay       = $basicPay + $totalEarnings - $totalDeductions;
                 $totalAmount += $netPay;
 
                 Payslip::create([
-                    'payroll_id' => $payroll->id,
-                    'user_id' => $user->id,
-                    'basic_pay' => $basicPay,
-                    'total_earnings' => $totalEarnings,
-                    'total_deductions' => $totalDeductions,
-                    'net_pay' => $netPay,
-                    'worked_days' => $paidDays,
-                    'status' => 'unpaid',
-                    'component_breakdown' => $breakdown
+                    'payroll_id'          => $payroll->id,
+                    'user_id'             => $user->id,
+                    'basic_pay'           => $basicPay,
+                    'total_earnings'      => $totalEarnings,
+                    'total_deductions'    => $totalDeductions,
+                    'net_pay'             => $netPay,
+                    'worked_days'         => $paidWorkingDays,
+                    'status'              => 'unpaid',
+                    'component_breakdown' => $breakdown,
                 ]);
             }
 
@@ -165,4 +227,206 @@ class PayrollService
             ]);
         });
     }
+
+    /**
+     * Check institution readiness before running payroll for given month/year
+     */
+    public function checkPayrollReadiness(int $institutionId, int $month, int $year): array
+    {
+        $allStaff = User::whereHas('staffProfile', function ($q) use ($institutionId) {
+            $q->where('institution_id', $institutionId);
+        })->with(['staffProfile', 'salaryStructure'])->get();
+
+        $readyStaff = [];
+        $missingStructure = [];
+        $noAttendance = [];
+
+        foreach ($allStaff as $staff) {
+            $empId = $staff->staffProfile?->employee_id ?? sprintf('EMP-%03d', $staff->id);
+            $hasStructure = (bool) $staff->salaryStructure;
+
+            $attCount = \App\Models\HR\StaffAttendance::where('user_id', $staff->id)
+                ->whereMonth('date', $month)
+                ->whereYear('date', $year)
+                ->count();
+
+            $item = [
+                'user_id' => $staff->id,
+                'employee_id' => $empId,
+                'name' => $staff->name,
+                'designation' => $staff->staffProfile?->designation ?? 'Staff',
+                'has_salary_structure' => $hasStructure,
+                'attendance_days_marked' => $attCount,
+            ];
+
+            if ($hasStructure) {
+                $readyStaff[] = $item;
+            } else {
+                $missingStructure[] = $item;
+            }
+
+            if ($attCount === 0) {
+                $noAttendance[] = $item;
+            }
+        }
+
+        return [
+            'month' => $month,
+            'year' => $year,
+            'total_staff_count' => count($allStaff),
+            'ready_count' => count($readyStaff),
+            'missing_structure_count' => count($missingStructure),
+            'missing_structure_staff' => $missingStructure,
+            'no_attendance_count' => count($noAttendance),
+            'no_attendance_staff' => $noAttendance,
+            'is_ready' => count($missingStructure) === 0,
+        ];
+    }
+
+    /**
+     * Recalculate a single payslip using active attendance and salary structure
+     */
+    public function recalculateSinglePayslip(Payslip $payslip): Payslip
+    {
+        $payroll = $payslip->payroll;
+        if ($payroll->status === 'paid') {
+            throw new \Exception("Cannot recalculate payslip for a finalized/paid payroll run.");
+        }
+
+        $institutionId = $payroll->institution_id;
+        $month = $payroll->month;
+        $year = $payroll->year;
+
+        $user = User::with(['staffProfile', 'salaryStructure.components.payrollComponent'])
+            ->find($payslip->user_id);
+
+        if (!$user || !$user->salaryStructure) {
+            throw new \Exception("User does not have an active salary structure configured.");
+        }
+
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $sundayCount = 0;
+        $cursor = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $monthEnd = $cursor->copy()->endOfMonth();
+        while ($cursor->lte($monthEnd)) {
+            if ($cursor->dayOfWeek === Carbon::SUNDAY) {
+                $sundayCount++;
+            }
+            $cursor->addDay();
+        }
+
+        $holidayDates = \App\Models\HR\Holiday::where('institution_id', $institutionId)
+            ->where(function ($q) use ($month, $year) {
+                $q->where(function ($q2) use ($month, $year) {
+                    $q2->where('is_recurring', false)
+                       ->whereYear('date', $year)
+                       ->whereMonth('date', $month);
+                })
+                ->orWhere(function ($q2) use ($month) {
+                    $q2->where('is_recurring', true)
+                       ->whereMonth('date', $month);
+                });
+            })
+            ->get()
+            ->map(function ($h) use ($year) {
+                if ($h->is_recurring) {
+                    return Carbon::createFromDate($year, $h->date->month, $h->date->day);
+                }
+                return Carbon::parse($h->date);
+            })
+            ->filter(fn($d) => $d->dayOfWeek !== Carbon::SUNDAY)
+            ->unique(fn($d) => $d->toDateString());
+
+        $holidayCount = $holidayDates->count();
+        $workingDaysInMonth = max(1, $daysInMonth - $sundayCount - $holidayCount);
+
+        $attendances = \App\Models\HR\StaffAttendance::where('user_id', $user->id)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
+
+        $holidayDateStrings = $holidayDates->map(fn($d) => $d->toDateString())->toArray();
+
+        $lwpDays = 0;
+        foreach ($attendances as $att) {
+            $attDate = Carbon::parse($att->date);
+            if ($attDate->dayOfWeek === Carbon::SUNDAY || in_array($attDate->toDateString(), $holidayDateStrings)) {
+                continue;
+            }
+
+            if ($att->status === 'absent') {
+                $lwpDays++;
+            } elseif ($att->status === 'half_day') {
+                $lwpDays += 0.5;
+            } elseif ($att->status === 'on_leave') {
+                if ($att->leaveType && !$att->leaveType->is_paid_leave) {
+                    $lwpDays++;
+                }
+            }
+        }
+
+        $paidWorkingDays = max(0, $workingDaysInMonth - $lwpDays);
+        $prorationFactor = $workingDaysInMonth > 0 ? ($paidWorkingDays / $workingDaysInMonth) : 1;
+
+        $structure = $user->salaryStructure;
+        $originalBasicPay = $structure->basic_salary;
+        $basicPay = round($originalBasicPay * $prorationFactor, 2);
+
+        $totalEarnings = 0;
+        $totalDeductions = 0;
+        $breakdown = [];
+
+        foreach ($structure->components as $comp) {
+            $cType = $comp->payrollComponent->type;
+            $cName = $comp->payrollComponent->name;
+            $originalAmount = $comp->amount;
+
+            if ($cType === 'earning') {
+                $amount = round($originalAmount * $prorationFactor, 2);
+                $totalEarnings += $amount;
+            } else {
+                $amount = $originalAmount;
+                $totalDeductions += $amount;
+            }
+
+            $breakdown[] = [
+                'name' => $cName,
+                'type' => $cType,
+                'amount' => $amount,
+            ];
+        }
+
+        if ($lwpDays > 0) {
+            $lwpDeductionAmount = $originalBasicPay - $basicPay;
+            $breakdown[] = [
+                'name' => "LWP Deduction ($lwpDays days)",
+                'type' => 'info',
+                'amount' => -$lwpDeductionAmount,
+            ];
+        }
+
+        $breakdown[] = [
+            'name' => "Working Days (excl. Sundays: {$sundayCount}, Holidays: {$holidayCount})",
+            'type' => 'info',
+            'amount' => $workingDaysInMonth,
+        ];
+
+        $netPay = $basicPay + $totalEarnings - $totalDeductions;
+
+        $payslip->update([
+            'basic_pay' => $basicPay,
+            'total_earnings' => $totalEarnings,
+            'total_deductions' => $totalDeductions,
+            'net_pay' => $netPay,
+            'worked_days' => round($paidWorkingDays),
+            'component_breakdown' => $breakdown,
+        ]);
+
+        $payroll->update([
+            'total_amount' => $payroll->payslips()->sum('net_pay')
+        ]);
+
+        return $payslip;
+    }
 }
+

@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\SalaryStructureController::store
- * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
+ * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:37
  * @route '/api/v1/hr/salary-structures/{user}'
  */
 export const store = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\SalaryStructureController::store
- * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
+ * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:37
  * @route '/api/v1/hr/salary-structures/{user}'
  */
 store.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ store.url = (args: { user: number | { id: number } } | [user: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\SalaryStructureController::store
- * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
+ * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:37
  * @route '/api/v1/hr/salary-structures/{user}'
  */
 store.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -137,7 +137,7 @@ store.post = (args: { user: number | { id: number } } | [user: number | { id: nu
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\SalaryStructureController::store
- * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
+ * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:37
  * @route '/api/v1/hr/salary-structures/{user}'
  */
     const storeForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -147,7 +147,7 @@ store.post = (args: { user: number | { id: number } } | [user: number | { id: nu
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\SalaryStructureController::store
- * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:31
+ * @see app/Http/Controllers/Api/V1/HR/SalaryStructureController.php:37
  * @route '/api/v1/hr/salary-structures/{user}'
  */
         storeForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

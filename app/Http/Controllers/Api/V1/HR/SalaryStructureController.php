@@ -15,10 +15,16 @@ class SalaryStructureController extends BaseController
     {
         $institutionId = $request->user()->activeInstitutionId();
         
-        // Fetch all staff users for the institution
         $staff = User::whereHas('staffProfile', function($q) use ($institutionId) {
             $q->where('institution_id', $institutionId);
         })->with(['staffProfile', 'salaryStructure.components.payrollComponent'])->paginate($request->per_page ?? 50);
+
+        $staff->getCollection()->transform(function ($user) {
+            if ($user->staffProfile && empty($user->staffProfile->employee_id)) {
+                $user->staffProfile->employee_id = sprintf('EMP-%03d', $user->id);
+            }
+            return $user;
+        });
 
         return $this->paginated($staff);
     }

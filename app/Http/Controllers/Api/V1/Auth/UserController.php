@@ -217,31 +217,36 @@ class UserController extends BaseController
     public function assignRole(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
-            'role_id' => 'required|exists:roles,id',
+            'role_id'        => 'required|exists:roles,id',
             'institution_id' => 'nullable|integer|exists:institutions,id',
         ]);
 
         $role = Role::findOrFail($validated['role_id']);
 
-        $protectedRoleKeys = ['super_admin', 'college_admin'];
+        $protectedRoleKeys = ['super_admin', 'institution_admin', 'student', 'candidate', 'parent'];
         if (in_array($role->key, $protectedRoleKeys, true)) {
             return $this->error('This role cannot be assigned via the API.', 403);
         }
 
-        $institutionId = $validated['institution_id'] ?? null;
-
-        // Super admin is the only role allowed global scope; all others must be institution-scoped.
+        // Super admin: global scope (no institution)
         if ($role->key === 'super_admin') {
             $institutionId = null;
-        } elseif ($institutionId === null) {
-            return $this->error('Non–super-admin roles require an institution_id.', 422);
+        } else {
+            // Use explicitly passed institution_id, or fall back to active institution from session
+            $institutionId = $validated['institution_id']
+                ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+
+            if (!$institutionId) {
+                return $this->error('Could not determine institution context. Please pass institution_id.', 422);
+            }
         }
 
         DB::table('user_roles')->insertOrIgnore([
-            'user_id' => $user->id,
-            'role_id' => $validated['role_id'],
+            'user_id'       => $user->id,
+            'role_id'       => $validated['role_id'],
             'institution_id' => $institutionId,
-            'assigned_by' => $request->user()->id,
+            'assigned_by'   => $request->user()->id,
+            'assigned_at'   => now(),
         ]);
 
         return $this->success(null, 'Role assigned successfully');

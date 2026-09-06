@@ -9,6 +9,7 @@ use App\Models\Session;
 use App\Models\Institution;
 use App\Models\StudentProfile;
 use App\Models\FeePayment;
+use App\Models\FeeRegulationProfile;
 use App\Models\LmsClass;
 use App\Models\LmsClassEnrollment;
 use App\Exports\ImportTemplateExport;
@@ -19,6 +20,7 @@ use App\Services\StudentIdentifierService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -282,31 +284,14 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
             // ── 6. Create Guardian ──
             $this->createGuardianIfAvailable($row, $user, $email, $mobile);
 
-            // ── 7. Fee Ledger (Handled dynamically via FeeProfile, past payments skipped) ──
-            $rawDues = $row['previous_dues'] ?? $row['previous_due'] ?? $row['arrears'] ?? $row['opening_balance'] ?? null;
-            if ($rawDues !== null) {
-                $cleanDues = preg_replace('/[^0-9.]/', '', (string) $rawDues);
-                $duesAmount = $cleanDues !== '' ? (float) $cleanDues : 0;
-            } else {
-                $duesAmount = 0;
-            }
-
-            if ($duesAmount > 0) {
-                // Seed this directly into the ledger using a special period key 'arrears'
-                // The FeeCollectionService will read this to initialize the matrix.
-                \App\Models\StudentFeePeriodBalance::updateOrCreate([
-                    'institution_id' => $this->institutionId,
-                    'user_id' => $user->id,
-                    'session_id' => $sessionId,
-                    'period_key' => 'arrears',
-                ], [
-                    'frequency' => 'annual',
-                    'opening_balance' => $duesAmount,
-                    'total_payable' => $duesAmount,
-                    'closing_balance' => $duesAmount,
-                    'version_hash' => md5($duesAmount),
-                ]);
-            }
+            // ── 7. Fee Ledger & One-Time Admission Fee Handling ──
+            $this->processAdmissionFeeAndLedger(
+                $row,
+                $user,
+                $sessionId,
+                $resolvedProfile,
+                $profileData['admission_date'] ?? null
+            );
 
             // ── 8. Notification (includes default password) ──
             try {
@@ -466,31 +451,148 @@ class ExistingStudentBulkImport implements ToModel, WithHeadingRow, WithValidati
         );
     }
 
-    // ── Unique Logic: Fee Ledger ────────────────────────────────────
+    // ── Unique Logic: Admission Fee & Fee Ledger ────────────────────
 
-    protected function createFeeLedger(array $row, int $userId): void
-    {
-        $feeAmount = $row['fee_paid_amount'] ?? null;
-        if (empty($feeAmount) || !is_numeric($feeAmount) || (float) $feeAmount <= 0) {
-            return;
+    /**
+     * Handle one-time admission fee and previous dues ledger.
+     *
+     * 1. If admission_fee_paid is YES, PAID, or a numeric amount:
+     *    - Creates FeePayment (status = 'paid') with prefix 'PAY-ADM-'
+     *    - Automatically recognized in Dashboard Analytics & Monthly Ledger
+     *    - If paid amount < total one-time fee, the difference is carried to arrears
+     *
+     * 2. If admission_fee_paid is 0, EXEMPT, or NA:
+     *    - Excluded from one-time fees (no payment, no dues)
+     *
+     * 3. If admission_fee_paid is BLANK or DUE / PENDING:
+     *    - The entire one-time fee is considered unpaid and added to opening arrears (previous dues)
+     */
+    protected function processAdmissionFeeAndLedger(
+        array $row,
+        User $user,
+        int $sessionId,
+        ?FeeRegulationProfile $resolvedProfile,
+        ?string $admissionDate
+    ): void {
+        // A. Resolve one-time fees from the student's fee profile
+        $oneTimeItems = collect();
+        if ($resolvedProfile) {
+            $resolvedProfile->loadMissing('items.feeType');
+            if ($resolvedProfile->items) {
+                $oneTimeItems = $resolvedProfile->items->filter(function ($item) {
+                    $cat = $item->feeType?->category;
+                    if ($cat !== null && !in_array($cat, [\App\Enums\FeeCategory::RECURRING->value, \App\Enums\FeeCategory::DISCOUNT->value], true)) {
+                        return (float) $item->amount > 0;
+                    }
+                    if ($cat === null && preg_match('/admission|registration|one[-_\s]?time|prospectus|caution|security/i', $item->feeType?->name ?? '')) {
+                        return (float) $item->amount > 0;
+                    }
+                    return false;
+                });
+            }
         }
 
-        FeePayment::create([
-            'institution_id' => $this->institutionId,
-            'payment_id'     => 'PAY-IMPORT-' . strtoupper(uniqid()),
-            'user_id'        => $userId,
-            'fee_head_id'    => null,
-            'for_month'      => $row['fee_for_month'] ?? now()->format('Y-m'),
-            'amount'         => (float) $feeAmount,
-            'late_fee_applied' => 0,
-            'total_amount'   => (float) $feeAmount,
-            'payment_mode'   => $row['fee_payment_mode'] ?? 'cash',
-            'payment_status' => 'paid',
-            'payment_date'   => now(),
-            'collected_by'   => auth()->id() ?? $this->resolveCollectedBy(),
-            'receipt_no'     => $row['fee_receipt_no'] ?? ('IMP-' . strtoupper(uniqid())),
-            'remarks'        => 'Imported via bulk import',
-        ]);
+        $totalOneTimeFee = (float) $oneTimeItems->sum('amount');
+        $primaryFeeTypeId = $oneTimeItems->first()?->fee_type_id;
+
+        // B. Parse Excel inputs
+        $rawAdmPaid = trim((string) ($row['admission_fee_paid'] ?? ''));
+        $rawPaymentDate = trim((string) ($row['admission_payment_date'] ?? ''));
+        $rawPaymentMode = strtolower(trim((string) ($row['admission_payment_mode'] ?? 'cash'))) ?: 'cash';
+        $receiptNo = trim((string) ($row['admission_receipt_no'] ?? ''));
+
+        $unpaidOneTime = 0.0;
+        $paidAmount = 0.0;
+
+        $isExempt = in_array(strtolower($rawAdmPaid), ['0', 'exempt', 'na', 'n/a', 'no_fee', 'promoted', 'none', 'false'], true);
+        $isFullPaid = in_array(strtolower($rawAdmPaid), ['yes', 'paid', 'true', '1'], true);
+        $cleanNumericPaid = preg_replace('/[^0-9.]/', '', $rawAdmPaid);
+        $isNumericPaid = !$isExempt && $cleanNumericPaid !== '' && is_numeric($cleanNumericPaid) && (float) $cleanNumericPaid > 0;
+
+        if ($isExempt) {
+            // Old or exempt student: 0 paid, 0 added to dues
+            $paidAmount = 0.0;
+            $unpaidOneTime = 0.0;
+        } elseif ($isFullPaid) {
+            // Full one-time fee paid
+            $paidAmount = $totalOneTimeFee > 0 ? $totalOneTimeFee : 0.0;
+            $unpaidOneTime = 0.0;
+        } elseif ($isNumericPaid) {
+            // Specific amount paid
+            $paidAmount = (float) $cleanNumericPaid;
+            if ($totalOneTimeFee > 0 && $paidAmount < $totalOneTimeFee) {
+                $unpaidOneTime = $totalOneTimeFee - $paidAmount;
+            } else {
+                $unpaidOneTime = 0.0;
+            }
+        } else {
+            // Blank / Unspecified / DUE: Entire one-time fee is unpaid and carried to arrears
+            $paidAmount = 0.0;
+            $unpaidOneTime = $totalOneTimeFee;
+        }
+
+        // C. If an admission payment was made, record FeePayment (for Analytics & Ledger)
+        if ($paidAmount > 0) {
+            $paymentMode = in_array($rawPaymentMode, ['cash', 'online', 'upi', 'cheque', 'bank_transfer'], true)
+                ? $rawPaymentMode
+                : 'cash';
+
+            $parsedDate = !empty($rawPaymentDate) ? $this->parseDate($rawPaymentDate) : null;
+            $finalPaymentDate = $parsedDate ?? $admissionDate ?? now()->toDateString();
+            $forMonth = substr($finalPaymentDate, 0, 7);
+
+            if (empty($receiptNo)) {
+                $receiptNo = 'ADM-' . date('Y') . '-' . strtoupper(Str::random(6));
+            }
+
+            $collectedBy = auth()->id() ?? $this->resolveCollectedBy() ?? 1;
+
+            // fee_payments.fee_head_id has a foreign key to fee_heads(id)
+            $verifiedFeeHeadId = $primaryFeeTypeId
+                ? DB::table('fee_heads')->where('id', $primaryFeeTypeId)->value('id')
+                : null;
+
+            FeePayment::create([
+                'institution_id'   => $this->institutionId,
+                'payment_id'       => 'PAY-ADM-' . strtoupper(uniqid()),
+                'user_id'          => $user->id,
+                'fee_head_id'      => $verifiedFeeHeadId,
+                'for_month'        => $forMonth,
+                'amount'           => $paidAmount,
+                'late_fee_applied' => 0,
+                'total_amount'     => $paidAmount,
+                'cash_amount'      => $paymentMode === 'cash' ? $paidAmount : 0,
+                'online_amount'    => $paymentMode !== 'cash' ? $paidAmount : 0,
+                'payment_mode'     => $paymentMode,
+                'payment_status'   => 'paid',
+                'payment_date'     => $finalPaymentDate,
+                'receipt_no'       => $receiptNo,
+                'remarks'          => 'Admission/one-time fee recorded on bulk import',
+                'collected_by'     => $collectedBy,
+                'process_status'   => 'approved',
+            ]);
+        }
+
+        // D. Calculate total opening arrears (CSV previous dues + unpaid one-time fees)
+        $rawDues = $row['previous_dues'] ?? $row['previous_due'] ?? $row['arrears'] ?? $row['opening_balance'] ?? null;
+        $cleanDues = $rawDues !== null && $rawDues !== '' ? (float) preg_replace('/[^0-9.]/', '', (string) $rawDues) : 0.0;
+
+        $totalArrears = $cleanDues + $unpaidOneTime;
+
+        if ($totalArrears > 0) {
+            \App\Models\StudentFeePeriodBalance::updateOrCreate([
+                'institution_id' => $this->institutionId,
+                'user_id'        => $user->id,
+                'session_id'     => $sessionId,
+                'period_key'     => 'arrears',
+            ], [
+                'frequency'       => 'annual',
+                'opening_balance' => $totalArrears,
+                'total_payable'   => $totalArrears,
+                'closing_balance' => $totalArrears,
+                'version_hash'    => md5((string) $totalArrears),
+            ]);
+        }
     }
 
     protected function resolveCollectedBy(): ?int

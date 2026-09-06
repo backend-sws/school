@@ -25,7 +25,7 @@ class StaffController extends BaseController
         $validated = $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users',
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:6',
             'role_id' => 'required|exists:roles,id',
             'category' => 'required|integer',
             'mobile' => 'nullable|string|max:15',
@@ -53,6 +53,7 @@ class StaffController extends BaseController
         $validated = $request->validate([
             'name' => 'sometimes|string|max:150',
             'mobile' => 'nullable|string|max:15',
+            'password' => 'nullable|string|min:6',
             'status' => 'sometimes|integer|in:0,1,2',
             'photo_url' => 'nullable|string|max:500',
             'role_id' => 'sometimes|nullable|exists:roles,id',

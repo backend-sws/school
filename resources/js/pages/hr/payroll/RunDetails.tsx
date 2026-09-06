@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { PageContainer } from '@/components/shared/page/PageContainer';
 import { MainPageHeader } from '@/components/shared/page/MainPageHeader';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, Download, Mail, CheckCircle2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { FileText, Download, Mail, CheckCircle2, Pencil, Plus, Trash2, RotateCcw } from 'lucide-react';
 import DataTable, { TableEmptyState, TableSkeletonLoader } from '@/components/dataTable';
 import Each from '@/components/Each';
 import { TableRow, TableCell } from '@/components/ui/table';
@@ -21,7 +21,7 @@ import { Label } from '@/components/ui/label';
 export default function RunDetails({ payrollId }: { payrollId: string | number }) {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(15);
-    
+
     const { data: slipsData, isLoading } = useQuery({
         queryKey: ['payslips', payrollId, page, perPage],
         queryFn: async () => {
@@ -43,6 +43,24 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
             toast.error(err.response?.data?.message || "Failed to send email");
         }
     });
+
+    const recalculateSlipMutation = useMutation({
+        mutationFn: async (slipId: number) => {
+            return await api.post(`/hr/payslips/${slipId}/recalculate`);
+        },
+        onSuccess: () => {
+            toast.success("Payslip recalculated from attendance & salary structure");
+            queryClient.invalidateQueries({ queryKey: ['payslips', payrollId] });
+            queryClient.invalidateQueries({ queryKey: ['payrolls'] });
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.message || "Failed to recalculate payslip");
+        }
+    });
+
+    const handleExportBankSheet = () => {
+        window.open(`/api/v1/hr/payrolls/${payrollId}/export-bank-sheet`, '_blank');
+    };
 
 
     const [slipToEdit, setSlipToEdit] = useState<any>(null);
@@ -85,7 +103,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
     const handleBreakdownChange = (index: number, field: string, value: string | number) => {
         const newBreakdown = [...editForm.component_breakdown];
         newBreakdown[index] = { ...newBreakdown[index], [field]: value };
-        
+
         // Recalculate earnings/deductions based on breakdown
         let earnings = 0;
         let deductions = 0;
@@ -114,7 +132,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
 
     const removeBreakdownItem = (index: number) => {
         const newBreakdown = editForm.component_breakdown.filter((_, i) => i !== index);
-        
+
         let earnings = 0;
         let deductions = 0;
         newBreakdown.forEach(item => {
@@ -155,7 +173,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
         <TooltipProvider>
             <PageContainer maxWidth="full">
                 <Head title="Payroll Run Details - HR" />
-                
+
                 <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-3">
@@ -170,11 +188,21 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                 </Badge>
                             )}
                         </div>
-                        <div className="flex justify-end w-full sm:w-auto gap-3">
+                        <div className="flex flex-wrap items-center justify-end w-full sm:w-auto gap-2.5">
+                            <Button
+                                variant="outline"
+                                onClick={handleExportBankSheet}
+                                className="gap-1.5"
+                                title="Download Excel sheet for bank salary transfer"
+                            >
+                                <Download className="size-4" />
+                                Export Bank Sheet
+                            </Button>
+
                             {slips && slips.length > 0 && slips[0].status !== 'paid' && (
-                                <Button 
-                                    variant="outline"
-                                    onClick={() => markPaidMutation.mutate()} 
+                                <Button
+                                    variant="default"
+                                    onClick={() => markPaidMutation.mutate()}
                                     disabled={markPaidMutation.isPending}
                                     className="gap-1.5"
                                 >
@@ -193,8 +221,11 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                             <DataTable
                                 columns={[
                                     { key: "sno", label: "S.No" },
+                                    { key: "employee_id", label: "Emp ID" },
                                     { key: "name", label: "Staff Name" },
                                     { key: "designation", label: "Designation" },
+                                    { key: "basic", label: "Basic Pay" },
+                                    { key: "days", label: "Worked Days" },
                                     { key: "net", label: "Net Payable" },
                                     { key: "actions", label: "Actions" }
                                 ]}
@@ -209,57 +240,89 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                 <Each
                                     of={slips}
                                     isLoading={isLoading}
-                                    nodatafound={<TableEmptyState colSpan={5} message="No payslips found for this run." />}
-                                    fallback={<TableSkeletonLoader columns={5} rows={5} />}
+                                    nodatafound={<TableEmptyState colSpan={8} message="No payslips found for this run." />}
+                                    fallback={<TableSkeletonLoader columns={8} rows={5} />}
                                     keyExtractor={(r: any) => r.id}
-                                    render={(slip: any, index: number) => (
-                                        <TableRow>
-                                            <TableCell className="w-[60px]">
-                                                {getSerialNumber(meta.current_page, meta.per_page, index)}
-                                            </TableCell>
-                                            <TableCell className="font-medium text-primary">
-                                                {slip.user?.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {slip.user?.staff_profile?.designation || slip.user?.staffProfile?.designation || 'N/A'}
-                                            </TableCell>
-                                            <TableCell className="font-bold">
-                                                ₹{Number(slip.net_pay).toFixed(2)}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    {slip.status === 'draft' && (
-                                                        <Button 
-                                                            variant="outline" 
-                                                            size="sm" 
-                                                            className="gap-1.5"
-                                                            onClick={() => openEditModal(slip)}
+                                    render={(slip: any, index: number) => {
+                                        const empId = slip.user?.staff_profile?.employee_id || slip.user?.staffProfile?.employee_id || `EMP-${String(slip.user_id).padStart(3, '0')}`;
+                                        return (
+                                            <TableRow key={slip.id}>
+                                                <TableCell className="w-[50px]">
+                                                    {getSerialNumber(meta.current_page, meta.per_page, index)}
+                                                </TableCell>
+                                                <TableCell className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                                    <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                                        {empId}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="font-medium text-primary">
+                                                    {slip.user?.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge variant="outline" className="text-xs font-normal">
+                                                        {slip.user?.staff_profile?.designation || slip.user?.staffProfile?.designation || 'Staff'}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="font-medium text-slate-700 dark:text-slate-300">
+                                                    ₹{Number(slip.basic_pay).toFixed(2)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                                        {slip.worked_days ?? 'N/A'} Days
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                    ₹{Number(slip.net_pay).toFixed(2)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-1.5">
+                                                        {slip.status !== 'paid' && (
+                                                            <>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="h-8 gap-1 text-xs"
+                                                                    onClick={() => openEditModal(slip)}
+                                                                    title="Edit & Adjust Payslip"
+                                                                >
+                                                                    <Pencil className="size-3.5" /> Edit
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-8 gap-1 text-xs text-slate-600 hover:text-primary"
+                                                                    onClick={() => recalculateSlipMutation.mutate(slip.id)}
+                                                                    disabled={recalculateSlipMutation.isPending && recalculateSlipMutation.variables === slip.id}
+                                                                    title="Recalculate from attendance & salary structure"
+                                                                >
+                                                                    <RotateCcw className={`size-3.5 ${recalculateSlipMutation.isPending && recalculateSlipMutation.variables === slip.id ? 'animate-spin' : ''}`} />
+                                                                    Recalc
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                        <Button
+                                                            variant="secondary"
+                                                            size="sm"
+                                                            className="h-8 gap-1 text-xs"
+                                                            onClick={() => handleDownload(slip.id)}
                                                         >
-                                                            <Pencil className="size-4" /> Edit
+                                                            <Download className="size-3.5" /> PDF
                                                         </Button>
-                                                    )}
-                                                    <Button 
-                                                        variant="secondary" 
-                                                        size="sm" 
-                                                        className="gap-1.5"
-                                                        onClick={() => handleDownload(slip.id)}
-                                                    >
-                                                        <Download className="size-4" /> PDF
-                                                    </Button>
-                                                    <Button 
-                                                        variant="outline" 
-                                                        size="sm" 
-                                                        className="gap-1.5"
-                                                        disabled={emailMutation.isPending && emailMutation.variables === slip.id}
-                                                        onClick={() => emailMutation.mutate(slip.id)}
-                                                    >
-                                                        <Mail className="size-4" /> 
-                                                        {emailMutation.isPending && emailMutation.variables === slip.id ? "Sending..." : "Email"}
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-8 gap-1 text-xs"
+                                                            disabled={emailMutation.isPending && emailMutation.variables === slip.id}
+                                                            onClick={() => emailMutation.mutate(slip.id)}
+                                                        >
+                                                            <Mail className="size-3.5" />
+                                                            {emailMutation.isPending && emailMutation.variables === slip.id ? "..." : "Email"}
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    }}
                                 />
                             </DataTable>
                         </CardContent>
@@ -269,17 +332,22 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                 <Dialog open={!!slipToEdit} onOpenChange={(open) => !open && setSlipToEdit(null)}>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
-                            <DialogTitle>Edit Payslip: {slipToEdit?.user?.name}</DialogTitle>
+                            <DialogTitle className="flex items-center gap-2">
+                                <span>Edit Payslip: {slipToEdit?.user?.name}</span>
+                                <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    {slipToEdit?.user?.staff_profile?.employee_id || slipToEdit?.user?.staffProfile?.employee_id || `EMP-${String(slipToEdit?.user_id).padStart(3, '0')}`}
+                                </span>
+                            </DialogTitle>
                         </DialogHeader>
-                        
+
                         <div className="grid gap-6 py-4">
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label>Basic Pay (₹)</Label>
-                                    <Input 
-                                        type="number" 
-                                        value={editForm.basic_pay} 
-                                        onChange={(e) => setEditForm({...editForm, basic_pay: Number(e.target.value)})}
+                                    <Input
+                                        type="number"
+                                        value={editForm.basic_pay}
+                                        onChange={(e) => setEditForm({ ...editForm, basic_pay: Number(e.target.value) })}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -291,7 +359,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                     <Input type="number" value={editForm.total_deductions} readOnly className="bg-muted" />
                                 </div>
                             </div>
-                            
+
                             <div className="rounded-md border p-4 bg-muted/30">
                                 <h4 className="text-sm font-semibold mb-1 text-primary">Net Payable</h4>
                                 <p className="text-2xl font-bold text-primary">
@@ -311,7 +379,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                         </Button>
                                     </div>
                                 </div>
-                                
+
                                 {editForm.component_breakdown.length === 0 ? (
                                     <p className="text-sm text-muted-foreground text-center py-4 border rounded-md">No components added.</p>
                                 ) : (
@@ -319,8 +387,8 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                         {editForm.component_breakdown.map((item, index) => (
                                             <div key={index} className="flex items-center gap-3">
                                                 <div className="flex-1">
-                                                    <Input 
-                                                        value={item.name} 
+                                                    <Input
+                                                        value={item.name}
                                                         onChange={(e) => handleBreakdownChange(index, 'name', e.target.value)}
                                                         placeholder="Component Name"
                                                     />
@@ -331,9 +399,9 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
                                                     </Badge>
                                                 </div>
                                                 <div className="w-[150px]">
-                                                    <Input 
-                                                        type="number" 
-                                                        value={item.amount} 
+                                                    <Input
+                                                        type="number"
+                                                        value={item.amount}
                                                         onChange={(e) => handleBreakdownChange(index, 'amount', Number(e.target.value))}
                                                     />
                                                 </div>
@@ -349,7 +417,7 @@ export default function RunDetails({ payrollId }: { payrollId: string | number }
 
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setSlipToEdit(null)}>Cancel</Button>
-                            <Button 
+                            <Button
                                 onClick={() => updateSlipMutation.mutate(editForm)}
                                 disabled={updateSlipMutation.isPending}
                             >

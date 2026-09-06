@@ -516,7 +516,7 @@ assignRole.post = (args: { user: number | { id: number } } | [user: number | { i
     assignRole.form = assignRoleForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::removeRole
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:264
  * @route '/api/v1/users/{user}/roles/{role}'
  */
 export const removeRole = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -531,7 +531,7 @@ removeRole.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::removeRole
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:264
  * @route '/api/v1/users/{user}/roles/{role}'
  */
 removeRole.url = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions) => {
@@ -559,7 +559,7 @@ removeRole.url = (args: { user: number | { id: number }, role: string | number }
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::removeRole
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:264
  * @route '/api/v1/users/{user}/roles/{role}'
  */
 removeRole.delete = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -569,7 +569,7 @@ removeRole.delete = (args: { user: number | { id: number }, role: string | numbe
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::removeRole
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:264
  * @route '/api/v1/users/{user}/roles/{role}'
  */
     const removeRoleForm = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -584,7 +584,7 @@ removeRole.delete = (args: { user: number | { id: number }, role: string | numbe
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::removeRole
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:259
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:264
  * @route '/api/v1/users/{user}/roles/{role}'
  */
         removeRoleForm.delete = (args: { user: number | { id: number }, role: string | number } | [user: number | { id: number }, role: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

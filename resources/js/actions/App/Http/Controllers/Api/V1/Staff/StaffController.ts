@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::resendInvitation
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:70
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:71
  * @route '/api/v1/staff/{staff}/resend-invitation'
  */
 export const resendInvitation = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ resendInvitation.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::resendInvitation
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:70
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:71
  * @route '/api/v1/staff/{staff}/resend-invitation'
  */
 resendInvitation.url = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ resendInvitation.url = (args: { staff: string | number } | [staff: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::resendInvitation
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:70
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:71
  * @route '/api/v1/staff/{staff}/resend-invitation'
  */
 resendInvitation.post = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -54,7 +54,7 @@ resendInvitation.post = (args: { staff: string | number } | [staff: string | num
 
     /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::resendInvitation
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:70
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:71
  * @route '/api/v1/staff/{staff}/resend-invitation'
  */
     const resendInvitationForm = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -64,7 +64,7 @@ resendInvitation.post = (args: { staff: string | number } | [staff: string | num
 
             /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::resendInvitation
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:70
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:71
  * @route '/api/v1/staff/{staff}/resend-invitation'
  */
         resendInvitationForm.post = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -412,7 +412,7 @@ update.patch = (args: { staff: string | number } | [staff: string | number ] | s
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::destroy
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:76
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:77
  * @route '/api/v1/staff/{staff}'
  */
 export const destroy = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -427,7 +427,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::destroy
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:76
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:77
  * @route '/api/v1/staff/{staff}'
  */
 destroy.url = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -455,7 +455,7 @@ destroy.url = (args: { staff: string | number } | [staff: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::destroy
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:76
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:77
  * @route '/api/v1/staff/{staff}'
  */
 destroy.delete = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -465,7 +465,7 @@ destroy.delete = (args: { staff: string | number } | [staff: string | number ] |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::destroy
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:76
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:77
  * @route '/api/v1/staff/{staff}'
  */
     const destroyForm = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -480,7 +480,7 @@ destroy.delete = (args: { staff: string | number } | [staff: string | number ] |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Staff\StaffController::destroy
- * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:76
+ * @see app/Http/Controllers/Api/V1/Staff/StaffController.php:77
  * @route '/api/v1/staff/{staff}'
  */
         destroyForm.delete = (args: { staff: string | number } | [staff: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

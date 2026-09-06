@@ -97,7 +97,7 @@ class ProcessBulkImportJob implements ShouldQueue
 
         // Guard: file-content hash idempotency — prevent re-importing the same data
         try {
-            $disk = $importLog->file_disk ?? 's3';
+            $disk = $importLog->file_disk ?? config('filesystems.default', 'local');
             $fileHash = md5(Storage::disk($disk)->get($importLog->file_path));
             $duplicateImport = ImportLog::where('institution_id', $importLog->institution_id)
                 ->where('module', $importLog->module)
@@ -127,7 +127,7 @@ class ProcessBulkImportJob implements ShouldQueue
         $importLog->update(['status' => 'processing', 'progress' => 0]);
 
         try {
-            $disk = $importLog->file_disk ?? 's3';
+            $disk = $importLog->file_disk ?? config('filesystems.default', 'local');
             $filePath = $importLog->file_path;
 
             // ── 1. Create importer ──

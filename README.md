@@ -128,5 +128,76 @@ If a school wants to use a custom domain (e.g., `their-school.com`):
 2. **cPanel Level:** Add the domain as an **Alias / Parked Domain** or **Addon Domain** pointing to the exact same `/public` document root.
 3. **DNS Level:** The school points their `A Record` to your server IP.
 
+---
+
+## 👥 Student Management CLI & Maintenance
+
+### 1. Bulk Student Import (CLI)
+To import existing students directly from a local CSV file without queue delays:
+```bash
+php artisan import:existing-students storage/your_file.csv --institution=1
+```
+
+### 2. Bulk Student Purge / Reset (`students:purge`)
+Use this command when students were imported with incorrect data and need to be completely removed along with all associated fees, balances, user accounts, and enrollments before re-importing.
+
+> **Safety:** This command automatically protects and excludes staff and administrator accounts (`super_admin`, `institution_admin`, `principal`, `teacher`, `accountant`, etc.).
+
+#### A. Dry-Run (Preview what will be deleted without touching DB)
+```bash
+php artisan students:purge --institution=1 --all --dry-run
+```
+
+#### B. Purge All Students in Institution
+```bash
+# Interactive (with confirmation prompt)
+php artisan students:purge --institution=1 --all
+
+# Force (non-interactive / script mode)
+php artisan students:purge --institution=1 --all --force
+
+# Also clear past student import logs
+php artisan students:purge --institution=1 --all --clear-import-logs --force
+```
+
+#### C. Filtered Purge (Specific Session or Stream/Class)
+```bash
+# Purge only students belonging to Session ID 2
+php artisan students:purge --institution=1 --session_id=2 --force
+
+# Purge only students belonging to Stream ID 3
+php artisan students:purge --institution=1 --stream_id=3 --force
+```
+
+#### What gets cleaned up:
+- `student_profiles` and corresponding student `users` (frees up emails and mobile numbers for clean re-import)
+- `fee_payments`, `student_fee_period_balances`, and `student_ad_hoc_charges`
+- `lms_class_enrollments`, `attendance_records`, `exam_marks`, `exam_remarks`
+- `guardian_students` and orphaned guardian accounts
+- `admission_applications` and associated verification data
+- `id_cards`, `student_addresses`, and `student_documents`
+
+---
+
+### 3. Roles & Permissions Production Seeding
+If permissions or workflows are updated:
+```bash
+php artisan db:seed --class=WorkflowSeeder --force
+php artisan db:seed --class=RoleMappingSeeder --force
+php artisan cache:clear
+php artisan config:clear
+```
+
+---
+
+### 4. Fee Regulation Profiles Seeding
+To populate standard class-wise Fee Profiles (Nursery through Class XII with Admission, Tuition, and Exam fees):
+```bash
+php artisan db:seed --class=FeeRegulationProfileSeeder --force
+```
+
+---
+
 ## 📄 License
 Proprietary / Closed Source
+

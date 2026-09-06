@@ -75,7 +75,7 @@ export const unifiedSidebarConfig: SidebarConfig = {
         {
             label: "Admission & Registry",
             items: [
-                { title: "Candidates", href: "/students/candidate", icon: UserPlus, permission: "view_candidates", feature: "admissions" },
+                // { title: "Candidates", href: "/students/candidate", icon: UserPlus, permission: "view_candidates", feature: "admissions" },
                 { title: "Applications", href: "/admission/applications", icon: FileSignatureIcon, permission: "view_applications", feature: "admissions" },
                 { title: "Students", href: "/students/manage", icon: Users, permission: "view_students", feature: "core" },
                 { title: "My Applications", href: "/student-portal/my-applications", icon: File, permission: "student_portal_applications", feature: "admissions" },
@@ -104,6 +104,7 @@ export const unifiedSidebarConfig: SidebarConfig = {
                 { title: "Staff Attendance", href: "/hr/attendance", icon: CalendarDays, permission: "view_users", feature: "core" },
                 { title: "Leave Types", href: "/hr/leave-types", icon: Layers, permission: "view_users", feature: "core" },
                 { title: "Leave Requests", href: "/hr/leave-requests", icon: ClipboardList, permission: "view_users", feature: "core" },
+                { title: "Holidays", href: "/hr/holidays", icon: CalendarDays, permission: "view_users", feature: "core" },
                 { title: "Payroll Hub", href: "/hr/payroll", icon: Banknote, permission: "view_users", feature: "core" },
                 { title: "Components", href: "/hr/payroll/components", icon: SlidersHorizontal, permission: "view_users", feature: "core" },
                 { title: "Salary Structures", href: "/hr/payroll/salary-structures", icon: Layers, permission: "view_users", feature: "core" }

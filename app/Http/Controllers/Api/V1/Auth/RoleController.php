@@ -18,7 +18,7 @@ class RoleController extends BaseController
     /**
      * Protected role keys: visible only to super_admin. Hidden from everyone else in list/show/update/destroy/sync.
      */
-    private const PROTECTED_ROLE_KEYS = ['super_admin', 'institution_admin', 'student', 'candidate'];
+    private const PROTECTED_ROLE_KEYS = ['super_admin', 'institution_admin', 'student', 'candidate', 'parent'];
 
     /** Portal workflow: assignable only by seeders; reject if included in sync. */
     private const PORTAL_WORKFLOW_KEYS = ['student_portal'];

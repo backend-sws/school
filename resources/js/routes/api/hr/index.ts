@@ -2,6 +2,7 @@ import payrolls from './payrolls'
 import payslips from './payslips'
 import leaveTypes from './leave-types'
 import leaveRequests from './leave-requests'
+import holidays from './holidays'
 import salaryStructures from './salary-structures'
 import payrollComponents from './payroll-components'
 const hr = {
@@ -9,6 +10,7 @@ const hr = {
 payslips: Object.assign(payslips, payslips),
 leaveTypes: Object.assign(leaveTypes, leaveTypes),
 leaveRequests: Object.assign(leaveRequests, leaveRequests),
+holidays: Object.assign(holidays, holidays),
 salaryStructures: Object.assign(salaryStructures, salaryStructures),
 payrollComponents: Object.assign(payrollComponents, payrollComponents),
 }

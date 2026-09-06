@@ -79,6 +79,7 @@ class FeeCollectionService
 
     public static function clearCache(): void
     {
+        self::$settingsCache = [];
         self::$bulkAdmissionApps = null;
         self::$bulkPayments = null;
         self::$bulkTransportAssignments = null;
@@ -607,6 +608,8 @@ class FeeCollectionService
             $balance = $totalPayable - $paidInMonth;
             
             $firstActualPayment = $actualPayments->first();
+            $primaryPayment = $firstActualPayment ?? $concessionPayments->first();
+            $monthRemarks = $monthPayments->pluck('remarks')->filter()->unique()->implode(' | ');
 
             $matrix[] = [
                 'month_key'            => $monthKey,
@@ -625,11 +628,12 @@ class FeeCollectionService
                 'total_payable'        => $totalPayable,
                 'paid_amount'          => $paidInMonth,
                 'balance'              => $balance,
-                'payment_id'           => $actualPayments->pluck('id')->filter()->first(),
-                'receipt_no'           => $actualPayments->pluck('receipt_no')->filter()->first(),
-                'payment_mode'         => $firstActualPayment?->payment_mode,
-                'payment_date'         => $firstActualPayment?->payment_date?->toDateString(),
-                'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 ? 'partial' : 'unpaid'),
+                'payment_id'           => $primaryPayment?->id,
+                'receipt_no'           => $primaryPayment?->receipt_no,
+                'payment_mode'         => $primaryPayment?->payment_mode,
+                'payment_date'         => $primaryPayment?->payment_date?->toDateString(),
+                'remarks'              => $monthRemarks ?: null,
+                'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 || $monthlyConcession > 0 ? 'partial' : 'unpaid'),
                 'reverted_payments'    => $formattedCancelled->filter(fn($cp) => $cp['for_month'] === $monthKey)->values()->all(),
             ];
 

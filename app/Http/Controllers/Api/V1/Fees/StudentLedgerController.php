@@ -139,7 +139,7 @@ class StudentLedgerController extends BaseController
             'user_id' => 'required|exists:users,id',
             'for_month' => 'required|string|regex:/^\d{4}-\d{2}$/',
             'amount' => 'required|numeric|min:0',
-            'payment_mode' => 'required|string|in:cash,online,cheque,dd,split',
+            'payment_mode' => 'required|string|in:cash,online,cheque,dd,split,concession',
             'cash_amount' => 'nullable|numeric|min:0',
             'online_amount' => 'nullable|numeric|min:0',
             'online_transaction_id' => 'nullable|string',
@@ -148,23 +148,28 @@ class StudentLedgerController extends BaseController
             'receipt_no' => 'nullable|string|max:50',
             'remarks' => 'nullable|string',
             'late_fee_applied' => 'nullable|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'discount_reason' => 'nullable|string|max:500',
         ]);
 
         $institutionId = self::getActiveInstitutionId($request->user());
         $baseAmount = (float) $validated['amount'];
+        $discountAmount = (float) ($validated['discount_amount'] ?? 0);
+        $discountReason = trim($validated['discount_reason'] ?? '');
+        $netAmount = max(0.0, $baseAmount - $discountAmount);
         $lateFee = (float) ($validated['late_fee_applied'] ?? 0);
 
-        if ($institutionId && $lateFee <= 0) {
+        if ($institutionId && $lateFee <= 0 && $netAmount > 0) {
             $settings = $this->feeCollectionService->getSettings($institutionId);
             $lateFee = $this->feeCollectionService->calculateLateFeeForPeriod(
                 $institutionId,
                 $validated['for_month'],
-                $baseAmount,
+                $netAmount,
                 $settings
             );
         }
 
-        $totalAmount = $baseAmount + $lateFee;
+        $totalPaidAmount = $netAmount + $lateFee;
         $receiptNo = $validated['receipt_no'] ?? ('RCP-' . strtoupper(uniqid()));
 
         $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($validated['user_id']);
@@ -175,50 +180,99 @@ class StudentLedgerController extends BaseController
             if (! isset($matrixResult['error'])) {
                 $row = collect($matrixResult['matrix'] ?? [])->firstWhere('month_key', $validated['for_month']);
                 if ($row) {
-                    $ledgerSnapshot = $this->ledgerSnapshotFactory->fromMatrixRow($row, $totalAmount);
+                    $ledgerSnapshot = $this->ledgerSnapshotFactory->fromMatrixRow($row, $totalPaidAmount > 0 ? $totalPaidAmount : $discountAmount);
                 }
             }
         }
 
-        $payment = DB::transaction(function () use ($institutionId, $validated, $baseAmount, $lateFee, $totalAmount, $request, $receiptNo, $ledgerSnapshot, $student) {
-            $payment = FeePayment::create([
-                'institution_id' => $institutionId,
-                'payment_id' => 'PAY-LEDGER-' . strtoupper(uniqid()),
-                'user_id' => $validated['user_id'],
-                'fee_head_id' => null,
-                'for_month' => $validated['for_month'],
-                'amount' => $baseAmount,
-                'late_fee_applied' => $lateFee,
-                'total_amount' => $totalAmount,
-                'payment_mode' => $validated['payment_mode'],
-                'payment_status' => 'paid',
-                'payment_date' => now(),
-                'collected_by' => $request->user()->id,
-                'receipt_no' => $receiptNo,
-                'remarks' => $validated['remarks'] ?? null,
-                'cash_amount' => $validated['cash_amount'] ?? null,
-                'online_amount' => $validated['online_amount'] ?? null,
-                'online_transaction_id' => $validated['online_transaction_id'] ?? null,
-                'cheque_number' => $validated['cheque_number'] ?? null,
-                'bank_name' => $validated['bank_name'] ?? null,
-                'ledger_snapshot' => $ledgerSnapshot,
-            ]);
+        $payment = DB::transaction(function () use (
+            $institutionId, $validated, $baseAmount, $discountAmount, $discountReason,
+            $netAmount, $lateFee, $totalPaidAmount, $request, $receiptNo, $ledgerSnapshot, $student
+        ) {
+            $primaryPayment = null;
+
+            // 1. If discount / concession is provided, create a concession FeePayment
+            if ($discountAmount > 0) {
+                $concessionRemarks = trim($discountReason ?: 'Discount / Concession applied');
+                if (!empty($validated['remarks'])) {
+                    $concessionRemarks .= ' | Note: ' . trim($validated['remarks']);
+                }
+                $concessionRemarks .= ($netAmount > 0 ? ' [Partial Concession with payment]' : ' [Full Waiver]');
+
+                $concessionPayment = FeePayment::create([
+                    'institution_id' => $institutionId,
+                    'payment_id' => 'PAY-DISC-' . strtoupper(uniqid()),
+                    'user_id' => $validated['user_id'],
+                    'fee_head_id' => null,
+                    'for_month' => $validated['for_month'],
+                    'amount' => $discountAmount,
+                    'late_fee_applied' => 0,
+                    'total_amount' => $discountAmount,
+                    'payment_mode' => 'concession',
+                    'payment_status' => 'paid',
+                    'payment_date' => now(),
+                    'collected_by' => $request->user()->id,
+                    'receipt_no' => $receiptNo . '-D',
+                    'remarks' => $concessionRemarks,
+                    'ledger_snapshot' => $ledgerSnapshot,
+                ]);
+
+                $primaryPayment = $concessionPayment;
+            }
+
+            // 2. If netAmount > 0, create the regular payment
+            if ($netAmount > 0) {
+                $actualRemarks = trim($validated['remarks'] ?? '');
+                if ($discountAmount > 0) {
+                    $discNote = 'Concession: ₹' . number_format($discountAmount, 2) . ($discountReason ? " ({$discountReason})" : '');
+                    $actualRemarks = trim(($actualRemarks ? $actualRemarks . ' | ' : '') . $discNote);
+                }
+
+                $primaryPayment = FeePayment::create([
+                    'institution_id' => $institutionId,
+                    'payment_id' => 'PAY-LEDGER-' . strtoupper(uniqid()),
+                    'user_id' => $validated['user_id'],
+                    'fee_head_id' => null,
+                    'for_month' => $validated['for_month'],
+                    'amount' => $netAmount,
+                    'late_fee_applied' => $lateFee,
+                    'total_amount' => $totalPaidAmount,
+                    'payment_mode' => $validated['payment_mode'],
+                    'payment_status' => 'paid',
+                    'payment_date' => now(),
+                    'collected_by' => $request->user()->id,
+                    'receipt_no' => $receiptNo,
+                    'remarks' => $actualRemarks ?: null,
+                    'cash_amount' => $validated['cash_amount'] ?? null,
+                    'online_amount' => $validated['online_amount'] ?? null,
+                    'online_transaction_id' => $validated['online_transaction_id'] ?? null,
+                    'cheque_number' => $validated['cheque_number'] ?? null,
+                    'bank_name' => $validated['bank_name'] ?? null,
+                    'ledger_snapshot' => $ledgerSnapshot,
+                ]);
+            }
 
             if ($institutionId) {
                 \App\Services\FeeCollectionService::clearCache();
                 $this->periodBalanceProjector->projectPeriod($student, $institutionId, $validated['for_month']);
             }
 
-            return $payment;
+            return $primaryPayment;
         });
+
         $sendReceipt = $institutionId && ($this->feeCollectionService->getSettings($institutionId)['receipt_send_email'] ?? true);
-        if ($student && $sendReceipt) {
+        if ($student && $sendReceipt && $netAmount > 0 && $payment) {
             $recipients = $this->recipientResolver->recipientsForStudent($student);
             foreach ($recipients as $notifiable) {
                 $notifiable->notify(new FeePaymentReceiptNotification($student, $payment));
             }
         }
-        return $this->created($payment, 'Payment recorded and ledger updated.');
+
+        $message = $netAmount > 0 
+            ? 'Payment recorded and ledger updated.' 
+            : 'Concession / waiver recorded and ledger updated.';
+
+        return $this->created($payment, $message);
     }
 
     // ─── POST /fees/ledger/resend-receipt ────────────────────────────────
@@ -398,6 +452,7 @@ class StudentLedgerController extends BaseController
             ]);
 
             if ($institutionId) {
+                \App\Services\FeeCollectionService::clearCache();
                 $this->periodBalanceProjector->projectPeriod($student, $institutionId, $validated['for_month']);
             }
 
@@ -443,7 +498,7 @@ class StudentLedgerController extends BaseController
             'months.*.for_month' => 'required|string|regex:/^\d{4}-\d{2}$/',
             'months.*.amount' => 'required|numeric|min:0',
             'total_amount' => 'required|numeric|min:0',
-            'payment_mode' => 'required|string|in:cash,online,cheque,dd,split',
+            'payment_mode' => 'required|string|in:cash,online,cheque,dd,split,concession',
             'cash_amount' => 'nullable|numeric|min:0',
             'online_amount' => 'nullable|numeric|min:0',
             'online_transaction_id' => 'nullable|string',
@@ -494,6 +549,12 @@ class StudentLedgerController extends BaseController
                 }
 
                 if ($monthDiscount > 0) {
+                    $advRemarks = trim($validated['discount_reason'] ?? 'Discount applied during advance payment');
+                    if (!empty($validated['remarks'])) {
+                        $advRemarks .= ' | Note: ' . trim($validated['remarks']);
+                    }
+                    $advRemarks .= " [Advance: {$monthCount} months — {$monthKeys}]";
+
                     $payments[] = FeePayment::create([
                         'institution_id' => $institutionId,
                         'payment_id' => 'PAY-ADV-DISC-' . strtoupper(uniqid()),
@@ -507,7 +568,7 @@ class StudentLedgerController extends BaseController
                         'payment_date' => now(),
                         'collected_by' => $request->user()->id,
                         'receipt_no' => $receiptNo . ($monthCount > 1 ? '-D' . ($idx + 1) : '-D'),
-                        'remarks' => trim(($validated['discount_reason'] ?? 'Discount applied during advance payment') . " [Advance: {$monthCount} months — {$monthKeys}]"),
+                        'remarks' => $advRemarks,
                     ]);
                 }
 
@@ -564,5 +625,32 @@ class StudentLedgerController extends BaseController
             'payments' => $payments,
             'count' => count($payments),
         ], "Advance payment recorded for {$monthCount} month(s).");
+    }
+
+    // ─── GET  /fees/ledger/student/{id}/export ───────────────────────────
+
+    public function exportExcel(Request $request, int $studentId)
+    {
+        $validated = $request->validate([
+            'session_id' => 'nullable|integer|exists:academic_sessions,id',
+        ]);
+
+        $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($studentId);
+        $institutionId = self::getActiveInstitutionId($request->user());
+
+        $result = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $validated['session_id'] ?? null);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], 404);
+        }
+
+        $sessionName = $student->studentProfile?->session?->name ?? 'Current_Session';
+        $safeStudentName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $student->name);
+        $filename = "Fee_Ledger_{$safeStudentName}_{$sessionName}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\StudentLedgerExport($student, $result),
+            $filename
+        );
     }
 }

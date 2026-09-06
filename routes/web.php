@@ -279,6 +279,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/attendance', fn() => Inertia::render('hr/attendance/StaffAttendance'))->name('attendance');
                 Route::get('/leave-types', fn() => Inertia::render('hr/leave/LeaveTypes'))->name('leave-types');
                 Route::get('/leave-requests', fn() => Inertia::render('hr/leave/LeaveRequests'))->name('leave-requests');
+                Route::get('/holidays', fn() => Inertia::render('hr/holidays/HolidayManager'))->name('holidays');
             });
         });
 

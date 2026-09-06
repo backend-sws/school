@@ -10,13 +10,14 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import { FORM_TYPE } from "@/constants";
-import { IndianRupee, CalendarRange, CheckCircle2, Loader2 } from "lucide-react";
+import { CalendarRange, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -101,9 +102,23 @@ export default function AdvancePaymentModal({
         [unpaidMonths, selectedMonthKeys],
     );
 
+    /**
+     * Calculate each row's actual payable amount.
+     * For Month 0 (the first month of the session): includes opening arrears (row.balance).
+     * For subsequent months: charges only that month's own fees (total_payable - previous_dues).
+     */
+    const getRowPayable = (r: any): number => {
+        const isFirstSessionMonth = matrix.length > 0 && r.month_key === matrix[0]?.month_key;
+        if (isFirstSessionMonth) {
+            return Math.max(0, Number(r.balance ?? r.total_payable ?? 0));
+        }
+        const monthOwn = Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0);
+        return Math.max(0, monthOwn);
+    };
+
     const totalAmount = useMemo(
-        () => selectedRows.reduce((sum: number, r: any) => sum + (Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0)), 0),
-        [selectedRows],
+        () => selectedRows.reduce((sum: number, r: any) => sum + getRowPayable(r), 0),
+        [selectedRows, matrix],
     );
 
     const form = useForm<AdvanceFormValues>({
@@ -144,8 +159,8 @@ export default function AdvancePaymentModal({
 
     const collectMutation = useMutation({
         mutationFn: (data: any) => api.post("/fees/ledger/collect-advance", data),
-        onSuccess: () => {
-            toast.success("Advance payment recorded successfully!");
+        onSuccess: (res: any) => {
+            toast.success(res?.data?.message || "Advance payment recorded successfully!");
             onSuccess();
         },
         onError: (err: any) => {
@@ -161,13 +176,18 @@ export default function AdvancePaymentModal({
 
         let finalCash = data.cash_amount;
         let finalOnline = data.online_amount;
+        let finalMode = data.payment_mode;
         const discountAmount = data.discount_amount || 0;
         const netAmount = Math.max(0, totalAmount - discountAmount);
 
-        if (data.payment_mode === "cash") {
+        if (netAmount === 0 && discountAmount > 0) {
+            finalMode = "concession";
+            finalCash = 0;
+            finalOnline = 0;
+        } else if (finalMode === "cash") {
             finalCash = netAmount;
             finalOnline = 0;
-        } else if (data.payment_mode === "online") {
+        } else if (finalMode === "online") {
             finalCash = 0;
             finalOnline = netAmount;
         }
@@ -176,10 +196,10 @@ export default function AdvancePaymentModal({
             user_id: student.id,
             months: selectedRows.map((r: any) => ({
                 for_month: r.month_key,
-                amount: Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0),
+                amount: getRowPayable(r),
             })),
             total_amount: totalAmount,
-            payment_mode: data.payment_mode,
+            payment_mode: finalMode,
             cash_amount: finalCash,
             online_amount: finalOnline,
             online_transaction_id: data.online_transaction_id || "",
@@ -192,7 +212,7 @@ export default function AdvancePaymentModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[560px] border shadow-2xl p-0 overflow-hidden rounded-xl">
+            <DialogContent className="sm:max-w-[580px] border shadow-2xl p-0 overflow-hidden rounded-xl">
                 <DialogHeader className="p-6 pb-0">
                     <DialogTitle className="text-xl font-bold flex items-center gap-2">
                         <CalendarRange className="size-5 text-primary" />
@@ -220,8 +240,7 @@ export default function AdvancePaymentModal({
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Transport</TableHead>
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Hostel</TableHead>
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Other</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Total</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider pr-4">Balance</TableHead>
+                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider pr-4">Amount Due</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -234,6 +253,9 @@ export default function AdvancePaymentModal({
                                 ) : (
                                     unpaidMonths.map((row: any) => {
                                         const isSelected = selectedMonthKeys.has(row.month_key);
+                                        const isFirstRowWithArrears = matrix.length > 0 && row.month_key === matrix[0]?.month_key && Number(row.previous_dues) > 0;
+                                        const rowPayable = getRowPayable(row);
+
                                         return (
                                             <TableRow
                                                 key={row.month_key}
@@ -249,7 +271,16 @@ export default function AdvancePaymentModal({
                                                         onCheckedChange={() => toggleMonth(row.month_key)}
                                                     />
                                                 </TableCell>
-                                                <TableCell className="py-2.5 font-semibold text-sm">{row.month_name}</TableCell>
+                                                <TableCell className="py-2.5 font-semibold text-sm">
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span>{row.month_name}</span>
+                                                        {isFirstRowWithArrears && (
+                                                            <Badge variant="outline" className="text-[9px] font-semibold text-amber-700 bg-amber-50 border-amber-200">
+                                                                Incl. ₹{Number(row.previous_dues).toLocaleString()} Arrears
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
                                                 <TableCell className="py-2.5 text-right tabular-nums text-sm">
                                                     {Number(row.transport_fee) > 0 ? formatCurrency(row.transport_fee) : "—"}
                                                 </TableCell>
@@ -259,11 +290,8 @@ export default function AdvancePaymentModal({
                                                 <TableCell className="py-2.5 text-right tabular-nums text-sm">
                                                     {Number(row.other_fees) > 0 ? formatCurrency(row.other_fees) : "—"}
                                                 </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm">
-                                                    {formatCurrency(Number(row.total_payable) - Number(row.previous_dues))}
-                                                </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm font-bold pr-4">
-                                                    {formatCurrency(row.balance)}
+                                                <TableCell className="py-2.5 text-right tabular-nums text-sm font-bold text-foreground pr-4">
+                                                    {formatCurrency(rowPayable)}
                                                 </TableCell>
                                             </TableRow>
                                         );
