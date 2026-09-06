@@ -79,6 +79,7 @@ class FeeCollectionService
 
     public static function clearCache(): void
     {
+        self::$settingsCache = [];
         self::$bulkAdmissionApps = null;
         self::$bulkPayments = null;
         self::$bulkTransportAssignments = null;

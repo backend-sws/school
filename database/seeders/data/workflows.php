@@ -148,9 +148,12 @@ return [
             'update_users',
             'delete_users',
             'view_students',
+            'view_candidates',       // FIX: was in route_permissions.php config but missing from workflow
             'create_faculty',
             'update_faculty',
             'delete_faculty',
+            'view_staff_links',      // FIX: was in route_permissions.php config but missing from workflow
+            'update_staff_links',    // FIX: was in route_permissions.php config but missing from workflow
         ],
     ],
 
