@@ -10,6 +10,8 @@ export const staffFormSchema = z.object({
   department_ids: z.array(z.any()).optional(),
   subject_ids: z.array(z.any()).optional(),
   send_invitation: z.boolean().optional(),
+  password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
+  status: z.union([z.number(), z.boolean()]).optional(),
 });
 
 export type StaffFormValues = z.infer<typeof staffFormSchema>;

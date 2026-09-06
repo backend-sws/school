@@ -591,10 +591,10 @@ const StudentShow = () => {
                   {/* Identity + Actions */}
                   <div className="flex-1 min-w-0 space-y-4">
                     {/* Name row */}
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                             {student?.name}
                           </h1>
                           <StatusBadge
@@ -607,7 +607,7 @@ const StudentShow = () => {
                       </div>
 
                       {/* Primary actions */}
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Each
                           of={primaryActions}
                           keyExtractor={(a: ActionConfig) => a.key}

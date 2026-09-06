@@ -213,11 +213,83 @@ leaveRequests.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
         })
     
     leaveRequests.form = leaveRequestsForm
+/**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+export const holidays = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: holidays.url(options),
+    method: 'get',
+})
+
+holidays.definition = {
+    methods: ["get","head"],
+    url: '/hr/holidays',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+holidays.url = (options?: RouteQueryOptions) => {
+    return holidays.definition.url + queryParams(options)
+}
+
+/**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+holidays.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: holidays.url(options),
+    method: 'get',
+})
+/**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+holidays.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: holidays.url(options),
+    method: 'head',
+})
+
+    /**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+    const holidaysForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: holidays.url(options),
+        method: 'get',
+    })
+
+            /**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+        holidaysForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: holidays.url(options),
+            method: 'get',
+        })
+            /**
+ * @see routes/web.php:282
+ * @route '/hr/holidays'
+ */
+        holidaysForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: holidays.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    holidays.form = holidaysForm
 const hr = {
     payroll: Object.assign(payroll, payroll),
 attendance: Object.assign(attendance, attendance),
 leaveTypes: Object.assign(leaveTypes, leaveTypes),
 leaveRequests: Object.assign(leaveRequests, leaveRequests),
+holidays: Object.assign(holidays, holidays),
 }
 
 export default hr

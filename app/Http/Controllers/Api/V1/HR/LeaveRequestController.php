@@ -43,7 +43,7 @@ class LeaveRequestController extends BaseController
         }
 
         $validated = $request->validate([
-            'status' => 'required|in:approved,rejected',
+            'status' => 'required|in:approved,rejected,pending',
             'rejection_reason' => 'nullable|string|required_if:status,rejected'
         ]);
 
@@ -64,7 +64,8 @@ class LeaveRequestController extends BaseController
                     'remarks' => 'Auto-marked: Leave Approved',
                 ]);
             }
-        } elseif ($validated['status'] === 'rejected') {
+        } elseif ($validated['status'] === 'rejected' || $validated['status'] === 'pending') {
+            // On reject OR revert-to-pending: remove auto-marked attendance records
             $startDate = \Carbon\Carbon::parse($leaveRequest->start_date);
             $endDate = \Carbon\Carbon::parse($leaveRequest->end_date);
             
@@ -73,6 +74,7 @@ class LeaveRequestController extends BaseController
                 ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
                 ->where('status', 'on_leave')
                 ->where('leave_type_id', $leaveRequest->leave_type_id)
+                ->where('remarks', 'Auto-marked: Leave Approved')
                 ->delete();
         }
 

@@ -18,6 +18,8 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 
+const Req = () => <span className="text-destructive ml-0.5">*</span>;
+
 export default function LeaveTypes() {
     const [types, setTypes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,6 +48,11 @@ export default function LeaveTypes() {
     }, []);
 
     const handleSubmit = async () => {
+        if (!formData.name?.trim()) {
+            toast.error("Please enter a leave type name");
+            return;
+        }
+
         try {
             if (editingId) {
                 await axios.put(`/api/v1/hr/leave-types/${editingId}`, formData);
@@ -156,7 +163,7 @@ export default function LeaveTypes() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                            <Label>Leave Name</Label>
+                            <Label>Leave Name <Req /></Label>
                             <Input 
                                 value={formData.name} 
                                 onChange={e => setFormData({...formData, name: e.target.value})} 
@@ -164,7 +171,7 @@ export default function LeaveTypes() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>Days Allowed (Yearly)</Label>
+                            <Label>Days Allowed (Yearly) <Req /></Label>
                             <Input 
                                 type="number" 
                                 value={formData.days_allowed} 

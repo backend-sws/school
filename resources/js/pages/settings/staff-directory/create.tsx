@@ -4,10 +4,10 @@ import SettingsTip from "@/components/shared/SettingsTip";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Save, User, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Loader2, Save, User, ShieldAlert, ShieldCheck, ShieldOff, KeyRound } from "lucide-react";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import Each from "@/components/Each";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -28,6 +28,10 @@ import StaffPermissionsTab from "@/components/admin/StaffPermissionsTab";
 import { PermissionGate } from "@/components/PermissionGate";
 import { cn } from "@/lib/utils";
 import SettingsFooter from "@/components/shared/SettingsFooter";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 
 interface PageProps { id?: number; name?: string }
 
@@ -87,7 +91,7 @@ const StaffDirectoryCreate = () => {
   const avatarField = formLayout.find((f) => f.name === "avatar");
   const restLayout = formLayout.filter((f) => f.name !== "avatar");
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+  const { control, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
     resolver: zodResolver(staffFormSchema),
     mode: "onChange",
     defaultValues: {
@@ -99,8 +103,12 @@ const StaffDirectoryCreate = () => {
       department_ids: [] as string[],
       subject_ids: [] as string[],
       send_invitation: true, // Default to true for new staff
+      password: "",
+      status: 1,
     },
   });
+
+  const watchStatus = watch("status") ?? 1;
 
   useEffect(() => {
     if (!isEditMode || !staffData) return;
@@ -114,6 +122,9 @@ const StaffDirectoryCreate = () => {
       category: u.category != null ? String(u.category) : "",
       department_ids: Array.isArray(u.department_ids) ? (u.department_ids as number[]).map(String) : [],
       subject_ids: Array.isArray(u.subject_ids) ? (u.subject_ids as number[]).map(String) : [],
+      send_invitation: false,
+      password: "",
+      status: u.status !== undefined && u.status !== null ? Number(u.status) : 1,
     });
   }, [isEditMode, staffData, reset]);
 
@@ -123,9 +134,12 @@ const StaffDirectoryCreate = () => {
         name: data.name,
         role_id: data.role_id ? Number(data.role_id) : undefined,
         category: data.category ? Number(data.category) : undefined,
-        status: 1,
+        status: data.status !== undefined ? Number(data.status) : 1,
         send_invitation: data.send_invitation === true,
       };
+      if (typeof data.password === "string" && data.password.trim().length > 0) {
+        payload.password = data.password.trim();
+      }
       if (!isEditMode) payload.email = data.email;
       const photoUrl = data.avatar;
       if (typeof photoUrl === "string" && photoUrl) payload.photo_url = photoUrl;
@@ -152,6 +166,43 @@ const StaffDirectoryCreate = () => {
     createMutation.mutate(data);
   };
 
+  const renderAccountStatusCard = () => (
+    <div className="rounded-xl border p-4 bg-card/60 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex items-start sm:items-center gap-3">
+        <div className={cn(
+          "size-10 rounded-lg flex items-center justify-center shrink-0 border",
+          Number(watchStatus) === 1
+            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400"
+            : "bg-destructive/10 text-destructive border-destructive/20"
+        )}>
+          {Number(watchStatus) === 1 ? <ShieldCheck className="size-5" /> : <ShieldOff className="size-5" />}
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold text-sm">Account Status</h4>
+            <Badge variant={Number(watchStatus) === 1 ? "default" : "destructive"} className="text-xs">
+              {Number(watchStatus) === 1 ? "Active / Enabled" : "Disabled / Inactive"}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {Number(watchStatus) === 1
+              ? "Staff member can log in and access assigned modules."
+              : "Account is disabled. Staff member cannot log into the portal."}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2.5 self-end sm:self-center">
+        <span className="text-xs font-medium text-muted-foreground">
+          {Number(watchStatus) === 1 ? "Active" : "Disabled"}
+        </span>
+        <Switch
+          checked={Number(watchStatus) === 1}
+          onCheckedChange={(checked) => setValue("status", checked ? 1 : 0, { shouldDirty: true })}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Head title={isEditMode ? "Edit staff" : "Add staff user"} />
@@ -172,7 +223,9 @@ const StaffDirectoryCreate = () => {
 
           {!isEditMode ? (
             <div className="space-y-4">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-8">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pb-8">
+                {renderAccountStatusCard()}
+
                 {avatarField && (
                   <div>
                     <ControlledFormComponent
@@ -203,6 +256,25 @@ const StaffDirectoryCreate = () => {
                       );
                     }}
                   />
+                  {/* Password Input in Create Mode */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Account Password (Optional)</Label>
+                    <Controller
+                      control={control}
+                      name="password"
+                      render={({ field }) => (
+                        <PasswordInput
+                          {...field}
+                          value={(field.value as string) || ""}
+                          placeholder="Set password directly (min. 6 chars)"
+                        />
+                      )}
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Set a password directly. If left blank and 'Send Invitation Email' is checked, an invitation link will be sent to their email.
+                    </p>
+                    {errors.password && <p className="text-xs text-destructive">{errors.password.message as string}</p>}
+                  </div>
                 </div>
 
                 <SettingsFooter
@@ -235,7 +307,9 @@ const StaffDirectoryCreate = () => {
 
               <TabPanels className="mt-6">
                 <TabPanel>
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-8">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pb-8">
+                    {renderAccountStatusCard()}
+
                     {avatarField && (
                       <div>
                         <ControlledFormComponent
@@ -266,6 +340,31 @@ const StaffDirectoryCreate = () => {
                           );
                         }}
                       />
+                    </div>
+
+                    {/* Change / Reset Password Section */}
+                    <div className="rounded-xl border p-4 bg-card/60 shadow-xs space-y-3">
+                      <div className="flex items-center gap-2">
+                        <KeyRound className="size-4 text-primary" />
+                        <h4 className="text-sm font-semibold">Change / Reset Password</h4>
+                      </div>
+                      <div className="max-w-md space-y-2">
+                        <Controller
+                          control={control}
+                          name="password"
+                          render={({ field }) => (
+                            <PasswordInput
+                              {...field}
+                              value={(field.value as string) || ""}
+                              placeholder="Enter new password (min. 6 characters)"
+                            />
+                          )}
+                        />
+                        <p className="text-[11px] text-muted-foreground">
+                          Leave blank to keep the current password unchanged. Enter at least 6 characters to reset password immediately.
+                        </p>
+                        {errors.password && <p className="text-xs text-destructive">{errors.password.message as string}</p>}
+                      </div>
                     </div>
 
                     <SettingsFooter

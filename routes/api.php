@@ -295,6 +295,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
 
                 // Monthly Ledger & Student Ledger Matrix
                 Route::get('fees/ledger/monthly', [\App\Http\Controllers\Api\V1\Fees\MonthlyLedgerController::class, 'index']);
+                Route::get('fees/ledger/student/{studentId}/export', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'exportExcel']);
                 Route::get('fees/ledger/student/{studentId}', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'getMatrix']);
                 Route::post('fees/ledger/collect', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'collect']);
                 Route::post('fees/ledger/collect-advance', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'collectAdvance']);
@@ -328,21 +329,30 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
             Route::middleware(config('route_permissions.middleware.office_registry'))->group(function () {
                 Route::prefix('hr')->name('hr.')->group(function () {
                     Route::apiResource('payrolls', \App\Http\Controllers\Api\V1\HR\PayrollController::class)->only(['index', 'destroy']);
+                    Route::get('payrolls/readiness', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'readiness'])->name('payrolls.readiness');
                     Route::post('payrolls/generate', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'generate'])->name('payrolls.generate');
                     Route::post('payrolls/{payroll}/mark-paid', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'markPaid'])->name('payrolls.mark-paid');
+                    Route::get('payrolls/{payroll}/export-bank-sheet', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'exportBankSheet'])->name('payrolls.export-bank-sheet');
                     Route::get('payrolls/{payroll}/payslips', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'payslips'])->name('payrolls.payslips');
                     Route::get('payrolls/{payroll}/slips', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'slips'])->name('payrolls.slips');
                     Route::get('payslips/staff/{userId}', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'staffHistory'])->name('payslips.history');
                     Route::get('payslips/{payslip}/download', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'downloadSlip'])->name('payslips.download');
                     Route::post('payslips/{payslip}/email', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'emailSlip'])->name('payslips.email');
+                    Route::post('payslips/{payslip}/recalculate', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'recalculateSlip'])->name('payslips.recalculate');
                     Route::put('payslips/{payslip}', [\App\Http\Controllers\Api\V1\HR\PayrollController::class, 'updatePayslip'])->name('payslips.update');
 
                     // Leave & Attendance
                     Route::apiResource('leave-types', \App\Http\Controllers\Api\V1\HR\LeaveTypeController::class);
                     Route::apiResource('leave-requests', \App\Http\Controllers\Api\V1\HR\LeaveRequestController::class)->except(['destroy', 'show']);
                     Route::patch('leave-requests/{leaveRequest}/status', [\App\Http\Controllers\Api\V1\HR\LeaveRequestController::class, 'updateStatus']);
+                    Route::apiResource('holidays', \App\Http\Controllers\Api\V1\HR\HolidayController::class)->except(['show', 'create', 'edit']);
+
                     
                     Route::get('staff-attendance/ledger', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'ledger']);
+                    Route::get('staff-attendance/export', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'export']);
+                    Route::get('staff-attendance/template', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'downloadTemplate']);
+                    Route::post('staff-attendance/import', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'import']);
+                    Route::post('staff-attendance/mark-cell', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'markCell']);
                     Route::get('staff-attendance', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'index']);
                     Route::post('staff-attendance', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'mark']);
                     Route::get('salary-structures', [\App\Http\Controllers\Api\V1\HR\SalaryStructureController::class, 'index'])->name('salary-structures.index');

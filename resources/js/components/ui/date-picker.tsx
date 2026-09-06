@@ -21,6 +21,7 @@ interface DatePickerProps {
     disabled?: boolean
     className?: string
     disabledDays?: Matcher | Matcher[]
+    dateFormat?: string
 }
 
 export function DatePicker({
@@ -30,6 +31,7 @@ export function DatePicker({
     disabled,
     className,
     disabledDays,
+    dateFormat = "dd MMM yyyy",
 }: DatePickerProps) {
     return (
         <Popover>
@@ -37,14 +39,17 @@ export function DatePicker({
                 <Button
                     variant={"outline"}
                     className={cn(
-                        "w-full justify-start text-left font-normal h-10 shadow-none",
+                        "w-full justify-start text-left font-normal h-9 shadow-none overflow-hidden px-3",
                         !date && "text-muted-foreground",
                         className
                     )}
                     disabled={disabled}
+                    title={date ? format(date, dateFormat) : placeholder}
                 >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>{placeholder}</span>}
+                    <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span className="truncate flex-1 min-w-0">
+                        {date ? format(date, dateFormat) : placeholder}
+                    </span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">

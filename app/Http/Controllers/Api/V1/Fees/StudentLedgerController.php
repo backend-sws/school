@@ -193,6 +193,12 @@ class StudentLedgerController extends BaseController
 
             // 1. If discount / concession is provided, create a concession FeePayment
             if ($discountAmount > 0) {
+                $concessionRemarks = trim($discountReason ?: 'Discount / Concession applied');
+                if (!empty($validated['remarks'])) {
+                    $concessionRemarks .= ' | Note: ' . trim($validated['remarks']);
+                }
+                $concessionRemarks .= ($netAmount > 0 ? ' [Partial Concession with payment]' : ' [Full Waiver]');
+
                 $concessionPayment = FeePayment::create([
                     'institution_id' => $institutionId,
                     'payment_id' => 'PAY-DISC-' . strtoupper(uniqid()),
@@ -207,7 +213,7 @@ class StudentLedgerController extends BaseController
                     'payment_date' => now(),
                     'collected_by' => $request->user()->id,
                     'receipt_no' => $receiptNo . '-D',
-                    'remarks' => trim(($discountReason ?: 'Discount / Concession applied') . ($netAmount > 0 ? ' [Partial Concession with payment]' : ' [Full Waiver]')),
+                    'remarks' => $concessionRemarks,
                     'ledger_snapshot' => $ledgerSnapshot,
                 ]);
 
@@ -543,6 +549,12 @@ class StudentLedgerController extends BaseController
                 }
 
                 if ($monthDiscount > 0) {
+                    $advRemarks = trim($validated['discount_reason'] ?? 'Discount applied during advance payment');
+                    if (!empty($validated['remarks'])) {
+                        $advRemarks .= ' | Note: ' . trim($validated['remarks']);
+                    }
+                    $advRemarks .= " [Advance: {$monthCount} months — {$monthKeys}]";
+
                     $payments[] = FeePayment::create([
                         'institution_id' => $institutionId,
                         'payment_id' => 'PAY-ADV-DISC-' . strtoupper(uniqid()),
@@ -556,7 +568,7 @@ class StudentLedgerController extends BaseController
                         'payment_date' => now(),
                         'collected_by' => $request->user()->id,
                         'receipt_no' => $receiptNo . ($monthCount > 1 ? '-D' . ($idx + 1) : '-D'),
-                        'remarks' => trim(($validated['discount_reason'] ?? 'Discount applied during advance payment') . " [Advance: {$monthCount} months — {$monthKeys}]"),
+                        'remarks' => $advRemarks,
                     ]);
                 }
 
@@ -613,5 +625,32 @@ class StudentLedgerController extends BaseController
             'payments' => $payments,
             'count' => count($payments),
         ], "Advance payment recorded for {$monthCount} month(s).");
+    }
+
+    // ─── GET  /fees/ledger/student/{id}/export ───────────────────────────
+
+    public function exportExcel(Request $request, int $studentId)
+    {
+        $validated = $request->validate([
+            'session_id' => 'nullable|integer|exists:academic_sessions,id',
+        ]);
+
+        $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($studentId);
+        $institutionId = self::getActiveInstitutionId($request->user());
+
+        $result = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $validated['session_id'] ?? null);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], 404);
+        }
+
+        $sessionName = $student->studentProfile?->session?->name ?? 'Current_Session';
+        $safeStudentName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $student->name);
+        $filename = "Fee_Ledger_{$safeStudentName}_{$sessionName}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\StudentLedgerExport($student, $result),
+            $filename
+        );
     }
 }

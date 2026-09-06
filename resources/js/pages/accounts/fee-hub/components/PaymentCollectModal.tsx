@@ -165,99 +165,95 @@ export default function PaymentCollectModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[460px] border shadow-2xl p-0 overflow-hidden rounded-xl">
-                <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-xl font-bold flex items-center justify-between">
-                        <span>Collect Payment / Waiver</span>
-                        <Badge variant="outline" className="text-xs font-semibold px-2.5 py-0.5">
-                            {monthData?.month_name}
-                        </Badge>
-                    </DialogTitle>
-                    <DialogDescription className="text-xs font-medium text-muted-foreground pt-1">
-                        Recording financial transaction for <span className="text-primary font-bold">{student?.name}</span>
+            <DialogContent className="sm:max-w-[540px] border shadow-2xl p-0 overflow-hidden rounded-xl max-h-[90vh] flex flex-col">
+                <DialogHeader className="px-5 pt-4 pb-2">
+                    <div className="flex items-center justify-between">
+                        <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                            <span>Collect Payment / Waiver</span>
+                            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 bg-muted/50">
+                                {monthData?.month_name}
+                            </Badge>
+                        </DialogTitle>
+                    </div>
+                    <DialogDescription className="text-xs text-muted-foreground pt-0.5">
+                        Recording transaction for <span className="text-foreground font-semibold">{student?.name}</span>
                     </DialogDescription>
                 </DialogHeader>
 
-                {/* ── Fee Breakdown Summary Card ── */}
-                <div className="px-6">
-                    <div className="bg-muted/40 border rounded-xl p-3.5 space-y-2">
-                        {prevDues > 0 && (
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="text-amber-700 font-semibold flex items-center gap-1">
-                                    Previous Dues / Arrears:
-                                </span>
-                                <span className="font-bold text-amber-800 tabular-nums">
-                                    ₹{prevDues.toLocaleString()}
-                                </span>
+                {/* ── Compact Fee Breakdown Summary Card ── */}
+                <div className="px-5 pt-0.5">
+                    <div className="bg-muted/40 border rounded-lg px-3.5 py-2 flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-xs">
+                            {prevDues > 0 && (
+                                <div className="border-r pr-4">
+                                    <span className="text-[10px] text-amber-800 font-semibold uppercase tracking-wider block">Prev Dues</span>
+                                    <span className="font-bold text-amber-900 tabular-nums">₹{prevDues.toLocaleString()}</span>
+                                </div>
+                            )}
+                            <div>
+                                <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">Month Fee</span>
+                                <span className="font-semibold text-foreground tabular-nums">₹{Math.max(0, monthFee).toLocaleString()}</span>
                             </div>
-                        )}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                            <span>Current Month Charge:</span>
-                            <span className="font-semibold text-foreground tabular-nums">
-                                ₹{Math.max(0, monthFee).toLocaleString()}
-                            </span>
                         </div>
-                        <div className="flex items-center justify-between pt-1.5 border-t border-border/70">
-                            <span className="text-xs font-bold text-foreground">Total Balance Due:</span>
-                            <span className="text-base font-black text-primary tabular-nums">
-                                ₹{rawBalance.toLocaleString()}
-                            </span>
+                        <div className="text-right">
+                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider block">Total Due</span>
+                            <span className="text-base font-black text-primary tabular-nums">₹{rawBalance.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="px-6 py-2 space-y-4 max-h-[60vh] overflow-y-auto">
-                    {/* ── Solution 3: Concession / Waiver Section ── */}
-                    <div className="rounded-xl border border-indigo-100 bg-indigo-50/20 p-3.5 space-y-2.5">
-                        <div className="flex items-center justify-between">
-                            <label className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
-                                <Tag className="size-3.5 text-indigo-600" />
-                                Discount / Concession / Waiver
+                <div className="px-5 py-2 space-y-2.5 overflow-y-auto max-h-[calc(90vh-140px)]">
+                    {/* ── Concession / Waiver Section ── */}
+                    <div className="rounded-lg border border-indigo-100 bg-indigo-50/20 p-2.5 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                            <label className="text-xs font-bold text-indigo-950 flex items-center gap-1.5 shrink-0">
+                                <Tag className="size-3 text-indigo-600" />
+                                Discount / Waiver
                             </label>
-                            {discountAmount > 0 && (
-                                <button
-                                    type="button"
-                                    onClick={clearDiscount}
-                                    className="text-[10px] font-semibold text-rose-600 hover:underline"
-                                >
-                                    Remove Discount
-                                </button>
-                            )}
-                        </div>
 
-                        {/* Quick waiver action buttons */}
-                        <div className="flex flex-wrap items-center gap-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={applyFullWaiver}
-                                className="h-7 text-[11px] px-2.5 bg-indigo-50 hover:bg-indigo-100 border-indigo-200 text-indigo-800 font-semibold flex items-center gap-1"
-                            >
-                                <Sparkles className="size-3 text-indigo-600" />
-                                ⚡ 100% Full Waiver
-                            </Button>
-                            {prevDues > 0 && monthFee > 0 && (
+                            {/* Quick action buttons on same line */}
+                            <div className="flex items-center gap-1.5 flex-wrap justify-end">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={applyMonthFeeWaiver}
-                                    className="h-7 text-[11px] px-2.5 bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-800 font-semibold"
+                                    onClick={applyFullWaiver}
+                                    className="h-6 text-[10px] px-2 bg-indigo-50 hover:bg-indigo-100 border-indigo-200 text-indigo-800 font-semibold flex items-center gap-1"
                                 >
-                                    Waive Month Fee Only (₹{monthFee.toLocaleString()})
+                                    <Sparkles className="size-2.5 text-indigo-600" />
+                                    ⚡ 100% Full Waiver
                                 </Button>
-                            )}
+                                {prevDues > 0 && monthFee > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={applyMonthFeeWaiver}
+                                        className="h-6 text-[10px] px-2 bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-800 font-semibold"
+                                    >
+                                        Month Only (₹{monthFee.toLocaleString()})
+                                    </Button>
+                                )}
+                                {discountAmount > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={clearDiscount}
+                                        className="text-[10px] font-semibold text-rose-600 hover:underline px-1"
+                                    >
+                                        Reset
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 pt-1">
+                        <div className="grid grid-cols-2 gap-2.5">
                             <ControlledFormComponent
                                 control={control as any}
                                 name="discount_amount"
                                 type={FORM_TYPE.NUMBER}
                                 label="Discount Amount (₹)"
                                 placeholder="0.00"
-                                className="h-9 font-bold tabular-nums"
+                                className="h-8 font-bold tabular-nums text-xs"
                             />
                             <ControlledFormComponent
                                 control={control as any}
@@ -265,24 +261,26 @@ export default function PaymentCollectModal({
                                 type={FORM_TYPE.TEXT}
                                 label="Discount Reason"
                                 placeholder="e.g. Mid-session waiver"
-                                className="h-9"
+                                className="h-8 text-xs"
                             />
                         </div>
                     </div>
 
                     {/* ── Net Payable Summary ── */}
                     {discountAmount > 0 && (
-                        <div className="bg-emerald-50/50 border border-emerald-200 rounded-lg p-3 flex items-center justify-between text-xs">
-                            <div>
-                                <span className="font-bold text-emerald-800 flex items-center gap-1">
-                                    <CheckCircle2 className="size-3.5 text-emerald-600" />
-                                    {isFullWaiver ? "100% Waived (No Payment Required)" : "Net Amount to Collect"}
-                                </span>
-                                <span className="text-[10px] text-muted-foreground">
-                                    Original: ₹{rawBalance.toLocaleString()} | Discount: -₹{discountAmount.toLocaleString()}
-                                </span>
+                        <div className="bg-emerald-50/70 border border-emerald-200 rounded-md px-3 py-1.5 flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1.5">
+                                <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
+                                <div>
+                                    <span className="font-bold text-emerald-900 block leading-tight text-xs">
+                                        {isFullWaiver ? "100% Waived (No Cash/Online Collection)" : "Net Payable Amount"}
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground">
+                                        Original: ₹{rawBalance.toLocaleString()} | Discount: -₹{discountAmount.toLocaleString()}
+                                    </span>
+                                </div>
                             </div>
-                            <span className="text-lg font-black text-emerald-700 tabular-nums">
+                            <span className="text-base font-black text-emerald-700 tabular-nums">
                                 ₹{netPayable.toLocaleString()}
                             </span>
                         </div>
@@ -290,16 +288,8 @@ export default function PaymentCollectModal({
 
                     {/* ── Payment Details (shown only if netPayable > 0) ── */}
                     {!isFullWaiver && (
-                        <div className="space-y-3 pt-1">
-                            <div className="grid grid-cols-2 gap-3">
-                                <ControlledFormComponent
-                                    control={control as any}
-                                    name="receipt_no"
-                                    type={FORM_TYPE.TEXT}
-                                    label="Receipt / Reference"
-                                    placeholder="Optional"
-                                    className="h-9"
-                                />
+                        <div className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2.5">
                                 <ControlledFormComponent
                                     control={control as any}
                                     name="payment_mode"
@@ -317,26 +307,32 @@ export default function PaymentCollectModal({
                                         }
                                     }}
                                 />
+                                <ControlledFormComponent
+                                    control={control as any}
+                                    name="receipt_no"
+                                    type={FORM_TYPE.TEXT}
+                                    label="Receipt / Reference"
+                                    placeholder="Optional"
+                                    className="h-8 text-xs"
+                                />
                             </div>
 
                             {mode === "split" && (
-                                <div className="p-3 rounded-lg bg-muted/40 border space-y-2">
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <ControlledFormComponent
-                                            control={control as any}
-                                            name="cash_amount"
-                                            type={FORM_TYPE.NUMBER}
-                                            label="Cash Pmt"
-                                            className="h-9"
-                                        />
-                                        <ControlledFormComponent
-                                            control={control as any}
-                                            name="online_amount"
-                                            type={FORM_TYPE.NUMBER}
-                                            label="Online Pmt"
-                                            className="h-9"
-                                        />
-                                    </div>
+                                <div className="p-2.5 rounded-lg bg-muted/40 border grid grid-cols-2 gap-2.5">
+                                    <ControlledFormComponent
+                                        control={control as any}
+                                        name="cash_amount"
+                                        type={FORM_TYPE.NUMBER}
+                                        label="Cash Pmt (₹)"
+                                        className="h-8 text-xs font-bold"
+                                    />
+                                    <ControlledFormComponent
+                                        control={control as any}
+                                        name="online_amount"
+                                        type={FORM_TYPE.NUMBER}
+                                        label="Online Pmt (₹)"
+                                        className="h-8 text-xs font-bold"
+                                    />
                                 </div>
                             )}
 
@@ -347,7 +343,7 @@ export default function PaymentCollectModal({
                                     type={FORM_TYPE.TEXT}
                                     label="Transaction ID / UTR"
                                     placeholder="Required for online payments"
-                                    className="h-9"
+                                    className="h-8 text-xs"
                                 />
                             )}
                         </div>
@@ -359,15 +355,15 @@ export default function PaymentCollectModal({
                         type={FORM_TYPE.TEXT}
                         label="Internal Remarks / Note"
                         placeholder="Optional remarks"
-                        className="h-9"
+                        className="h-8 text-xs"
                     />
                 </div>
 
-                <DialogFooter className="p-6 pt-2">
+                <DialogFooter className="px-5 pt-1 pb-4">
                     <Button
                         onClick={handleSubmit(onSubmit as any)}
                         disabled={collectMutation.isPending}
-                        className={`w-full h-11 font-bold text-sm ${
+                        className={`w-full h-10 font-bold text-xs shadow-md ${
                             isFullWaiver ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""
                         }`}
                     >

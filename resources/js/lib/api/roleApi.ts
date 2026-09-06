@@ -2,7 +2,7 @@ import api from "./api";
 
 const API_URL = "/roles";
 
-/** Role list excludes protected keys (super_admin, college_admin, student, candidate). All other roles are included. */
+/** Role list excludes protected keys (super_admin, institution_admin, student, candidate, parent). All other roles are included. */
 /** Custom roles only: institution-created roles (is_system = false), for the Security Roles settings table. */
 const RoleApi = {
   getRoles: () => api.get(API_URL),

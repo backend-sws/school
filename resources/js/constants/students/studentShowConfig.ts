@@ -166,10 +166,10 @@ export const STUDENT_SHOW_ACTIONS: ActionConfig[] = [
     key: "resend_verification",
     label: "Resend Verification",
     icon: MailIcon,
-    variant: "outline",
-    tier: "primary",
+    variant: "ghost",
+    tier: "secondary",
     showWhenUnverified: true,
-    className: "text-primary border-primary/20 hover:bg-primary/10 hover:text-primary",
+    className: "text-amber-600 hover:text-amber-700 hover:bg-amber-500/10",
   },
   {
     key: "readmit",
@@ -184,10 +184,10 @@ export const STUDENT_SHOW_ACTIONS: ActionConfig[] = [
     key: "copy_link",
     label: "Copy Link",
     icon: Copy,
-    variant: "outline",
-    tier: "primary",
+    variant: "ghost",
+    tier: "secondary",
     showWhenUnverified: true,
-    className: "text-primary border-primary/20 hover:bg-primary/10 hover:text-primary",
+    className: "text-primary hover:text-primary hover:bg-primary/10",
   },
   {
     key: "toggle_status",
@@ -316,8 +316,8 @@ export function getGuardianFields(): FieldConfig[] {
     { key: "mother_name", label: "Mother's name", icon: User, path: "profile.mother_name" },
     { key: "local_guardian_name", label: "Local Guardian Name", icon: User, path: "profile.guardian_snapshot.local_guardian.name" },
     { key: "local_guardian_phone", label: "Local Guardian Phone", icon: Phone, path: "profile.guardian_snapshot.local_guardian.phone", mono: true },
-    { key: "emergency_name", label: "Emergency Contact", icon: User, path: "profile.guardian_snapshot.emergency_contact.name", variant: "destructive" },
-    { key: "emergency_mobile", label: "Emergency Phone", icon: Phone, path: "profile.guardian_snapshot.emergency_contact.mobile", mono: true, variant: "destructive" },
+    { key: "emergency_name", label: "Emergency Contact", icon: User, path: "profile.guardian_snapshot.emergency_contact.name" },
+    { key: "emergency_mobile", label: "Emergency Phone", icon: Phone, path: "profile.guardian_snapshot.emergency_contact.mobile", mono: true },
   ];
 }
 

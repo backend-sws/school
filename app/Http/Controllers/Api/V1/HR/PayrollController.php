@@ -48,6 +48,22 @@ class PayrollController extends BaseController
         }
     }
 
+    public function readiness(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year'  => 'required|integer'
+        ]);
+
+        $data = $this->payrollService->checkPayrollReadiness(
+            $request->user()->activeInstitutionId(),
+            (int) $request->month,
+            (int) $request->year
+        );
+
+        return $this->success($data);
+    }
+
     public function markPaid(Payroll $payroll, Request $request)
     {
         if ((int)$payroll->institution_id !== (int)$request->user()->activeInstitutionId()) {
@@ -62,6 +78,19 @@ class PayrollController extends BaseController
         }
     }
 
+    public function exportBankSheet(Payroll $payroll, Request $request)
+    {
+        if ((int)$payroll->institution_id !== (int)$request->user()->activeInstitutionId()) {
+            return $this->forbidden();
+        }
+
+        $fileName = "salary_bank_disbursement_{$payroll->month}_{$payroll->year}.xlsx";
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\BankDisbursementExport($payroll),
+            $fileName
+        );
+    }
+
     public function slips(Payroll $payroll, Request $request)
     {
         if ((int)$payroll->institution_id !== (int)$request->user()->activeInstitutionId()) {
@@ -69,7 +98,30 @@ class PayrollController extends BaseController
         }
 
         $slips = $payroll->payslips()->with(['user.staffProfile'])->paginate($request->per_page ?? 50);
+
+        // Ensure each slip user has an employee_id fallback if needed
+        $slips->getCollection()->transform(function ($slip) {
+            if ($slip->user && $slip->user->staffProfile && empty($slip->user->staffProfile->employee_id)) {
+                $slip->user->staffProfile->employee_id = sprintf('EMP-%03d', $slip->user->id);
+            }
+            return $slip;
+        });
+
         return $this->paginated($slips);
+    }
+
+    public function recalculateSlip(Payslip $payslip, Request $request)
+    {
+        if ((int)$payslip->payroll->institution_id !== (int)$request->user()->activeInstitutionId()) {
+            return $this->forbidden();
+        }
+
+        try {
+            $updated = $this->payrollService->recalculateSinglePayslip($payslip);
+            return $this->success($updated, 'Payslip recalculated successfully from attendance and salary structure');
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 400);
+        }
     }
 
     public function staffHistory($userId, Request $request)

@@ -27,6 +27,17 @@ export default function Dashboard() {
     const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
 
+    const { data: readinessData, isLoading: isReadinessLoading } = useQuery({
+        queryKey: ['payroll-readiness', selectedMonth, selectedYear],
+        queryFn: async () => {
+            const res = await api.get('/hr/payrolls/readiness', {
+                params: { month: selectedMonth, year: selectedYear }
+            });
+            return res.data;
+        },
+        enabled: isGenerateModalOpen
+    });
+
     const { data, isLoading } = useQuery({
         queryKey: ['payrolls', page, perPage],
         queryFn: async () => {
@@ -216,6 +227,43 @@ export default function Dashboard() {
                                     </Select>
                                 </div>
                             </div>
+                            {readinessData && (
+                                <div className="rounded-xl border p-3.5 space-y-2 bg-slate-50 dark:bg-slate-900 text-xs">
+                                    <div className="flex items-center justify-between font-semibold">
+                                        <span>Pre-Run Readiness Audit</span>
+                                        <span className={readinessData.missing_structure_count === 0 ? "text-emerald-600 font-bold" : "text-amber-600 font-bold"}>
+                                            {readinessData.ready_count} of {readinessData.total_staff_count} Staff Ready
+                                        </span>
+                                    </div>
+
+                                    {readinessData.missing_structure_count > 0 && (
+                                        <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 space-y-1">
+                                            <p className="font-semibold flex items-center gap-1.5">
+                                                <AlertCircle className="size-3.5 shrink-0 text-amber-600" />
+                                                <span>{readinessData.missing_structure_count} staff member(s) missing salary structure:</span>
+                                            </p>
+                                            <div className="text-[11px] font-mono pl-5">
+                                                {readinessData.missing_structure_staff.slice(0, 3).map((s: any) => (
+                                                    <div key={s.user_id}>• {s.name} ({s.employee_id})</div>
+                                                ))}
+                                                {readinessData.missing_structure_count > 3 && (
+                                                    <div>...and {readinessData.missing_structure_count - 3} more</div>
+                                                )}
+                                            </div>
+                                            <p className="text-[10px] text-amber-700/80 pl-5">
+                                                Staff without a salary structure will be excluded from this payroll run.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {readinessData.no_attendance_count > 0 && (
+                                        <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px]">
+                                            ℹ️ {readinessData.no_attendance_count} staff member(s) have 0 attendance records for this month.
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             <p className="text-sm text-muted-foreground mt-2">
                                 This will generate draft payslips for all staff members with an active salary structure. You can review and edit them before marking them as paid.
                             </p>

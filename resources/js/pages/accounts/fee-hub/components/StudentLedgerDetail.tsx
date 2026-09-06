@@ -270,8 +270,34 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
             const currentPeriod = matrix?.[0]?.month_key ?? new Date().toISOString().slice(0, 7);
             sendReminderMutation.mutate({ period: currentPeriod, type: "due_soon" });
         },
+        export: async () => {
+            try {
+                toast.loading("Generating Excel spreadsheet...", { id: "export-ledger" });
+                const endpoint = isStudentPortal ? `/student/financial-ledger/export` : `/fees/ledger/student/${studentId}/export`;
+                const response = await api.get(endpoint, {
+                    params: { session_id: selectedSession === "current" ? null : selectedSession },
+                    responseType: "blob",
+                });
+
+                const blob = new Blob([response.data], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                const safeName = (student?.name || "Student").replace(/[^a-zA-Z0-9_-]/g, "_");
+                const sessionStr = student?.student_profile?.session?.name || "Session";
+                link.download = `Fee_Ledger_${safeName}_${sessionStr}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+                toast.success("Excel ledger downloaded successfully!", { id: "export-ledger" });
+            } catch (err: any) {
+                toast.error("Failed to export fee ledger to Excel.", { id: "export-ledger" });
+            }
+        },
         print: () => window.print(),
-        export: () => toast.info("Export coming soon"),
     };
 
     const rowActionHandlers: RowActionHandlers = {
@@ -553,6 +579,20 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                     {row.due_date && (
                                                         <div className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Due: {row.due_date}</div>
                                                     )}
+                                                    {row.remarks && (
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <div className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded bg-muted/60 border text-muted-foreground text-[9px] font-medium max-w-[150px] truncate cursor-help">
+                                                                    <span className="font-semibold text-foreground">Note:</span>
+                                                                    <span className="truncate">{row.remarks}</span>
+                                                                </div>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="right" className="max-w-xs p-2.5 text-xs">
+                                                                <span className="font-bold text-foreground">Transaction Note / Reason:</span>
+                                                                <p className="mt-1 text-muted-foreground">{row.remarks}</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    )}
                                                     {row.reverted_payments && row.reverted_payments.length > 0 && (
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
@@ -747,6 +787,46 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             );
+                                                        } else if (col.key === "receipt_no" && rawVal) {
+                                                            display = (
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <div className="inline-flex flex-col items-center cursor-help">
+                                                                            <span className="text-[11px] font-mono font-bold text-primary">{rawVal}</span>
+                                                                            {row.remarks && (
+                                                                                <span className="text-[9px] text-muted-foreground truncate max-w-[120px] italic">
+                                                                                    "{row.remarks}"
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent side="top" className="max-w-xs text-xs p-2.5 space-y-1">
+                                                                        <div className="font-bold text-foreground">Receipt: {rawVal}</div>
+                                                                        {row.payment_mode && (
+                                                                            <div className="text-[11px] uppercase font-bold text-muted-foreground">Mode: {row.payment_mode}</div>
+                                                                        )}
+                                                                        {row.remarks && (
+                                                                            <div className="text-xs text-muted-foreground border-t pt-1">
+                                                                                <span className="font-semibold text-foreground">Note / Remarks:</span> {row.remarks}
+                                                                            </div>
+                                                                        )}
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            );
+                                                        } else if (col.key === "payment_mode" && rawVal) {
+                                                            display = (
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className={cn(
+                                                                        "text-[10px] uppercase font-bold tracking-wider",
+                                                                        rawVal === "concession" ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
+                                                                        rawVal === "cash" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                                                                        "bg-blue-50 text-blue-700 border-blue-200"
+                                                                    )}
+                                                                >
+                                                                    {rawVal}
+                                                                </Badge>
+                                                            );
                                                         }
 
                                                         return (
@@ -803,29 +883,29 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                 let total = 0;
                                                 if (col.key === "total_dues") {
                                                     const firstRowPrevDues = Number(matrix[0]?.previous_dues ?? 0);
-                                                    const totalParticularsSum = admissionFeeColumns.reduce((sum, c) => {
-                                                        return sum + matrix.reduce((s, r) => s + Number(r[c.rowField!] ?? 0), 0);
-                                                    }, 0) + allParticulars.reduce((sum, pName) => {
-                                                        return sum + matrix.reduce((s, r) => {
+                                                    const totalParticularsSum = admissionFeeColumns.reduce((sum: number, c: any) => {
+                                                        return sum + matrix.reduce((s: number, r: any) => s + Number(r[c.rowField!] ?? 0), 0);
+                                                    }, 0) + allParticulars.reduce((sum: number, pName: string) => {
+                                                        return sum + matrix.reduce((s: number, r: any) => {
                                                             const ep = (r.expected_particulars || []).find((ep: any) => ep.name === pName);
                                                             return s + (ep?.amount ?? 0);
                                                         }, 0);
-                                                    }, 0) + matrix.reduce((s, r) => s + Number(r.late_fee ?? 0), 0);
+                                                    }, 0) + matrix.reduce((s: number, r: any) => s + Number(r.late_fee ?? 0), 0);
 
                                                     total = firstRowPrevDues + totalParticularsSum;
                                                 } else if (col.key === "arrears") {
                                                     const firstRowPrevDues = Number(matrix[0]?.previous_dues ?? 0);
-                                                    const totalParticularsSum = admissionFeeColumns.reduce((sum, c) => {
-                                                        return sum + matrix.reduce((s, r) => s + Number(r[c.rowField!] ?? 0), 0);
-                                                    }, 0) + allParticulars.reduce((sum, pName) => {
-                                                        return sum + matrix.reduce((s, r) => {
+                                                    const totalParticularsSum = admissionFeeColumns.reduce((sum: number, c: any) => {
+                                                        return sum + matrix.reduce((s: number, r: any) => s + Number(r[c.rowField!] ?? 0), 0);
+                                                    }, 0) + allParticulars.reduce((sum: number, pName: string) => {
+                                                        return sum + matrix.reduce((s: number, r: any) => {
                                                             const ep = (r.expected_particulars || []).find((ep: any) => ep.name === pName);
                                                             return s + (ep?.amount ?? 0);
                                                         }, 0);
-                                                    }, 0) + matrix.reduce((s, r) => s + Number(r.late_fee ?? 0), 0);
+                                                    }, 0) + matrix.reduce((s: number, r: any) => s + Number(r.late_fee ?? 0), 0);
 
                                                     const grandTotalDues = firstRowPrevDues + totalParticularsSum;
-                                                    const grandTotalPaid = matrix.reduce((sum, r) => sum + Number(r.paid_amount ?? 0), 0);
+                                                    const grandTotalPaid = matrix.reduce((sum: number, r: any) => sum + Number(r.paid_amount ?? 0), 0);
                                                     total = grandTotalDues - grandTotalPaid;
                                                 } else {
                                                     total = matrix.reduce((sum: number, r: any) => sum + Math.max(0, Number(r[col.rowField!] ?? 0)), 0);
