@@ -45,7 +45,7 @@ export function InventoryMovementDialog({ open, onClose, onSuccess }: InventoryM
     return (Array.isArray(items) ? items : []).map((i: any) => ({
       key: String(i.id),
       value: i.id,
-      text: i.name + (i.code ? ` (${i.code})` : ""),
+      text: i.name + (i.code ? ` (${i.code})` : "") + (i.location ? ` • 📍 Loc: ${i.location}` : ""),
     }));
   }, [itemsData]);
 

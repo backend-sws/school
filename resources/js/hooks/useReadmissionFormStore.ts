@@ -133,7 +133,7 @@ export function useReadmissionFormStore(): UseFormReturn<ApplicationDeskFormValu
             // Map known fields from prefill
             const sanitizedData = sanitizeNulls(prefillData);
             const directFields = [
-                "id", "application_id", "process_status",
+                "id", "user_id", "student_profile_id", "application_id", "process_status",
                 "applicant_name", "father_name", "mother_name", "dob", "gender",
                 "category", "religion", "nationality", "mobile", "email",
                 "aadhaar_no", "blood_group", "address_snapshot", "guardian_snapshot",

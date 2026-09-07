@@ -38,6 +38,7 @@ import { TooltipWrapper } from "@/components/shared/TooltipWrapper";
 import { cn, copyToClipboard } from "@/lib/utils";
 import { VerifiedDocumentsCard } from "@/components/student/VerifiedDocumentsCard";
 import Each from "@/components/Each";
+import R2Api from "@/lib/api/r2Api";
 import {
   getStudentShowSections,
   getHeroInfoPills,
@@ -579,10 +580,18 @@ const StudentShow = () => {
                   {/* Avatar */}
                   <div className="flex shrink-0 items-start justify-center sm:justify-start">
                     <div className="relative">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 ring-2 ring-primary/20">
-                        <span className="text-3xl font-black text-primary">
-                          {student?.name?.charAt(0)?.toUpperCase()}
-                        </span>
+                      <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 ring-2 ring-primary/20 overflow-hidden">
+                        {(student?.photo_url || student?.avatar || student?.user?.photo_url) ? (
+                          <img
+                            src={R2Api.imageSrc((student.photo_url || student.avatar || student.user?.photo_url) as string)}
+                            alt={student?.name ?? "Student"}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-3xl font-black text-primary">
+                            {student?.name?.charAt(0)?.toUpperCase()}
+                          </span>
+                        )}
                       </div>
                       <div className="absolute -bottom-1 -right-1">
                         <StatusBadge status={student?.status ? "active" : "inactive"} />

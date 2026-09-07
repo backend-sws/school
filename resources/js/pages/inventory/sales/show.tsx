@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { PermissionGate } from "@/components/PermissionGate";
 import { Head, Link, usePage } from "@inertiajs/react";
-import { ShoppingCart, Printer } from "lucide-react";
+import { ShoppingCart, Printer, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import inventoryApi from "@/lib/api/inventoryApi";
 import {
@@ -38,7 +38,7 @@ type Sale = {
     quantity: number;
     unit_price: number;
     amount: number;
-    item?: { id: number; name: string; code?: string };
+    item?: { id: number; name: string; code?: string; location?: string };
   }>;
 };
 
@@ -167,11 +167,21 @@ const InventorySalesShow = () => {
                 {(sale.lines ?? []).map((line) => (
                   <TableRow key={line.id}>
                     <TableCell>
-                      {line.item?.name ?? `Item #${line.item?.id ?? ""}`}
-                      {line.item?.code && (
-                        <span className="text-muted-foreground ml-1">
-                          ({line.item.code})
+                      <div>
+                        <span className="font-medium">
+                          {line.item?.name ?? `Item #${line.item?.id ?? ""}`}
                         </span>
+                        {line.item?.code && (
+                          <span className="text-muted-foreground ml-1">
+                            ({line.item.code})
+                          </span>
+                        )}
+                      </div>
+                      {line.item?.location && (
+                        <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin className="size-3 text-amber-600 dark:text-amber-400 shrink-0" />
+                          <span>Loc: {line.item.location}</span>
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-right font-mono">

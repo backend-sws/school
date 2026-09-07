@@ -11,6 +11,8 @@ use App\Models\LmsClassEnrollment;
 use App\Models\Session;
 use App\Models\Setting;
 use App\Models\StudentFeePeriodBalance;
+use App\Models\StudentProfile;
+use App\Models\StudentTransition;
 use App\Models\User;
 use App\Services\AcademicCalendarService;
 use Carbon\Carbon;
@@ -46,6 +48,7 @@ class FeeCollectionService
     protected static ?array $bulkTransportAssignments = null;
     protected static ?array $bulkHostelAllocations = null;
     protected static ?array $bulkAdHocCharges = null;
+    protected static bool $isCalculatingPreviousSessionDues = false;
 
     public function getSettings(int $institutionId): array
     {
@@ -162,24 +165,18 @@ class FeeCollectionService
         }
 
         $institutionSettings = $this->getSettings($institutionId);
-        $class = $this->resolveStudentClass($student, $institutionId, $profile?->stream_id);
+        $class = $this->resolveStudentClass($student, $institutionId, $profile?->stream_id, $session->id);
 
         // 2. Determine frequency
         $frequency = $this->resolveFrequencyForStudent($student, $institutionId, $class);
         $periodCount = $frequency === 'quarterly' ? 4 : 12;
 
-        $feeBreakdown = $this->engine->calculateRecurringFee(
-            $institutionId,
-            $profile->stream_id,
-            $class?->id,
-            $profile->category ?? null,
-            $profile->gender ?? null,
-            null,
-            $profile->fee_regulation_profile_id,
-        );
+        $targetStreamId = $class?->stream_id ?? $profile->stream_id;
+        $targetClassId = $class?->id;
+        $targetFeeRegId = $profile->fee_regulation_profile_id;
 
         $isHistoricalSession = $sessionId && $sessionId != $profile->session_id;
-        if ($isHistoricalSession) {
+        if ($isHistoricalSession && !$class) {
             $feeBreakdown = [
                 'net' => 0,
                 'gross' => 0,
@@ -187,6 +184,16 @@ class FeeCollectionService
                 'items' => [],
                 'one_time_charges' => [],
             ];
+        } else {
+            $feeBreakdown = $this->engine->calculateRecurringFee(
+                $institutionId,
+                $targetStreamId,
+                $targetClassId,
+                $profile->category ?? null,
+                $profile->gender ?? null,
+                null,
+                $targetFeeRegId,
+            );
         }
 
         $grossExpected = $feeBreakdown['gross'];
@@ -410,6 +417,38 @@ class FeeCollectionService
             ->where('period_key', 'arrears')
             ->first();
         $accumulatedArrears = $importedArrearsRow ? (float) $importedArrearsRow->opening_balance : 0.0;
+
+        // Carry forward unpaid balance from the student's previous academic session
+        if ($accumulatedArrears <= 0 && !self::$isCalculatingPreviousSessionDues) {
+            $associatedSessionIds = $this->getStudentAssociatedSessionIds($student, $institutionId);
+            $prevSession = Session::withoutGlobalScope('institution_scope')
+                ->where('institution_id', $institutionId)
+                ->where('start_year', '<', $session->start_year)
+                ->whereIn('id', $associatedSessionIds)
+                ->orderByDesc('start_year')
+                ->first();
+
+            if ($prevSession) {
+                self::$isCalculatingPreviousSessionDues = true;
+                try {
+                    $prevStudent = $this->resolveEffectiveStudentUserForSession($student, $institutionId, $prevSession->id);
+                    $prevLedger = $this->getStudentLedgerMatrix($prevStudent, $institutionId, $prevSession->id);
+                    $prevPending = (float) ($prevLedger['total_pending'] ?? 0);
+                    if ($prevPending > 0) {
+                        $accumulatedArrears = $prevPending;
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Failed calculating previous session dues', [
+                        'student_id' => $student->id,
+                        'prev_session_id' => $prevSession->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                } finally {
+                    self::$isCalculatingPreviousSessionDues = false;
+                }
+            }
+        }
+
         $current = $startDate->copy();
 
         $studentTransports = collect(self::$bulkTransportAssignments[$student->id] ?? []);
@@ -543,6 +582,7 @@ class FeeCollectionService
                 $monthExpected += (float) $charge->amount;
                 $monthGross += (float) $charge->amount;
                 $monthParticulars[] = [
+                    'id' => $charge->id,
                     'name' => $charge->name,
                     'amount' => (float) $charge->amount,
                     'type' => 'ad_hoc',
@@ -580,7 +620,7 @@ class FeeCollectionService
                         $amt = (float) ($item['amount'] ?? 0);
                         if ($amt > 0) {
                             $monthParticulars[] = [
-                                'name'     => $item['name'] ?? 'Discount',
+                                'name'     => $item['name'] ?? 'Admission Discount',
                                 'amount'   => -$amt,
                                 'type'     => 'discount',
                                 'category' => 'discount',
@@ -635,6 +675,13 @@ class FeeCollectionService
                 'remarks'              => $monthRemarks ?: null,
                 'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 || $monthlyConcession > 0 ? 'partial' : 'unpaid'),
                 'reverted_payments'    => $formattedCancelled->filter(fn($cp) => $cp['for_month'] === $monthKey)->values()->all(),
+                'ad_hoc_charges'       => $adHocCharges->map(fn($c) => [
+                    'id' => $c->id,
+                    'name' => $c->name,
+                    'amount' => (float) $c->amount,
+                    'for_month' => $c->for_month,
+                    'remarks' => $c->remarks,
+                ])->values()->all(),
             ];
 
             // Carry forward balance as arrears for next row (negative means overpayment credit)
@@ -705,27 +752,158 @@ class FeeCollectionService
 
     protected static array $resolvedClassCache = [];
 
-    public function resolveStudentClass(User $student, int $institutionId, ?int $streamId = null): ?LmsClass
+    public function resolveStudentClass(User $student, int $institutionId, ?int $streamId = null, ?int $sessionId = null): ?LmsClass
     {
-        if (isset(self::$resolvedClassCache[$student->id])) {
-            return self::$resolvedClassCache[$student->id];
+        $cacheKey = $student->id . '_' . ($sessionId ?? 'current');
+        if (isset(self::$resolvedClassCache[$cacheKey])) {
+            return self::$resolvedClassCache[$cacheKey];
         }
 
-        $enrollment = LmsClassEnrollment::where('user_id', $student->id)
+        $query = LmsClassEnrollment::where('user_id', $student->id)
             ->where('role', 'student')
-            ->where('status', 'active')
-            ->with('lmsClass')
-            ->first();
+            ->with('lmsClass');
+
+        if ($sessionId) {
+            $query->whereHas('lmsClass', fn($q) => $q->where('session_id', $sessionId));
+        } else {
+            $query->where('status', 'active');
+        }
+
+        $enrollment = $query->first();
         $class = $enrollment?->lmsClass;
 
-        if (!$class && $streamId) {
-            $class = LmsClass::where('stream_id', $streamId)
-                ->where('institution_id', $institutionId)
-                ->first();
+        if (!$class && $sessionId) {
+            // Check student_transitions for class in that session
+            $transition = \App\Models\StudentTransition::where('user_id', $student->id)
+                ->where(function($q) use ($sessionId) {
+                    $q->where('from_session_id', $sessionId)
+                      ->orWhere('to_session_id', $sessionId);
+                })->first();
+            if ($transition) {
+                $classId = ($transition->from_session_id == $sessionId) ? $transition->from_class_id : $transition->to_class_id;
+                if ($classId) {
+                    $class = LmsClass::find($classId);
+                }
+            }
         }
 
-        self::$resolvedClassCache[$student->id] = $class;
+        if (!$class && $streamId) {
+            $classQuery = LmsClass::where('stream_id', $streamId)
+                ->where('institution_id', $institutionId);
+            if ($sessionId) {
+                $class = (clone $classQuery)->where('session_id', $sessionId)->first();
+            }
+            if (!$class) {
+                $class = $classQuery->first();
+            }
+        }
+
+        self::$resolvedClassCache[$cacheKey] = $class;
         return $class;
+    }
+
+    /**
+     * Get all session IDs associated with the student (profile, transitions, enrollments, applications, linked users).
+     */
+    public function getStudentAssociatedSessionIds(User $student, int $institutionId): array
+    {
+        $studentId = $student->id;
+        $linkedUserIds = collect([$studentId]);
+
+        // If this user has re-admission applications, find linked original users
+        $readmissionApps = AdmissionApplication::where('user_id', $studentId)
+            ->where('application_type', 're-admission')
+            ->get();
+
+        foreach ($readmissionApps as $rApp) {
+            if (!empty($rApp->student_profile_id)) {
+                $origUserId = StudentProfile::where('id', $rApp->student_profile_id)->value('user_id');
+                if ($origUserId) {
+                    $linkedUserIds->push($origUserId);
+                }
+            }
+            $prefs = is_array($rApp->subject_preferences) ? $rApp->subject_preferences : [];
+            if (!empty($prefs['student_profile_id'])) {
+                $origUserId = StudentProfile::where('id', $prefs['student_profile_id'])->value('user_id');
+                if ($origUserId) {
+                    $linkedUserIds->push($origUserId);
+                }
+            }
+        }
+
+        // Also check by name and normalized mobile for any duplicate/original student user in the same institution
+        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?? ''));
+        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+        if (!empty($last10)) {
+            $otherUserIds = User::where('institution_id', $institutionId)
+                ->where('id', '!=', $studentId)
+                ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
+                ->where(function ($q) use ($last10) {
+                    $q->where('mobile', $last10)
+                      ->orWhere('mobile', '+91' . $last10)
+                      ->orWhere('mobile', '91' . $last10);
+                })
+                ->pluck('id');
+            $linkedUserIds = $linkedUserIds->merge($otherUserIds);
+        }
+
+        $allUserIds = $linkedUserIds->unique()->values()->all();
+
+        // 1. Current student profile session
+        $sessions = collect([$student->studentProfile?->session_id]);
+
+        // 2. Profiles of linked users
+        $sessions = $sessions->merge(StudentProfile::whereIn('user_id', $allUserIds)->pluck('session_id'));
+
+        // 3. student_transitions (both from_session_id and to_session_id)
+        $transitions = \App\Models\StudentTransition::whereIn('user_id', $allUserIds)->get();
+        $sessions = $sessions->merge($transitions->pluck('from_session_id'))
+                             ->merge($transitions->pluck('to_session_id'));
+
+        // 4. lms_class_enrollments
+        $classSessions = \Illuminate\Support\Facades\DB::table('lms_class_enrollments')
+            ->join('lms_classes', 'lms_class_enrollments.lms_class_id', '=', 'lms_classes.id')
+            ->whereIn('lms_class_enrollments.user_id', $allUserIds)
+            ->pluck('lms_classes.session_id');
+        $sessions = $sessions->merge($classSessions);
+
+        // 5. student_fee_period_balances
+        $sessions = $sessions->merge(\Illuminate\Support\Facades\DB::table('student_fee_period_balances')->whereIn('user_id', $allUserIds)->pluck('session_id'));
+
+        // 6. admission_applications
+        $sessions = $sessions->merge(\Illuminate\Support\Facades\DB::table('admission_applications')->whereIn('user_id', $allUserIds)->pluck('session_id'));
+
+        return $sessions->filter()->unique()->values()->all();
+    }
+
+    /**
+     * If querying a specific session that belongs to a linked historical user, return that user.
+     */
+    public function resolveEffectiveStudentUserForSession(User $student, int $institutionId, ?int $sessionId = null): User
+    {
+        if (!$sessionId || (int) $student->studentProfile?->session_id === (int) $sessionId) {
+            return $student;
+        }
+
+        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?? ''));
+        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+
+        $linkedUser = User::where('institution_id', $institutionId)
+            ->where('id', '!=', $student->id)
+            ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
+            ->where(function ($q) use ($last10) {
+                if (!empty($last10)) {
+                    $q->where('mobile', $last10)
+                      ->orWhere('mobile', '+91' . $last10)
+                      ->orWhere('mobile', '91' . $last10);
+                }
+            })
+            ->whereHas('studentProfile', function ($q) use ($sessionId) {
+                $q->where('session_id', $sessionId);
+            })
+            ->first();
+
+        return $linkedUser ?? $student;
     }
 
     public function resolveFrequencyForStudent(User $student, int $institutionId, ?LmsClass $class = null): string

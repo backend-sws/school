@@ -181,7 +181,7 @@ prefill.head = (args: { studentProfile: number | { id: number } } | [studentProf
     prefill.form = prefillForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
 export const previewFees = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -196,7 +196,7 @@ previewFees.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
 previewFees.url = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -224,7 +224,7 @@ previewFees.url = (args: { studentProfileId: string | number } | [studentProfile
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
 previewFees.get = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -233,7 +233,7 @@ previewFees.get = (args: { studentProfileId: string | number } | [studentProfile
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
 previewFees.head = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -243,7 +243,7 @@ previewFees.head = (args: { studentProfileId: string | number } | [studentProfil
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
     const previewFeesForm = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -253,7 +253,7 @@ previewFees.head = (args: { studentProfileId: string | number } | [studentProfil
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
         previewFeesForm.get = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -262,7 +262,7 @@ previewFees.head = (args: { studentProfileId: string | number } | [studentProfil
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::previewFees
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:207
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:213
  * @route '/api/v1/readmissions/preview-fees/{studentProfileId}'
  */
         previewFeesForm.head = (args: { studentProfileId: string | number } | [studentProfileId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -278,7 +278,7 @@ previewFees.head = (args: { studentProfileId: string | number } | [studentProfil
     previewFees.form = previewFeesForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::process
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:229
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:235
  * @route '/api/v1/readmissions/process'
  */
 export const process = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -293,7 +293,7 @@ process.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::process
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:229
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:235
  * @route '/api/v1/readmissions/process'
  */
 process.url = (options?: RouteQueryOptions) => {
@@ -302,7 +302,7 @@ process.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::process
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:229
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:235
  * @route '/api/v1/readmissions/process'
  */
 process.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -312,7 +312,7 @@ process.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::process
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:229
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:235
  * @route '/api/v1/readmissions/process'
  */
     const processForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +322,7 @@ process.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::process
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:229
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:235
  * @route '/api/v1/readmissions/process'
  */
         processForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -333,7 +333,7 @@ process.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     process.form = processForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::bulk
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:260
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:266
  * @route '/api/v1/readmissions/bulk'
  */
 export const bulk = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -348,7 +348,7 @@ bulk.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::bulk
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:260
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:266
  * @route '/api/v1/readmissions/bulk'
  */
 bulk.url = (options?: RouteQueryOptions) => {
@@ -357,7 +357,7 @@ bulk.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::bulk
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:260
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:266
  * @route '/api/v1/readmissions/bulk'
  */
 bulk.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -367,7 +367,7 @@ bulk.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::bulk
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:260
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:266
  * @route '/api/v1/readmissions/bulk'
  */
     const bulkForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -377,7 +377,7 @@ bulk.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::bulk
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:260
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:266
  * @route '/api/v1/readmissions/bulk'
  */
         bulkForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -388,7 +388,7 @@ bulk.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     bulk.form = bulkForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::rollback
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:303
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
 export const rollback = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -403,7 +403,7 @@ rollback.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::rollback
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:303
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
 rollback.url = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -436,7 +436,7 @@ rollback.url = (args: { transition: number | { id: number } } | [transition: num
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::rollback
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:303
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
 rollback.post = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -446,7 +446,7 @@ rollback.post = (args: { transition: number | { id: number } } | [transition: nu
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::rollback
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:303
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
     const rollbackForm = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -456,7 +456,7 @@ rollback.post = (args: { transition: number | { id: number } } | [transition: nu
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::rollback
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:297
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:303
  * @route '/api/v1/readmissions/{transition}/rollback'
  */
         rollbackForm.post = (args: { transition: number | { id: number } } | [transition: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -467,7 +467,7 @@ rollback.post = (args: { transition: number | { id: number } } | [transition: nu
     rollback.form = rollbackForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
 export const history = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -482,7 +482,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
 history.url = (options?: RouteQueryOptions) => {
@@ -491,7 +491,7 @@ history.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
 history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -500,7 +500,7 @@ history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
 history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -510,7 +510,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
     const historyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -520,7 +520,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
         historyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -529,7 +529,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ReadmissionController::history
- * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:314
+ * @see app/Http/Controllers/Api/V1/Admission/ReadmissionController.php:320
  * @route '/api/v1/readmissions/history'
  */
         historyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

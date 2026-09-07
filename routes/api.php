@@ -127,6 +127,10 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
         Route::post('r2/upload-url', [\App\Http\Controllers\Api\V1\R2\R2Controller::class, 'uploadUrl']);
         Route::post('r2/upload', [\App\Http\Controllers\Api\V1\R2\R2Controller::class, 'upload']);
 
+        // Student 360 and Lifetime History direct aliases
+        Route::get('students/{student_user}/global-360', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'globalStudent360']);
+        Route::get('students/{student_user}/lifetime-history', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'lifetimeHistory']);
+
 
         // ─── Redressal Cell (Support Tickets) ─────────────────────
         // Accessible by any user with redressal_cell permissions (Admins & Students)
@@ -306,6 +310,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('fees/ledger/download-receipt/{payment}', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'downloadReceipt']);
                 Route::get('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'index']);
                 Route::post('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'store']);
+                Route::post('fees/ad-hoc-charges/bulk-delete', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'bulkDestroy']);
                 Route::delete('fees/ad-hoc-charges/{id}', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'destroy']);
 
                 // Fee collection workflow: settings, dues, overdue, send reminder
@@ -547,6 +552,10 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
             Route::get('classes/{lms_class}/enrollments', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'index']);
             Route::post('classes/{lms_class}/enrollments', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'store']);
             Route::delete('classes/{lms_class}/enrollments/{user_id}', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'destroy'])->whereNumber('user_id');
+
+            // ─── Student Transfer (Section & Session Migration) ─────────
+            Route::get('classes/{lms_class}/transfer-options', [\App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::class, 'options']);
+            Route::post('classes/{lms_class}/transfer-students', [\App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::class, 'transfer']);
 
             // ─── Student 360, Roster & Leave Vault ─────────────────────────────
             Route::get('classes/{lms_class}/students-summary', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'studentsSummary']);

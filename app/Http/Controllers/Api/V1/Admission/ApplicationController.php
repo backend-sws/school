@@ -354,6 +354,10 @@ class ApplicationController extends BaseController
             'due_amount' => 'nullable|numeric|min:0',
             'application_type' => 'nullable|in:new,re-admission',
             'process_status' => 'nullable|in:draft,pending',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'student_profile_id' => 'nullable|integer|exists:student_profiles,id',
+            'from_session_id' => 'nullable|integer|exists:sessions,id',
+            'from_class_id' => 'nullable|integer',
         ]);
 
         // Use the same institution resolution as the model's global scope (BelongsToDefaultInstitution)
@@ -361,10 +365,21 @@ class ApplicationController extends BaseController
         $activeInstitutionId = AdmissionApplication::getActiveInstitutionId($request->user())
             ?? $request->user()->institution_id;
 
-        // Persist draft stream_id so it's never lost during editing
-        if (!empty($validated['stream_id'])) {
+        // Persist draft stream_id and re-admission transition context so it's never lost during editing
+        if (!empty($validated['stream_id']) || !empty($validated['student_profile_id']) || !empty($validated['from_session_id'])) {
             $prefs = $validated['subject_preferences'] ?? [];
-            $prefs['_draft_stream_id'] = $validated['stream_id'];
+            if (!empty($validated['stream_id'])) {
+                $prefs['_draft_stream_id'] = $validated['stream_id'];
+            }
+            if (!empty($validated['student_profile_id'])) {
+                $prefs['student_profile_id'] = $validated['student_profile_id'];
+            }
+            if (!empty($validated['from_session_id'])) {
+                $prefs['from_session_id'] = $validated['from_session_id'];
+            }
+            if (!empty($validated['from_class_id'])) {
+                $prefs['from_class_id'] = $validated['from_class_id'];
+            }
             $validated['subject_preferences'] = $prefs;
         }
 
@@ -411,21 +426,40 @@ class ApplicationController extends BaseController
         //      The GuardianService call below will link them.
         $isDeskSubmitter = $user->hasRole('staff') || $user->hasRole('admin') || $user->hasRole('institution_admin')
             || $user->hasRole('college_admin') || $user->hasRole('principal') || $user->hasRole('super_admin');
-        if ($isDeskSubmitter && (!empty($validated['email']) || !empty($validated['mobile']))) {
+        if ($isDeskSubmitter && (!empty($validated['email']) || !empty($validated['mobile']) || !empty($validated['user_id']) || !empty($validated['student_profile_id']))) {
             $nameNormalized = strtolower(trim((string) ($validated['applicant_name'] ?? '')));
+            $cleanMobile = preg_replace('/\D/', '', (string) ($validated['mobile'] ?? ''));
+            $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
 
-            // Step 1: Try exact match (contact + name) — same student re-applying
-            $studentUser = User::query()
-                ->where(function ($q) use ($validated) {
-                    if (!empty($validated['email'])) {
-                        $q->where('email', $validated['email']);
-                    }
-                    if (!empty($validated['mobile'])) {
-                        $q->orWhere('mobile', $validated['mobile']);
-                    }
-                })
-                ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
-                ->first();
+            // Step 0: For re-admission, explicitly check passed user_id or student_profile_id
+            $studentUser = null;
+            if (($validated['application_type'] ?? '') === 're-admission') {
+                if (!empty($validated['user_id'])) {
+                    $studentUser = User::find($validated['user_id']);
+                } elseif (!empty($validated['student_profile_id'])) {
+                    $studentUser = StudentProfile::find($validated['student_profile_id'])?->user;
+                }
+            }
+
+            // Step 1: Try contact + name match (including normalized phone numbers)
+            if (!$studentUser) {
+                $studentUser = User::query()
+                    ->where(function ($q) use ($validated, $last10) {
+                        if (!empty($validated['email'])) {
+                            $q->where('email', $validated['email']);
+                        }
+                        if (!empty($validated['mobile'])) {
+                            $q->orWhere('mobile', $validated['mobile']);
+                        }
+                        if (!empty($last10)) {
+                            $q->orWhere('mobile', $last10)
+                              ->orWhere('mobile', '+91' . $last10)
+                              ->orWhere('mobile', '91' . $last10);
+                        }
+                    })
+                    ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
+                    ->first();
+            }
 
             if ($studentUser) {
                 Log::info('Admission desk: reusing existing user', [
@@ -437,7 +471,13 @@ class ApplicationController extends BaseController
             } else {
                 // Step 2: Check if mobile/email already belongs to a different user (guardian's phone)
                 $existingMobileUser = !empty($validated['mobile'])
-                    ? User::where('mobile', $validated['mobile'])->first()
+                    ? User::where(function($q) use ($validated, $last10) {
+                        $q->where('mobile', $validated['mobile']);
+                        if (!empty($last10)) {
+                            $q->orWhere('mobile', $last10)
+                              ->orWhere('mobile', '+91' . $last10);
+                        }
+                    })->first()
                     : null;
                 $emailAlreadyTaken = !empty($validated['email'])
                     && User::where('email', $validated['email'])->exists();

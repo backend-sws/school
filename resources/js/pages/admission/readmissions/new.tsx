@@ -367,8 +367,11 @@ const ReadmissionsNew = () => {
     const { dueAmount } = computePaymentSummary(values, grandTotal);
 
     return {
-
       id: values.id || undefined,
+      user_id: values.user_id ? Number(values.user_id) : undefined,
+      student_profile_id: values.student_profile_id ? Number(values.student_profile_id) : undefined,
+      from_session_id: (values._from_session_id ?? values.from_session_id) ? Number(values._from_session_id ?? values.from_session_id) : undefined,
+      from_class_id: (values._from_class_id ?? values.from_class_id) ? Number(values._from_class_id ?? values.from_class_id) : undefined,
       application_type: "re-admission",
       process_status: isDraft ? "draft" : "pending",
       stream_id: values.stream_id ? Number(values.stream_id) : undefined,

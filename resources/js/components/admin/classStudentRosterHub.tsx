@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Users,
   Search,
@@ -23,12 +24,14 @@ import {
   UserX,
   Phone,
   School,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import lmsApi from "@/lib/api/lmsApi";
 import { cn } from "@/lib/utils";
 import { StudentClassProfileDrawer } from "./studentClassProfileDrawer";
 import { StudentLeaveUploadDialog } from "./studentLeaveUploadDialog";
+import { ClassStudentTransferDialog } from "./classStudentTransferDialog";
 
 interface ClassStudentRosterHubProps {
   classId: number;
@@ -40,6 +43,9 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
   const [sortBy, setSortBy] = useState<"roll" | "attendance" | "tests">("roll");
   const [selectedStudent, setSelectedStudent] = useState<{ id: number; name: string } | null>(null);
   const [leaveUploadStudent, setLeaveUploadStudent] = useState<{ id: number; name: string } | null>(null);
+  const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
+  const [transferDialogOpen, setTransferDialogOpen] = useState<boolean>(false);
+  const [transferTargetUserIds, setTransferTargetUserIds] = useState<number[]>([]);
 
   const { data: rosterRes, isLoading, refetch } = useQuery({
     queryKey: ["lms-class-students-summary", classId],
@@ -161,7 +167,21 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
           />
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setTransferTargetUserIds(selectedUserIds.length > 0 ? selectedUserIds : []);
+              setTransferDialogOpen(true);
+            }}
+            className="h-10 rounded-xl font-bold text-xs gap-1.5 border-border/80 hover:border-primary/50 hover:bg-primary/5"
+          >
+            <ArrowRightLeft className="size-3.5 text-primary" />
+            Transfer Students
+          </Button>
+
           <span className="text-xs font-semibold text-muted-foreground hidden md:inline">Sort by:</span>
           <div className="flex items-center rounded-xl bg-muted/40 p-1 border border-border/60">
             <button
@@ -198,6 +218,41 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
         </div>
       </div>
 
+      {/* ── Bulk Selection Action Bar ──────────────────────────────── */}
+      {selectedUserIds.length > 0 && (
+        <div className="flex items-center justify-between gap-3 p-4 rounded-2xl bg-primary/10 border border-primary/20 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2.5">
+            <Badge variant="secondary" className="bg-primary text-primary-foreground font-black text-xs px-2.5 py-0.5">
+              {selectedUserIds.length} Selected
+            </Badge>
+            <span className="text-xs font-semibold text-foreground hidden sm:inline">
+              students chosen for transfer
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                setTransferTargetUserIds(selectedUserIds);
+                setTransferDialogOpen(true);
+              }}
+              className="h-9 rounded-xl font-bold text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+            >
+              <ArrowRightLeft className="size-3.5" />
+              Transfer Selected ({selectedUserIds.length})
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setSelectedUserIds([])}
+              className="h-9 rounded-xl font-bold text-xs"
+            >
+              Clear
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* ── Student Roster Grid ───────────────────────────────────── */}
       {isLoading ? (
         <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-border/60 bg-muted/5">
@@ -219,14 +274,31 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
           {filteredStudents.map((s: any) => {
             const atndPct = s.attendance?.percentage ?? 0;
             const testPct = s.tests?.completion_rate ?? 0;
+            const isChecked = selectedUserIds.includes(s.user_id);
 
             return (
               <div
                 key={s.user_id}
-                className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-3xl border border-border/70 bg-card hover:border-primary/50 hover:shadow-md transition-all"
+                className={cn(
+                  "group flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-3xl border bg-card transition-all",
+                  isChecked
+                    ? "border-primary ring-2 ring-primary/20 bg-primary/[0.02]"
+                    : "border-border/70 hover:border-primary/50 hover:shadow-md"
+                )}
               >
                 {/* Student Info */}
-                <div className="flex items-center gap-4 min-w-0">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={() => {
+                      setSelectedUserIds((prev) =>
+                        prev.includes(s.user_id)
+                          ? prev.filter((id) => id !== s.user_id)
+                          : [...prev, s.user_id]
+                      );
+                    }}
+                    className="size-4.5 rounded-md border-border/80 data-[state=checked]:bg-primary shrink-0"
+                  />
                   <div className="relative size-13 shrink-0 rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted flex items-center justify-center shadow-sm">
                     {s.photo_url ? (
                       <img src={s.photo_url} alt={s.name} className="h-full w-full object-cover" />
@@ -308,8 +380,20 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
                   </div>
                 </div>
 
-                {/* 360 Action Button */}
+                {/* 360 & Transfer Action Buttons */}
                 <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-border/40">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setTransferTargetUserIds([s.user_id]);
+                      setTransferDialogOpen(true);
+                    }}
+                    className="h-9 rounded-xl font-bold text-xs gap-1.5 border-border/80 hover:border-primary/50 hover:bg-primary/5"
+                  >
+                    <ArrowRightLeft className="size-3.5 text-primary" />
+                    Transfer
+                  </Button>
                   <Button
                     size="sm"
                     onClick={() => setSelectedStudent({ id: s.user_id, name: s.name })}
@@ -343,6 +427,24 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
           userId={leaveUploadStudent.id}
           studentName={leaveUploadStudent.name}
           onSuccess={() => refetch()}
+        />
+      )}
+
+      {/* ── Student Transfer Dialog Modal ──────────────────────────── */}
+      {transferDialogOpen && (
+        <ClassStudentTransferDialog
+          open={transferDialogOpen}
+          onClose={() => {
+            setTransferDialogOpen(false);
+            setTransferTargetUserIds([]);
+          }}
+          classId={classId}
+          className={className}
+          preSelectedStudentUserIds={transferTargetUserIds}
+          onSuccess={() => {
+            setSelectedUserIds([]);
+            refetch();
+          }}
         />
       )}
     </div>

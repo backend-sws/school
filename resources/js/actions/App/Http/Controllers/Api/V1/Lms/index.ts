@@ -1,8 +1,9 @@
+import ClassStudentRosterController from './ClassStudentRosterController'
 import LmsCourseController from './LmsCourseController'
 import LmsClassController from './LmsClassController'
 import ClassSubjectAllocationController from './ClassSubjectAllocationController'
 import LmsClassEnrollmentController from './LmsClassEnrollmentController'
-import ClassStudentRosterController from './ClassStudentRosterController'
+import ClassStudentTransferController from './ClassStudentTransferController'
 import StudentLeaveApplicationController from './StudentLeaveApplicationController'
 import LmsAssignmentController from './LmsAssignmentController'
 import LmsAssignmentSubmissionController from './LmsAssignmentSubmissionController'
@@ -14,11 +15,12 @@ import LmsRecordingController from './LmsRecordingController'
 import LmsAnnouncementController from './LmsAnnouncementController'
 import LmsMaterialController from './LmsMaterialController'
 const Lms = {
-    LmsCourseController: Object.assign(LmsCourseController, LmsCourseController),
+    ClassStudentRosterController: Object.assign(ClassStudentRosterController, ClassStudentRosterController),
+LmsCourseController: Object.assign(LmsCourseController, LmsCourseController),
 LmsClassController: Object.assign(LmsClassController, LmsClassController),
 ClassSubjectAllocationController: Object.assign(ClassSubjectAllocationController, ClassSubjectAllocationController),
 LmsClassEnrollmentController: Object.assign(LmsClassEnrollmentController, LmsClassEnrollmentController),
-ClassStudentRosterController: Object.assign(ClassStudentRosterController, ClassStudentRosterController),
+ClassStudentTransferController: Object.assign(ClassStudentTransferController, ClassStudentTransferController),
 StudentLeaveApplicationController: Object.assign(StudentLeaveApplicationController, StudentLeaveApplicationController),
 LmsAssignmentController: Object.assign(LmsAssignmentController, LmsAssignmentController),
 LmsAssignmentSubmissionController: Object.assign(LmsAssignmentSubmissionController, LmsAssignmentSubmissionController),

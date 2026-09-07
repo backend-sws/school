@@ -33,7 +33,7 @@ export const studentEditSchema = z.object({
     .optional()
     .nullable(),
   reg_no: z.string().min(1, "Registration number is required").max(50),
-  photo_url: z.string().url("Invalid photo URL").or(z.literal("")).optional().nullable(),
+  photo_url: z.string().optional().nullable(),
 
   // --- Profile-level fields ---
   main_stream_id: z.coerce.number().min(1, "Please select main stream"),

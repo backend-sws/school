@@ -241,12 +241,38 @@ class AdmissionToStudentSyncService
         $profileData['state']                = $address['state'];
         $profileData['pincode']              = $address['pincode'];
         $profileData['is_differently_abled'] = !empty($app->disability);
-        $profileData['verified']             = false;
+        $existingProfile = StudentProfile::where('user_id', $app->user_id)->first();
+        $fromSessionId = $existingProfile?->session_id;
+        $fromClassId = $existingProfile?->class_id;
 
         $context['profile'] = StudentProfile::updateOrCreate(
             ['user_id' => $app->user_id],
             $profileData
         );
+
+        if ($this->isReadmission($app) && $context['sessionId']) {
+            $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
+            $resolvedFromSession = $fromSessionId ?: ($prefs['from_session_id'] ?? null);
+            $resolvedFromClass = $fromClassId ?: ($prefs['from_class_id'] ?? null);
+
+            \App\Models\StudentTransition::firstOrCreate(
+                [
+                    'user_id' => $app->user_id,
+                    'to_session_id' => $context['sessionId'],
+                    'type' => 'readmission',
+                ],
+                [
+                    'institution_id' => $app->institution_id,
+                    'student_profile_id' => $context['profile']->id,
+                    'from_session_id' => $resolvedFromSession,
+                    'from_class_id' => $resolvedFromClass,
+                    'to_class_id' => $app->class_id ?? $app->section_id,
+                    'status' => 'approved',
+                    'processed_at' => now(),
+                    'remarks' => 'Re-admission via application ' . $app->application_id,
+                ]
+            );
+        }
     }
 
     protected function stepSyncAddresses(array &$context): void

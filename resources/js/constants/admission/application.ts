@@ -576,6 +576,12 @@ export const APPLICATION_DESK_DOCUMENT_ACCEPT =
 /** Document types for document upload section (label + tooltip per type) */
 export const APPLICATION_DESK_DOCUMENT_TYPES = [
   {
+    key: "photo",
+    label: "Student Photo",
+    tooltip: "Recent passport-size photograph of the student. JPG, PNG or WebP.",
+    permission: "field_application_doc_photo",
+  },
+  {
     key: "birth_certificate",
     label: "Birth Certificate",
     tooltip: "Date of birth proof. Required for admission. PDF or image.",
@@ -619,7 +625,7 @@ export const APPLICATION_DESK_DOCUMENT_FIELDS = APPLICATION_DESK_DOCUMENT_TYPES.
   label: doc.label,
   tooltip: doc.tooltip,
   type: FORM_TYPE.FILE,
-  accept: APPLICATION_DESK_DOCUMENT_ACCEPT,
+  accept: doc.key === "photo" ? "image/*,.jpg,.jpeg,.png,.webp,.gif" : APPLICATION_DESK_DOCUMENT_ACCEPT,
   required: false,
 }));
 

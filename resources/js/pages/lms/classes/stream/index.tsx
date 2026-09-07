@@ -1,14 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import FullPageLayout from "@/layouts/full-page-layout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { Card, CardContent } from "@/components/ui/card";
 import Each from "@/components/Each";
-import { Users, ArrowRight, Hash, GraduationCap, Layers, Pencil, Trash2 } from "lucide-react";
+import { Users, ArrowRight, Hash, GraduationCap, Layers, Pencil, Trash2, ArrowRightLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import lmsApi from "@/lib/api/lmsApi";
 import streamApi from "@/lib/api/streamApi";
 import { LmsClassDialog, type LmsClassDialogData } from "@/components/admin/lmsClassDialog";
+import { ClassStudentTransferDialog } from "@/components/admin/classStudentTransferDialog";
 import { PermissionGate } from "@/components/PermissionGate";
 import { PageContainer } from "@/components/shared/page/PageContainer";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
@@ -81,6 +82,7 @@ const LmsStreamClassesIndex = () => {
   const queryClient = useQueryClient();
   const dialogDisclosure = useDisclosure<LmsClassDialogData>();
   const deleteDisclosure = useDisclosure<ClassRow>();
+  const [transferTargetClass, setTransferTargetClass] = useState<{ id: number; name: string } | null>(null);
 
   const destroyMutation = useMutation({
     mutationFn: (id: number) => lmsApi.classes.destroy(id),
@@ -177,6 +179,17 @@ const LmsStreamClassesIndex = () => {
         confirmText="Delete"
         variant="danger"
       />
+      {transferTargetClass && (
+        <ClassStudentTransferDialog
+          open={!!transferTargetClass}
+          onClose={() => setTransferTargetClass(null)}
+          classId={transferTargetClass.id}
+          className={transferTargetClass.name}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ["lms-classes"] });
+          }}
+        />
+      )}
       <PageContainer maxWidth="2xl" className="space-y-8">
         <MainPageHeader
           breadcrumbs={breadcrumbs}
@@ -249,6 +262,23 @@ const LmsStreamClassesIndex = () => {
                             e.stopPropagation();
                           }}
                         >
+                          {canEdit && (
+                            <TooltipWrapper content="Transfer / Migrate Students">
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setTransferTargetClass({ id: cls.id, name: cls.name });
+                                }}
+                              >
+                                <ArrowRightLeft className="size-3.5" />
+                              </Button>
+                            </TooltipWrapper>
+                          )}
                           {canEdit && (
                             <TooltipWrapper content="Edit Section">
                               <Button

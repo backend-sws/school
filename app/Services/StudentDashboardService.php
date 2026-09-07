@@ -418,13 +418,16 @@ class StudentDashboardService
             $user = User::findOrFail($id);
 
 
+            $photoDoc = collect($data['documents'] ?? [])->firstWhere('doc_type', 'photo');
+            $photoUrl = $data['photo_url'] ?? ($photoDoc['path'] ?? null);
+
             // 1. User Update
             $user->update([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
                 'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
-                'photo_url' => $data['photo_url'] ?? $user->photo_url,
+                'photo_url' => $photoUrl ?? $user->photo_url,
                 'reg_no' => $data['reg_no'] ?? $user->reg_no,
             ]);
 
@@ -488,6 +491,9 @@ class StudentDashboardService
                                 'status' => 'pending',
                             ]
                         );
+                        if ($doc['doc_type'] === 'photo') {
+                            $user->update(['photo_url' => $doc['path']]);
+                        }
                     }
                 }
             }

@@ -265,7 +265,7 @@ class StudentController extends BaseController
             'email' => 'required|email|unique:users,email,' . $id,
             'mobile' => 'required|digits:10|unique:users,mobile,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
-            'photo_url' => 'nullable|url',
+            'photo_url' => 'nullable|string|max:1000',
 
 
             // Profile Fields
@@ -677,7 +677,7 @@ class StudentController extends BaseController
             'email' => 'required|email|unique:users,email,' . $id,
             'mobile' => 'nullable|string|max:20|unique:users,mobile,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
-            'photo_url' => 'nullable|url',
+            'photo_url' => 'nullable|string|max:1000',
 
             // Profile Fields
             'student_profile.roll_no' => 'nullable|string',

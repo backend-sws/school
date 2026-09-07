@@ -10,8 +10,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle
+    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar
 } from "lucide-react";
+import {
+    Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
+} from "@/components/ui/dialog";
 import {
     Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
@@ -119,6 +122,7 @@ interface RowActionHandlers {
     copyLink: (studentId: number) => void;
     sendReminder: (period: string, type: "due_soon" | "overdue", via?: "email" | "push") => void;
     revertPayment?: (row: any) => void;
+    revertAdHoc?: (charge: any) => void;
 }
 
 function PaidRowActions({ row, handlers }: { row: any; handlers: RowActionHandlers }) {
@@ -134,6 +138,13 @@ function PaidRowActions({ row, handlers }: { row: any; handlers: RowActionHandle
             color: "hover:bg-rose-50 text-rose-500 hover:text-rose-600",
             onClick: () => handlers.revertPayment!(row),
         }] : []),
+        ...(handlers.revertAdHoc && row.ad_hoc_charges && row.ad_hoc_charges.length > 0 ? row.ad_hoc_charges.map((charge: any) => ({
+            key: `revert-adhoc-${charge.id}`,
+            icon: RotateCcw,
+            tooltip: `Revert Ad-Hoc: ${charge.name} (₹${Number(charge.amount).toLocaleString('en-IN')})`,
+            color: "hover:bg-amber-50 text-amber-600 hover:text-amber-700",
+            onClick: () => handlers.revertAdHoc!(charge),
+        })) : []),
     ];
     return (
         <Each
@@ -182,6 +193,23 @@ function UnpaidRowActions({ row, handlers, isPending }: { row: any; handlers: Ro
                     </Tooltip>
                 )}
             />
+            {handlers.revertAdHoc && row.ad_hoc_charges && row.ad_hoc_charges.length > 0 && (
+                row.ad_hoc_charges.map((charge: any) => (
+                    <Tooltip key={`revert-adhoc-${charge.id}`}>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-7 rounded-lg hover:bg-amber-50 text-amber-600 hover:text-amber-700"
+                                onClick={() => handlers.revertAdHoc!(charge)}
+                            >
+                                <RotateCcw className="size-3.5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Revert Ad-Hoc: {charge.name} (₹{Number(charge.amount).toLocaleString('en-IN')})</TooltipContent>
+                    </Tooltip>
+                ))
+            )}
         </div>
     );
 }
@@ -203,11 +231,27 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const [showAdvance, setShowAdvance] = useState(false);
     const [selectedSession, setSelectedSession] = useState<string | null>(null);
     const [revertingRow, setRevertingRow] = useState<any>(null);
+    const [revertingAdHoc, setRevertingAdHoc] = useState<any>(null);
 
     // ─── Data Fetching ───────────────────────────────────────────────────────
     const { data: ledgerRes, isLoading, isError } = useQuery({
         queryKey: ["student-ledger-matrix", studentId, selectedSession, isStudentPortal],
         queryFn: () => api.get(isStudentPortal ? `/student/financial-ledger` : `/fees/ledger/student/${studentId}`, { params: { session_id: selectedSession === "current" ? null : selectedSession } }),
+    });
+
+    // ─── Mutations ───────────────────────────────────────────────────────────
+    const revertAdHocMutation = useMutation({
+        mutationFn: (chargeId: number) => api.delete(`/fees/ad-hoc-charges/${chargeId}`),
+        onSuccess: () => {
+            toast.success("Ad-hoc charge reverted successfully. Student ledger updated.");
+            setRevertingAdHoc(null);
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.message || "Failed to revert ad-hoc charge.");
+        },
     });
 
     // ─── Mutations ───────────────────────────────────────────────────────────
@@ -310,6 +354,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
         },
         sendReminder: (period, type, via) => sendReminderMutation.mutate({ period, type, via }),
         revertPayment: (row) => setRevertingRow(row),
+        revertAdHoc: (charge) => setRevertingAdHoc(charge),
     };
 
     // ─── Loading & Error States ──────────────────────────────────────────────
@@ -652,9 +697,30 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                         const ep = (row.expected_particulars || []).find((ep: any) => ep.name === pName);
                                                         const isFallbackFees = pName === "Fees" && allParticulars.length === 1 && !ep;
                                                         const pValue = ep?.amount ?? (isFallbackFees ? (row.monthly_total ?? row.total_payable ?? 0) : 0);
+                                                        const isAdHoc = ep?.type === "ad_hoc";
                                                         return (
                                                             <TableCell className={cn("text-right py-4 tabular-nums text-sm font-medium border-r opacity-70", pValue < 0 && "text-emerald-600 font-bold opacity-100")}>
-                                                                {pValue !== 0 ? (pValue > 0 ? formatCurrency(pValue) : `-${formatCurrency(Math.abs(pValue))}`) : "—"}
+                                                                {pValue !== 0 ? (
+                                                                    isAdHoc && ep?.id && !isStudentPortal ? (
+                                                                        <div className="inline-flex items-center justify-end gap-1 group/adhoc">
+                                                                            <span className="font-semibold text-foreground">{formatCurrency(pValue)}</span>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => setRevertingAdHoc(ep)}
+                                                                                        className="opacity-0 group-hover/adhoc:opacity-100 transition-opacity p-0.5 rounded text-amber-600 hover:bg-amber-50 hover:text-amber-700 cursor-pointer"
+                                                                                    >
+                                                                                        <RotateCcw className="size-2.5" />
+                                                                                    </button>
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent side="top">Revert Ad-Hoc: {ep.name}</TooltipContent>
+                                                                            </Tooltip>
+                                                                        </div>
+                                                                    ) : (
+                                                                        pValue > 0 ? formatCurrency(pValue) : `-${formatCurrency(Math.abs(pValue))}`
+                                                                    )
+                                                                ) : "—"}
                                                             </TableCell>
                                                         );
                                                     }}
@@ -1041,6 +1107,82 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                         }}
                     />
                 )}
+
+                {/* ─── Revert Ad-Hoc Charge Modal ────────────────────────── */}
+                <Dialog open={!!revertingAdHoc} onOpenChange={(open) => !open && setRevertingAdHoc(null)}>
+                    <DialogContent className="sm:max-w-[420px] border shadow-2xl p-0 overflow-hidden rounded-2xl">
+                        <DialogHeader className="p-6 pb-2">
+                            <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="size-5" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-lg font-bold text-foreground">
+                                        Revert Ad-Hoc Charge
+                                    </DialogTitle>
+                                    <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                                        Remove this ad-hoc charge from the student's ledger
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
+
+                        <div className="p-6 pt-2 space-y-4">
+                            <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3.5 space-y-2 text-xs">
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="flex items-center gap-1.5 font-medium">
+                                        <User className="size-3.5" />
+                                        Student
+                                    </span>
+                                    <span className="font-bold text-foreground">{student.name}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="flex items-center gap-1.5 font-medium">
+                                        <Receipt className="size-3.5" />
+                                        Charge Name
+                                    </span>
+                                    <span className="font-bold text-primary">{revertingAdHoc?.name}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                    <span className="flex items-center gap-1.5 font-medium">
+                                        <Calendar className="size-3.5" />
+                                        Amount
+                                    </span>
+                                    <span className="font-bold text-destructive text-sm">₹{Number(revertingAdHoc?.amount ?? 0).toLocaleString()}</span>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground pt-1 border-t border-destructive/10">
+                                    Reverting will immediately deduct this charge from the student's expected fee and balance for this period.
+                                </p>
+                            </div>
+
+                            <DialogFooter className="gap-2 sm:gap-0">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setRevertingAdHoc(null)}
+                                    disabled={revertAdHocMutation.isPending}
+                                    className="rounded-xl font-bold"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => {
+                                        if (revertingAdHoc?.id) {
+                                            revertAdHocMutation.mutate(revertingAdHoc.id);
+                                        }
+                                    }}
+                                    disabled={revertAdHocMutation.isPending}
+                                    className="rounded-xl font-bold gap-2"
+                                >
+                                    {revertAdHocMutation.isPending && <Loader2 className="size-4 animate-spin" />}
+                                    Confirm Revert
+                                </Button>
+                            </DialogFooter>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         </TooltipProvider>
     );

@@ -53,14 +53,17 @@ class StudentLedgerController extends BaseController
             ->delete();
 
         $institutionId = self::getActiveInstitutionId($request->user());
+        $requestedSessionId = $validated['session_id'] ?? null;
+        $effectiveStudent = $this->feeCollectionService->resolveEffectiveStudentUserForSession($student, $institutionId, $requestedSessionId);
+
         $projectedRows = $this->feeCollectionService->getProjectedPeriodBalances(
-            $student,
+            $effectiveStudent,
             $institutionId,
-            $validated['session_id'] ?? null,
+            $requestedSessionId,
             $validated['from_period'] ?? null,
             $validated['to_period'] ?? null,
         );
-        $result = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $validated['session_id'] ?? null);
+        $result = $this->feeCollectionService->getStudentLedgerMatrix($effectiveStudent, $institutionId, $requestedSessionId);
 
         if (isset($result['error'])) {
             return $this->error($result['error'], 404);
@@ -95,13 +98,7 @@ class StudentLedgerController extends BaseController
         $pagedMatrix = array_slice($matrix, $offset, $perPage);
 
         // Determine which sessions the student is actually associated with
-        $studentSessionIds = collect([$student->studentProfile?->session_id])
-            ->merge(\Illuminate\Support\Facades\DB::table('student_fee_period_balances')->where('user_id', $studentId)->pluck('session_id'))
-            ->merge(\Illuminate\Support\Facades\DB::table('admission_applications')->where('user_id', $studentId)->pluck('session_id'))
-            ->filter()
-            ->unique()
-            ->values()
-            ->toArray();
+        $studentSessionIds = $this->feeCollectionService->getStudentAssociatedSessionIds($student, $institutionId);
 
         $availableSessions = \App\Models\Session::where('institution_id', $institutionId)
             ->whereIn('id', $studentSessionIds)
@@ -647,8 +644,10 @@ class StudentLedgerController extends BaseController
 
         $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($studentId);
         $institutionId = self::getActiveInstitutionId($request->user());
+        $requestedSessionId = $validated['session_id'] ?? null;
+        $effectiveStudent = $this->feeCollectionService->resolveEffectiveStudentUserForSession($student, $institutionId, $requestedSessionId);
 
-        $result = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $validated['session_id'] ?? null);
+        $result = $this->feeCollectionService->getStudentLedgerMatrix($effectiveStudent, $institutionId, $requestedSessionId);
 
         if (isset($result['error'])) {
             return $this->error($result['error'], 404);

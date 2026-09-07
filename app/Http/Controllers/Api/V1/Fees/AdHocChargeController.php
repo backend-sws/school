@@ -132,6 +132,41 @@ class AdHocChargeController extends Controller
 
         $charge->delete();
 
-        return response()->json(['message' => 'Ad-hoc charge deleted successfully.']);
+        return response()->json(['message' => 'Ad-hoc charge reverted successfully.']);
+    }
+
+    /**
+     * Revert / bulk delete ad-hoc charges by IDs or by batch criteria.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'nullable|array',
+            'ids.*' => 'integer',
+            'name' => 'nullable|string|max:150',
+            'for_month' => 'nullable|string|date_format:Y-m',
+        ]);
+
+        $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+        $query = StudentAdHocCharge::query();
+        if ($institutionId) {
+            $query->where('institution_id', $institutionId);
+        }
+
+        if (!empty($validated['ids'])) {
+            $query->whereIn('id', $validated['ids']);
+        } elseif (!empty($validated['name']) && !empty($validated['for_month'])) {
+            $query->where('name', $validated['name'])
+                  ->where('for_month', $validated['for_month']);
+        } else {
+            return response()->json(['message' => 'No charges selected for reversion.'], 422);
+        }
+
+        $count = $query->delete();
+
+        return response()->json([
+            'message' => "{$count} ad-hoc charge(s) reverted successfully.",
+            'count' => $count,
+        ]);
     }
 }

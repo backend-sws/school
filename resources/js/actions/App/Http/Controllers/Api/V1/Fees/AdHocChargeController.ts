@@ -133,6 +133,61 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     
     store.form = storeForm
 /**
+* @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:141
+ * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
+ */
+export const bulkDestroy = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: bulkDestroy.url(options),
+    method: 'post',
+})
+
+bulkDestroy.definition = {
+    methods: ["post"],
+    url: '/api/v1/fees/ad-hoc-charges/bulk-delete',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:141
+ * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
+ */
+bulkDestroy.url = (options?: RouteQueryOptions) => {
+    return bulkDestroy.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:141
+ * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
+ */
+bulkDestroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: bulkDestroy.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:141
+ * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
+ */
+    const bulkDestroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: bulkDestroy.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:141
+ * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
+ */
+        bulkDestroyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: bulkDestroy.url(options),
+            method: 'post',
+        })
+    
+    bulkDestroy.form = bulkDestroyForm
+/**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
  * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:123
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
@@ -216,6 +271,6 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
         })
     
     destroy.form = destroyForm
-const AdHocChargeController = { index, store, destroy }
+const AdHocChargeController = { index, store, bulkDestroy, destroy }
 
 export default AdHocChargeController

@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Head, Link, router } from "@inertiajs/react";
-import { ShoppingCart, Plus, Trash2 } from "lucide-react";
+import { ShoppingCart, Plus, Trash2, MapPin } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import inventoryApi from "@/lib/api/inventoryApi";
 import {
@@ -36,6 +36,7 @@ type ItemOption = {
   code?: string;
   current_quantity: number;
   selling_price?: number;
+  location?: string;
 };
 
 const InventorySalesCreate = () => {
@@ -214,11 +215,14 @@ const InventorySalesCreate = () => {
                     <Each
                       of={items}
                       keyExtractor={(i) => String(i.id)}
-                      render={(i) => (
-                        <option key={i.id} value={i.id}>
-                          {i.name} {i.code ? `(${i.code})` : ""} — Stock: {i.current_quantity}
-                        </option>
-                      )}
+                      render={(i) => {
+                        const loc = i.location ? ` • 📍 Loc: ${i.location}` : "";
+                        return (
+                          <option key={i.id} value={i.id}>
+                            {i.name} {i.code ? `(${i.code})` : ""} — Stock: {i.current_quantity}{loc}
+                          </option>
+                        );
+                      }}
                     />
                   </select>
                 </div>
@@ -250,12 +254,28 @@ const InventorySalesCreate = () => {
                   Add
                 </Button>
               </div>
+
+              {selectedItem && (
+                <div className="w-full p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
+                    <MapPin className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <span>Storage Location:</span>
+                    <span className="font-semibold text-amber-950 dark:text-amber-100 bg-amber-200/50 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                      {selectedItem.location ? selectedItem.location : "Not specified"}
+                    </span>
+                  </div>
+                  <div className="text-muted-foreground text-[11px]">
+                    Available Stock: <span className="font-semibold text-foreground">{selectedItem.current_quantity}</span>
+                  </div>
+                </div>
+              )}
+
               {lines.length > 0 && (
                 <div className="border rounded-md overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/50">
-                        <TableHead className="p-2">Item ID</TableHead>
+                        <TableHead className="p-2">Item</TableHead>
                         <TableHead className="p-2 text-right">Qty</TableHead>
                         <TableHead className="p-2 text-right">Unit price</TableHead>
                         <TableHead className="p-2 text-right">Amount</TableHead>
@@ -266,21 +286,32 @@ const InventorySalesCreate = () => {
                       <Each
                         of={lines}
                         keyExtractor={(line, idx) => `line-${idx}`}
-                        render={(line, idx) => (
-                          <TableRow key={idx}>
-                            <TableCell className="p-2 font-mono">
-                              {line.inventory_item_id}
-                            </TableCell>
-                            <TableCell className="p-2 text-right font-mono">
-                              {line.quantity}
-                            </TableCell>
-                            <TableCell className="p-2 text-right font-mono">
-                              ₹{line.unit_price.toFixed(2)}
-                            </TableCell>
-                            <TableCell className="p-2 text-right font-mono">
-                              ₹{line.amount.toFixed(2)}
-                            </TableCell>
-                            <TableCell className="p-2">
+                        render={(line, idx) => {
+                          const item = items.find((i) => i.id === line.inventory_item_id);
+                          return (
+                            <TableRow key={idx}>
+                              <TableCell className="p-2 text-xs">
+                                <div className="font-medium text-foreground">
+                                  {item?.name ?? `Item #${line.inventory_item_id}`}
+                                  {item?.code ? ` (${item.code})` : ""}
+                                </div>
+                                {item?.location && (
+                                  <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                                    <MapPin className="size-3 text-amber-600 dark:text-amber-400 shrink-0" />
+                                    <span>Loc: {item.location}</span>
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell className="p-2 text-right font-mono">
+                                {line.quantity}
+                              </TableCell>
+                              <TableCell className="p-2 text-right font-mono">
+                                ₹{line.unit_price.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="p-2 text-right font-mono">
+                                ₹{line.amount.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="p-2">
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -291,8 +322,9 @@ const InventorySalesCreate = () => {
                               </Button>
                             </TableCell>
                           </TableRow>
-                        )}
-                      />
+                        );
+                      }}
+                    />
                     </TableBody>
                   </Table>
                 </div>

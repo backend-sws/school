@@ -23,6 +23,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentEditSchema, type StudentEditFormValues } from "@/lib/validations/student";
+import R2Api from "@/lib/api/r2Api";
+import { User } from "lucide-react";
 
 const StudentEdit = () => {
   const { props } = usePage();
@@ -72,9 +74,13 @@ const StudentEdit = () => {
     const profile = get(data, "student_profile") ?? get(data, "studentProfile");
     
     const docRecord = (data.documents ?? []).reduce((acc: Record<string, string>, doc: any) => {
-      acc[doc.doc_type] = doc.file_url;
+      acc[doc.doc_type] = doc.file_url ?? doc.doc_path;
       return acc;
     }, {});
+
+    if (!docRecord.photo && data.photo_url) {
+      docRecord.photo = data.photo_url;
+    }
 
     // Top-level user fields
     const userFields = {
@@ -83,7 +89,7 @@ const StudentEdit = () => {
       email: data.email ?? "",
       mobile: data.mobile ?? "",
       reg_no: data.reg_no ?? profile?.reg_no ?? "",
-      photo_url: data.photo_url ?? "",
+      photo_url: data.photo_url || docRecord.photo || "",
     };
 
     return {
@@ -242,7 +248,16 @@ const StudentEdit = () => {
     }
   });
 
+  const currentPhoto = watch("documents.photo" as any) || watch("photo_url");
+
   const onSubmit = (formData: StudentEditFormValues) => {
+    const photoFromDocs = (formData.documents as any)?.photo;
+    if (photoFromDocs && !formData.photo_url) {
+      formData.photo_url = photoFromDocs;
+    } else if (formData.photo_url && !(formData.documents as any)?.photo) {
+      if (!formData.documents) formData.documents = {};
+      (formData.documents as any).photo = formData.photo_url;
+    }
     updateMutation.mutate(buildStudentEditPayload(formData));
   };
 
@@ -316,6 +331,52 @@ const StudentEdit = () => {
                 onSubmit={handleSubmit(onSubmit, onInvalid)}
                 className="space-y-6"
               >
+                {/* ── Student Photo Preview / Quick View ── */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 rounded-xl border bg-muted/20">
+                  <div className="relative shrink-0">
+                    <div className="h-20 w-20 rounded-xl overflow-hidden border-2 border-primary/20 bg-muted flex items-center justify-center shadow-sm">
+                      {currentPhoto ? (
+                        <img
+                          src={R2Api.imageSrc(currentPhoto)}
+                          alt="Student photo"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-10 w-10 text-muted-foreground/40" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-center sm:text-left flex-1 min-w-0">
+                    <div className="flex items-center justify-center sm:justify-start gap-2">
+                      <h4 className="text-sm font-semibold text-foreground">Student Photo</h4>
+                      {currentPhoto && (
+                        <span className="text-[11px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
+                          Uploaded
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Upload or replace the student's passport photo in the <strong>Uploaded Documents</strong> section below.
+                    </p>
+                    {currentPhoto && (
+                      <div className="pt-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
+                          onClick={() => {
+                            setValue("documents.photo" as any, "");
+                            setValue("photo_url", "");
+                          }}
+                        >
+                          Remove photo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Each
                     of={basicFields}

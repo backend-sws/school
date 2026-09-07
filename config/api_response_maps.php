@@ -300,6 +300,7 @@ return [
             'payment_date',
             'status',
             'reverted_payments',
+            'ad_hoc_charges',
         ],
     ],
 

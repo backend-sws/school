@@ -31,7 +31,7 @@ import {
   type InventorySaleFormValues,
   type InventorySaleFormInputValues,
 } from "@/lib/validations/inventory";
-import { Plus, Trash2, User, Mail, Phone } from "lucide-react";
+import { Plus, Trash2, User, Mail, Phone, MapPin } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════
 //  Types (component-local — not shared outside)
@@ -44,6 +44,7 @@ type ItemOption = {
   current_quantity: number;
   selling_price?: number;
   gst_rate?: number;
+  location?: string;
 };
 
 type SaleLine = {
@@ -86,11 +87,14 @@ function parseUserId(raw: unknown): number {
 function buildItemOptions(items: ItemOption[]) {
   return [
     { key: "select-item", text: "Select item", value: "" },
-    ...items.map((i) => ({
-      key: String(i.id),
-      text: `${i.name} ${i.code ? `(${i.code})` : ""} — Stock: ${i.current_quantity}`,
-      value: String(i.id),
-    })),
+    ...items.map((i) => {
+      const loc = i.location ? ` • 📍 Loc: ${i.location}` : "";
+      return {
+        key: String(i.id),
+        text: `${i.name} ${i.code ? `(${i.code})` : ""} — Stock: ${i.current_quantity}${loc}`,
+        value: String(i.id),
+      };
+    }),
   ];
 }
 
@@ -407,6 +411,21 @@ export function InventorySaleDialog({
             </Button>
           </div>
 
+          {selectedItem && (
+            <div className="mt-2.5 p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
+                <MapPin className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                <span>Storage Location:</span>
+                <span className="font-semibold text-amber-950 dark:text-amber-100 bg-amber-200/50 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                  {selectedItem.location || "Not specified"}
+                </span>
+              </div>
+              <div className="text-muted-foreground text-[11px]">
+                Available Stock: <span className="font-semibold text-foreground">{selectedItem.current_quantity}</span>
+              </div>
+            </div>
+          )}
+
           {errors.lines?.message && (
             <p className="text-xs text-destructive mt-1">{errors.lines.message}</p>
           )}
@@ -429,33 +448,44 @@ export function InventorySaleDialog({
                     <Each
                       of={lines}
                       keyExtractor={(_: SaleLine, idx: number) => `line-${idx}`}
-                      render={(line: SaleLine, idx: number) => (
-                        <TableRow>
-                          <TableCell className="p-2 text-xs">
-                            {items.find((i) => i.id === line.inventory_item_id)?.name ??
-                              `#${line.inventory_item_id}`}
-                          </TableCell>
-                          <TableCell className="p-2 text-right text-xs">
-                            {line.quantity}
-                          </TableCell>
-                          <TableCell className="p-2 text-right text-xs">
-                            ₹{line.unit_price.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="p-2 text-right text-xs">
-                            ₹{computeLineAmount(line.quantity, line.unit_price).toFixed(2)}
-                          </TableCell>
-                          <TableCell className="p-2">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeLine(idx)}
-                            >
-                              <Trash2 className="size-4 text-destructive" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )}
+                      render={(line: SaleLine, idx: number) => {
+                        const item = items.find((i) => i.id === line.inventory_item_id);
+                        return (
+                          <TableRow>
+                            <TableCell className="p-2 text-xs">
+                              <div className="font-medium text-foreground">
+                                {item?.name ?? `#${line.inventory_item_id}`}
+                                {item?.code ? ` (${item.code})` : ""}
+                              </div>
+                              {item?.location && (
+                                <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                                  <MapPin className="size-3 text-amber-600 dark:text-amber-400 shrink-0" />
+                                  <span>Loc: {item.location}</span>
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="p-2 text-right text-xs">
+                              {line.quantity}
+                            </TableCell>
+                            <TableCell className="p-2 text-right text-xs">
+                              ₹{line.unit_price.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="p-2 text-right text-xs">
+                              ₹{computeLineAmount(line.quantity, line.unit_price).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeLine(idx)}
+                              >
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      }}
                     />
                   </TableBody>
                 </Table>

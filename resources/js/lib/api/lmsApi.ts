@@ -144,9 +144,9 @@ const lmsApi = {
     student360: (classId: string | number, userId: string | number) =>
       api.get(`${BASE}/classes/${classId}/students/${userId}/360`),
     global360: (userId: string | number, classId?: string | number) =>
-      api.get(`/students/${userId}/global-360`, { params: { class_id: classId } }),
+      api.get(`${BASE}/students/${userId}/global-360`, { params: { class_id: classId } }),
     lifetimeHistory: (userId: string | number) =>
-      api.get(`/students/${userId}/lifetime-history`),
+      api.get(`${BASE}/students/${userId}/lifetime-history`),
     leaves: (classId: string | number, userId: string | number) =>
       api.get(`${BASE}/classes/${classId}/students/${userId}/leaves`),
     uploadLeave: (classId: string | number, userId: string | number, payload: FormData | Record<string, any>) =>
@@ -159,6 +159,21 @@ const lmsApi = {
       api.patch(`${BASE}/leaves/${leaveId}/status`, data),
     deleteLeave: (leaveId: string | number) =>
       api.delete(`${BASE}/leaves/${leaveId}`),
+  },
+  studentTransfer: {
+    options: (classId: string | number) =>
+      api.get(`${BASE}/classes/${classId}/transfer-options`),
+    transfer: (
+      classId: string | number,
+      payload: {
+        transfer_mode: 'section' | 'session';
+        student_user_ids: number[];
+        target_class_id?: number | null;
+        target_session_id?: number | null;
+        target_section?: string | null;
+        remarks?: string | null;
+      }
+    ) => api.post(`${BASE}/classes/${classId}/transfer-students`, payload),
   },
 };
 

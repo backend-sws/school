@@ -7,6 +7,7 @@ import Grievance from './Grievance'
 import R2 from './R2'
 import IdCards from './IdCards'
 import Notifications from './Notifications'
+import Lms from './Lms'
 import Support from './Support'
 import Staff from './Staff'
 import Analytics from './Analytics'
@@ -25,7 +26,6 @@ import Hostel from './Hostel'
 import Library from './Library'
 import Attendance from './Attendance'
 import Timetable from './Timetable'
-import Lms from './Lms'
 import DoubtForum from './DoubtForum'
 import Guardian from './Guardian'
 import StudentDashboard from './StudentDashboard'
@@ -39,6 +39,7 @@ Grievance: Object.assign(Grievance, Grievance),
 R2: Object.assign(R2, R2),
 IdCards: Object.assign(IdCards, IdCards),
 Notifications: Object.assign(Notifications, Notifications),
+Lms: Object.assign(Lms, Lms),
 Support: Object.assign(Support, Support),
 Staff: Object.assign(Staff, Staff),
 Analytics: Object.assign(Analytics, Analytics),
@@ -57,7 +58,6 @@ Hostel: Object.assign(Hostel, Hostel),
 Library: Object.assign(Library, Library),
 Attendance: Object.assign(Attendance, Attendance),
 Timetable: Object.assign(Timetable, Timetable),
-Lms: Object.assign(Lms, Lms),
 DoubtForum: Object.assign(DoubtForum, DoubtForum),
 Guardian: Object.assign(Guardian, Guardian),
 StudentDashboard: Object.assign(StudentDashboard, StudentDashboard),

@@ -12,12 +12,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AsyncSelectField } from "@/components/shared/AsyncSelectField";
 import StudentApi from "@/lib/api/studentApi";
 import lmsApi from "@/lib/api/lmsApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles } from "lucide-react";
+import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles, RotateCcw, AlertTriangle, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PREMIUM_INPUT_CLASSES, PREMIUM_LABEL_CLASSES } from "@/components/shared/form/types";
@@ -179,18 +181,69 @@ export default function AdHocCharges({ auth }: any) {
   const logs = logsData?.data || [];
   const logsPagination = logsData || {};
 
-  const deleteMutation = useMutation({
+  const [selectedLogIds, setSelectedLogIds] = useState<Set<number>>(new Set());
+  const [revertingTarget, setRevertingTarget] = useState<{
+    type: "single" | "bulk" | "batch";
+    id?: number;
+    ids?: number[];
+    name?: string;
+    amount?: number | string;
+    for_month?: string;
+    studentName?: string;
+    count?: number;
+  } | null>(null);
+
+  const singleDeleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await axios.delete(`/api/v1/fees/ad-hoc-charges/${id}`);
     },
     onSuccess: () => {
-      toast.success("Charge deleted successfully.");
+      toast.success("Ad-hoc charge reverted successfully.");
+      setRevertingTarget(null);
       queryClient.invalidateQueries({ queryKey: ["ad-hoc-logs", institutionId] });
+      queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix"] });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "Failed to delete.");
+      toast.error(err.response?.data?.message || "Failed to revert charge.");
     },
   });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (payload: { ids?: number[]; name?: string; for_month?: string }) => {
+      const res = await axios.post("/api/v1/fees/ad-hoc-charges/bulk-delete", payload);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Charges reverted successfully.");
+      setSelectedLogIds(new Set());
+      setRevertingTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["ad-hoc-logs", institutionId] });
+      queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || "Failed to revert charges.");
+    },
+  });
+
+  const allLogsOnPageSelected = logs.length > 0 && logs.every((l: any) => selectedLogIds.has(l.id));
+  const someLogsOnPageSelected = logs.some((l: any) => selectedLogIds.has(l.id)) && !allLogsOnPageSelected;
+
+  const toggleAllLogsOnPage = () => {
+    const next = new Set(selectedLogIds);
+    if (allLogsOnPageSelected) {
+      logs.forEach((l: any) => next.delete(l.id));
+    } else {
+      logs.forEach((l: any) => next.add(l.id));
+    }
+    setSelectedLogIds(next);
+  };
+
+  const toggleLogSelection = (id: number) => {
+    const next = new Set(selectedLogIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedLogIds(next);
+  };
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -630,6 +683,52 @@ export default function AdHocCharges({ auth }: any) {
                   </div>
                 </div>
 
+                {/* Bulk Revert Toolbar when rows are selected */}
+                {selectedLogIds.size > 0 && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center gap-2.5">
+                      <div className="size-8 rounded-lg bg-destructive/20 text-destructive flex items-center justify-center font-bold text-xs">
+                        {selectedLogIds.size}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-foreground">
+                          {selectedLogIds.size} {selectedLogIds.size === 1 ? "charge" : "charges"} selected
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">
+                          Reverting will delete these charges and immediately update student fee ledgers.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedLogIds(new Set())}
+                        className="h-8 text-xs font-semibold"
+                      >
+                        Deselect All
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setRevertingTarget({
+                            type: "bulk",
+                            ids: Array.from(selectedLogIds),
+                            count: selectedLogIds.size,
+                          });
+                        }}
+                        className="h-8 text-xs font-bold gap-1.5 shadow-sm"
+                      >
+                        <RotateCcw className="size-3.5" />
+                        Revert Selected ({selectedLogIds.size})
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 {loadingLogs ? (
                   <div className="py-12 text-center text-muted-foreground border rounded-md bg-muted/10">Loading logs...</div>
                 ) : logs && logs.length > 0 ? (
@@ -638,17 +737,31 @@ export default function AdHocCharges({ auth }: any) {
                       <Table>
                         <TableHeader className="bg-muted/50">
                           <TableRow>
+                            <TableHead className="w-12 text-center">
+                              <Checkbox
+                                checked={allLogsOnPageSelected || (someLogsOnPageSelected ? "indeterminate" : false)}
+                                onCheckedChange={toggleAllLogsOnPage}
+                                aria-label="Select all on this page"
+                              />
+                            </TableHead>
                             <TableHead>Date Assigned</TableHead>
                             <TableHead>Student</TableHead>
                             <TableHead>Charge Name</TableHead>
                             <TableHead>For Month</TableHead>
                             <TableHead className="text-right">Amount (₹)</TableHead>
-                            <TableHead className="w-12"></TableHead>
+                            <TableHead className="w-16 text-center">Action</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {logs.map((log: any) => (
                             <TableRow key={log.id} className="hover:bg-muted/30">
+                              <TableCell className="text-center">
+                                <Checkbox
+                                  checked={selectedLogIds.has(log.id)}
+                                  onCheckedChange={() => toggleLogSelection(log.id)}
+                                  aria-label={`Select charge for ${log.user?.name}`}
+                                />
+                              </TableCell>
                               <TableCell className="text-muted-foreground whitespace-nowrap text-xs">
                                 {format(new Date(log.created_at), "dd MMM yyyy, p")}
                               </TableCell>
@@ -672,19 +785,30 @@ export default function AdHocCharges({ auth }: any) {
                                 {Number(log.amount).toLocaleString('en-IN')}
                               </TableCell>
                               <TableCell className="text-center">
-                                 <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="size-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
-                                    onClick={() => {
-                                      if(confirm("Are you sure you want to delete this charge? It will be removed from their ledger immediately.")) {
-                                        deleteMutation.mutate(log.id);
-                                      }
-                                    }}
-                                    disabled={deleteMutation.isPending}
-                                  >
-                                    <Trash2 className="size-4" />
-                                 </Button>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                        onClick={() => {
+                                          setRevertingTarget({
+                                            type: "single",
+                                            id: log.id,
+                                            name: log.name,
+                                            amount: log.amount,
+                                            studentName: log.user?.name,
+                                            for_month: log.for_month,
+                                          });
+                                        }}
+                                      >
+                                        <RotateCcw className="size-3.5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="left">Revert Charge</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -723,6 +847,94 @@ export default function AdHocCharges({ auth }: any) {
                     No assignment logs found matching your filters.
                   </div>
                 )}
+
+                {/* Revert Confirmation Dialog */}
+                <Dialog open={!!revertingTarget} onOpenChange={(open) => !open && setRevertingTarget(null)}>
+                  <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border shadow-2xl">
+                    <DialogHeader className="p-6 pb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+                          <AlertTriangle className="size-5" />
+                        </div>
+                        <div>
+                          <DialogTitle className="text-lg font-bold text-foreground">
+                            Revert Ad-Hoc Charge
+                          </DialogTitle>
+                          <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                            This will permanently remove the charge from the fee ledger.
+                          </DialogDescription>
+                        </div>
+                      </div>
+                    </DialogHeader>
+
+                    <div className="p-6 pt-2 space-y-4">
+                      <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3.5 space-y-2 text-xs">
+                        {revertingTarget?.type === "single" && (
+                          <>
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Student:</span>
+                              <strong className="text-foreground">{revertingTarget.studentName}</strong>
+                            </div>
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Charge Name:</span>
+                              <strong className="text-foreground">{revertingTarget.name}</strong>
+                            </div>
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Amount:</span>
+                              <strong className="text-destructive font-bold">₹{Number(revertingTarget.amount).toLocaleString('en-IN')}</strong>
+                            </div>
+                            {revertingTarget.for_month && (
+                              <div className="flex items-center justify-between text-muted-foreground">
+                                <span>For Month:</span>
+                                <span className="font-medium text-foreground">{format(new Date(`${revertingTarget.for_month}-01`), "MMMM yyyy")}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        {revertingTarget?.type === "bulk" && (
+                          <div className="space-y-1">
+                            <p className="font-bold text-destructive">
+                              Revert {revertingTarget.count} selected charge{revertingTarget.count! > 1 ? "s" : ""}
+                            </p>
+                            <p className="text-muted-foreground text-[11px]">
+                              These charges will be removed immediately from each student's fee ledger and their payable balance will be reduced.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <DialogFooter className="gap-2 sm:gap-0">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setRevertingTarget(null)}
+                          disabled={singleDeleteMutation.isPending || bulkDeleteMutation.isPending}
+                          className="rounded-xl font-bold"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => {
+                            if (revertingTarget?.type === "single" && revertingTarget.id) {
+                              singleDeleteMutation.mutate(revertingTarget.id);
+                            } else if (revertingTarget?.type === "bulk" && revertingTarget.ids) {
+                              bulkDeleteMutation.mutate({ ids: revertingTarget.ids });
+                            }
+                          }}
+                          disabled={singleDeleteMutation.isPending || bulkDeleteMutation.isPending}
+                          className="rounded-xl font-bold gap-2"
+                        >
+                          {(singleDeleteMutation.isPending || bulkDeleteMutation.isPending) && (
+                            <Loader2 className="size-4 animate-spin" />
+                          )}
+                          Confirm Revert
+                        </Button>
+                      </DialogFooter>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           </TabsContent>

@@ -113,10 +113,14 @@ class ReadmissionController extends BaseController
             'prefill' => $existingDraft ? array_merge([
                 // Base prefill data
                 'id' => $existingDraft->id,
+                'user_id' => $studentProfile->user_id,
+                'student_profile_id' => $studentProfile->id,
                 'application_id' => $existingDraft->application_id,
                 'process_status' => $existingDraft->process_status,
             ], $existingDraft->toArray(), [
                 // Overrides to ensure UI compatibility
+                'user_id'           => $studentProfile->user_id,
+                'student_profile_id'=> $studentProfile->id,
                 '_from_stream_id'   => $studentProfile->stream_id,
                 '_from_stream_name' => $studentProfile->stream?->name,
                 '_from_session_id'  => $studentProfile->session_id,
@@ -131,6 +135,8 @@ class ReadmissionController extends BaseController
                                 ->latest('created_at')->first(),
             ]) : [
                 // Identity
+                'user_id'        => $studentProfile->user_id,
+                'student_profile_id' => $studentProfile->id,
                 'applicant_name' => $studentProfile->user?->name,
                 'father_name'    => $studentProfile->father_name,
                 'father_mobile'  => $studentProfile->father_mobile,

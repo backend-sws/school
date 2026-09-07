@@ -945,5 +945,11 @@ export function buildStudentEditPayload(formData: Record<string, unknown>): Reco
       .filter(([, path]) => path)
       .map(([doc_type, path]) => ({ doc_type, path }));
 
+  if (docsObject.photo) {
+    top.photo_url = docsObject.photo;
+  } else if (top.photo_url && !docsObject.photo) {
+    documentsArray.push({ doc_type: "photo", path: String(top.photo_url) });
+  }
+
   return { ...top, student_profile: profile, documents: documentsArray };
 }
