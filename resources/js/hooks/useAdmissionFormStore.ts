@@ -165,6 +165,18 @@ export function useAdmissionFormStore(): UseFormReturn<ApplicationDeskFormValues
             if (prefillData.class_id) {
                 merged.class_id = String(prefillData.class_id);
             }
+            if (prefillData.section_id) {
+                merged.section_id = String(prefillData.section_id);
+            }
+            if (prefillData.main_stream_name) {
+                merged._to_stream_name = prefillData.main_stream_name;
+            }
+            if (prefillData.branch_stream_name) {
+                merged._to_class_name = prefillData.branch_stream_name;
+            }
+            if (prefillData.section_name) {
+                merged._to_section_name = prefillData.section_name;
+            }
 
             form.reset(merged as any);
             persist(merged);

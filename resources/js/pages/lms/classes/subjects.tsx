@@ -46,6 +46,9 @@ import {
 } from "@/constants/lmsClasses/formConfig";
 import { LmsClassesQueryKeys } from "@/lib/querykey/lmsClasses";
 import attendanceApi from "@/lib/api/attendanceApi";
+import { ClassAttendanceAnalyticsHeader } from "@/components/admin/classAttendanceAnalyticsHeader";
+import { ClassStudentRosterHub } from "@/components/admin/classStudentRosterHub";
+import { GraduationCap } from "lucide-react";
 
 const STUDENT_MY_CLASSES_BREADCRUMBS: BreadcrumbItem[] = [
   { title: "My Portal", href: "/student-portal/dashboard" },
@@ -140,6 +143,7 @@ const LmsClassSubjects = () => {
   const teacherDialogDisclosure = useDisclosure<boolean>();
   const attendanceDisclosure = useDisclosure<{ classId: number; allocationId?: number; mode?: "marking" | "reporting" }>();
   const subjectTeacherDisclosure = useDisclosure<boolean>();
+  const [activeMainView, setActiveMainView] = React.useState<"subjects" | "students">("subjects");
 
   const deleteMutation = useMutation({
     mutationFn: () => lmsApi.classes.destroy(classId),
@@ -346,6 +350,7 @@ const LmsClassSubjects = () => {
                 { label: CONTENT.editBtn as string, icon: Pencil, onClick: () => editDialogDisclosure.onOpen(true) },
                 { label: "Assign Class Teacher", icon: User2, onClick: () => teacherDialogDisclosure.onOpen(true) },
                 { label: "Assign Subject Teachers", icon: Users, onClick: () => subjectTeacherDisclosure.onOpen(true), separator: true },
+                { label: "Student 360° Roster", icon: GraduationCap, onClick: () => setActiveMainView("students"), separator: true },
                 { label: "Mark Attendance", icon: ClipboardCheck, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "marking" }), permission: "mark_attendance", separator: true },
                 { label: "Daily Register", icon: Calendar, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "reporting" }), permission: "view_attendance" },
                 { label: "Monthly Register (Excel)", icon: Download, onClick: handleExportMonthly, permission: "view_attendance" },
@@ -354,50 +359,57 @@ const LmsClassSubjects = () => {
             />
           </MainPageHeader>
 
-          {/* ── Class Info Bar ────────────────────────── */}
+          {/* ── Class Attendance & Engagement Analytics Hub ────────────────────────── */}
           {classDetail && (
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
-                  <User2 className="size-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Class Teacher</p>
-                  <p className="truncate text-sm font-semibold text-foreground">{classDetail.class_teacher?.name ?? "Not Assigned"}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600">
-                  <Users className="size-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Students</p>
-                  <p className="text-sm font-semibold text-foreground">{classDetail.enrollments_count ?? 0}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
-                  <UserCheck className="size-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Present Today</p>
-                  <p className="text-sm font-semibold text-foreground">{attendanceSummary?.present ?? "—"}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
-                  <UserX className="size-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">Absent Today</p>
-                  <p className="text-sm font-semibold text-foreground">{attendanceSummary?.absent ?? "—"}</p>
-                </div>
+            <div className="mt-6">
+              <ClassAttendanceAnalyticsHeader
+                classId={classId}
+                className={classDetail.name}
+                classTeacherName={classDetail.class_teacher?.name}
+                enrollmentsCount={classDetail.enrollments_count ?? 0}
+                onOpenMarking={() => attendanceDisclosure.onOpen({ classId, mode: "marking" })}
+                onOpenRegister={() => attendanceDisclosure.onOpen({ classId, mode: "reporting" })}
+                onOpenRoster={() => setActiveMainView("students")}
+              />
+            </div>
+          )}
+
+          {/* ── Main View Segmented Switcher ────────────────────────────────────── */}
+          {classDetail && (
+            <div className="mt-8 flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 p-1 rounded-2xl bg-muted/30 border border-border/60">
+                <button
+                  type="button"
+                  onClick={() => setActiveMainView("subjects")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+                    activeMainView === "subjects"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <BookOpen className="size-4" />
+                  Subjects & Allocations ({allocations.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveMainView("students")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+                    activeMainView === "students"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <GraduationCap className="size-4" />
+                  Students & 360° Performance Roster ({classDetail?.enrollments_count ?? 0})
+                </button>
               </div>
             </div>
           )}
 
           {classLoading && (
-            <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-border/60 bg-muted/5">
+            <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-border/60 bg-muted/5 mt-6">
               <div className="flex flex-col items-center gap-4 text-muted-foreground">
                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
                 <p className="font-medium">Loading class details...</p>
@@ -406,10 +418,13 @@ const LmsClassSubjects = () => {
           )}
 
           {!classLoading && classDetail && (
-            <div className="space-y-12">
-
-              {/* --- Subject Cards --- */}
-              <section className="space-y-8">
+            <div className="mt-6 space-y-12">
+              {activeMainView === "students" ? (
+                /* --- Student 360° Roster Hub --- */
+                <ClassStudentRosterHub classId={classId} className={classDetail.name} />
+              ) : (
+                /* --- Subject Cards --- */
+                <section className="space-y-8">
 
                 {allocationsLoading ? (
                   <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -489,6 +504,7 @@ const LmsClassSubjects = () => {
                   </div>
                 )}
               </section>
+              )}
             </div>
           )}
 

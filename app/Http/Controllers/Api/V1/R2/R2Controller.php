@@ -124,8 +124,9 @@ class R2Controller extends Controller
         }
 
         // Generate a safe unique path — only use alnum + underscore in the unique id
+        $userId = $request->user()?->id ?? auth()->id() ?? 'public';
         $safeFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $sanitizedFileName);
-        $path = 'uploads/' . auth()->id() . '/' . uniqid() . '_' . $safeFileName;
+        $path = 'uploads/' . $userId . '/' . uniqid() . '_' . $safeFileName;
 
         return response()->json([
             'upload_url' => $r2->uploadUrl($path, $request->content_type),
@@ -215,6 +216,8 @@ class R2Controller extends Controller
             ], 422);
         }
 
+        $userId = $request->user()?->id ?? auth()->id() ?? 'public';
+
         // Compress images before uploading to R2
         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         if (in_array($extension, $imageExtensions)) {
@@ -227,7 +230,7 @@ class R2Controller extends Controller
                 $sanitizedFileName = $baseName . '.jpg';
                 $mimeType = $compressed['mime'];
 
-                $path = 'uploads/' . auth()->id() . '/' . uniqid() . '_' . $sanitizedFileName;
+                $path = 'uploads/' . $userId . '/' . uniqid() . '_' . $sanitizedFileName;
                 $r2->put($path, $compressed['data'], $mimeType);
 
                 return response()->json(['path' => $path]);
@@ -235,7 +238,7 @@ class R2Controller extends Controller
             // Fallback: if compression fails, upload original
         }
 
-        $path = 'uploads/' . auth()->id() . '/' . uniqid() . '_' . $sanitizedFileName;
+        $path = 'uploads/' . $userId . '/' . uniqid() . '_' . $sanitizedFileName;
 
         $r2->put($path, fopen($file->getRealPath(), 'r'), $mimeType);
 
@@ -258,26 +261,38 @@ class R2Controller extends Controller
             return redirect($path);
         }
 
+        $r2Url = config('filesystems.disks.r2.url');
+        if (!empty($r2Url)) {
+            return redirect(rtrim($r2Url, '/') . '/' . ltrim($path, '/'));
+        }
+
         try {
             $object = $r2->getObject($path);
-            if (!$object) {
-                abort(404);
+            if ($object) {
+                $body = $object['Body'];
+                $contentType = $object['ContentType'] ?? 'application/octet-stream';
+
+                return response()->stream(function () use ($body) {
+                    while (!$body->eof()) {
+                        echo $body->read(8192);
+                    }
+                }, 200, [
+                    'Content-Type' => $contentType,
+                    'Cache-Control' => 'public, max-age=3600',
+                ]);
             }
-
-            $body = $object['Body'];
-            $contentType = $object['ContentType'] ?? 'application/octet-stream';
-
-            return response()->stream(function () use ($body) {
-                while (!$body->eof()) {
-                    echo $body->read(8192);
-                }
-            }, 200, [
-                'Content-Type' => $contentType,
-                'Cache-Control' => 'public, max-age=3600',
-            ]);
         } catch (\Throwable) {
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+                return response()->file(\Illuminate\Support\Facades\Storage::disk('public')->path($path));
+            }
             abort(404);
         }
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return response()->file(\Illuminate\Support\Facades\Storage::disk('public')->path($path));
+        }
+
+        abort(404);
     }
 
     /**

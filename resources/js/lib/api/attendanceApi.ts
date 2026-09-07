@@ -8,9 +8,17 @@ export type AttendanceRecordRow = {
   id?: number;
   user_id: number;
   user_name: string;
+  roll_no?: string;
   status: string;
+  has_record?: boolean;
   remarks?: string | null;
   date: string;
+};
+
+export type AttendanceMeta = {
+  is_sunday: boolean;
+  is_holiday: boolean;
+  holiday: { id: number; name: string; description?: string | null } | null;
 };
 
 export type DailyResponse = {
@@ -18,6 +26,42 @@ export type DailyResponse = {
   summary: { present: number; absent: number; late: number; leave: number; holiday: number; total: number };
   level: AttendanceLevel;
   class_subject_allocation_id: number | null;
+  meta?: AttendanceMeta | null;
+};
+
+export type DayMeta = {
+  day: number;
+  day_name: string;
+  is_sunday: boolean;
+  holiday: { id: number; name: string; description?: string | null } | null;
+};
+
+export type LedgerStudentRow = {
+  user_id: number;
+  roll_no: string;
+  name: string;
+  summary: {
+    present: number;
+    absent: number;
+    late: number;
+    leave: number;
+    holiday: number;
+    total_marked: number;
+  };
+  days: Record<string, { id?: number; status: string; remarks?: string | null } | null>;
+};
+
+export type AttendanceLedgerData = {
+  class_id: number;
+  class_name: string;
+  subject_name: string;
+  level: AttendanceLevel;
+  month: string;
+  days_in_month: number;
+  days_meta: Record<string, DayMeta>;
+  matrix: LedgerStudentRow[];
+  working_days: number;
+  total_students: number;
 };
 
 const attendanceApi = {
@@ -34,7 +78,7 @@ const attendanceApi = {
     date: string;
     level?: AttendanceLevel;
     class_subject_allocation_id?: number | null;
-  }) => api.get<{ records: AttendanceRecordRow[]; summary: DailyResponse["summary"]; level: AttendanceLevel; class_subject_allocation_id: number | null }>(`${BASE}/daily`, { params }),
+  }) => api.get<{ data?: DailyResponse } & DailyResponse>(`${BASE}/daily`, { params }),
 
   submitDaily: (payload: {
     lms_class_id: number;
@@ -43,6 +87,44 @@ const attendanceApi = {
     class_subject_allocation_id?: number | null;
     records: Array<{ user_id: number; status: string; remarks?: string | null }>;
   }) => api.post(`${BASE}/daily`, payload),
+
+  ledger: (params: {
+    lms_class_id: number;
+    month?: string;
+    level?: AttendanceLevel;
+    class_subject_allocation_id?: number | null;
+  }) => api.get<{ data: AttendanceLedgerData }>(`${BASE}/ledger`, { params }),
+
+  markCell: (payload: {
+    lms_class_id: number;
+    user_id: number;
+    date: string;
+    status: string;
+    level?: AttendanceLevel;
+    class_subject_allocation_id?: number | null;
+    remarks?: string | null;
+  }) => api.post(`${BASE}/mark-cell`, payload),
+
+  export: (params: {
+    lms_class_id: number;
+    month?: string;
+    level?: AttendanceLevel;
+    class_subject_allocation_id?: number | null;
+  }) => api.get(`${BASE}/export`, { params, responseType: "blob" }),
+
+  downloadTemplate: (params: {
+    lms_class_id: number;
+    month?: string;
+    level?: AttendanceLevel;
+    class_subject_allocation_id?: number | null;
+  }) => api.get(`${BASE}/template`, { params, responseType: "blob" }),
+
+  import: (formData: FormData) =>
+    api.post<{ data: { imported_count: number; skipped_count: number; errors: string[]; total_errors: number } }>(
+      `${BASE}/import`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    ),
 
   updateRecord: (id: number, data: { status?: string; remarks?: string | null }) =>
     api.put(`${BASE}/records/${id}`, data),
@@ -74,3 +156,4 @@ const attendanceApi = {
 };
 
 export default attendanceApi;
+

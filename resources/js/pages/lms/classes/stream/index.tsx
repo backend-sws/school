@@ -22,6 +22,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { toast } from "sonner";
 import { CardGridEmptyState, CardGridSkeleton } from "@/components/shared/CardGridStates";
 import useSearchFilter from "@/hooks/useSearchfilter";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { nextSectionLabel } from "@/lib/utils";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import {
@@ -93,6 +94,10 @@ const LmsStreamClassesIndex = () => {
       toast.error(msg);
     },
   });
+
+  // ─── Sessions ──────────────────────────────────────
+  const { data: sessionsRes } = useCollegeSessions({});
+  const sessions = sessionsRes?.data ?? [];
 
   // ─── Stream detail ─────────────────────────────────
   const { data: streamRes } = useQuery({
@@ -187,8 +192,22 @@ const LmsStreamClassesIndex = () => {
             </h2>
             <FilterBar values={filter} onChange={(updates) => {
               if (updates.search !== undefined) handleFilterBykey("search", updates.search);
+              if (updates.session_id !== undefined) handleFilterBykey("session_id", updates.session_id);
             }}>
-              <FilterBar.Renderer config={{ filters: [], search: { name: "search", placeholder: CONTENT.searchPlaceholder } }} />
+              <FilterBar.Renderer 
+                config={{ 
+                  filters: [
+                    { 
+                      name: "session_id", 
+                      type: "select", 
+                      label: "Session", 
+                      placeholder: "Current Session", 
+                      options: sessions.map((s: any) => ({ value: String(s.id), label: s.name })) 
+                    }
+                  ], 
+                  search: { name: "search", placeholder: CONTENT.searchPlaceholder } 
+                }} 
+              />
             </FilterBar>
           </div>
 
@@ -283,6 +302,11 @@ const LmsStreamClassesIndex = () => {
                           {cls.name}
                         </h3>
                         <div className="flex flex-wrap gap-2">
+                          {cls.session && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 text-[10px] font-black uppercase tracking-wider border-blue-200 dark:border-blue-800 border">
+                              {cls.session.name}
+                            </Badge>
+                          )}
                           {cls.section && (
                             <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">
                               Section {cls.section}

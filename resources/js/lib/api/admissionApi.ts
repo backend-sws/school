@@ -44,7 +44,7 @@ const AdmissionApi = {
     api.put(`/applications/${id}`, data),
 
   /** Process an application (Approve/Reject) */
-  process: (id: number | string, data: { status: string; remarks?: string }) =>
+  process: (id: number | string, data: { status: string; remarks?: string; section_id?: number | string }) =>
     api.post(`/applications/${id}/process`, data),
 
   /** Record a payment for an application */

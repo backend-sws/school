@@ -150,6 +150,7 @@ class StudentLedgerController extends BaseController
             'late_fee_applied' => 'nullable|numeric|min:0',
             'discount_amount' => 'nullable|numeric|min:0',
             'discount_reason' => 'nullable|string|max:500',
+            'payment_date' => 'nullable|date',
         ]);
 
         $institutionId = self::getActiveInstitutionId($request->user());
@@ -174,6 +175,10 @@ class StudentLedgerController extends BaseController
 
         $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($validated['user_id']);
 
+        $paymentDate = !empty($validated['payment_date'])
+            ? \Carbon\Carbon::parse($validated['payment_date'])->setTimezone(config('app.timezone', 'Asia/Kolkata'))->setTimeFrom(now())
+            : now();
+
         $ledgerSnapshot = null;
         if ($institutionId) {
             $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
@@ -187,7 +192,7 @@ class StudentLedgerController extends BaseController
 
         $payment = DB::transaction(function () use (
             $institutionId, $validated, $baseAmount, $discountAmount, $discountReason,
-            $netAmount, $lateFee, $totalPaidAmount, $request, $receiptNo, $ledgerSnapshot, $student
+            $netAmount, $lateFee, $totalPaidAmount, $request, $receiptNo, $ledgerSnapshot, $student, $paymentDate
         ) {
             $primaryPayment = null;
 
@@ -210,7 +215,7 @@ class StudentLedgerController extends BaseController
                     'total_amount' => $discountAmount,
                     'payment_mode' => 'concession',
                     'payment_status' => 'paid',
-                    'payment_date' => now(),
+                    'payment_date' => $paymentDate,
                     'collected_by' => $request->user()->id,
                     'receipt_no' => $receiptNo . '-D',
                     'remarks' => $concessionRemarks,
@@ -239,7 +244,7 @@ class StudentLedgerController extends BaseController
                     'total_amount' => $totalPaidAmount,
                     'payment_mode' => $validated['payment_mode'],
                     'payment_status' => 'paid',
-                    'payment_date' => now(),
+                    'payment_date' => $paymentDate,
                     'collected_by' => $request->user()->id,
                     'receipt_no' => $receiptNo,
                     'remarks' => $actualRemarks ?: null,
@@ -506,6 +511,7 @@ class StudentLedgerController extends BaseController
             'remarks' => 'nullable|string',
             'discount_amount' => 'nullable|numeric|min:0',
             'discount_reason' => 'nullable|string|max:500',
+            'payment_date' => 'nullable|date',
         ]);
 
         $institutionId = self::getActiveInstitutionId($request->user());
@@ -515,7 +521,11 @@ class StudentLedgerController extends BaseController
         $monthCount = count($validated['months']);
         $monthKeys = collect($validated['months'])->pluck('for_month')->implode(', ');
 
-        $payments = DB::transaction(function () use ($institutionId, $student, $validated, $request, $receiptNo, $monthCount, $monthKeys) {
+        $paymentDate = !empty($validated['payment_date'])
+            ? \Carbon\Carbon::parse($validated['payment_date'])->setTimezone(config('app.timezone', 'Asia/Kolkata'))->setTimeFrom(now())
+            : now();
+
+        $payments = DB::transaction(function () use ($institutionId, $student, $validated, $request, $receiptNo, $monthCount, $monthKeys, $paymentDate) {
             $payments = [];
 
             foreach ($validated['months'] as $idx => $monthItem) {
@@ -565,7 +575,7 @@ class StudentLedgerController extends BaseController
                         'total_amount' => $monthDiscount,
                         'payment_mode' => 'concession',
                         'payment_status' => 'paid',
-                        'payment_date' => now(),
+                        'payment_date' => $paymentDate,
                         'collected_by' => $request->user()->id,
                         'receipt_no' => $receiptNo . ($monthCount > 1 ? '-D' . ($idx + 1) : '-D'),
                         'remarks' => $advRemarks,
@@ -589,7 +599,7 @@ class StudentLedgerController extends BaseController
                         'total_amount' => $netMonthAmount,
                         'payment_mode' => $validated['payment_mode'],
                         'payment_status' => 'paid',
-                        'payment_date' => now(),
+                        'payment_date' => $paymentDate,
                         'collected_by' => $request->user()->id,
                         'receipt_no' => $receiptNo . ($monthCount > 1 ? '-' . ($idx + 1) : ''),
                         'remarks' => trim($actualRemarks),

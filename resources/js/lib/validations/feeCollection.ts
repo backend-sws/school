@@ -12,6 +12,7 @@ export const feeCollectionSchema = z.object({
     bank_name: z.string().nullable().optional(),
     discount_amount: z.number().min(0).optional(),
     discount_reason: z.string().nullable().optional(),
+    payment_date: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
     const { payment_mode, amount, cash_amount, online_amount, online_transaction_id, discount_amount, discount_reason } = data;
 
@@ -61,4 +62,5 @@ export type FeeCollectionFormValues = {
     bank_name?: string | null;
     discount_amount?: number;
     discount_reason?: string | null;
+    payment_date?: string | null;
 };

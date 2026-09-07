@@ -328,9 +328,11 @@ type ActionHandlers = Record<string, () => void>;
 // ─── Main page component ────────────────────────────────────────────────────
 
 import { ManageServicesModal } from "./components/ManageServicesModal";
+import { StudentClassProfileDrawer } from "@/components/admin/studentClassProfileDrawer";
 
 const StudentShow = () => {
   const [servicesModalOpen, setServicesModalOpen] = useState(false);
+  const [profile360Open, setProfile360Open] = useState(false);
 
   const { props } = usePage();
   const id = (props as unknown as { id: string | number }).id;
@@ -608,6 +610,14 @@ const StudentShow = () => {
 
                       {/* Primary actions */}
                       <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => setProfile360Open(true)}
+                          className="h-9 rounded-xl font-bold text-xs gap-1.5 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          <GraduationCap className="size-4" />
+                          360° Academic & Leave Vault
+                        </Button>
                         <Each
                           of={primaryActions}
                           keyExtractor={(a: ActionConfig) => a.key}
@@ -712,12 +722,20 @@ const StudentShow = () => {
       </div>
 
       {student && (
-        <ManageServicesModal
-          isOpen={servicesModalOpen}
-          onClose={() => setServicesModalOpen(false)}
-          student={student}
-          institutionId={institutionId}
-        />
+        <>
+          <ManageServicesModal
+            isOpen={servicesModalOpen}
+            onClose={() => setServicesModalOpen(false)}
+            student={student}
+            institutionId={institutionId}
+          />
+          <StudentClassProfileDrawer
+            open={profile360Open}
+            onClose={() => setProfile360Open(false)}
+            userId={student?.id}
+            studentName={student?.name}
+          />
+        </>
       )}
     </>
   );

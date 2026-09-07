@@ -2,6 +2,8 @@ import LmsCourseController from './LmsCourseController'
 import LmsClassController from './LmsClassController'
 import ClassSubjectAllocationController from './ClassSubjectAllocationController'
 import LmsClassEnrollmentController from './LmsClassEnrollmentController'
+import ClassStudentRosterController from './ClassStudentRosterController'
+import StudentLeaveApplicationController from './StudentLeaveApplicationController'
 import LmsAssignmentController from './LmsAssignmentController'
 import LmsAssignmentSubmissionController from './LmsAssignmentSubmissionController'
 import LmsTestController from './LmsTestController'
@@ -16,6 +18,8 @@ const Lms = {
 LmsClassController: Object.assign(LmsClassController, LmsClassController),
 ClassSubjectAllocationController: Object.assign(ClassSubjectAllocationController, ClassSubjectAllocationController),
 LmsClassEnrollmentController: Object.assign(LmsClassEnrollmentController, LmsClassEnrollmentController),
+ClassStudentRosterController: Object.assign(ClassStudentRosterController, ClassStudentRosterController),
+StudentLeaveApplicationController: Object.assign(StudentLeaveApplicationController, StudentLeaveApplicationController),
 LmsAssignmentController: Object.assign(LmsAssignmentController, LmsAssignmentController),
 LmsAssignmentSubmissionController: Object.assign(LmsAssignmentSubmissionController, LmsAssignmentSubmissionController),
 LmsTestController: Object.assign(LmsTestController, LmsTestController),

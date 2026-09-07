@@ -44,8 +44,12 @@ class LeaveRequestController extends BaseController
 
         $validated = $request->validate([
             'status' => 'required|in:approved,rejected,pending',
-            'rejection_reason' => 'nullable|string|required_if:status,rejected'
+            'rejection_reason' => 'nullable|string|max:500'
         ]);
+
+        if ($validated['status'] !== 'rejected') {
+            $validated['rejection_reason'] = null;
+        }
 
         $leaveRequest->update($validated);
 

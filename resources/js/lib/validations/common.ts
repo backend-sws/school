@@ -85,13 +85,15 @@ export function safeRequiredString(max: number, requiredMessage: string) {
  * Optional string with max length and security check.
  */
 export function safeOptionalString(max: number, fieldName: string) {
-  return z
-    .string()
-    .max(max, `${fieldName} must be at most ${max} characters`)
-    .refine(safeStringRefineOptional, SAFE_STRING_MESSAGE)
-    .optional()
-    .nullable()
-    .or(z.literal(""));
+  return z.preprocess(
+    (val) => (val === null || val === undefined ? "" : String(val)),
+    z
+      .string()
+      .max(max, `${fieldName} must be at most ${max} characters`)
+      .refine(safeStringRefineOptional, SAFE_STRING_MESSAGE)
+      .optional()
+      .or(z.literal(""))
+  );
 }
 
 
@@ -103,12 +105,15 @@ export const EMAIL_MAX_LENGTH = 150;
  * @param maxLength - max length (default EMAIL_MAX_LENGTH)
  */
 export function emailSchemaOptional(maxLength: number = EMAIL_MAX_LENGTH) {
-  return z
-    .union([
-      z.string().email("Enter a valid email address").max(maxLength, `Email must be at most ${maxLength} characters`),
-      z.literal(""),
-    ])
-    .optional();
+  return z.preprocess(
+    (val) => (val === null || val === undefined ? "" : String(val).trim()),
+    z
+      .union([
+        z.string().email("Enter a valid email address").max(maxLength, `Email must be at most ${maxLength} characters`),
+        z.literal(""),
+      ])
+      .optional()
+  );
 }
 
 /**
@@ -140,38 +145,56 @@ export function numericString(message: string = "Please enter a valid number") {
  * Optional numeric string validation. Returns 0 or null if empty, otherwise validates as number.
  */
 export function numericStringOptional() {
-  return z
-    .union([z.string(), z.number()])
-    .optional()
-    .or(z.literal(""))
-    .transform((val) => {
-      if (val == null || val === "") return 0;
-      if (typeof val === "number") return val;
-      const stripped = val.replace(/,/g, "");
-      return stripped.trim() !== "" ? Number(stripped) : 0;
-    });
+  return z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === "") return 0;
+      return val;
+    },
+    z
+      .union([z.string(), z.number()])
+      .optional()
+      .or(z.literal(""))
+      .transform((val) => {
+        if (val == null || val === "") return 0;
+        if (typeof val === "number") return val;
+        const stripped = String(val).replace(/,/g, "").trim();
+        return stripped !== "" && !isNaN(Number(stripped)) ? Number(stripped) : 0;
+      })
+  );
 }
 
 /**
  * Aadhaar number validation – 12 digits.
  */
 export function aadhaarSchema(message: string = "Aadhaar must be a 12-digit number") {
-  return z
-    .string()
-    .regex(/^\d{12}$/, message)
-    .optional()
-    .or(z.literal(""));
+  return z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return "";
+      return String(val).trim();
+    },
+    z
+      .string()
+      .regex(/^\d{12}$/, message)
+      .optional()
+      .or(z.literal(""))
+  );
 }
 
 /**
  * Pincode validation – 6 digits (India).
  */
 export function pincodeSchema(message: string = "Pincode must be a 6-digit number") {
-  return z
-    .string()
-    .regex(/^\d{6}$/, message)
-    .optional()
-    .or(z.literal(""));
+  return z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return "";
+      return String(val).trim();
+    },
+    z
+      .string()
+      .regex(/^\d{6}$/, message)
+      .optional()
+      .or(z.literal(""))
+  );
 }
 
 /**
@@ -189,11 +212,15 @@ export function phoneSchema(message: string = "Enter a valid phone number with c
  * Optional phone number validation.
  */
 export function phoneSchemaOptional(message: string = "Enter a valid phone number with country code (e.g. +91...)") {
-  return z
-    .string()
-    .regex(/^\+\d{10,15}$/, message)
-    .optional()
-    .or(z.literal(""));
+  return z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return "";
+      const s = String(val).trim();
+      if (s.length <= 4 && s.startsWith("+")) return "";
+      return s;
+    },
+    z.string().regex(/^\+\d{10,15}$/, message).optional().or(z.literal(""))
+  );
 }
 
 

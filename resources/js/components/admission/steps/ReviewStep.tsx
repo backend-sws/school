@@ -48,6 +48,7 @@ interface SelectionLabels {
   session: string;
   stream: string;
   class: string;
+  section?: string;
 }
 
 interface SectionRenderContext {
@@ -84,7 +85,7 @@ const formatAddress = (addr?: Record<string, any>) => {
 const SECTION_RENDERERS: Record<ReviewSectionKey, (ctx: SectionRenderContext) => SectionOutput> = {
   academic: ({ selectionLabels }) => ({
     children: (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="space-y-1.5">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Stream / Program</p>
           <p className="text-sm font-bold text-foreground">{selectionLabels.stream || "—"}</p>
@@ -92,6 +93,10 @@ const SECTION_RENDERERS: Record<ReviewSectionKey, (ctx: SectionRenderContext) =>
         <div className="space-y-1.5 border-l sm:pl-6 border-border/40">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Target Class</p>
           <p className="text-sm font-bold text-foreground">{selectionLabels.class || "—"}</p>
+        </div>
+        <div className="space-y-1.5 border-l sm:pl-6 border-border/40">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Section</p>
+          <p className="text-sm font-bold text-foreground">{selectionLabels.section || "—"}</p>
         </div>
       </div>
     ),

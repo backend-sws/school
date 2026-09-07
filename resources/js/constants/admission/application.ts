@@ -695,7 +695,7 @@ export const ADMISSION_STEP_CONFIG: AdmissionStepConfig[] = [
     slug: "academic",
     label: "Academics",
     iconName: "GraduationCap",
-    validationFields: ["stream_id", "class_id"],
+    validationFields: ["stream_id", "class_id", "section_id"],
   },
   {
     key: "services",

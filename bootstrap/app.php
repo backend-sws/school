@@ -90,7 +90,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
-                $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+                $statusCode = 500;
+
+                if (method_exists($e, 'getStatusCode')) {
+                    $code = $e->getStatusCode();
+                    if (is_numeric($code) && (int) $code >= 100 && (int) $code <= 599) {
+                        $statusCode = (int) $code;
+                    }
+                }
 
                 // Set status code for specific exceptions if not default
                 if ($e instanceof \Illuminate\Auth\AuthenticationException) {
@@ -103,7 +110,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     $statusCode = 403;
                 }
 
-                $statusText = \Symfony\Component\HttpFoundation\Response::$statusTexts[$statusCode] ?? 'Unknown Status';
+                $statusText = \Symfony\Component\HttpFoundation\Response::$statusTexts[$statusCode] ?? 'Internal Server Error';
 
                 $message = $e->getMessage() ?: $statusText;
 
@@ -118,7 +125,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status_code' => $statusCode,
                     'status_text' => $statusText,
                     'errors' => ($e instanceof \Illuminate\Validation\ValidationException) ? $e->errors() : null,
-                ], $statusCode);
+                ], (int) $statusCode);
             }
         });
     })->create();

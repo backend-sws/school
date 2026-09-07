@@ -27,6 +27,31 @@ interface PaymentCollectModalProps {
     onSuccess: () => void;
 }
 
+const getTodayDateString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+};
+
+const normalizeDate = (d: any) => {
+    if (!d) return undefined;
+    if (typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+    try {
+        const dateObj = new Date(d);
+        if (!isNaN(dateObj.getTime())) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+            const day = String(dateObj.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+        }
+    } catch {
+        // ignore
+    }
+    return d;
+};
+
 export default function PaymentCollectModal({
     isOpen,
     onClose,
@@ -43,6 +68,7 @@ export default function PaymentCollectModal({
         defaultValues: {
             amount: rawBalance,
             payment_mode: "cash",
+            payment_date: getTodayDateString(),
             cash_amount: 0,
             online_amount: 0,
             online_transaction_id: "",
@@ -67,6 +93,7 @@ export default function PaymentCollectModal({
             reset({
                 amount: rawBalance,
                 payment_mode: "cash",
+                payment_date: getTodayDateString(),
                 cash_amount: 0,
                 online_amount: 0,
                 online_transaction_id: "",
@@ -151,6 +178,7 @@ export default function PaymentCollectModal({
             for_month: monthData.month_key,
             amount: fixedAmount,
             payment_mode: finalMode,
+            payment_date: normalizeDate(data.payment_date) || getTodayDateString(),
             cash_amount: finalCash,
             online_amount: finalOnline,
             online_transaction_id: data.online_transaction_id || "",
@@ -202,9 +230,9 @@ export default function PaymentCollectModal({
                     </div>
                 </div>
 
-                <div className="px-5 py-2 space-y-2.5 overflow-y-auto max-h-[calc(90vh-140px)]">
+                <div className="flex-1 overflow-y-auto px-5 py-3 space-y-3.5">
                     {/* ── Concession / Waiver Section ── */}
-                    <div className="rounded-lg border border-indigo-100 bg-indigo-50/20 p-2.5 space-y-2">
+                    <div className="rounded-lg border border-indigo-100 bg-indigo-50/20 p-3 space-y-2.5">
                         <div className="flex items-center justify-between gap-2">
                             <label className="text-xs font-bold text-indigo-950 flex items-center gap-1.5 shrink-0">
                                 <Tag className="size-3 text-indigo-600" />
@@ -246,14 +274,13 @@ export default function PaymentCollectModal({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2.5">
+                        <div className="grid grid-cols-2 gap-3">
                             <ControlledFormComponent
                                 control={control as any}
                                 name="discount_amount"
                                 type={FORM_TYPE.NUMBER}
                                 label="Discount Amount (₹)"
                                 placeholder="0.00"
-                                className="h-8 font-bold tabular-nums text-xs"
                             />
                             <ControlledFormComponent
                                 control={control as any}
@@ -261,14 +288,13 @@ export default function PaymentCollectModal({
                                 type={FORM_TYPE.TEXT}
                                 label="Discount Reason"
                                 placeholder="e.g. Mid-session waiver"
-                                className="h-8 text-xs"
                             />
                         </div>
                     </div>
 
                     {/* ── Net Payable Summary ── */}
                     {discountAmount > 0 && (
-                        <div className="bg-emerald-50/70 border border-emerald-200 rounded-md px-3 py-1.5 flex items-center justify-between text-xs">
+                        <div className="bg-emerald-50/70 border border-emerald-200 rounded-md px-3 py-2 flex items-center justify-between text-xs">
                             <div className="flex items-center gap-1.5">
                                 <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
                                 <div>
@@ -288,8 +314,8 @@ export default function PaymentCollectModal({
 
                     {/* ── Payment Details (shown only if netPayable > 0) ── */}
                     {!isFullWaiver && (
-                        <div className="space-y-2">
-                            <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
                                 <ControlledFormComponent
                                     control={control as any}
                                     name="payment_mode"
@@ -309,43 +335,61 @@ export default function PaymentCollectModal({
                                 />
                                 <ControlledFormComponent
                                     control={control as any}
+                                    name="payment_date"
+                                    type={FORM_TYPE.DATE}
+                                    label="Payment Date"
+                                    placeholder="Select payment date"
+                                />
+                            </div>
+
+                            <div className={`grid ${mode === "online" || (mode === "split" && Number(onlineAmount) > 0) ? "grid-cols-2" : "grid-cols-1"} gap-3`}>
+                                <ControlledFormComponent
+                                    control={control as any}
                                     name="receipt_no"
                                     type={FORM_TYPE.TEXT}
                                     label="Receipt / Reference"
                                     placeholder="Optional"
-                                    className="h-8 text-xs"
                                 />
+
+                                {(mode === "online" || (mode === "split" && Number(onlineAmount) > 0)) && (
+                                    <ControlledFormComponent
+                                        control={control as any}
+                                        name="online_transaction_id"
+                                        type={FORM_TYPE.TEXT}
+                                        label="Transaction ID / UTR"
+                                        placeholder="Required for online payments"
+                                    />
+                                )}
                             </div>
 
                             {mode === "split" && (
-                                <div className="p-2.5 rounded-lg bg-muted/40 border grid grid-cols-2 gap-2.5">
+                                <div className="p-3 rounded-lg bg-muted/40 border grid grid-cols-2 gap-3">
                                     <ControlledFormComponent
                                         control={control as any}
                                         name="cash_amount"
                                         type={FORM_TYPE.NUMBER}
                                         label="Cash Pmt (₹)"
-                                        className="h-8 text-xs font-bold"
                                     />
                                     <ControlledFormComponent
                                         control={control as any}
                                         name="online_amount"
                                         type={FORM_TYPE.NUMBER}
                                         label="Online Pmt (₹)"
-                                        className="h-8 text-xs font-bold"
                                     />
                                 </div>
                             )}
+                        </div>
+                    )}
 
-                            {(mode === "online" || (mode === "split" && Number(onlineAmount) > 0)) && (
-                                <ControlledFormComponent
-                                    control={control as any}
-                                    name="online_transaction_id"
-                                    type={FORM_TYPE.TEXT}
-                                    label="Transaction ID / UTR"
-                                    placeholder="Required for online payments"
-                                    className="h-8 text-xs"
-                                />
-                            )}
+                    {isFullWaiver && (
+                        <div>
+                            <ControlledFormComponent
+                                control={control as any}
+                                name="payment_date"
+                                type={FORM_TYPE.DATE}
+                                label="Waiver / Effective Date"
+                                placeholder="Select date"
+                            />
                         </div>
                     )}
 
@@ -355,11 +399,10 @@ export default function PaymentCollectModal({
                         type={FORM_TYPE.TEXT}
                         label="Internal Remarks / Note"
                         placeholder="Optional remarks"
-                        className="h-8 text-xs"
                     />
                 </div>
 
-                <DialogFooter className="px-5 pt-1 pb-4">
+                <DialogFooter className="px-5 py-3 border-t bg-muted/10 shrink-0">
                     <Button
                         onClick={handleSubmit(onSubmit as any)}
                         disabled={collectMutation.isPending}

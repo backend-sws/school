@@ -171,6 +171,71 @@ class AdmissionApplication extends Model
     }
 
     /**
+     * Section associated with the application (LMS class)
+     */
+    public function lmsSection(): BelongsTo
+    {
+        return $this->belongsTo(LmsClass::class, 'section_id');
+    }
+
+    public function getSectionNameAttribute(): ?string
+    {
+        if ($this->relationLoaded('lmsSection') && $this->lmsSection) {
+            return $this->lmsSection->section ? "{$this->lmsSection->name} ({$this->lmsSection->section})" : $this->lmsSection->name;
+        }
+        if (!empty($this->section_id)) {
+            $sec = LmsClass::withoutGlobalScopes()->find($this->section_id);
+            return $sec?->section ? "{$sec->name} ({$sec->section})" : $sec?->name;
+        }
+        return null;
+    }
+
+    public function getClassNameAttribute(): ?string
+    {
+        if ($this->relationLoaded('lmsClass') && $this->lmsClass) {
+            return $this->lmsClass->name;
+        }
+        if ($this->relationLoaded('stream') && $this->stream) {
+            return $this->stream->name;
+        }
+        if (!empty($this->class_id)) {
+            return Stream::withoutGlobalScopes()->find($this->class_id)?->name
+                ?? LmsClass::withoutGlobalScopes()->find($this->class_id)?->name;
+        }
+        return null;
+    }
+
+    public function getMainStreamNameAttribute(): ?string
+    {
+        if (!empty($this->stream_id)) {
+            $ms = MainStream::withoutGlobalScopes()->find($this->stream_id);
+            if ($ms) return $ms->name;
+        }
+        if ($this->relationLoaded('admissionHead') && $this->admissionHead) {
+            $name = $this->admissionHead->mainStream?->name ?? $this->admissionHead->stream?->mainStream?->name;
+            if ($name) return $name;
+            if ($this->admissionHead->main_stream_id) {
+                return MainStream::withoutGlobalScopes()->find($this->admissionHead->main_stream_id)?->name;
+            }
+        }
+        if (!empty($this->subject_preferences['_draft_stream_id'])) {
+            return MainStream::withoutGlobalScopes()->find($this->subject_preferences['_draft_stream_id'])?->name;
+        }
+        return null;
+    }
+
+    public function getSessionNameAttribute(): ?string
+    {
+        if ($this->relationLoaded('session') && $this->session) {
+            return $this->session->name;
+        }
+        if (!empty($this->session_id)) {
+            return Session::withoutGlobalScopes()->find($this->session_id)?->name;
+        }
+        return null;
+    }
+
+    /**
      * Admin/Staff who processed this application
      */
     public function processor(): BelongsTo

@@ -28,7 +28,12 @@ class R2Service
             );
         }
 
-        $this->client = new S3Client([
+        $endpoint = rtrim((string) $endpoint, '/');
+        if (!empty($bucket) && str_ends_with($endpoint, '/' . $bucket)) {
+            $endpoint = substr($endpoint, 0, -strlen('/' . $bucket));
+        }
+
+        $options = [
             'version' => 'latest',
             'region' => config('filesystems.disks.r2.region') ?? 'auto',
             'endpoint' => $endpoint,
@@ -37,7 +42,17 @@ class R2Service
                 'key' => $key,
                 'secret' => $secret,
             ],
-        ]);
+        ];
+
+        // Ensure SSL verification works in all environments (including Windows local dev)
+        $caBundle = ini_get('curl.cainfo') ?: ini_get('openssl.cafile');
+        if (!empty($caBundle) && file_exists($caBundle)) {
+            $options['http'] = ['verify' => $caBundle];
+        } elseif (app()->environment('local', 'development', 'testing') || config('app.debug')) {
+            $options['http'] = ['verify' => false];
+        }
+
+        $this->client = new S3Client($options);
     }
 
     // Upload URL

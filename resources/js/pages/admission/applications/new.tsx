@@ -8,9 +8,11 @@ import AdmissionApi from "@/lib/api/admissionApi";
 import SessionApi from "@/lib/api/sessionApi";
 import MainStreamApi from "@/lib/api/mainStreamApi";
 import StreamApi from "@/lib/api/streamApi";
+import lmsApi from "@/lib/api/lmsApi";
 import { computeFeeBreakdown, computePaymentSummary } from "@/lib/utils";
 import { MainStreamQueryKeys } from "@/lib/querykey/mainStream";
 import { StreamQueryKeys } from "@/lib/querykey/stream";
+import { LmsQueryKeys } from "@/lib/querykey/lms";
 
 import {
   APPLICATION_DESK_BASIC_FIELDS,
@@ -124,6 +126,7 @@ const ApplicationsNew = () => {
 
   const streamId = watch("stream_id");
   const classId = watch("class_id");
+  const sectionId = watch("section_id");
   const prevStreamIdRef = useRef<string | number | undefined>(streamId);
   const isMountedRef = useRef(false);
   const isSubmittingRef = useRef(false);
@@ -135,7 +138,7 @@ const ApplicationsNew = () => {
       prevStreamIdRef.current = streamId;
       return;
     }
-    if (String(prevStreamIdRef.current) !== String(streamId)) {
+    if (prevStreamIdRef.current !== undefined && String(prevStreamIdRef.current) !== String(streamId)) {
       setValue("class_id", "", { shouldValidate: false });
     }
     prevStreamIdRef.current = streamId;
@@ -167,6 +170,12 @@ const ApplicationsNew = () => {
     queryKey: [...StreamQueryKeys.detail(classId as number)],
     queryFn: () => StreamApi.show(classId as number),
     enabled: !!classId,
+  });
+
+  const { data: sectionDetail } = useQuery({
+    queryKey: [...LmsQueryKeys.classDetail(sectionId as number)],
+    queryFn: () => lmsApi.classes.show(sectionId as number),
+    enabled: !!sectionId,
   });
 
   /* ── Mutation ──────────────────────────────────────────────────────── */
@@ -251,13 +260,22 @@ const ApplicationsNew = () => {
   };
 
   const onContinueFromAddressGuardian = async () => {
-    const isValid = await trigger([
+    await trigger([
       "address_snapshot", "guardian_snapshot", "permanent_address_type", "has_local_guardian",
     ]);
-    if (isValid) {
+    const errors = form.formState.errors;
+    const relevantErrors = {
+      address_snapshot: errors.address_snapshot,
+      guardian_snapshot: errors.guardian_snapshot,
+      permanent_address_type: errors.permanent_address_type,
+      has_local_guardian: errors.has_local_guardian,
+    };
+    const firstMsg = getFirstErrorMessage(relevantErrors);
+    if (!firstMsg) {
       goToStep("medical_documents");
     } else {
-      toast.error("Please complete address and guardian details before continuing.");
+      console.log("Validation failed for AddressGuardian", relevantErrors);
+      toast.error(firstMsg);
     }
   };
 
@@ -273,11 +291,11 @@ const ApplicationsNew = () => {
   };
 
   const onContinueFromAcademic = async () => {
-    const isValid = await trigger(["stream_id", "class_id"]);
+    const isValid = await trigger(["stream_id", "class_id", "section_id"]);
     if (isValid) {
       goToStep("services");
     } else {
-      toast.error("Please select stream and class before continuing.");
+      toast.error("Please select stream, class, and section before continuing.");
     }
   };
 
@@ -357,6 +375,7 @@ const ApplicationsNew = () => {
       process_status: isDraft ? "draft" : "pending",
       stream_id: values.stream_id ? Number(values.stream_id) : undefined,
       class_id: values.class_id ? Number(values.class_id) : undefined,
+      section_id: values.section_id ? Number(values.section_id) : undefined,
       applicant_name: values.applicant_name,
       father_name: values.father_name || undefined,
       mother_name: values.mother_name || undefined,
@@ -389,11 +408,11 @@ const ApplicationsNew = () => {
       guardian_snapshot: values.guardian_snapshot && Object.keys(values.guardian_snapshot).length > 0 ? values.guardian_snapshot : undefined,
       mobile: values.mobile || undefined,
       email: values.email || undefined,
-      fees: values.fees?.map(f => ({
+      fees: values.fees?.map((f: any) => ({
         fee_particular_id: Number(f.fee_particular_id),
         amount: f.amount,
       })),
-      inventory_items: values.inventory_items?.map(i => ({
+      inventory_items: values.inventory_items?.map((i: any) => ({
         item_id: Number(i.item_id),
         quantity: i.quantity,
         price: i.price,
@@ -444,14 +463,21 @@ const ApplicationsNew = () => {
   const selectedStream = useMemo(() => {
     const raw = (mainStreamDetail as any)?.data;
     const detail = raw?.data ?? raw;
-    return detail?.name || "—";
-  }, [mainStreamDetail]);
+    return detail?.name || getValues("_to_stream_name") || "—";
+  }, [mainStreamDetail, getValues]);
 
   const selectedClass = useMemo(() => {
     const raw = (classDetail as any)?.data;
     const detail = raw?.data ?? raw;
-    return detail?.name || "—";
-  }, [classDetail]);
+    return detail?.name || getValues("_to_class_name") || "—";
+  }, [classDetail, getValues]);
+
+  const selectedSection = useMemo(() => {
+    const raw = (sectionDetail as any)?.data;
+    const detail = raw?.data ?? raw;
+    const secName = detail?.section ? `${detail?.name} (${detail?.section})` : detail?.name;
+    return secName || getValues("_to_section_name") || "—";
+  }, [sectionDetail, getValues]);
 
   /* ── Document handlers ─────────────────────────────────────────────── */
   const handleDocUpload = useCallback(
@@ -555,6 +581,7 @@ const ApplicationsNew = () => {
           session: selectedSession,
           stream: selectedStream,
           class: selectedClass,
+          section: selectedSection,
         }}
       />
     ),

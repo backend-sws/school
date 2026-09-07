@@ -81,6 +81,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
         Route::post('contact', [\App\Http\Controllers\Api\V1\Grievance\ContactController::class, 'store']);
 
         Route::get('r2/asset', [\App\Http\Controllers\Api\V1\R2\R2Controller::class, 'streamAsset']);
+        Route::get('public/r2/asset', [\App\Http\Controllers\Api\V1\R2\R2Controller::class, 'streamAsset']);
 
         Route::post('grievances', [\App\Http\Controllers\Api\V1\Grievance\GrievanceController::class, 'publicStore']);
         Route::post('feedback', [\App\Http\Controllers\Api\V1\Grievance\FeedbackController::class, 'store']);
@@ -503,6 +504,11 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('classes/{lms_class_id}/allocations', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'allocationsForClass'])->whereNumber('lms_class_id');
                 Route::get('daily', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'getDaily']);
                 Route::post('daily', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'submitDaily']);
+                Route::get('ledger', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'ledger']);
+                Route::get('export', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'export']);
+                Route::get('template', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'downloadTemplate']);
+                Route::post('import', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'import']);
+                Route::post('mark-cell', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'markCell']);
                 Route::put('records/{id}', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'updateRecord'])->whereNumber('id');
                 Route::delete('records/{id}', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'destroyRecord'])->whereNumber('id');
                 Route::get('reports/daily', [\App\Http\Controllers\Api\V1\Attendance\AttendanceController::class, 'reportsDaily']);
@@ -541,6 +547,16 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
             Route::get('classes/{lms_class}/enrollments', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'index']);
             Route::post('classes/{lms_class}/enrollments', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'store']);
             Route::delete('classes/{lms_class}/enrollments/{user_id}', [\App\Http\Controllers\Api\V1\Lms\LmsClassEnrollmentController::class, 'destroy'])->whereNumber('user_id');
+
+            // ─── Student 360, Roster & Leave Vault ─────────────────────────────
+            Route::get('classes/{lms_class}/students-summary', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'studentsSummary']);
+            Route::get('classes/{lms_class}/students/{student_user}/360', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'student360']);
+            Route::get('students/{student_user}/global-360', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'globalStudent360']);
+            Route::get('students/{student_user}/lifetime-history', [\App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::class, 'lifetimeHistory']);
+            Route::get('classes/{lms_class}/students/{student_user}/leaves', [\App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::class, 'index']);
+            Route::post('classes/{lms_class}/students/{student_user}/leaves', [\App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::class, 'store']);
+            Route::patch('leaves/{leave}/status', [\App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::class, 'updateStatus']);
+            Route::delete('leaves/{leave}', [\App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::class, 'destroy']);
 
 
             Route::get('classes/{lms_class_id}/assignments', [\App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::class, 'index']);

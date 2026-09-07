@@ -21,6 +21,7 @@ import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { useAuth } from "@/hooks/use-can";
 import { useInstitutionLabels } from "@/hooks/useInstitutionLabels";
 import PromotionApi from "@/lib/api/promotionApi";
+import lmsApi from "@/lib/api/lmsApi";
 import { toast } from "sonner";
 import { getSerialNumber } from "@/lib/utils";
 import { ModalDialog } from "@/components/shared/Modal";
@@ -38,6 +39,7 @@ const queryClient = useQueryClient();
     const [bulkData, setBulkData] = useState({
         to_session_id: "",
         to_semester: "",
+        to_class_id: "",
     });
     useRegisterGuide(PROMOTIONS_GUIDE);
 
@@ -61,6 +63,13 @@ const queryClient = useQueryClient();
         queryFn: () => PromotionApi.eligible(filter as any),
         enabled: !!filter.session_id,
     });
+
+    const { data: targetClassesRes } = useQuery({
+        queryKey: ["lms-classes-target", filter.stream_id, bulkData.to_session_id],
+        queryFn: () => lmsApi.classes.index({ stream_id: filter.stream_id, session_id: bulkData.to_session_id, per_page: 100 }),
+        enabled: !!filter.stream_id && !!bulkData.to_session_id,
+    });
+    const targetClasses = targetClassesRes?.data?.data ?? [];
 
     const { data: historyRes, isLoading: isHistoryLoading } = useQuery({
         queryKey: ["promotions-history", filter.page, filter.per_page],
@@ -126,6 +135,7 @@ const queryClient = useQueryClient();
             from_session_id: filter.session_id,
             to_session_id: bulkData.to_session_id,
             to_semester: bulkData.to_semester ? Number(bulkData.to_semester) : undefined,
+            to_class_id: bulkData.to_class_id ? Number(bulkData.to_class_id) : undefined,
             stream_id: filter.stream_id,
             semester: filter.semester ? Number(filter.semester) : undefined,
             class_id: filter.class_id,
@@ -347,6 +357,26 @@ const queryClient = useQueryClient();
                                             {Array.from({ length: 10 }, (_, i) => (
                                                 <SelectItem key={i + 1} value={String(i + 1)}>{semesterLabel} {i + 1}</SelectItem>
                                             ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+                            {filter.stream_id && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="to-class">Target Section (Optional)</Label>
+                                    <Select onValueChange={(v) => setBulkData(prev => ({ ...prev, to_class_id: v === "auto" ? "" : v }))}>
+                                        <SelectTrigger id="to-class">
+                                            <SelectValue placeholder="Select section" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="auto">Auto Assign</SelectItem>
+                                            <Each
+                                                of={targetClasses}
+                                                keyExtractor={(c: any) => String(c.id)}
+                                                render={(c: any) => (
+                                                    <SelectItem key={c.id} value={String(c.id)}>{c.name} {c.section ? `(Section ${c.section})` : ""}</SelectItem>
+                                                )}
+                                            />
                                         </SelectContent>
                                     </Select>
                                 </div>

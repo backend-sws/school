@@ -85,6 +85,7 @@ class ApplicationController extends BaseController
             'admissionHead.stream',
             'admissionHead.majorSubject',
             'lmsClass',
+            'lmsSection',
             'stream',
             'session',
             'transaction'
@@ -1252,6 +1253,7 @@ public function update(Request $request, $id): JsonResponse
             'admissionHead.stream.mainStream',
             'admissionHead.feeStructures',
             'lmsClass',
+            'lmsSection',
             'stream',
             'stream.mainStream',
             'session',
@@ -1284,6 +1286,7 @@ public function update(Request $request, $id): JsonResponse
                 ProcessStatus::REJECTED->value
             ]),
             'remarks' => 'nullable|string',
+            'section_id' => 'nullable|integer',
         ]);
 
         $status = ProcessStatus::from($validated['status']);
@@ -1297,12 +1300,17 @@ public function update(Request $request, $id): JsonResponse
 
         try {
             return DB::transaction(function () use ($request, $application, $validated, $status) {
-                $application->update([
+                $updateData = [
                     'process_status' => $status,
                     'remarks' => $validated['remarks'] ?? null,
                     'processed_by' => $request->user()->id,
                     'processed_at' => now(),
-                ]);
+                ];
+                if (isset($validated['section_id'])) {
+                    $updateData['section_id'] = $validated['section_id'];
+                }
+                
+                $application->update($updateData);
 
                 if ($status === ProcessStatus::APPROVED) {
                     app(AdmissionToStudentSyncService::class)->syncFromApplication($application);

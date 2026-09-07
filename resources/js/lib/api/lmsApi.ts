@@ -138,6 +138,29 @@ const lmsApi = {
     destroy: (classId: string | number, id: string | number) =>
       api.delete(`${BASE}/classes/${classId}/materials/${id}`),
   },
+  studentRoster: {
+    summary: (classId: string | number) =>
+      api.get(`${BASE}/classes/${classId}/students-summary`),
+    student360: (classId: string | number, userId: string | number) =>
+      api.get(`${BASE}/classes/${classId}/students/${userId}/360`),
+    global360: (userId: string | number, classId?: string | number) =>
+      api.get(`/students/${userId}/global-360`, { params: { class_id: classId } }),
+    lifetimeHistory: (userId: string | number) =>
+      api.get(`/students/${userId}/lifetime-history`),
+    leaves: (classId: string | number, userId: string | number) =>
+      api.get(`${BASE}/classes/${classId}/students/${userId}/leaves`),
+    uploadLeave: (classId: string | number, userId: string | number, payload: FormData | Record<string, any>) =>
+      payload instanceof FormData
+        ? api.post(`${BASE}/classes/${classId}/students/${userId}/leaves`, payload, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          })
+        : api.post(`${BASE}/classes/${classId}/students/${userId}/leaves`, payload),
+    updateLeaveStatus: (leaveId: string | number, data: { status: string; admin_remarks?: string; sync_attendance?: boolean }) =>
+      api.patch(`${BASE}/leaves/${leaveId}/status`, data),
+    deleteLeave: (leaveId: string | number) =>
+      api.delete(`${BASE}/leaves/${leaveId}`),
+  },
 };
 
 export default lmsApi;
+

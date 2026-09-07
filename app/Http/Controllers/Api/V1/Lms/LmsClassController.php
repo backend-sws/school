@@ -58,8 +58,16 @@ class LmsClassController extends BaseController
             $query->where('lms_course_id', (int) $request->lms_course_id);
         }
 
-        if ($request->filled('session_id')) {
+        if ($request->filled('session_id') && $request->session_id !== 'all') {
             $query->where('session_id', (int) $request->session_id);
+        } elseif (!$request->filled('session_id')) {
+            $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+            $currentSessionId = \App\Models\Session::where('institution_id', $institutionId)
+                ->where('is_current', true)
+                ->value('id');
+            if ($currentSessionId) {
+                $query->where('session_id', $currentSessionId);
+            }
         }
 
         return $this->paginatedWithMap(
@@ -320,9 +328,20 @@ class LmsClassController extends BaseController
             return $this->forbidden('You do not have permission to view LMS classes.');
         }
 
-        $sessionFilter = fn ($q) => $request->filled('session_id')
-            ? $q->where('session_id', (int) $request->session_id)
-            : $q;
+        $sessionFilter = function ($q) use ($request) {
+            if ($request->filled('session_id') && $request->session_id !== 'all') {
+                return $q->where('session_id', (int) $request->session_id);
+            } elseif (!$request->filled('session_id')) {
+                $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+                $currentSessionId = \App\Models\Session::where('institution_id', $institutionId)
+                    ->where('is_current', true)
+                    ->value('id');
+                if ($currentSessionId) {
+                    return $q->where('session_id', $currentSessionId);
+                }
+            }
+            return $q;
+        };
 
         $query = Stream::query()
             ->withCount(['lmsClasses' => $sessionFilter])

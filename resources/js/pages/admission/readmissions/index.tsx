@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Head } from "@inertiajs/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { READMISSIONS_GUIDE } from "@/constants/guides/readmissions";
@@ -23,6 +23,7 @@ import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { useAuth } from "@/hooks/use-can";
 import { useInstitutionLabels } from "@/hooks/useInstitutionLabels";
 import ReadmissionApi from "@/lib/api/readmissionApi";
+import lmsApi from "@/lib/api/lmsApi";
 import { ReadmissionQueryKeys } from "@/lib/querykey/readmission";
 import { toast } from "sonner";
 import { getSerialNumber } from "@/lib/utils";
@@ -81,14 +82,42 @@ const ReadmissionsIndex = () => {
         [sessions]
     );
 
+    const individualToSessionId = useWatch({ control, name: "to_session_id" });
+    const bulkToSessionId = useWatch({ control: bulkForm.control, name: "to_session_id" });
+    const bulkStreamId = useWatch({ control: bulkForm.control, name: "stream_id" });
+
+    const { data: individualClassesRes } = useQuery({
+        queryKey: ["lms-classes-target", selectedStudent?.stream_id, individualToSessionId],
+        queryFn: () => lmsApi.classes.index({ stream_id: selectedStudent?.stream_id, session_id: individualToSessionId, per_page: 100 }),
+        enabled: !!selectedStudent?.stream_id && !!individualToSessionId,
+    });
+    
+    const { data: bulkClassesRes } = useQuery({
+        queryKey: ["lms-classes-target", bulkStreamId, bulkToSessionId],
+        queryFn: () => lmsApi.classes.index({ stream_id: bulkStreamId, session_id: bulkToSessionId, per_page: 100 }),
+        enabled: !!bulkStreamId && !!bulkToSessionId,
+    });
+
+    const individualClassOptions = useMemo(() => {
+        return (individualClassesRes?.data?.data ?? []).map((c: any) => ({
+            key: String(c.id), value: String(c.id), text: `${c.name} ${c.section ? `(Section ${c.section})` : ""}`
+        }));
+    }, [individualClassesRes]);
+
+    const bulkClassOptions = useMemo(() => {
+        return (bulkClassesRes?.data?.data ?? []).map((c: any) => ({
+            key: String(c.id), value: String(c.id), text: `${c.name} ${c.section ? `(Section ${c.section})` : ""}`
+        }));
+    }, [bulkClassesRes]);
+
     const formFields = useMemo(
-        () => getReadmissionProcessFormFields(sessionOptions, semesterLabel, hasSemester),
-        [sessionOptions, semesterLabel, hasSemester]
+        () => getReadmissionProcessFormFields(sessionOptions, semesterLabel, hasSemester, [], individualClassOptions),
+        [sessionOptions, semesterLabel, hasSemester, individualClassOptions]
     );
 
     const bulkFormFields = useMemo(
-        () => getBulkReadmissionFormFields(sessionOptions, semesterLabel, hasSemester),
-        [sessionOptions, semesterLabel, hasSemester]
+        () => getBulkReadmissionFormFields(sessionOptions, semesterLabel, hasSemester, [], bulkClassOptions),
+        [sessionOptions, semesterLabel, hasSemester, bulkClassOptions]
     );
 
     // ─── Queries ────────────────────────────────────────────────

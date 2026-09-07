@@ -28,8 +28,10 @@ import ControlledFormComponent from "@/components/shared/ControlledFormComponent
 import Each from "@/components/Each";
 import MainStreamApi from "@/lib/api/mainStreamApi";
 import StreamApi from "@/lib/api/streamApi";
+import lmsApi from "@/lib/api/lmsApi";
 import { MainStreamQueryKeys } from "@/lib/querykey/mainStream";
 import { StreamQueryKeys } from "@/lib/querykey/stream";
+import { LmsQueryKeys } from "@/lib/querykey/lms";
 import type { AsyncSelectConfig } from "@/types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -150,6 +152,7 @@ export function AcademicStep({
 
   // Live preview for "To" card
   const selectedStreamId = useWatch({ control, name: "stream_id" });
+  const selectedClassId = useWatch({ control, name: "class_id" });
   const toStreamName = useWatch({ control, name: "_to_stream_name" });
   const toClassName = useWatch({ control, name: "_to_class_name" });
 
@@ -178,6 +181,20 @@ export function AcademicStep({
       enabled: hasStream,
     }),
     [selectedStreamId, hasStream],
+  );
+
+  const hasClass = !!selectedClassId;
+
+  const sectionAsyncConfig: AsyncSelectConfig = useMemo(
+    () => ({
+      queryFn: (params: Record<string, any>) => lmsApi.classes.index(params),
+      queryKey: ["lms-classes"],
+      labelKey: "name",
+      valueKey: "id",
+      extraParams: { stream_id: selectedClassId },
+      enabled: hasClass,
+    }),
+    [selectedClassId, hasClass],
   );
 
   return (
@@ -252,6 +269,25 @@ export function AcademicStep({
               disabled={!hasStream}
               onValueChange={(_, opt) => {
                 setValue("_to_class_name", opt?.label ?? "");
+                setValue("_to_section_name", "");
+                setValue("section_id", ""); // Reset section when class changes
+              }}
+            />
+          </div>
+
+          {/* Section — async select, depends on class_id */}
+          <div className="md:col-span-2">
+            <ControlledFormComponent
+              control={control as any}
+              name="section_id"
+              type={FORM_TYPE.ASYNC_SELECT}
+              label={content.form_section_label || "Section"}
+              placeholder={hasClass ? content.form_select_section : "Select class first"}
+              required
+              asyncConfig={sectionAsyncConfig}
+              disabled={!hasClass}
+              onValueChange={(_, opt) => {
+                setValue("_to_section_name", opt?.label ?? "");
               }}
             />
           </div>

@@ -15,59 +15,74 @@ import {
 } from "../common";
 
 /** Single address block (correspondence or permanent) */
-const addressBlockSchema = z
-  .object({
-    line1: safeOptionalString(255, "Address line 1"),
-    line2: safeOptionalString(255, "Address line 2"),
-    city: safeOptionalString(100, "City"),
-    state: safeOptionalString(100, "State"),
-    pincode: pincodeSchema(),
-  })
-  .optional()
-  .default({});
+const addressBlockSchema = z.preprocess(
+  (val) => (val && typeof val === "object" && !Array.isArray(val) ? val : {}),
+  z
+    .object({
+      line1: safeOptionalString(255, "Address line 1"),
+      line2: safeOptionalString(255, "Address line 2"),
+      city: safeOptionalString(100, "City"),
+      state: safeOptionalString(100, "State"),
+      pincode: pincodeSchema(),
+    })
+    .optional()
+    .default({})
+);
 
 /** Address snapshot: correspondence and permanent address */
-const addressSnapshotSchema = z
-  .object({
-    correspondence: addressBlockSchema,
-    permanent: addressBlockSchema,
-  })
-  .optional()
-  .default({ correspondence: {}, permanent: {} });
+const addressSnapshotSchema = z.preprocess(
+  (val) => (val && typeof val === "object" && !Array.isArray(val) ? val : {}),
+  z
+    .object({
+      correspondence: addressBlockSchema,
+      permanent: addressBlockSchema,
+    })
+    .optional()
+    .default({ correspondence: {}, permanent: {} })
+);
 
 /** Local guardian (optional) */
-const localGuardianSchema = z
-  .object({
-    name: safeOptionalString(150, "Name"),
-    phone: phoneSchemaOptional(),
-    relationship: safeOptionalString(50, "Relationship"),
-  })
-  .optional()
-  .default({});
+const localGuardianSchema = z.preprocess(
+  (val) => (val && typeof val === "object" && !Array.isArray(val) ? val : {}),
+  z
+    .object({
+      name: safeOptionalString(150, "Name"),
+      phone: phoneSchemaOptional(),
+      relationship: safeOptionalString(50, "Relationship"),
+    })
+    .optional()
+    .default({})
+);
 
 /** Emergency contact */
-const emergencyContactSchema = z
-  .object({
-    name: safeOptionalString(150, "Name"),
-    relationship: safeOptionalString(50, "Relationship"),
-    mobile: phoneSchemaOptional(),
-    alternate_mobile: phoneSchemaOptional(),
-  })
-  .optional()
-  .default({ mobile: "" });
+const emergencyContactSchema = z.preprocess(
+  (val) => (val && typeof val === "object" && !Array.isArray(val) ? val : {}),
+  z
+    .object({
+      name: safeOptionalString(150, "Name"),
+      relationship: safeOptionalString(50, "Relationship"),
+      mobile: phoneSchemaOptional(),
+      alternate_mobile: phoneSchemaOptional(),
+    })
+    .optional()
+    .default({ mobile: "" })
+);
 
 /** Guardian snapshot: guardian details captured at admission */
-const guardianSnapshotSchema = z
-  .object({
-    name: safeOptionalString(150, "Guardian name"),
-    occupation: safeOptionalString(100, "Occupation"),
-    aadhaar_no: aadhaarSchema(),
-    income: numericStringOptional(),
-    local_guardian: localGuardianSchema,
-    emergency_contact: emergencyContactSchema,
-  })
-  .optional()
-  .default({ local_guardian: {}, emergency_contact: { mobile: "" }, income: 0 });
+const guardianSnapshotSchema = z.preprocess(
+  (val) => (val && typeof val === "object" && !Array.isArray(val) ? val : {}),
+  z
+    .object({
+      name: safeOptionalString(150, "Guardian name"),
+      occupation: safeOptionalString(100, "Occupation"),
+      aadhaar_no: aadhaarSchema(),
+      income: numericStringOptional(),
+      local_guardian: localGuardianSchema,
+      emergency_contact: emergencyContactSchema,
+    })
+    .optional()
+    .default({ local_guardian: {}, emergency_contact: { mobile: "" }, income: 0 })
+);
 
 /** Schema for the Application Desk one-go form (multi-step) */
 export const applicationDeskFormSchema = z
@@ -134,23 +149,35 @@ export const applicationDeskFormSchema = z
     email: z.preprocess((val) => (val === undefined ? "" : val), emailSchemaRequired("Enter a valid email address.")),
 
     address_snapshot: addressSnapshotSchema,
-    permanent_address_type: z.enum(["same", "different"]).default("same"),
-    has_local_guardian: z.boolean().optional().default(false),
+    permanent_address_type: z.preprocess(
+      (val) => (val === "different" ? "different" : "same"),
+      z.enum(["same", "different"]).default("same")
+    ),
+    has_local_guardian: z.preprocess(
+      (val) => Boolean(val),
+      z.boolean().optional().default(false)
+    ),
     guardian_snapshot: guardianSnapshotSchema,
 
     medical_condition: safeOptionalString(200, "Medical condition"),
     disability: safeOptionalString(200, "Disability"),
     allergy: safeOptionalString(200, "Allergy"),
 
-    // Academic – class required; section optional
+    // Academic – class required; section required
     class_id: z.preprocess(
-      (val) => (val === undefined ? "" : val),
+      (val) => (val === undefined || val === null ? "" : val),
       z.union([
         z.string().min(1, "Please select a class."),
         z.number().positive("Please select a class."),
       ], { message: "Please select a class." })
     ),
-    section_id: z.union([z.string().refine(safeStringRefineOptional, SAFE_STRING_MESSAGE), z.number()]).optional().or(z.literal("")),
+    section_id: z.preprocess(
+      (val) => (val === undefined || val === null ? "" : val),
+      z.union([
+        z.string().min(1, "Please select a section."),
+        z.number().positive("Please select a section."),
+      ], { message: "Please select a section." })
+    ),
 
     fee_regulation_profile_id: z.union([z.string().refine(safeStringRefineOptional, SAFE_STRING_MESSAGE), z.number()]).optional().or(z.literal("")),
 
@@ -217,7 +244,7 @@ export const applicationDeskFormSchema = z
     // Coerce undefined document values to "" so z.record(z.string(), z.string()) doesn't throw "expected string, received undefined"
     documents: z.preprocess(
       (val) => {
-        if (val != null && typeof val === "object") {
+        if (val != null && typeof val === "object" && !Array.isArray(val)) {
           const out: Record<string, string> = {};
           for (const k of Object.keys(val)) {
             const v = (val as Record<string, unknown>)[k];
@@ -239,6 +266,7 @@ export const applicationDeskFormSchema = z
     // Live Transition Metadata (Selection Preview)
     _to_stream_name: z.string().optional(),
     _to_class_name: z.string().optional(),
+    _to_section_name: z.string().optional(),
   })
   .superRefine((data: any, ctx: z.RefinementCtx) => {
 

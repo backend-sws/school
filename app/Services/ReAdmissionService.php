@@ -147,7 +147,7 @@ class ReAdmissionService
     private function createReadmissionApplication(StudentProfile $student, array $data): AdmissionApplication
     {
         return AdmissionApplication::create([
-            'application_type' => 'readmission',
+            'application_type' => 're-admission',
             'user_id' => $student->user_id,
             'institution_id' => $student->institution_id,
             'session_id' => $data['to_session_id'],

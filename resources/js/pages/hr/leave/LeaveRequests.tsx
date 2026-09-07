@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Check, X, ClipboardList, Plus, Undo2 } from 'lucide-react';
+import { Check, X, ClipboardList, Plus, Undo2, Ban } from 'lucide-react';
 import { PageContainer } from '@/components/shared/page/PageContainer';
 import { MainPageHeader } from '@/components/shared/page/MainPageHeader';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,6 +40,12 @@ export default function LeaveRequests() {
         reason: ''
     });
     const [submitting, setSubmitting] = useState(false);
+
+    // Reject leave modal
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+    const [selectedRequestForReject, setSelectedRequestForReject] = useState<any>(null);
+    const [rejectionReason, setRejectionReason] = useState('');
+    const [rejecting, setRejecting] = useState(false);
 
     const fetchRequests = async () => {
         try {
@@ -70,14 +76,37 @@ export default function LeaveRequests() {
         fetchDependencies();
     }, []);
 
-    const updateStatus = async (id: number, status: 'approved' | 'rejected' | 'pending') => {
+    const updateStatus = async (id: number, status: 'approved' | 'rejected' | 'pending', rejection_reason?: string) => {
         try {
-            await axios.patch(`/api/v1/hr/leave-requests/${id}/status`, { status });
+            await axios.patch(`/api/v1/hr/leave-requests/${id}/status`, { status, rejection_reason });
             const label = status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'reverted to pending';
             toast.success(`Leave request ${label}`);
             fetchRequests();
-        } catch (e) {
-            toast.error("Failed to update status");
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || "Failed to update status");
+        }
+    };
+
+    const handleOpenRejectDialog = (req: any) => {
+        setSelectedRequestForReject(req);
+        setRejectionReason('');
+        setRejectDialogOpen(true);
+    };
+
+    const handleConfirmReject = async () => {
+        if (!selectedRequestForReject) return;
+        if (!rejectionReason.trim()) {
+            toast.error("Please enter a reason for rejection");
+            return;
+        }
+        setRejecting(true);
+        try {
+            await updateStatus(selectedRequestForReject.id, 'rejected', rejectionReason.trim());
+            setRejectDialogOpen(false);
+            setSelectedRequestForReject(null);
+            setRejectionReason('');
+        } finally {
+            setRejecting(false);
         }
     };
 
@@ -182,6 +211,11 @@ export default function LeaveRequests() {
                                             'bg-yellow-100 text-yellow-700 border border-yellow-200'}`}>
                                         {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
                                     </span>
+                                    {req.status === 'rejected' && req.rejection_reason && (
+                                        <div className="text-[11px] text-red-600 mt-1 max-w-[180px] truncate" title={`Rejection Reason: ${req.rejection_reason}`}>
+                                            Reason: {req.rejection_reason}
+                                        </div>
+                                    )}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-1">
@@ -190,7 +224,7 @@ export default function LeaveRequests() {
                                                 <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50 px-2 h-8" onClick={() => updateStatus(req.id, 'approved')}>
                                                     <Check className="h-4 w-4 mr-1" /> Approve
                                                 </Button>
-                                                <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-8" onClick={() => updateStatus(req.id, 'rejected')}>
+                                                <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-8" onClick={() => handleOpenRejectDialog(req)}>
                                                     <X className="h-4 w-4 mr-1" /> Reject
                                                 </Button>
                                             </>
@@ -276,6 +310,55 @@ export default function LeaveRequests() {
                         <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
                         <Button onClick={handleAddLeave} disabled={submitting}>
                             {submitting ? 'Submitting...' : 'Submit Leave'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Reject Leave Dialog */}
+            <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+                <DialogContent className="sm:max-w-[460px] p-6 rounded-2xl">
+                    <DialogHeader className="space-y-2">
+                        <DialogTitle className="text-lg font-bold text-red-600 flex items-center gap-2">
+                            <Ban className="size-5" /> Reject Leave Request
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-muted-foreground">
+                            Are you sure you want to reject the leave application for{" "}
+                            <span className="font-semibold text-foreground">{selectedRequestForReject?.user?.name}</span>?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-3 space-y-2">
+                        <Label htmlFor="leave_rejection_reason" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                            Reason for rejection <Req />
+                        </Label>
+                        <Textarea
+                            id="leave_rejection_reason"
+                            placeholder="Enter rejection reason (e.g. Inadequate staffing, urgent project deadline, unapproved leave window)..."
+                            rows={3}
+                            className="text-sm rounded-xl"
+                            value={rejectionReason}
+                            onChange={e => setRejectionReason(e.target.value)}
+                        />
+                    </div>
+                    <DialogFooter className="flex gap-2 justify-end pt-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setRejectDialogOpen(false);
+                                setSelectedRequestForReject(null);
+                                setRejectionReason('');
+                            }}
+                            disabled={rejecting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleConfirmReject}
+                            disabled={rejecting || !rejectionReason.trim()}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            {rejecting ? 'Rejecting...' : 'Confirm Reject'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

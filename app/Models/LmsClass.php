@@ -115,6 +115,11 @@ class LmsClass extends Model
         return $this->hasMany(AttendanceRecord::class, 'lms_class_id');
     }
 
+    public function studentLeaveApplications(): HasMany
+    {
+        return $this->hasMany(StudentLeaveApplication::class, 'lms_class_id');
+    }
+
     /**
      * Whether the user can access this class for read (view class, allocations, content).
      * True if user has view_lms_classes OR (view_my_lms_classes AND is enrolled with status active).

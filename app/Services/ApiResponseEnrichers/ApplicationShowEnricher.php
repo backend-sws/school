@@ -18,24 +18,35 @@ class ApplicationShowEnricher implements ResponseMapEnricherContract
     public function enrich(object $source): array
     {
         if (! $source instanceof AdmissionApplication) {
-            return ['main_stream_name' => null, 'branch_stream_name' => null];
+            return [
+                'main_stream_name' => null,
+                'branch_stream_name' => null,
+                'section_name' => null,
+            ];
         }
 
-        $head = $source->admissionHead;
-        $mainStreamName = $head?->mainStream?->name
-            ?? $head?->stream?->mainStream?->name
+        $mainStreamName = $source->main_stream_name
+            ?? $source->admissionHead?->mainStream?->name
+            ?? $source->admissionHead?->stream?->mainStream?->name
             ?? null;
-        if ($mainStreamName === null && $head?->main_stream_id) {
-            $mainStreamName = MainStream::withoutGlobalScopes()->find($head->main_stream_id)?->name;
+
+        if ($mainStreamName === null && $source->admissionHead?->main_stream_id) {
+            $mainStreamName = MainStream::withoutGlobalScopes()->find($source->admissionHead->main_stream_id)?->name;
         }
-        $branchStreamName = $head?->stream?->name
+
+        $branchStreamName = $source->class_name
+            ?? $source->admissionHead?->stream?->name
             ?? $source->lmsClass?->name
-            ?? $source->class_name
+            ?? null;
+
+        $sectionName = $source->section_name
+            ?? $source->lmsSection?->name
             ?? null;
 
         return [
             'main_stream_name' => $mainStreamName,
             'branch_stream_name' => $branchStreamName,
+            'section_name' => $sectionName,
         ];
     }
 }

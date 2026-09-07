@@ -35,6 +35,7 @@ const advancePaymentSchema = z.object({
     remarks: z.string().nullable().optional(),
     discount_amount: z.number().min(0).optional(),
     discount_reason: z.string().nullable().optional(),
+    payment_date: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
     const { payment_mode, online_amount, online_transaction_id } = data;
     const isOnlineInvolved = payment_mode === "online" || (payment_mode === "split" && online_amount > 0);
@@ -48,6 +49,31 @@ const advancePaymentSchema = z.object({
 });
 
 type AdvanceFormValues = z.infer<typeof advancePaymentSchema>;
+
+const getTodayDateString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+};
+
+const normalizeDate = (d: any) => {
+    if (!d) return undefined;
+    if (typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+    try {
+        const dateObj = new Date(d);
+        if (!isNaN(dateObj.getTime())) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+            const day = String(dateObj.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+        }
+    } catch {
+        // ignore
+    }
+    return d;
+};
 
 // ── Props ───────────────────────────────────────────────────────────
 interface AdvancePaymentModalProps {
@@ -125,6 +151,7 @@ export default function AdvancePaymentModal({
         resolver: zodResolver(advancePaymentSchema),
         defaultValues: {
             payment_mode: "cash",
+            payment_date: getTodayDateString(),
             cash_amount: 0,
             online_amount: 0,
             online_transaction_id: "",
@@ -146,6 +173,7 @@ export default function AdvancePaymentModal({
         if (isOpen) {
             reset({
                 payment_mode: "cash",
+                payment_date: getTodayDateString(),
                 cash_amount: 0,
                 online_amount: 0,
                 online_transaction_id: "",
@@ -200,6 +228,7 @@ export default function AdvancePaymentModal({
             })),
             total_amount: totalAmount,
             payment_mode: finalMode,
+            payment_date: normalizeDate(data.payment_date) || getTodayDateString(),
             cash_amount: finalCash,
             online_amount: finalOnline,
             online_transaction_id: data.online_transaction_id || "",
@@ -338,14 +367,7 @@ export default function AdvancePaymentModal({
                     {/* ── Payment Details ───────────────────────────── */}
                     {selectedRows.length > 0 && (
                         <div className="space-y-3 pt-2">
-                            <div className="grid grid-cols-2 gap-4">
-                                <ControlledFormComponent
-                                    control={control as any}
-                                    name="receipt_no"
-                                    type={FORM_TYPE.TEXT}
-                                    label="Receipt / Reference"
-                                    placeholder="Optional"
-                                />
+                            <div className="grid grid-cols-3 gap-3">
                                 <ControlledFormComponent
                                     control={control as any}
                                     name="payment_mode"
@@ -362,6 +384,20 @@ export default function AdvancePaymentModal({
                                             setValue("online_amount", 0);
                                         }
                                     }}
+                                />
+                                <ControlledFormComponent
+                                    control={control as any}
+                                    name="payment_date"
+                                    type={FORM_TYPE.DATE}
+                                    label="Payment Date"
+                                    placeholder="Select payment date"
+                                />
+                                <ControlledFormComponent
+                                    control={control as any}
+                                    name="receipt_no"
+                                    type={FORM_TYPE.TEXT}
+                                    label="Receipt / Reference"
+                                    placeholder="Optional"
                                 />
                             </div>
 

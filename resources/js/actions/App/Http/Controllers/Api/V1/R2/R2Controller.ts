@@ -1,73 +1,73 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-export const streamAsset = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: streamAsset.url(options),
+const streamAssetde3fb31e32c113c0f12e24c17f04784a = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: streamAssetde3fb31e32c113c0f12e24c17f04784a.url(options),
     method: 'get',
 })
 
-streamAsset.definition = {
+streamAssetde3fb31e32c113c0f12e24c17f04784a.definition = {
     methods: ["get","head"],
     url: '/api/v1/public/r2/asset',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-streamAsset.url = (options?: RouteQueryOptions) => {
-    return streamAsset.definition.url + queryParams(options)
+streamAssetde3fb31e32c113c0f12e24c17f04784a.url = (options?: RouteQueryOptions) => {
+    return streamAssetde3fb31e32c113c0f12e24c17f04784a.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-streamAsset.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: streamAsset.url(options),
+streamAssetde3fb31e32c113c0f12e24c17f04784a.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: streamAssetde3fb31e32c113c0f12e24c17f04784a.url(options),
     method: 'get',
 })
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-streamAsset.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: streamAsset.url(options),
+streamAssetde3fb31e32c113c0f12e24c17f04784a.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: streamAssetde3fb31e32c113c0f12e24c17f04784a.url(options),
     method: 'head',
 })
 
     /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-    const streamAssetForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: streamAsset.url(options),
+    const streamAssetde3fb31e32c113c0f12e24c17f04784aForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: streamAssetde3fb31e32c113c0f12e24c17f04784a.url(options),
         method: 'get',
     })
 
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-        streamAssetForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: streamAsset.url(options),
+        streamAssetde3fb31e32c113c0f12e24c17f04784aForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: streamAssetde3fb31e32c113c0f12e24c17f04784a.url(options),
             method: 'get',
         })
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:248
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
  * @route '/api/v1/public/r2/asset'
  */
-        streamAssetForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: streamAsset.url({
+        streamAssetde3fb31e32c113c0f12e24c17f04784aForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: streamAssetde3fb31e32c113c0f12e24c17f04784a.url({
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
                             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -76,10 +76,99 @@ streamAsset.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
     
-    streamAsset.form = streamAssetForm
+    streamAssetde3fb31e32c113c0f12e24c17f04784a.form = streamAssetde3fb31e32c113c0f12e24c17f04784aForm
+    /**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+const streamAssetbcbed740a653411fbdd076ceb23b004c = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: streamAssetbcbed740a653411fbdd076ceb23b004c.url(options),
+    method: 'get',
+})
+
+streamAssetbcbed740a653411fbdd076ceb23b004c.definition = {
+    methods: ["get","head"],
+    url: '/api/v1/public/public/r2/asset',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+streamAssetbcbed740a653411fbdd076ceb23b004c.url = (options?: RouteQueryOptions) => {
+    return streamAssetbcbed740a653411fbdd076ceb23b004c.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+streamAssetbcbed740a653411fbdd076ceb23b004c.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: streamAssetbcbed740a653411fbdd076ceb23b004c.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+streamAssetbcbed740a653411fbdd076ceb23b004c.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: streamAssetbcbed740a653411fbdd076ceb23b004c.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+    const streamAssetbcbed740a653411fbdd076ceb23b004cForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: streamAssetbcbed740a653411fbdd076ceb23b004c.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+        streamAssetbcbed740a653411fbdd076ceb23b004cForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: streamAssetbcbed740a653411fbdd076ceb23b004c.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:251
+ * @route '/api/v1/public/public/r2/asset'
+ */
+        streamAssetbcbed740a653411fbdd076ceb23b004cForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: streamAssetbcbed740a653411fbdd076ceb23b004c.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    streamAssetbcbed740a653411fbdd076ceb23b004c.form = streamAssetbcbed740a653411fbdd076ceb23b004cForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\Api\V1\R2\R2Controller::streamAsset, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `streamAsset['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const streamAsset = {
+    '/api/v1/public/r2/asset': streamAssetde3fb31e32c113c0f12e24c17f04784a,
+    '/api/v1/public/public/r2/asset': streamAssetbcbed740a653411fbdd076ceb23b004c,
+}
+
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
 export const viewUrl = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +183,7 @@ viewUrl.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
 viewUrl.url = (options?: RouteQueryOptions) => {
@@ -103,7 +192,7 @@ viewUrl.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
 viewUrl.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +201,7 @@ viewUrl.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
 viewUrl.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +211,7 @@ viewUrl.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
     const viewUrlForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +221,7 @@ viewUrl.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
         viewUrlForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +230,7 @@ viewUrl.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::viewUrl
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:159
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:160
  * @route '/api/v1/r2/view-url'
  */
         viewUrlForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +246,7 @@ viewUrl.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     viewUrl.form = viewUrlForm
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
 export const proxy = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +261,7 @@ proxy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
 proxy.url = (options?: RouteQueryOptions) => {
@@ -181,7 +270,7 @@ proxy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
 proxy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +279,7 @@ proxy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
 proxy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +289,7 @@ proxy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
     const proxyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +299,7 @@ proxy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
         proxyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +308,7 @@ proxy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::proxy
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:286
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:301
  * @route '/api/v1/r2/proxy'
  */
         proxyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -290,7 +379,7 @@ uploadUrl.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     uploadUrl.form = uploadUrlForm
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::upload
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:190
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:191
  * @route '/api/v1/r2/upload'
  */
 export const upload = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -305,7 +394,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::upload
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:190
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:191
  * @route '/api/v1/r2/upload'
  */
 upload.url = (options?: RouteQueryOptions) => {
@@ -314,7 +403,7 @@ upload.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::upload
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:190
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:191
  * @route '/api/v1/r2/upload'
  */
 upload.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -324,7 +413,7 @@ upload.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::upload
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:190
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:191
  * @route '/api/v1/r2/upload'
  */
     const uploadForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -334,7 +423,7 @@ upload.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\R2\R2Controller::upload
- * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:190
+ * @see app/Http/Controllers/Api/V1/R2/R2Controller.php:191
  * @route '/api/v1/r2/upload'
  */
         uploadForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

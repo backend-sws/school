@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Attendance;
 
+use App\Exports\StudentAttendanceMonthlyExport;
 use App\Http\Controllers\Api\V1\BaseController;
+use App\Imports\StudentAttendanceBulkImport;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSubjectAllocation;
+use App\Models\HR\Holiday;
 use App\Models\User;
 use App\Notifications\AttendanceMarkedNotification;
 use App\Traits\DispatchesRealtimeNotifications;
@@ -12,13 +15,16 @@ use App\Models\LmsClass;
 use App\Models\LmsClassEnrollment;
 use App\Models\Setting;
 use App\Support\InstitutionContext;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends BaseController
 {
     use DispatchesRealtimeNotifications;
+
     /**
      * List classes the user can mark/view attendance for.
      * Scoped: class teacher sees only their classes; subject teacher sees classes with their allocations; staff with permission sees all.
@@ -141,26 +147,51 @@ class AttendanceController extends BaseController
 
         $data = $this->fetchDailyData($lmsClassId, $date, $level, $csaId);
 
-        return $this->success($this->buildDailyResponse($data['records'], $data['summary'], $level, $csaId));
+        return $this->success($this->buildDailyResponse($data['records'], $data['summary'], $level, $csaId, $data['meta']));
     }
 
-    private function buildDailyResponse($records, array $summary, string $level, ?int $csaId): array
+    private function buildDailyResponse($records, array $summary, string $level, ?int $csaId, ?array $meta = null): array
     {
         return [
             'records' => $records->values()->all(),
             'summary' => $summary,
             'level' => $level,
             'class_subject_allocation_id' => $level === 'subject' ? $csaId : null,
+            'meta' => $meta,
         ];
     }
 
     private function fetchDailyData(int $lmsClassId, string $date, string $level, ?int $csaId): array
     {
+        $institutionId = InstitutionContext::getActiveInstitutionId(auth()->user());
+
+        // Check holiday and Sunday for this date
+        $carbonDate = Carbon::parse($date);
+        $year = $carbonDate->year;
+        $isSunday = $carbonDate->isSunday();
+
+        $holiday = Holiday::where('institution_id', $institutionId)
+            ->where(function ($q) use ($year) {
+                $q->where('year', $year)
+                  ->orWhere('is_recurring', true);
+            })
+            ->get()
+            ->first(function ($h) use ($date, $year) {
+                $rawDate = $h->getRawOriginal('date');
+                if ($h->is_recurring && $rawDate) {
+                    $parts = explode('-', $rawDate);
+                    if (count($parts) === 3) {
+                        $rawDate = sprintf('%04d-%02d-%02d', (int) $year, (int) $parts[1], (int) $parts[2]);
+                    }
+                }
+                return $rawDate === $date;
+            });
+
         $students = LmsClassEnrollment::query()
             ->where('lms_class_id', $lmsClassId)
             ->where('role', 'student')
             ->where('status', 'active')
-            ->with('user:id,name,email')
+            ->with(['user:id,name,email', 'user.studentProfile:id,user_id,roll_no,reg_no'])
             ->get();
 
         $existing = AttendanceRecord::query()
@@ -171,13 +202,20 @@ class AttendanceController extends BaseController
             ->get()
             ->keyBy('user_id');
 
-        $records = $students->map(function ($enrollment) use ($existing, $date) {
+        $defaultStatus = ($holiday || $isSunday) ? 'holiday' : 'present';
+
+        $records = $students->map(function ($enrollment) use ($existing, $date, $defaultStatus) {
             $rec = $existing->get($enrollment->user_id);
+            $profile = $enrollment->user?->studentProfile;
+            $rollNo = $profile?->roll_no ?: ($profile?->reg_no ?: "ID: {$enrollment->user_id}");
+
             return [
                 'id' => $rec?->id,
                 'user_id' => $enrollment->user_id,
                 'user_name' => $enrollment->user?->name ?? '',
-                'status' => $rec?->status ?? 'present', // Default to present
+                'roll_no' => $rollNo,
+                'status' => $rec ? $rec->status : $defaultStatus,
+                'has_record' => (bool) $rec,
                 'remarks' => $rec?->remarks,
                 'date' => $date,
             ];
@@ -192,7 +230,17 @@ class AttendanceController extends BaseController
             'total' => $records->count(),
         ];
 
-        return ['records' => $records, 'summary' => $summary];
+        $meta = [
+            'is_sunday'  => $isSunday,
+            'is_holiday' => (bool) $holiday,
+            'holiday'    => $holiday ? [
+                'id'          => $holiday->id,
+                'name'        => $holiday->name,
+                'description' => $holiday->description,
+            ] : null,
+        ];
+
+        return ['records' => $records, 'summary' => $summary, 'meta' => $meta];
     }
 
     /**
@@ -258,7 +306,7 @@ class AttendanceController extends BaseController
                 AttendanceRecord::updateOrCreate(
                     [
                         'lms_class_id' => $class->id,
-                        'class_subject_allocation_id' => $csaId, // null or number
+                        'class_subject_allocation_id' => $csaId,
                         'user_id' => $userId,
                         'date' => $date,
                     ],
@@ -281,6 +329,402 @@ class AttendanceController extends BaseController
         }
 
         return $this->success(null, 'Attendance saved successfully.');
+    }
+
+    /**
+     * Single cell mark/update from Calendar Register Matrix
+     */
+    public function markCell(Request $request): JsonResponse
+    {
+        if (!$request->user()->hasAbility('mark_attendance') && !$request->user()->hasAbility('update_attendance')) {
+            return $this->forbidden('You do not have permission to mark attendance.');
+        }
+
+        $validated = $request->validate([
+            'lms_class_id'                => 'required|exists:lms_classes,id',
+            'user_id'                     => 'required|exists:users,id',
+            'date'                        => 'required|date',
+            'status'                      => 'nullable|in:present,absent,late,leave,holiday,clear',
+            'level'                       => 'nullable|in:class,subject',
+            'class_subject_allocation_id' => 'nullable|exists:class_subject_allocations,id',
+            'remarks'                     => 'nullable|string|max:255',
+        ]);
+
+        $class = LmsClass::find($validated['lms_class_id']);
+        if (!$class) {
+            return $this->notFound('Class not found.');
+        }
+
+        $level = $validated['level'] ?? 'class';
+        $csaId = $level === 'subject' && isset($validated['class_subject_allocation_id'])
+            ? (int) $validated['class_subject_allocation_id']
+            : null;
+
+        $this->authorizeClassOrAllocation($request->user(), $class, $csaId, 'mark');
+
+        $userId = (int) $validated['user_id'];
+        $date = $validated['date'];
+        $status = $validated['status'] ?? null;
+        $institutionId = $class->institution_id;
+
+        if (!$status || $status === 'clear') {
+            AttendanceRecord::where('institution_id', $institutionId)
+                ->where('lms_class_id', $class->id)
+                ->when($csaId, fn($q) => $q->where('class_subject_allocation_id', $csaId), fn($q) => $q->whereNull('class_subject_allocation_id'))
+                ->where('user_id', $userId)
+                ->where('date', $date)
+                ->delete();
+            $savedStatus = null;
+        } else {
+            $record = AttendanceRecord::updateOrCreate(
+                [
+                    'institution_id'              => $institutionId,
+                    'lms_class_id'                => $class->id,
+                    'class_subject_allocation_id' => $csaId,
+                    'user_id'                     => $userId,
+                    'date'                        => $date,
+                ],
+                [
+                    'status'    => $status,
+                    'marked_by' => $request->user()->id,
+                    'remarks'   => $validated['remarks'] ?? null,
+                ]
+            );
+            $savedStatus = $record->status;
+        }
+
+        // Recalculate monthly summary for this student
+        $month = Carbon::parse($date)->format('Y-m');
+        $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+
+        $userAttendances = AttendanceRecord::where('institution_id', $institutionId)
+            ->where('lms_class_id', $class->id)
+            ->when($csaId, fn($q) => $q->where('class_subject_allocation_id', $csaId), fn($q) => $q->whereNull('class_subject_allocation_id'))
+            ->where('user_id', $userId)
+            ->whereBetween('date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->get();
+
+        $presentCount = $userAttendances->where('status', 'present')->count();
+        $absentCount = $userAttendances->where('status', 'absent')->count();
+        $lateCount = $userAttendances->where('status', 'late')->count();
+        $leaveCount = $userAttendances->where('status', 'leave')->count();
+        $holidayCount = $userAttendances->where('status', 'holiday')->count();
+        $totalMarked = $userAttendances->count();
+
+        $summary = [
+            'present'      => $presentCount,
+            'absent'       => $absentCount,
+            'late'         => $lateCount,
+            'leave'        => $leaveCount,
+            'holiday'      => $holidayCount,
+            'total_marked' => $totalMarked,
+        ];
+
+        return $this->success([
+            'user_id' => $userId,
+            'date'    => $date,
+            'status'  => $savedStatus,
+            'summary' => $summary,
+        ], 'Attendance updated successfully');
+    }
+
+    /**
+     * GET monthly attendance register / ledger matrix
+     */
+    public function ledger(Request $request): JsonResponse
+    {
+        if (!$request->user()->hasAbility('view_attendance')) {
+            return $this->forbidden('You do not have permission to view attendance.');
+        }
+
+        $validated = $request->validate([
+            'lms_class_id'                => 'required|exists:lms_classes,id',
+            'month'                       => 'nullable|string',
+            'level'                       => 'nullable|in:class,subject',
+            'class_subject_allocation_id' => 'nullable|exists:class_subject_allocations,id',
+        ]);
+
+        $lmsClassId = (int) $validated['lms_class_id'];
+        $class = LmsClass::find($lmsClassId);
+        if (!$class) {
+            return $this->notFound('Class not found.');
+        }
+
+        $level = $validated['level'] ?? 'class';
+        $csaId = $level === 'subject' && isset($validated['class_subject_allocation_id'])
+            ? (int) $validated['class_subject_allocation_id']
+            : null;
+
+        $this->authorizeClassOrAllocation($request->user(), $class, $csaId, 'view');
+
+        $month = $validated['month'] ?? Carbon::today()->format('Y-m');
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+
+        $ledgerData = $this->buildClassLedgerData($institutionId, $class, $month, $level, $csaId);
+
+        return $this->success($ledgerData);
+    }
+
+    /**
+     * Export Monthly Attendance Register to Excel
+     */
+    public function export(Request $request)
+    {
+        if (!$request->user()->hasAbility('view_attendance') && !$request->user()->hasAbility('view_attendance_reports')) {
+            return $this->forbidden('You do not have permission to export attendance.');
+        }
+
+        $validated = $request->validate([
+            'lms_class_id'                => 'required|exists:lms_classes,id',
+            'month'                       => 'nullable|string',
+            'level'                       => 'nullable|in:class,subject',
+            'class_subject_allocation_id' => 'nullable|exists:class_subject_allocations,id',
+        ]);
+
+        $lmsClassId = (int) $validated['lms_class_id'];
+        $class = LmsClass::find($lmsClassId);
+        if (!$class) {
+            return $this->notFound('Class not found.');
+        }
+
+        $level = $validated['level'] ?? 'class';
+        $csaId = $level === 'subject' && isset($validated['class_subject_allocation_id'])
+            ? (int) $validated['class_subject_allocation_id']
+            : null;
+
+        $month = $validated['month'] ?? Carbon::today()->format('Y-m');
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+
+        $ledgerData = $this->buildClassLedgerData($institutionId, $class, $month, $level, $csaId);
+
+        $cleanClassName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $class->name);
+        $fileName = "attendance_register_{$cleanClassName}_{$month}.xlsx";
+
+        return Excel::download(new StudentAttendanceMonthlyExport($month, $ledgerData), $fileName);
+    }
+
+    /**
+     * Download Class Attendance Import Template (pre-filled with student list)
+     */
+    public function downloadTemplate(Request $request)
+    {
+        $validated = $request->validate([
+            'lms_class_id'                => 'required|exists:lms_classes,id',
+            'month'                       => 'nullable|string',
+            'level'                       => 'nullable|in:class,subject',
+            'class_subject_allocation_id' => 'nullable|exists:class_subject_allocations,id',
+        ]);
+
+        $lmsClassId = (int) $validated['lms_class_id'];
+        $class = LmsClass::find($lmsClassId);
+        if (!$class) {
+            return $this->notFound('Class not found.');
+        }
+
+        $level = $validated['level'] ?? 'class';
+        $csaId = $level === 'subject' && isset($validated['class_subject_allocation_id'])
+            ? (int) $validated['class_subject_allocation_id']
+            : null;
+
+        $month = $validated['month'] ?? Carbon::today()->format('Y-m');
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+
+        $ledgerData = $this->buildClassLedgerData($institutionId, $class, $month, $level, $csaId);
+
+        $cleanClassName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $class->name);
+        $fileName = "attendance_template_{$cleanClassName}_{$month}.xlsx";
+
+        return Excel::download(new StudentAttendanceMonthlyExport($month, $ledgerData, true), $fileName);
+    }
+
+    /**
+     * Bulk Import Attendance from Excel
+     */
+    public function import(Request $request): JsonResponse
+    {
+        if (!$request->user()->hasAbility('mark_attendance')) {
+            return $this->forbidden('You do not have permission to import attendance.');
+        }
+
+        $request->validate([
+            'file'                        => 'required|file|mimes:xlsx,xls,csv|max:10240',
+            'lms_class_id'                => 'required|exists:lms_classes,id',
+            'month'                       => 'nullable|string',
+            'class_subject_allocation_id' => 'nullable|exists:class_subject_allocations,id',
+        ]);
+
+        $lmsClassId = (int) $request->input('lms_class_id');
+        $class = LmsClass::find($lmsClassId);
+        if (!$class) {
+            return $this->notFound('Class not found.');
+        }
+
+        $csaId = $request->filled('class_subject_allocation_id') ? (int) $request->input('class_subject_allocation_id') : null;
+        $this->authorizeClassOrAllocation($request->user(), $class, $csaId, 'mark');
+
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+        $file = $request->file('file');
+        $month = $request->input('month');
+
+        $import = new StudentAttendanceBulkImport($institutionId, $request->user()->id, $lmsClassId, $csaId, $month);
+        Excel::import($import, $file);
+
+        $imported = $import->getImportedCount();
+        $skipped = $import->getSkippedCount();
+        $errors = $import->getRowErrors();
+
+        return $this->success([
+            'imported_count' => $imported,
+            'skipped_count'  => $skipped,
+            'errors'         => array_slice($errors, 0, 10),
+            'total_errors'   => count($errors),
+        ], "Import completed: {$imported} attendance marks saved.");
+    }
+
+    /**
+     * Helper to build monthly ledger data for a class
+     */
+    protected function buildClassLedgerData(int $institutionId, LmsClass $class, string $month, string $level = 'class', ?int $csaId = null): array
+    {
+        $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $daysInMonth = $startOfMonth->daysInMonth;
+        $year = $startOfMonth->year;
+
+        // Fetch holidays for this year (and recurring)
+        $holidays = Holiday::where('institution_id', $institutionId)
+            ->where(function ($q) use ($year) {
+                $q->where('year', $year)
+                  ->orWhere('is_recurring', true);
+            })
+            ->get();
+
+        $holidaysMap = [];
+        foreach ($holidays as $h) {
+            $rawDate = $h->getRawOriginal('date');
+            if ($h->is_recurring && $rawDate) {
+                $parts = explode('-', $rawDate);
+                if (count($parts) === 3) {
+                    $rawDate = sprintf('%04d-%02d-%02d', (int) $year, (int) $parts[1], (int) $parts[2]);
+                }
+            }
+            if ($rawDate) {
+                $holidaysMap[$rawDate] = [
+                    'id'          => $h->id,
+                    'name'        => $h->name,
+                    'is_recurring'=> (bool) $h->is_recurring,
+                    'description' => $h->description,
+                ];
+            }
+        }
+
+        // Build days metadata (day, day_name, is_sunday, holiday)
+        $daysMeta = [];
+        $holidayCount = 0;
+        $sundayCount = 0;
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dt = $startOfMonth->copy()->addDays($d - 1);
+            $dateStr = $dt->toDateString();
+            $isSun = $dt->isSunday();
+            $hol = $holidaysMap[$dateStr] ?? null;
+
+            if ($isSun) $sundayCount++;
+            if ($hol) $holidayCount++;
+
+            $daysMeta[$dateStr] = [
+                'day'       => $d,
+                'day_name'  => $dt->format('D'),
+                'is_sunday' => $isSun,
+                'holiday'   => $hol,
+            ];
+        }
+
+        // Get enrolled students
+        $enrollments = LmsClassEnrollment::query()
+            ->where('lms_class_id', $class->id)
+            ->where('role', 'student')
+            ->where('status', 'active')
+            ->with(['user:id,name,email', 'user.studentProfile:id,user_id,roll_no,reg_no'])
+            ->get();
+
+        // Get attendance records in date range
+        $attendances = AttendanceRecord::where('institution_id', $institutionId)
+            ->where('lms_class_id', $class->id)
+            ->when($level === 'class', fn($q) => $q->classLevel())
+            ->when($level === 'subject' && $csaId, fn($q) => $q->where('class_subject_allocation_id', $csaId))
+            ->whereBetween('date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->get();
+
+        $grouped = [];
+        foreach ($attendances as $att) {
+            $dateKey = is_string($att->date) ? substr($att->date, 0, 10) : $att->date->toDateString();
+            $grouped[$att->user_id][$dateKey] = $att;
+        }
+
+        $subjectName = 'General (Class Level)';
+        if ($csaId) {
+            $alloc = ClassSubjectAllocation::with('subject')->find($csaId);
+            $subjectName = $alloc?->subject?->name ?? "Subject #{$csaId}";
+        }
+
+        $matrix = [];
+        foreach ($enrollments as $enr) {
+            $user = $enr->user;
+            if (!$user) continue;
+
+            $profile = $user->studentProfile;
+            $rollNo = $profile?->roll_no ?: ($profile?->reg_no ?: "ID: {$user->id}");
+
+            $row = [
+                'user_id'     => $user->id,
+                'roll_no'     => $rollNo,
+                'name'        => $user->name,
+                'summary'     => [
+                    'present'      => 0,
+                    'absent'       => 0,
+                    'late'         => 0,
+                    'leave'        => 0,
+                    'holiday'      => 0,
+                    'total_marked' => 0,
+                ],
+                'days'        => []
+            ];
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dateStr = sprintf('%s-%02d', $month, $d);
+                $att = $grouped[$user->id][$dateStr] ?? null;
+
+                if ($att) {
+                    $row['days'][$dateStr] = [
+                        'id'      => $att->id,
+                        'status'  => $att->status,
+                        'remarks' => $att->remarks,
+                    ];
+                    if (isset($row['summary'][$att->status])) {
+                        $row['summary'][$att->status]++;
+                    }
+                    $row['summary']['total_marked']++;
+                } else {
+                    $row['days'][$dateStr] = null;
+                }
+            }
+
+            $matrix[] = $row;
+        }
+
+        return [
+            'class_id'       => $class->id,
+            'class_name'     => $class->name,
+            'subject_name'   => $subjectName,
+            'level'          => $level,
+            'month'          => $month,
+            'days_in_month'  => $daysInMonth,
+            'days_meta'      => $daysMeta,
+            'matrix'         => $matrix,
+            'working_days'   => max(0, $daysInMonth - $sundayCount - $holidayCount),
+            'total_students' => count($matrix),
+        ];
     }
 
     /**
@@ -364,7 +808,7 @@ class AttendanceController extends BaseController
         $csaId = isset($validated['class_subject_allocation_id']) ? (int) $validated['class_subject_allocation_id'] : null;
         $data = $this->fetchDailyData((int) $validated['lms_class_id'], $validated['date'], $level, $csaId);
 
-        return $this->success($this->buildDailyResponse($data['records'], $data['summary'], $level, $csaId));
+        return $this->success($this->buildDailyResponse($data['records'], $data['summary'], $level, $csaId, $data['meta']));
     }
 
     /**
@@ -500,3 +944,4 @@ class AttendanceController extends BaseController
         }
     }
 }
+

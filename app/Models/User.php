@@ -477,5 +477,9 @@ class User extends Authenticatable
         return $this->hasMany(Payslip::class, 'user_id');
     }
 
+    public function studentLeaveApplications(): HasMany
+    {
+        return $this->hasMany(StudentLeaveApplication::class, 'user_id');
+    }
 }
 

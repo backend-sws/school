@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { Head, Link, usePage } from "@inertiajs/react";
-import { Pencil, Eye, Users, UserPlus, Copy, Mail, Download, UserCheck, ShieldAlert, CheckCircle2, Receipt } from "lucide-react";
+import { Pencil, Eye, Users, UserPlus, Copy, Mail, Download, UserCheck, ShieldAlert, CheckCircle2, Receipt, GraduationCap } from "lucide-react";
+import { StudentClassProfileDrawer } from "@/components/admin/studentClassProfileDrawer";
 import { useNavigation } from "@/hooks/use-navigation";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ const ManageStudent = () => {
   const listConfig = getStudentListDisplayConfig(scopeType);
   const metadata = getMetadata("/students/manage");
   const queryClient = useQueryClient();
+  const [studentFor360, setStudentFor360] = React.useState<{ id: number; name: string } | null>(null);
 
   // ─── Mutations ───────────────────────────────────────────────────────────
   const resendVerificationMutation = useMutation({
@@ -318,6 +320,16 @@ const ManageStudent = () => {
                               </Button>
                             </Link>
                           </TooltipWrapper>
+                          <TooltipWrapper content="360° Academic & Leave Vault">
+                            <Button
+                              size="icon-sm"
+                              variant="ghost"
+                              className="text-primary hover:text-primary hover:bg-primary/10"
+                              onClick={() => setStudentFor360({ id: val.id, name: val.name })}
+                            >
+                              <GraduationCap className="size-4" />
+                            </Button>
+                          </TooltipWrapper>
                           <PermissionGate can="view_fee_particulars">
                             <TooltipWrapper content="View Fee Ledger">
                               <Link href={`/accounts/fee-hub/students?student=${val.id}`}>
@@ -395,6 +407,14 @@ const ManageStudent = () => {
           </Card>
         </div>
       </TooltipProvider>
+
+      {/* ── Student 360° Profile & Record Vault Drawer ────────────────── */}
+      <StudentClassProfileDrawer
+        open={!!studentFor360}
+        onClose={() => setStudentFor360(null)}
+        userId={studentFor360?.id}
+        studentName={studentFor360?.name}
+      />
     </>
   );
 };

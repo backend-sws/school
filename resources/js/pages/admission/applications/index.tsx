@@ -70,6 +70,8 @@ type ApplicationRow = {
   submitted_at?: string;
   admission_head?: { stream?: { name: string }; session?: { name: string } };
   lms_class?: { name: string };
+  lms_section?: { name: string };
+  section_name?: string;
   stream?: { name: string };
   session?: { name: string };
   due_amount?: string | number;
@@ -249,7 +251,14 @@ const ApplicationsIndex = () => {
                       )}
                       <TableCell>
                         <div className="text-sm">
-                          {row.admission_head?.stream?.name || row.stream?.name || row.lms_class?.name || "—"}
+                          <span className="font-medium">
+                            {row.admission_head?.stream?.name || row.stream?.name || row.lms_class?.name || "—"}
+                          </span>
+                          {(row.section_name || row.lms_section?.name) && (
+                            <span className="text-muted-foreground text-xs ml-1 font-normal">
+                              • {row.section_name || row.lms_section?.name}
+                            </span>
+                          )}
                           {(row.admission_head?.session?.name || row.session?.name) && (
                             <span className="text-muted-foreground font-mono text-[10px] ml-1">
                               ({row.admission_head?.session?.name || row.session?.name})

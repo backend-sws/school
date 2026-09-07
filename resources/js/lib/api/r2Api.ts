@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosProgressEvent } from "axios";
 import api from "./api";
 
 export type UploadProgressCallback = (percent: number) => void;
@@ -99,10 +99,11 @@ const R2Api = {
     }),
 
   /**
-   * Full upload flow: validate → POST multipart to Laravel → server uploads to R2.
-   * Avoids browser CORS issues with presigned PUT URLs.
-   * Returns the stored path on success.
-   * @throws Error on validation failure or upload error.
+   * Full upload flow:
+   * 1. Request presigned URL from backend (/r2/upload-url)
+   * 2. Direct PUT to Cloudflare R2 bucket via presigned URL
+   * 3. Seamless fallback to server-side multipart (/r2/upload) if direct PUT fails
+   * Returns the stored path on success (uploads/...).
    */
   uploadFile: async (
     file: File,
@@ -113,13 +114,40 @@ const R2Api = {
       throw new Error(validationError.message);
     }
 
+    const contentType = file.type || "application/octet-stream";
+
+    // 1. Try Direct Presigned URL Upload to Cloudflare R2
+    try {
+      const presigned = (await R2Api.getUploadUrl(file)) as unknown as {
+        upload_url?: string;
+        path?: string;
+      };
+
+      if (presigned?.upload_url && presigned?.path) {
+        await axios.put(presigned.upload_url, file, {
+          headers: {
+            "Content-Type": contentType,
+          },
+          onUploadProgress: (event) => {
+            if (!onProgress || !event.total) return;
+            onProgress(Math.round((event.loaded * 100) / event.total));
+          },
+        });
+
+        return presigned.path;
+      }
+    } catch (presignedErr: any) {
+      console.warn("Direct presigned URL upload failed, attempting server-side fallback:", presignedErr?.message || presignedErr);
+    }
+
+    // 2. Fallback: Server-side upload via FormData
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const res = (await api.post<{ path: string }>("/r2/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (event) => {
+        onUploadProgress: (event: AxiosProgressEvent) => {
           if (!onProgress || !event.total) return;
           onProgress(Math.round((event.loaded * 100) / event.total));
         },
@@ -155,7 +183,11 @@ const R2Api = {
     if (imageUrl.startsWith("/")) {
       return imageUrl;
     }
-    return `/api/v1/public/r2/asset?path=${encodeURIComponent(imageUrl)}`;
+    const publicR2Url = (import.meta as any).env?.VITE_R2_URL;
+    if (publicR2Url) {
+      return `${publicR2Url.replace(/\/+$/, "")}/${imageUrl.replace(/^\/+/, "")}`;
+    }
+    return `/api/v1/r2/asset?path=${encodeURIComponent(imageUrl)}`;
   },
 };
 

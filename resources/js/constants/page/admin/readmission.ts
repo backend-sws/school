@@ -92,6 +92,7 @@ export const getBulkReadmissionFormFields = (
   semesterLabel: string,
   hasSemester: boolean,
   streamOptions: ReadmissionSessionOption[] = [],
+  classOptions: ReadmissionSessionOption[] = [],
 ) => {
   return [
     {
@@ -118,6 +119,17 @@ export const getBulkReadmissionFormFields = (
             type: FORM_TYPE.DROPDOWN,
             placeholder: "All streams",
             options: streamOptions,
+          },
+        ]
+      : []),
+    ...(classOptions.length > 0
+      ? [
+          {
+            name: "to_class_id",
+            label: "Target Section",
+            type: FORM_TYPE.DROPDOWN,
+            placeholder: "Select section (auto-assigns if empty)",
+            options: classOptions,
           },
         ]
       : []),

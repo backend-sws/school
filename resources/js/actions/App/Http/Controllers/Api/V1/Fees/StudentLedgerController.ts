@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
 export const exportExcel = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ exportExcel.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
 exportExcel.url = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ exportExcel.url = (args: { studentId: string | number } | [studentId: string | n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
 exportExcel.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ exportExcel.get = (args: { studentId: string | number } | [studentId: string | n
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
 exportExcel.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ exportExcel.head = (args: { studentId: string | number } | [studentId: string | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
     const exportExcelForm = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ exportExcel.head = (args: { studentId: string | number } | [studentId: string | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
         exportExcelForm.get = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ exportExcel.head = (args: { studentId: string | number } | [studentId: string | 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::exportExcel
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:632
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:642
  * @route '/api/v1/fees/ledger/student/{studentId}/export'
  */
         exportExcelForm.head = (args: { studentId: string | number } | [studentId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -250,7 +250,7 @@ collect.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     collect.form = collectForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::collectAdvance
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:493
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:498
  * @route '/api/v1/fees/ledger/collect-advance'
  */
 export const collectAdvance = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -265,7 +265,7 @@ collectAdvance.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::collectAdvance
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:493
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:498
  * @route '/api/v1/fees/ledger/collect-advance'
  */
 collectAdvance.url = (options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ collectAdvance.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::collectAdvance
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:493
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:498
  * @route '/api/v1/fees/ledger/collect-advance'
  */
 collectAdvance.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -284,7 +284,7 @@ collectAdvance.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::collectAdvance
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:493
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:498
  * @route '/api/v1/fees/ledger/collect-advance'
  */
     const collectAdvanceForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -294,7 +294,7 @@ collectAdvance.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::collectAdvance
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:493
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:498
  * @route '/api/v1/fees/ledger/collect-advance'
  */
         collectAdvanceForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ collectAdvance.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     collectAdvance.form = collectAdvanceForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::resendReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:280
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:285
  * @route '/api/v1/fees/ledger/resend-receipt'
  */
 export const resendReceipt = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -320,7 +320,7 @@ resendReceipt.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::resendReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:280
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:285
  * @route '/api/v1/fees/ledger/resend-receipt'
  */
 resendReceipt.url = (options?: RouteQueryOptions) => {
@@ -329,7 +329,7 @@ resendReceipt.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::resendReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:280
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:285
  * @route '/api/v1/fees/ledger/resend-receipt'
  */
 resendReceipt.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -339,7 +339,7 @@ resendReceipt.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::resendReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:280
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:285
  * @route '/api/v1/fees/ledger/resend-receipt'
  */
     const resendReceiptForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -349,7 +349,7 @@ resendReceipt.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::resendReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:280
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:285
  * @route '/api/v1/fees/ledger/resend-receipt'
  */
         resendReceiptForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -360,7 +360,7 @@ resendReceipt.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
     resendReceipt.form = resendReceiptForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::markAsPaid
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:389
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:394
  * @route '/api/v1/fees/ledger/mark-as-paid'
  */
 export const markAsPaid = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -375,7 +375,7 @@ markAsPaid.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::markAsPaid
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:389
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:394
  * @route '/api/v1/fees/ledger/mark-as-paid'
  */
 markAsPaid.url = (options?: RouteQueryOptions) => {
@@ -384,7 +384,7 @@ markAsPaid.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::markAsPaid
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:389
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:394
  * @route '/api/v1/fees/ledger/mark-as-paid'
  */
 markAsPaid.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -394,7 +394,7 @@ markAsPaid.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::markAsPaid
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:389
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:394
  * @route '/api/v1/fees/ledger/mark-as-paid'
  */
     const markAsPaidForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -404,7 +404,7 @@ markAsPaid.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::markAsPaid
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:389
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:394
  * @route '/api/v1/fees/ledger/mark-as-paid'
  */
         markAsPaidForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -415,7 +415,7 @@ markAsPaid.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     markAsPaid.form = markAsPaidForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::revertPayment
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:309
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:314
  * @route '/api/v1/fees/ledger/revert-payment'
  */
 export const revertPayment = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -430,7 +430,7 @@ revertPayment.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::revertPayment
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:309
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:314
  * @route '/api/v1/fees/ledger/revert-payment'
  */
 revertPayment.url = (options?: RouteQueryOptions) => {
@@ -439,7 +439,7 @@ revertPayment.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::revertPayment
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:309
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:314
  * @route '/api/v1/fees/ledger/revert-payment'
  */
 revertPayment.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -449,7 +449,7 @@ revertPayment.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::revertPayment
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:309
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:314
  * @route '/api/v1/fees/ledger/revert-payment'
  */
     const revertPaymentForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -459,7 +459,7 @@ revertPayment.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::revertPayment
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:309
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:314
  * @route '/api/v1/fees/ledger/revert-payment'
  */
         revertPaymentForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -470,7 +470,7 @@ revertPayment.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
     revertPayment.form = revertPaymentForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
 export const downloadReceipt = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -485,7 +485,7 @@ downloadReceipt.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
 downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -518,7 +518,7 @@ downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
 downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -527,7 +527,7 @@ downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
 downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -537,7 +537,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
     const downloadReceiptForm = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -547,7 +547,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
         downloadReceiptForm.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -556,7 +556,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:479
+ * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:484
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
         downloadReceiptForm.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

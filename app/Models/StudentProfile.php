@@ -204,4 +204,9 @@ class StudentProfile extends Model
         return $this->hasMany(LmsClassEnrollment::class, 'user_id', 'user_id')
             ->where('status', 'active');
     }
+
+    public function studentLeaveApplications(): HasMany
+    {
+        return $this->hasMany(StudentLeaveApplication::class, 'user_id', 'user_id');
+    }
 }

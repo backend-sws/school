@@ -106,7 +106,7 @@ const ApplicationsShow = () => {
   }, [application]);
 
   const processMutation = useMutation({
-    mutationFn: (payload: { status: string; remarks?: string }) =>
+    mutationFn: (payload: { status: string; remarks?: string; section_id?: number | string }) =>
       AdmissionApi.process(id, payload),
     onSuccess: (_data, variables) => {
       const isApproved = variables.status === "approved";
@@ -172,7 +172,7 @@ const ApplicationsShow = () => {
         application.stream?.name ||
         null);
     const sectionOrSemester = isSchool
-      ? (application.lms_section?.name || application.lmsSection?.name || application.section_name || null)
+      ? (application.section_name || application.lms_section?.name || application.lmsSection?.name || null)
       : (application.semester != null && application.semester !== "" ? String(application.semester) : null);
 
     const hasValue = (v: string | null | undefined) =>
@@ -190,10 +190,10 @@ const ApplicationsShow = () => {
     const sectionLabel = isSchool ? "Provisional Section" : "Current Semester";
 
     const displayItems: { label: string; value: string; isSemester?: boolean }[] = [];
-    if (hasValue(sessionName)) displayItems.push({ label: sessionLabel, value: sessionName! });
-    displayItems.push({ label: mainLabel, value: mainProgram && hasValue(mainProgram) ? mainProgram : "—" });
-    if (hasValue(branchStream!)) displayItems.push({ label: branchLabel, value: branchStream! });
-    if (hasValue(sectionOrSemester!)) displayItems.push({ label: sectionLabel, value: sectionOrSemester!, isSemester: !isSchool });
+    displayItems.push({ label: sessionLabel, value: hasValue(sessionName) ? sessionName! : "—" });
+    displayItems.push({ label: mainLabel, value: hasValue(mainProgram) ? mainProgram! : "—" });
+    displayItems.push({ label: branchLabel, value: hasValue(branchStream) ? branchStream! : "—" });
+    displayItems.push({ label: sectionLabel, value: hasValue(sectionOrSemester) ? sectionOrSemester! : "—", isSemester: !isSchool && hasValue(sectionOrSemester) });
 
     return { academicDetails: details, academicDisplayItems: displayItems };
   }, [application, inertiaScope, isSchool]);
@@ -574,7 +574,9 @@ const ApplicationsShow = () => {
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="size-4" />
-                        <span className="font-bold text-sm">Approve Admission</span>
+                        <span className="font-bold text-sm">
+                          {processMutation.isPending ? "Approving..." : "Approve Admission"}
+                        </span>
                       </div>
                       <ChevronRight className="size-4 opacity-50" />
                     </Button>
@@ -648,6 +650,8 @@ const ApplicationsShow = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
 
       {/* Payment Dialog */}
       <RecordPaymentDialog

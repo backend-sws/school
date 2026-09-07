@@ -1,3 +1,4 @@
+import React, { useMemo, useState, useEffect } from "react";
 import { Head } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,13 +17,22 @@ import {
   ArrowRight,
   Clock,
   UserCheck,
+  CalendarDays,
+  Sparkles,
+  PartyPopper,
+  Sun,
+  FileSpreadsheet,
+  Upload,
+  Download
 } from "lucide-react";
 import Each from "@/components/Each";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import attendanceApi, { type AttendanceLevel, type AttendanceRecordRow } from "@/lib/api/attendanceApi";
 import { ATTENDANCE_STATUS_OPTIONS } from "@/constants/page/admin/attendance";
-import { useMemo, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { AttendanceRegisterMatrix } from "@/components/admin/attendanceRegisterMatrix";
+import { AttendanceImportDialog } from "@/components/admin/attendanceImportDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const defaultDate = () => new Date().toISOString().slice(0, 10);
 
@@ -34,10 +44,12 @@ function getInitialClassIdFromUrl(): number | undefined {
 
 export default function AttendanceMark() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<"daily" | "monthly">("daily");
   const [selectedClassId, setSelectedClassId] = useState<number | undefined>(getInitialClassIdFromUrl());
   const [selectedAllocationId, setSelectedAllocationId] = useState<number | undefined>(undefined);
   const [date, setDate] = useState(defaultDate());
   const [searchQuery, setSearchQuery] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
 
   // Fetch Classes
   const { data: classesRes, isLoading: classesLoading } = useQuery({
@@ -50,6 +62,13 @@ export default function AttendanceMark() {
     if (Array.isArray(raw)) return raw as { id: number; name: string }[];
     return [];
   }, [classesRes]);
+
+  // Auto-select first class if none selected
+  useEffect(() => {
+    if (!selectedClassId && classes.length > 0) {
+      setSelectedClassId(classes[0].id);
+    }
+  }, [classes, selectedClassId]);
 
   // Fetch Allocations for selected class
   const { data: allocationsRes, isLoading: allocationsLoading } = useQuery({
@@ -79,11 +98,13 @@ export default function AttendanceMark() {
     enabled: !!selectedClassId,
   });
 
-  // API returns { success, data: { records, summary, ... } }; axios interceptor returns response.data
+  const rawDailyData = (dailyRes as any)?.data || dailyRes;
   const records = useMemo(
-    () => (dailyRes as { data?: { records?: AttendanceRecordRow[] } } | undefined)?.data?.records ?? [],
-    [dailyRes]
+    () => rawDailyData?.records ?? [],
+    [rawDailyData]
   ) as AttendanceRecordRow[];
+  const meta = rawDailyData?.meta;
+
   const [localRecords, setLocalRecords] = useState<Record<number, string>>({});
 
   // Sync Records
@@ -91,28 +112,31 @@ export default function AttendanceMark() {
     if (records.length > 0) {
       const initial: Record<number, string> = {};
       records.forEach((r) => {
-        initial[r.user_id] = r.status || "present";
+        initial[r.user_id] = r.status || (meta?.is_holiday || meta?.is_sunday ? "holiday" : "present");
       });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalRecords(initial);
     } else {
-
       setLocalRecords((prev) => (Object.keys(prev).length > 0 ? {} : prev));
     }
-  }, [records]);
+  }, [records, meta]);
 
   const filteredRecords = useMemo(() => {
     if (!searchQuery) return records;
+    const q = searchQuery.toLowerCase();
     return records.filter(r =>
-      r.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+      r.user_name.toLowerCase().includes(q) ||
+      (r.roll_no && r.roll_no.toLowerCase().includes(q))
     );
   }, [records, searchQuery]);
 
   const stats = useMemo(() => {
     const total = records.length;
     const present = records.filter(r => (localRecords[r.user_id] || "present") === "present").length;
-    const absent = total - present;
-    return { total, present, absent };
+    const absent = records.filter(r => (localRecords[r.user_id] || "present") === "absent").length;
+    const late = records.filter(r => localRecords[r.user_id] === "late").length;
+    const leave = records.filter(r => localRecords[r.user_id] === "leave").length;
+    const holiday = records.filter(r => localRecords[r.user_id] === "holiday").length;
+    return { total, present, absent, late, leave, holiday };
   }, [records, localRecords]);
 
   const handleStatusChange = (userId: number, status: string) => {
@@ -131,6 +155,7 @@ export default function AttendanceMark() {
     mutationFn: (payload: Parameters<typeof attendanceApi.submitDaily>[0]) => attendanceApi.submitDaily(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["attendance-daily"] });
+      queryClient.invalidateQueries({ queryKey: ["attendance-ledger"] });
       if (selectedClassId) {
         queryClient.invalidateQueries({ queryKey: ["lms-class-attendance-summary", selectedClassId] });
       }
@@ -158,30 +183,34 @@ export default function AttendanceMark() {
     });
   };
 
+  const selectedClassName = classes.find(c => c.id === selectedClassId)?.name || "Class";
+
   return (
     <>
       <Head title="Mark Attendance" />
 
-      <div className="max-w-[1200px] mx-auto space-y-8">
-        {/* Immersive Fancy Header */}
-        <div className="relative overflow-hidden rounded-[40px] bg-gradient-to-br from-amber-600/10 via-background to-background p-10 border border-white/10 shadow-2xl">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+      <div className="max-w-[1300px] mx-auto space-y-8 pb-12">
+        {/* Fancy Hero Header */}
+        <div className="relative overflow-hidden rounded-[36px] bg-gradient-to-br from-emerald-600/10 via-background to-background p-8 md:p-10 border border-border shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
-            <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
+            <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="size-16 rounded-[28px] bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 ring-4 ring-amber-500/10 transition-transform hover:scale-105 duration-500">
+                <div className="size-16 rounded-[24px] bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-600/20 ring-4 ring-emerald-500/10">
                   <ClipboardCheck className="size-9 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-4xl font-black tracking-tighter text-foreground drop-shadow-sm">Mark Register</h2>
-                  <div className="flex items-center gap-6 text-[11px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] mt-1">
-                    <span className="flex items-center gap-2 px-3 py-1 bg-green-500/5 text-green-600 rounded-full border border-green-500/10">
-                      <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
-                      Active Session
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
+                    Class Attendance Register
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                    <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full border border-emerald-500/20">
+                      <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                      {selectedClassName}
                     </span>
-                    <span className="flex items-center gap-2">
-                      <Clock className="size-4" />
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="size-3.5" />
                       {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -189,319 +218,420 @@ export default function AttendanceMark() {
               </div>
             </div>
 
-            {/* Quick Stats in Header */}
-            <div className="flex gap-6 p-3 bg-white/5 border border-white/10 rounded-[28px] backdrop-blur-md shadow-inner">
-              <StatColumn label="TOTAL ENROLLMENT" value={stats.total} color="muted" />
-              <Separator orientation="vertical" className="h-12 bg-white/10" />
-              <StatColumn label="PRESENT" value={stats.present} color="green" />
-              <Separator orientation="vertical" className="h-12 bg-white/10" />
-              <StatColumn label="ABSENT" value={stats.absent} color="red" />
+            {/* View Mode Switcher Pills */}
+            <div className="flex items-center p-1.5 bg-muted/60 backdrop-blur-md rounded-2xl border border-border">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setActiveTab("daily")}
+                className={cn(
+                  "rounded-xl px-5 py-2 text-xs font-bold transition-all",
+                  activeTab === "daily"
+                    ? "bg-background text-foreground shadow-md shadow-black/5"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <ClipboardCheck className="size-4 mr-2 text-primary" />
+                Daily Marking
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setActiveTab("monthly")}
+                className={cn(
+                  "rounded-xl px-5 py-2 text-xs font-bold transition-all",
+                  activeTab === "monthly"
+                    ? "bg-background text-foreground shadow-md shadow-black/5"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <CalendarDays className="size-4 mr-2 text-primary" />
+                Monthly Register (Calendar)
+              </Button>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Left Sidebar: Controls */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="p-8 rounded-[32px] bg-background/40 backdrop-blur-xl border border-white/5 shadow-xl space-y-8">
-              <ConfigField label="CLASSROOM">
-                <Select
-                  value={selectedClassId?.toString()}
-                  onValueChange={(v) => {
-                    setSelectedClassId(parseInt(v));
-                    setSelectedAllocationId(undefined);
-                  }}
-                >
-                  <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-muted/20 backdrop-blur-sm font-black text-foreground shadow-sm hover:bg-muted/30 transition-all">
-                    <SelectValue placeholder="Choose Class" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-border/60 backdrop-blur-xl">
-                    {classesLoading ? (
-                      <LoadingIndicator label="Classes" />
-                    ) : (
-                      classes.map((c: { id: number; name: string }) => (
-                        <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-3">
-                          {c.name}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </ConfigField>
-
-              <ConfigField label="SUBJECT / SESSION">
-                <Select
-                  value={selectedAllocationId?.toString() || "class"}
-                  onValueChange={(v) => setSelectedAllocationId(v === "class" ? undefined : parseInt(v))}
-                  disabled={!selectedClassId}
-                >
-                  <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-muted/20 backdrop-blur-sm font-black text-foreground shadow-sm hover:bg-muted/30 transition-all">
-                    <SelectValue placeholder="Class Level" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-border/60 backdrop-blur-xl">
-                    <SelectItem value="class" className="font-black text-amber-600 py-3">GENERAL ATTENDANCE</SelectItem>
-                    <Separator className="my-2 bg-border/40" />
-                    {allocationsLoading ? (
-                      <LoadingIndicator label="Subjects" />
-                    ) : (
-                      allocations.map((a: { id: number; subject: { name: string } | null }) => (
-                        <SelectItem key={a.id} value={a.id.toString()} className="font-bold py-3">
-                          {a.subject?.name || "Unknown"}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </ConfigField>
-
-              <ConfigField label="DATE">
-                <div className="relative">
-                  <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-amber-600/60 pointer-events-none" />
-                  <input
-                    type="date"
-                    className="flex h-14 w-full rounded-2xl border-white/5 bg-muted/20 backdrop-blur-sm pl-12 pr-4 py-2 text-base font-black text-foreground ring-offset-background placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/20 transition-all outline-none"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                </div>
-              </ConfigField>
-
-              <Separator className="bg-white/5" />
-
-              <div className="space-y-4 pt-2">
-                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/30 ml-1">Quick Actions</p>
-                <div className="grid grid-cols-1 gap-3">
-                  <QuickActionButton
-                    onClick={() => markAllAs("present")}
-                    icon={UserCheck}
-                    label="BATCH PRESENT"
-                    color="green"
-                    disabled={!records.length}
-                  />
-                  <QuickActionButton
-                    onClick={() => markAllAs("absent")}
-                    icon={XCircle}
-                    label="BATCH ABSENT"
-                    color="red"
-                    disabled={!records.length}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Button
-              className="w-full h-20 text-xl font-black rounded-[32px] shadow-2xl shadow-amber-500/20 bg-amber-500 hover:bg-amber-600 text-white transition-all hover:scale-[1.02] active:scale-[0.98] group"
-              onClick={handleSubmit}
-              disabled={isPending || !records.length}
+        {/* Global Selectors: Class & Subject */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-3xl bg-card border border-border shadow-md">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Classroom</Label>
+            <Select
+              value={selectedClassId?.toString()}
+              onValueChange={(v) => {
+                setSelectedClassId(parseInt(v));
+                setSelectedAllocationId(undefined);
+              }}
             >
-              {isPending ? (
-                <div className="flex items-center">
-                  <Loader2 className="size-7 animate-spin mr-3" />
-                  COMMITTING...
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-3">
-                  FINALIZE RECORD
-                  <ArrowRight className="size-7 group-hover:translate-x-1.5 transition-transform" />
-                </div>
-              )}
-            </Button>
+              <SelectTrigger className="h-11 rounded-xl border-border bg-background font-bold text-foreground">
+                <SelectValue placeholder="Choose Class" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border">
+                {classesLoading ? (
+                  <div className="flex items-center justify-center p-4 gap-2">
+                    <Loader2 className="size-4 animate-spin text-primary" />
+                    <span className="text-xs text-muted-foreground">Loading...</span>
+                  </div>
+                ) : (
+                  classes.map((c: { id: number; name: string }) => (
+                    <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-2.5">
+                      {c.name}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Right Side: Student List */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="flex items-center justify-between p-4 bg-background/40 backdrop-blur-xl rounded-[28px] border border-white/5 shadow-inner">
-              <div className="w-full max-w-lg relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-amber-500 transition-colors pointer-events-none" />
-                <Input
-                  placeholder="Instant find student..."
-                  className="h-12 pl-12 rounded-2xl border-none bg-muted/10 font-bold focus-visible:ring-amber-500/10 transition-all placeholder:text-muted-foreground/30"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <div className="hidden md:flex items-center gap-3 px-6">
-                <div className="size-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600">
-                  <Users className="size-5" />
-                </div>
-                <p className="text-[10px] font-black text-muted-foreground/60 tracking-widest uppercase">
-                  Register Index
-                </p>
-              </div>
-            </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Subject / Allocation</Label>
+            <Select
+              value={selectedAllocationId?.toString() || "class"}
+              onValueChange={(v) => setSelectedAllocationId(v === "class" ? undefined : parseInt(v))}
+              disabled={!selectedClassId}
+            >
+              <SelectTrigger className="h-11 rounded-xl border-border bg-background font-bold text-foreground">
+                <SelectValue placeholder="General Attendance" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border">
+                <SelectItem value="class" className="font-bold text-primary py-2.5">
+                  General (Class Level)
+                </SelectItem>
+                <Separator className="my-1" />
+                {allocationsLoading ? (
+                  <div className="flex items-center justify-center p-4 gap-2">
+                    <Loader2 className="size-4 animate-spin text-primary" />
+                    <span className="text-xs text-muted-foreground">Loading...</span>
+                  </div>
+                ) : (
+                  allocations.map((a: { id: number; subject: { name: string } | null }) => (
+                    <SelectItem key={a.id} value={a.id.toString()} className="font-bold py-2.5">
+                      {a.subject?.name || "Unknown"}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="relative rounded-[40px] border border-border/40 bg-background/50 backdrop-blur-md shadow-2xl overflow-hidden min-h-[600px]">
-              {dailyLoading ? (
-                <ListLoadingView />
-              ) : !selectedClassId ? (
-                <ListEmptyView
-                  icon={BookOpen}
-                  title="Awaiting Instruction"
-                  description="Select a classroom from the sidebar to initialize the daily attendance register."
-                />
-              ) : records.length === 0 ? (
-                <ListEmptyView
-                  icon={Users}
-                  title="Empty Classroom"
-                  description="No student enrollments found for this specific class or subject session."
-                />
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
-                    <thead className="sticky top-0 bg-background/80 backdrop-blur-2xl border-b border-border/40 z-10 shadow-sm">
-                      <tr>
-                        <th className="p-8 text-left font-black text-muted-foreground/50 uppercase tracking-widest text-[11px]">Identity</th>
-                        <th className="p-8 text-right font-black text-muted-foreground/50 uppercase tracking-widest text-[11px]">Record Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/20">
-                      <Each
-                        of={filteredRecords}
-                        keyExtractor={(r) => r.user_id.toString()}
-                        render={(r) => (
-                          <tr key={r.user_id} className="group hover:bg-amber-500/[0.03] transition-all duration-300">
-                            <td className="p-8">
-                              <div className="flex items-center gap-5">
-                                <div className="size-14 rounded-[22px] bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/10 flex items-center justify-center text-amber-600 font-black text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500 shadow-sm">
-                                  {r.user_name.charAt(0)}
-                                </div>
-                                <div className="space-y-1">
-                                  <p className="text-xl font-black tracking-tight text-foreground group-hover:text-amber-600 transition-colors duration-300">{r.user_name}</p>
-                                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Reference: REG-{r.user_id}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="p-8 text-right">
-                              <StatusPillGroup
-                                value={localRecords[r.user_id] || "present"}
-                                onChange={(v) => handleStatusChange(r.user_id, v)}
-                              />
-                            </td>
-                          </tr>
-                        )}
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Quick Tool</Label>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setImportOpen(true)}
+                disabled={!selectedClassId}
+                className="w-full h-11 rounded-xl font-bold gap-2 text-xs border-border"
+              >
+                <Upload className="size-4 text-primary" />
+                Import Excel Register
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab 1: Daily Marking View */}
+        {activeTab === "daily" && (
+          <div className="space-y-8">
+            {/* Holiday / Sunday Alert Banner */}
+            {meta?.is_holiday && (
+              <div className="p-5 rounded-3xl bg-purple-500/10 border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-purple-500/5">
+                <div className="flex items-center gap-3.5">
+                  <div className="size-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/20 shrink-0">
+                    <PartyPopper className="size-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-purple-950 dark:text-purple-100 flex items-center gap-2">
+                      Holiday Detected: {meta.holiday?.name}
+                    </h4>
+                    <p className="text-xs text-purple-800 dark:text-purple-300">
+                      {meta.holiday?.description || "This date is marked as an institutional holiday in the calendar."}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  onClick={() => markAllAs("holiday")}
+                  className="rounded-xl font-bold bg-purple-600 hover:bg-purple-700 text-white shrink-0 shadow-md shadow-purple-600/20"
+                >
+                  <Sparkles className="size-3.5 mr-1.5" />
+                  Set All as Holiday
+                </Button>
+              </div>
+            )}
+
+            {meta?.is_sunday && !meta?.is_holiday && (
+              <div className="p-4 rounded-3xl bg-rose-500/10 border border-rose-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-500/20 shrink-0">
+                    <Sun className="size-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-rose-950 dark:text-rose-100">
+                      Sunday / Weekly Off
+                    </h4>
+                    <p className="text-xs text-rose-800 dark:text-rose-300">
+                      The selected date is a Sunday.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => markAllAs("holiday")}
+                  className="rounded-xl font-bold border-rose-300 text-rose-700 hover:bg-rose-100 shrink-0"
+                >
+                  Mark All Off
+                </Button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Left Column: Date & Quick Actions */}
+              <div className="lg:col-span-1 space-y-6">
+                <div className="p-6 rounded-3xl bg-card border border-border shadow-md space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select Date</Label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                      <input
+                        type="date"
+                        className="flex h-12 w-full rounded-2xl border border-border bg-background pl-10 pr-3 text-sm font-bold text-foreground focus-visible:outline-none focus:ring-2 focus:ring-ring transition-all"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                       />
-                    </tbody>
-                  </table>
-                  {filteredRecords.length === 0 && searchQuery && (
-                    <div className="py-32 text-center group">
-                      <div className="size-20 bg-muted/10 rounded-[30px] flex items-center justify-center text-muted-foreground/20 mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 border border-white/5">
-                        <Search className="size-10" />
-                      </div>
-                      <p className="text-xl font-black text-muted-foreground/20 italic tracking-tight">No match found for "{searchQuery}"</p>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-3">
+                    <p className="text-[11px] uppercase font-bold tracking-wider text-muted-foreground">
+                      Batch Actions
+                    </p>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => markAllAs("present")}
+                        disabled={!records.length}
+                        className="h-11 rounded-xl font-bold text-xs justify-start px-4 border-emerald-500/20 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500 hover:text-white transition-colors"
+                      >
+                        <UserCheck className="size-4 mr-2" />
+                        All Present (P)
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => markAllAs("absent")}
+                        disabled={!records.length}
+                        className="h-11 rounded-xl font-bold text-xs justify-start px-4 border-rose-500/20 bg-rose-500/5 text-rose-700 hover:bg-rose-500 hover:text-white transition-colors"
+                      >
+                        <XCircle className="size-4 mr-2" />
+                        All Absent (A)
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => markAllAs("holiday")}
+                        disabled={!records.length}
+                        className="h-11 rounded-xl font-bold text-xs justify-start px-4 border-purple-500/20 bg-purple-500/5 text-purple-700 hover:bg-purple-600 hover:text-white transition-colors"
+                      >
+                        <PartyPopper className="size-4 mr-2" />
+                        All Holiday (H)
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Summary Counters */}
+                  <div className="grid grid-cols-2 gap-2 text-center">
+                    <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                      <p className="text-[10px] font-black uppercase text-emerald-700">Present</p>
+                      <p className="text-2xl font-black text-emerald-700">{stats.present}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                      <p className="text-[10px] font-black uppercase text-rose-700">Absent</p>
+                      <p className="text-2xl font-black text-rose-700">{stats.absent}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full h-14 text-base font-black rounded-2xl shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-[1.01] active:scale-[0.99] group"
+                  onClick={handleSubmit}
+                  disabled={isPending || !records.length}
+                >
+                  {isPending ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="size-5 animate-spin" />
+                      Saving Records...
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      Save & Commit Attendance
+                      <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  )}
+                </Button>
+              </div>
+
+              {/* Right Column: Student Attendance Roster */}
+              <div className="lg:col-span-3 space-y-4">
+                <div className="p-4 bg-card rounded-2xl border border-border flex items-center justify-between gap-4">
+                  <div className="w-full max-w-md relative">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search student by name or roll no..."
+                      className="h-10 pl-10 rounded-xl border-border text-sm font-medium bg-background"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div className="text-xs font-bold text-muted-foreground flex items-center gap-2">
+                    <Users className="size-4" />
+                    <span>{records.length} Total Students</span>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-border bg-card shadow-md overflow-hidden">
+                  {dailyLoading ? (
+                    <div className="py-32 flex flex-col items-center justify-center gap-3">
+                      <Loader2 className="size-8 animate-spin text-primary" />
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        Loading Student Roster...
+                      </p>
+                    </div>
+                  ) : !selectedClassId ? (
+                    <div className="py-24 text-center space-y-2">
+                      <BookOpen className="size-10 text-muted-foreground/30 mx-auto" />
+                      <p className="text-base font-bold text-foreground">Select Classroom</p>
+                      <p className="text-xs text-muted-foreground">Please select a class above to mark attendance.</p>
+                    </div>
+                  ) : records.length === 0 ? (
+                    <div className="py-24 text-center space-y-2">
+                      <Users className="size-10 text-muted-foreground/30 mx-auto" />
+                      <p className="text-base font-bold text-foreground">No Enrolled Students</p>
+                      <p className="text-xs text-muted-foreground">No students found in this class.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm border-collapse">
+                        <thead className="bg-muted/50 border-b border-border text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                          <tr>
+                            <th className="px-6 py-3.5 text-left">Student</th>
+                            <th className="px-6 py-3.5 text-right">Attendance Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          <Each
+                            of={filteredRecords}
+                            keyExtractor={(r) => r.user_id.toString()}
+                            render={(r) => (
+                              <tr key={r.user_id} className="hover:bg-muted/30 transition-colors">
+                                <td className="px-6 py-3.5">
+                                  <div className="flex items-center gap-3.5">
+                                    <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-sm shrink-0">
+                                      {r.user_name.charAt(0)}
+                                    </div>
+                                    <div>
+                                      <p className="font-bold text-foreground text-sm leading-tight">
+                                        {r.user_name}
+                                      </p>
+                                      <p className="text-[11px] font-mono text-muted-foreground">
+                                        {r.roll_no || `ID: ${r.user_id}`}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-3.5 text-right">
+                                  <StatusPillGroup
+                                    value={localRecords[r.user_id] || "present"}
+                                    onChange={(v) => handleStatusChange(r.user_id, v)}
+                                  />
+                                </td>
+                              </tr>
+                            )}
+                          />
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Tab 2: Monthly Register Matrix (Calendar View) */}
+        {activeTab === "monthly" && selectedClassId && (
+          <AttendanceRegisterMatrix
+            classId={selectedClassId}
+            className={selectedClassName}
+            allocationId={selectedAllocationId}
+            level={level}
+          />
+        )}
       </div>
+
+      {/* Bulk Import Modal */}
+      {selectedClassId && (
+        <AttendanceImportDialog
+          open={importOpen}
+          onClose={() => setImportOpen(false)}
+          classId={selectedClassId}
+          className={selectedClassName}
+          month={date.slice(0, 7)}
+          allocationId={selectedAllocationId}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ["attendance-daily"] });
+            queryClient.invalidateQueries({ queryKey: ["attendance-ledger"] });
+          }}
+        />
+      )}
     </>
   );
 }
 
-// Sub-components
-
-function StatColumn({ label, value, color }: { label: string, value: number, color: "green" | "red" | "muted" }) {
-  const colorClass = color === "green" ? "text-green-500" : color === "red" ? "text-red-500" : "text-muted-foreground";
+function StatusPillGroup({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <div className="px-8 py-2 text-center min-w-[140px]">
-      <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground/40 mb-1">{label}</p>
-      <p className={cn("text-3xl font-black tracking-tighter", colorClass)}>{value}</p>
-    </div>
-  );
-}
-
-function ConfigField({ label, children }: { label: string, children: React.ReactNode }) {
-  return (
-    <div className="space-y-3">
-      <Label className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/30 ml-1">{label}</Label>
-      {children}
-    </div>
-  );
-}
-
-function QuickActionButton({ onClick, icon: Icon, label, color, disabled }: { onClick: () => void; icon: React.ElementType; label: string; color: "green" | "red"; disabled: boolean }) {
-  const baseClass = "h-14 rounded-2xl px-6 text-[11px] font-black uppercase tracking-widest border transition-all duration-300";
-  const colorStyles = color === "green"
-    ? "bg-green-500/5 text-green-600 border-green-500/10 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/20"
-    : "bg-red-500/5 text-red-600 border-red-500/10 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20";
-
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      className={cn(baseClass, colorStyles)}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      <Icon className="size-4 mr-3" />
-      {label}
-    </Button>
-  );
-}
-
-function StatusPillGroup({ value, onChange }: { value: string, onChange: (v: string) => void }) {
-  return (
-    <div className="flex gap-2 justify-end bg-black/10 p-1.5 rounded-2xl border border-white/5 w-fit ml-auto shadow-inner">
+    <div className="inline-flex gap-1.5 p-1 bg-muted/60 rounded-2xl border border-border/80">
       {ATTENDANCE_STATUS_OPTIONS.map((o) => {
         const isActive = value === o.value;
+
+        const activeStyles =
+          o.value === "present"
+            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/30"
+            : o.value === "absent"
+              ? "bg-rose-500 text-white shadow-md shadow-rose-500/30"
+              : o.value === "late"
+                ? "bg-amber-500 text-white shadow-md shadow-amber-500/30"
+                : o.value === "leave"
+                  ? "bg-blue-500 text-white shadow-md shadow-blue-500/30"
+                  : "bg-purple-600 text-white shadow-md shadow-purple-600/30";
+
         return (
           <Button
             key={o.value}
+            type="button"
             variant="ghost"
             onClick={() => onChange(o.value)}
             className={cn(
-              "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 h-auto",
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all h-auto",
               isActive
-                ? o.value === "present" ? "bg-green-500 text-white shadow-[0_8px_20px_rgba(34,197,94,0.4)] scale-105 hover:bg-green-600 hover:text-white" :
-                  o.value === "absent" ? "bg-red-500 text-white shadow-[0_8px_20px_rgba(239,68,68,0.4)] scale-105 hover:bg-red-600 hover:text-white" :
-                    o.value === "late" ? "bg-amber-500 text-white shadow-[0_8px_20px_rgba(245,158,11,0.4)] scale-105 hover:bg-amber-600 hover:text-white" :
-                      "bg-blue-500 text-white shadow-[0_8px_20px_rgba(59,130,246,0.4)] scale-105 hover:bg-blue-600 hover:text-white"
-                : "text-muted-foreground/30 hover:text-muted-foreground/60 hover:bg-white/5"
+                ? activeStyles
+                : "text-muted-foreground hover:text-foreground hover:bg-background/80"
             )}
           >
             {o.label}
           </Button>
         );
       })}
-    </div>
-  );
-}
-
-function LoadingIndicator({ label }: { label: string }) {
-  return (
-    <div className="flex items-center justify-center p-8 gap-3">
-      <Loader2 className="size-6 animate-spin text-amber-500" />
-      <span className="text-sm font-black uppercase tracking-widest text-muted-foreground">Loading {label}...</span>
-    </div>
-  );
-}
-
-function ListLoadingView() {
-  return (
-    <div className="flex flex-col items-center justify-center py-40 gap-8 bg-background/50 backdrop-blur-xl">
-      <div className="relative">
-        <div className="size-24 border-[8px] border-amber-500/10 border-t-amber-500 rounded-full animate-spin" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <UserCheck className="size-10 text-amber-500/20" />
-        </div>
-      </div>
-      <p className="text-sm font-black text-muted-foreground/40 uppercase tracking-[0.4em] animate-pulse">Initializing Roster Data</p>
-    </div>
-  );
-}
-
-function ListEmptyView({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description: string }) {
-  return (
-    <div className="py-40 flex flex-col items-center justify-center text-center gap-8 px-16 bg-background/50 backdrop-blur-xl">
-      <div className="size-32 bg-muted/20 rounded-[45px] flex items-center justify-center text-muted-foreground/10 border border-white/5 shadow-inner transition-transform duration-700 hover:rotate-12">
-        <Icon className="size-16" />
-      </div>
-      <div className="space-y-3 max-w-md">
-        <h4 className="text-3xl font-black tracking-tight text-muted-foreground/60 leading-none">{title}</h4>
-        <p className="text-base text-muted-foreground/30 font-bold leading-relaxed">{description}</p>
-      </div>
     </div>
   );
 }
