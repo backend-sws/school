@@ -71,22 +71,25 @@ class StudentProfile extends Model
         'government_portal_name',
     ];
 
-    protected $casts = [
-        'dob' => 'date',
-        'current_semester' => 'integer',
-        'verified' => 'boolean',
-        'verified_at' => 'datetime',
-        'admission_date' => 'date',
-        'enrollment_status' => 'string',
-        'is_differently_abled' => 'boolean',
-        'minority_status' => 'boolean',
-        'free_textbook' => 'boolean',
-        'midday_meal_beneficiary' => 'boolean',
-        'has_tc' => 'boolean',
-        'has_government_portal' => 'boolean',
-        'previous_marks' => 'decimal:2',
-        'guardian_snapshot' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'dob' => 'date:Y-m-d',
+            'current_semester' => 'integer',
+            'verified' => 'boolean',
+            'verified_at' => 'datetime',
+            'admission_date' => 'date:Y-m-d',
+            'enrollment_status' => 'string',
+            'is_differently_abled' => 'boolean',
+            'minority_status' => 'boolean',
+            'free_textbook' => 'boolean',
+            'midday_meal_beneficiary' => 'boolean',
+            'has_tc' => 'boolean',
+            'has_government_portal' => 'boolean',
+            'previous_marks' => 'decimal:2',
+            'guardian_snapshot' => 'array',
+        ];
+    }
 
     protected static function booted()
     {

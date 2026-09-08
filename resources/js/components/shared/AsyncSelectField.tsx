@@ -51,7 +51,7 @@ function toOptions(
     const sp = item.student_profile || item.studentProfile;
     if (sp) {
       const classInfo = sp.stream?.name || "";
-      const regNo = sp.reg_no ? `Reg: ${sp.reg_no}` : "";
+      const regNo = (sp.reg_no || item.reg_no) ? `Reg: ${sp.reg_no || item.reg_no}` : "";
       const extra = [classInfo, regNo].filter(Boolean).join(" | ");
       if (extra) {
         label = `${label} (${extra})`;

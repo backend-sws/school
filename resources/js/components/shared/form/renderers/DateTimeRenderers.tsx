@@ -19,6 +19,38 @@ function parseLocalDate(val?: string | Date | null): Date | undefined {
   return isNaN(d.getTime()) ? undefined : d;
 }
 
+function parseLocalTime(val?: string | null): Date | undefined {
+  if (!val) return undefined;
+  const str = String(val).trim();
+  if (!str) return undefined;
+  const parts = str.split(":");
+  if (parts.length >= 2) {
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+    const seconds = parts[2] ? parseInt(parts[2], 10) : 0;
+    if (!isNaN(hours) && !isNaN(minutes) && !isNaN(seconds)) {
+      const d = new Date();
+      d.setHours(hours, minutes, seconds, 0);
+      return d;
+    }
+  }
+  return undefined;
+}
+
+function parseLocalDateTime(val?: string | Date | null): Date | undefined {
+  if (!val) return undefined;
+  if (val instanceof Date) return isNaN(val.getTime()) ? undefined : val;
+  const str = String(val).trim();
+  if (!str) return undefined;
+  const match = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (match) {
+    const [, y, m, d, h, min, s] = match.map(Number);
+    return new Date(y, m - 1, d, h, min, s || 0);
+  }
+  const parsed = new Date(str);
+  return isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
 export const DateTimeRenderers = (props: BaseFieldProps) => {
   const {
     type,
@@ -53,7 +85,7 @@ export const DateTimeRenderers = (props: BaseFieldProps) => {
         <div className="w-full">
           <SmartDateTimePicker
             mode="time"
-            value={value ? new Date(`1970-01-01T${value}`) : undefined}
+            value={parseLocalTime(value as string)}
             onChange={(date) => onChange(date ? format(date, "HH:mm:ss") : "")}
             onBlur={onBlur}
             disabled={disabled}
@@ -69,8 +101,8 @@ export const DateTimeRenderers = (props: BaseFieldProps) => {
         <div className="w-full">
           <SmartDateTimePicker
             mode="datetime"
-            value={value ? new Date(value as string) : undefined}
-            onChange={(date) => onChange(date ? date.toISOString() : "")}
+            value={parseLocalDateTime(value as string)}
+            onChange={(date) => onChange(date ? format(date, "yyyy-MM-dd HH:mm:ss") : "")}
             onBlur={onBlur}
             disabled={disabled}
             placeholder={placeholder || "Select date & time"}

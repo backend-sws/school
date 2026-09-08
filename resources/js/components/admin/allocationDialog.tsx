@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { ModalDialog } from "@/components/shared/Modal";
@@ -10,6 +10,7 @@ import ControlledFormComponent from "@/components/shared/ControlledFormComponent
 import { FORM_TYPE } from "@/constants/shared/form";
 import UserApi from "@/lib/api/userApi";
 import { UserQueryKeys } from "@/lib/querykey/user";
+import type { AsyncSelectConfig } from "@/types";
 
 export type AllocationDialogData = HostelAllocation | null;
 
@@ -45,12 +46,16 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
   const selectedRoomId = watch("hostel_room_id");
   const selectedMessPlanId = watch("hostel_mess_plan_id");
 
-  // Fetch Users
-  const { data: usersResponse, isLoading: isLoadingUsers } = useQuery({
+  // User Search Async Config
+  const userAsyncConfig: AsyncSelectConfig = useMemo(() => ({
+    queryFn: (params) => UserApi.getUser(params),
     queryKey: UserQueryKeys.all,
-    queryFn: () => UserApi.getUser({ per_page: 200 }),
-    enabled: open && !isEditing,
-  });
+    labelKey: "name",
+    valueKey: "id",
+    searchKey: "search",
+    perPage: 50,
+    multiple: false,
+  }), []);
 
   // Fetch Hostels
   const { data: hostelsResponse, isLoading: isLoadingHostels } = useQuery({
@@ -90,21 +95,6 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
     queryKey: ["hostel-mess-plans-active"],
     queryFn: () => hostelApi.messPlans.index({ is_active: true, per_page: 100 }),
     enabled: open,
-  });
-
-  const users = Array.isArray(usersResponse) ? usersResponse : (usersResponse?.data || []);
-  const userOptions = users.map((u: any) => {
-    const sp = u.student_profile;
-    const classInfo = sp?.stream?.name ? sp.stream.name : "";
-    const regNo = sp?.reg_no ? `Reg: ${sp.reg_no}` : "";
-    const extra = [classInfo, regNo].filter(Boolean).join(" | ");
-    const textLabel = extra ? `${u.name} (${extra})` : u.name;
-    return {
-      key: String(u.id),
-      value: String(u.id),
-      text: textLabel,
-      label: textLabel
-    };
   });
 
   const hostelOptions = (hostelsResponse?.data || []).map((h: any) => ({
@@ -296,13 +286,11 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
             <ControlledFormComponent
               control={control}
               name="user_id"
-              type={FORM_TYPE.SELECT}
+              type={FORM_TYPE.ASYNC_SELECT}
               label="Resident (User)"
               required
-              options={userOptions}
-              placeholder={isLoadingUsers ? "Loading users..." : "Select user"}
-              disabled={isLoadingUsers}
-              searchable
+              asyncConfig={userAsyncConfig}
+              placeholder="Search by name, reg no, or email..."
             />
 
             <div className="grid grid-cols-2 gap-4">

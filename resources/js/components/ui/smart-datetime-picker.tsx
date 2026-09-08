@@ -106,11 +106,34 @@ export function SmartDateTimePicker({
         } else if (mode === "year") {
             val = val.replace(/\D/g, "")
             if (val.length > 4) val = val.slice(0, 4)
+        } else if (mode === "time") {
+            val = val.replace(/\D/g, "")
+            const maxDigits = showSeconds ? 6 : 4
+            if (val.length > maxDigits) val = val.slice(0, maxDigits)
+
+            let formatted = ""
+            if (val.length > 0) formatted += val.slice(0, 2)
+            if (val.length > 2) formatted += ":" + val.slice(2, 4)
+            if (showSeconds && val.length > 4) formatted += ":" + val.slice(4, 6)
+            val = formatted
+        } else if (mode === "datetime") {
+            val = val.replace(/\D/g, "")
+            const maxDigits = showSeconds ? 14 : 12
+            if (val.length > maxDigits) val = val.slice(0, maxDigits)
+
+            let formatted = ""
+            if (val.length > 0) formatted += val.slice(0, 2)
+            if (val.length > 2) formatted += "/" + val.slice(2, 4)
+            if (val.length > 4) formatted += "/" + val.slice(4, 8)
+            if (val.length > 8) formatted += " " + val.slice(8, 10)
+            if (val.length > 10) formatted += ":" + val.slice(10, 12)
+            if (showSeconds && val.length > 12) formatted += ":" + val.slice(12, 14)
+            val = formatted
         }
 
         setInputValue(val)
 
-        // Try to parse the date if length is complete
+        // Try to parse the date/time if length is complete
         if (mode === "date" && val.length === 10) {
             const parsed = parse(val, "dd/MM/yyyy", new Date())
             if (isValid(parsed)) {
@@ -123,6 +146,18 @@ export function SmartDateTimePicker({
             }
         } else if (mode === "year" && val.length === 4) {
             const parsed = parse(val, "yyyy", new Date())
+            if (isValid(parsed)) {
+                onChange(parsed)
+            }
+        } else if (mode === "time" && val.length === (showSeconds ? 8 : 5)) {
+            const timeFormat = showSeconds ? "HH:mm:ss" : "HH:mm"
+            const parsed = parse(val, timeFormat, new Date())
+            if (isValid(parsed)) {
+                onChange(parsed)
+            }
+        } else if (mode === "datetime" && val.length === (showSeconds ? 19 : 16)) {
+            const dtFormat = showSeconds ? "dd/MM/yyyy HH:mm:ss" : "dd/MM/yyyy HH:mm"
+            const parsed = parse(val, dtFormat, new Date())
             if (isValid(parsed)) {
                 onChange(parsed)
             }
