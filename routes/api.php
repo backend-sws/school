@@ -461,6 +461,15 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('sales/{inventory_sale}', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'show'])->whereNumber('inventory_sale');
                 Route::get('sales/{inventory_sale}/receipt', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'receipt'])->whereNumber('inventory_sale')->name('inventory.sales.receipt');
                 Route::post('sales/{inventory_sale}/confirm', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'confirm'])->whereNumber('inventory_sale');
+                // ─── Purchases (Internal — market se kharidna) ──────────
+                Route::get('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'index']);
+                Route::post('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'store']);
+                Route::get('purchases/{inventory_purchase}', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'show'])->whereNumber('inventory_purchase');
+                // ─── Issues / Dispatch (Staff ko nikalna) ───────────────
+                Route::get('issues', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'index']);
+                Route::post('issues', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'store']);
+                Route::get('issues/{inventory_issue}', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'show'])->whereNumber('inventory_issue');
+                Route::post('issues/{inventory_issue}/return', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'recordReturn'])->whereNumber('inventory_issue');
             });
 
             // ─── Transport ─────────────────────────────────────────────

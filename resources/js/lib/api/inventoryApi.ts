@@ -70,6 +70,22 @@ const inventoryApi = {
     confirm: (id: string | number, data?: Record<string, unknown>) =>
       api.post(`${BASE}/sales/${id}/confirm`, data ?? {}),
   },
+  purchases: {
+    index: (params?: Record<string, unknown>) =>
+      api.get(`${BASE}/purchases`, { params }),
+    show: (id: string | number) => api.get(`${BASE}/purchases/${id}`),
+    store: (data: Record<string, unknown>) =>
+      api.post(`${BASE}/purchases`, data),
+  },
+  issues: {
+    index: (params?: Record<string, unknown>) =>
+      api.get(`${BASE}/issues`, { params }),
+    show: (id: string | number) => api.get(`${BASE}/issues/${id}`),
+    store: (data: Record<string, unknown>) =>
+      api.post(`${BASE}/issues`, data),
+    recordReturn: (id: string | number, data: { returned_quantity: number; remarks?: string }) =>
+      api.post(`${BASE}/issues/${id}/return`, data),
+  },
 };
 
 export default inventoryApi;

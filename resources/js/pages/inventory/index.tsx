@@ -3,7 +3,7 @@ import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { PageContainer } from "@/components/shared/page/PageContainer";
 import { Card, CardContent } from "@/components/ui/card";
 import { TooltipWrapper } from "@/components/shared/TooltipWrapper";
-import { Package, FolderTree, Boxes, ArrowLeftRight, AlertTriangle } from "lucide-react";
+import { Package, FolderTree, Boxes, ArrowLeftRight, AlertTriangle, ShoppingCart, LogOut } from "lucide-react";
 import { INVENTORY_BREADCRUMBS, INVENTORY_GUIDELINES, INVENTORY_TIP } from "@/constants/page/admin/inventory";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { INVENTORY_OVERVIEW_GUIDE } from "@/constants/guides/inventory";
@@ -15,6 +15,8 @@ const links = [
   { title: "ITEMS", href: "/inventory/items", icon: Boxes, description: "Manage inventory items and stock levels" },
   { title: "MOVEMENTS", href: "/inventory/movements", icon: ArrowLeftRight, description: "View and record issue, receive, adjust" },
   { title: "LOW STOCK", href: "/inventory/reports/low-stock", icon: AlertTriangle, description: "Items at or below minimum stock" },
+  { title: "PURCHASES", href: "/inventory/purchases", icon: ShoppingCart, description: "Record market purchases — staff ne kya kharida" },
+  { title: "ISSUES / DISPATCH", href: "/inventory/issues", icon: LogOut, description: "Record item dispatch to staff — kisko kya nikala" },
 ];
 
 const InventoryIndex = () => {

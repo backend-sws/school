@@ -5,6 +5,8 @@ import items from './items'
 import movements from './movements'
 import reports from './reports'
 import sales from './sales'
+import purchases from './purchases'
+import issues from './issues'
 /**
  * @see routes/web.php:405
  * @route '/inventory'
@@ -84,6 +86,8 @@ items: Object.assign(items, items),
 movements: Object.assign(movements, movements),
 reports: Object.assign(reports, reports),
 sales: Object.assign(sales, sales),
+purchases: Object.assign(purchases, purchases),
+issues: Object.assign(issues, issues),
 }
 
 export default inventory

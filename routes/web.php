@@ -417,6 +417,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/sales/create', fn() => Inertia::render('inventory/sales/create'))->name('sales.create');
                 Route::get('/sales/{id}', fn($id) => Inertia::render('inventory/sales/show', ['id' => (int) $id]))->name('sales.show');
                 Route::get('/sales/{id}/collect-payment', fn($id) => Inertia::render('inventory/sales/collect-payment', ['id' => (int) $id]))->name('sales.collect-payment');
+                Route::get('/purchases', fn() => Inertia::render('inventory/purchases/index'))->name('purchases.index');
+                Route::get('/issues', fn() => Inertia::render('inventory/issues/index'))->name('issues.index');
             });
         });
 

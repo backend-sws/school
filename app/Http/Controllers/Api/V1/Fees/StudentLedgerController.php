@@ -264,9 +264,17 @@ class StudentLedgerController extends BaseController
 
         $sendReceipt = $institutionId && ($this->feeCollectionService->getSettings($institutionId)['receipt_send_email'] ?? true);
         if ($student && $sendReceipt && $netAmount > 0 && $payment) {
-            $recipients = $this->recipientResolver->recipientsForStudent($student);
-            foreach ($recipients as $notifiable) {
-                $notifiable->notify(new FeePaymentReceiptNotification($student, $payment));
+            try {
+                $recipients = $this->recipientResolver->recipientsForStudent($student);
+                foreach ($recipients as $notifiable) {
+                    $notifiable->notify((new FeePaymentReceiptNotification($student, $payment))->afterCommit());
+                }
+            } catch (\Throwable $e) {
+                \Log::warning('collectPayment: receipt notification failed', [
+                    'payment_id' => $payment->id ?? null,
+                    'student_id' => $student->id ?? null,
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
 
@@ -299,8 +307,16 @@ class StudentLedgerController extends BaseController
             ? ['mail']
             : [\NotificationChannels\WebPush\WebPushChannel::class];
 
-        foreach ($recipients as $notifiable) {
-            $notifiable->notify(new FeePaymentReceiptNotification($student, $payment));
+        try {
+            foreach ($recipients as $notifiable) {
+                $notifiable->notify((new FeePaymentReceiptNotification($student, $payment))->afterCommit());
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('resendReceipt: notification failed', [
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage(),
+            ]);
+            return $this->error('Failed to send receipt: ' . $e->getMessage(), 500);
         }
 
         return $this->success(null, 'Receipt sent ' . ($validated['via'] === 'email' ? 'via email' : 'via push notification') . '.');

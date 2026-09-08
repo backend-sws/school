@@ -16,7 +16,7 @@ import {
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
 import { Head, Link } from "@inertiajs/react";
-import { Boxes, Eye, Pencil, Plus, Trash2, Package, Layers, AlertTriangle, XCircle, IndianRupee } from "lucide-react";
+import { Boxes, Eye, Pencil, Plus, Trash2, Package, Layers, AlertTriangle, XCircle, IndianRupee, ShoppingBag, Send, ArrowLeftRight, ShoppingCart } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FORM_TYPE } from "@/constants";
 import useSearchFilter from "@/hooks/useSearchfilter";
@@ -24,6 +24,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import inventoryApi from "@/lib/api/inventoryApi";
 import { InventoryItemDialog } from "@/components/admin/inventoryItemDialog";
+import { InventoryPurchaseDialog } from "@/components/admin/inventoryPurchaseDialog";
+import { InventoryIssueDialog } from "@/components/admin/inventoryIssueDialog";
 import { PermissionGate } from "@/components/PermissionGate";
 import {
   INVENTORY_ITEMS_BREADCRUMBS,
@@ -76,6 +78,8 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
   const { filter, handleFilter } = useSearchFilter(INITIAL_FILTERS);
   const itemDisclosure = useDisclosure<ItemRow | null>();
   const deleteDisclosure = useDisclosure<{ id: number; name: string }>();
+  const purchaseDisclosure = useDisclosure();
+  const issueDisclosure = useDisclosure();
 
   const { data, isLoading } = useQuery({
     queryKey: ["inventory-items", filter],
@@ -183,6 +187,20 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
         onClose={() => itemDisclosure.onClose()}
         data={itemDisclosure.data ?? undefined}
       />
+      <InventoryPurchaseDialog
+        open={purchaseDisclosure.isOpen}
+        onClose={purchaseDisclosure.onClose}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+        }}
+      />
+      <InventoryIssueDialog
+        open={issueDisclosure.isOpen}
+        onClose={issueDisclosure.onClose}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+        }}
+      />
       <ConfirmDialog
         open={deleteDisclosure.isOpen}
         onOpenChange={deleteDisclosure.onClose}
@@ -204,6 +222,48 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
             icon={Boxes}
             guidance={INVENTORY_ITEMS_GUIDE}
           />
+          {/* ── Sub-Navigation Tabs ── */}
+          <div className="flex flex-wrap items-center gap-2 border-b pb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground shadow-sm">
+              <Boxes className="size-3.5" />
+              <span>Items Catalog</span>
+            </span>
+            <Link
+              href="/inventory/purchases"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border"
+            >
+              <ShoppingBag className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Purchases (खरीद)</span>
+            </Link>
+            <Link
+              href="/inventory/issues"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border"
+            >
+              <Send className="size-3.5 text-blue-600 dark:text-blue-400" />
+              <span>Issues / Dispatch (निकासी)</span>
+            </Link>
+            <Link
+              href="/inventory/movements"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border"
+            >
+              <ArrowLeftRight className="size-3.5" />
+              <span>Stock Movements</span>
+            </Link>
+            <Link
+              href="/inventory/sales"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border"
+            >
+              <ShoppingCart className="size-3.5" />
+              <span>Sales</span>
+            </Link>
+            <Link
+              href="/inventory/reports/low-stock"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border"
+            >
+              <AlertTriangle className="size-3.5 text-amber-500" />
+              <span>Low Stock</span>
+            </Link>
+          </div>
           {/* ── Analytics Stats Section (Clickable to Filter) ── */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {/* 1. Total Items */}
@@ -410,7 +470,28 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
             </Card>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Quick Actions:</span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1.5 border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                onClick={() => purchaseDisclosure.onOpen()}
+              >
+                <ShoppingBag className="size-3.5 text-emerald-600" />
+                <span>Record Purchase</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1.5 border-blue-500/30 hover:bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                onClick={() => issueDisclosure.onOpen()}
+              >
+                <Send className="size-3.5 text-blue-600" />
+                <span>Issue / Dispatch Item</span>
+              </Button>
+            </div>
             <PermissionGate can="create_inventory_items">
               <Button
                 id="new-item-btn"

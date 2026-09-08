@@ -51,6 +51,8 @@ import {
     Paintbrush,
     Banknote,
     Plus,
+    ShoppingBag,
+    Send,
 } from "lucide-react";
 import type { SidebarConfig, SidebarNavGroup, SidebarNavItem } from "@/types/navigation";
 
@@ -181,6 +183,8 @@ export const unifiedSidebarConfig: SidebarConfig = {
                 { title: "Categories", href: "/inventory/categories", icon: FolderTree, permission: "view_inventory_categories", feature: "inventory" },
                 { title: "Locations", href: "/inventory/locations", icon: MapPin, permission: "view_inventory_locations", feature: "inventory" },
                 { title: "Items", href: "/inventory/items", icon: Boxes, permission: "view_inventory_items", feature: "inventory" },
+                { title: "Purchases", href: "/inventory/purchases", icon: ShoppingBag, permission: "view_inventory_items", feature: "inventory" },
+                { title: "Issues / Dispatch", href: "/inventory/issues", icon: Send, permission: "view_inventory_items", feature: "inventory" },
                 { title: "Movements", href: "/inventory/movements", icon: ArrowLeftRight, permission: "view_inventory_movements", feature: "inventory" },
                 { title: "Sales", href: "/inventory/sales", icon: ShoppingCart, permission: "view_inventory_sales", feature: "inventory" },
                 { title: "Low Stock", href: "/inventory/reports/low-stock", icon: AlertTriangle, permission: "view_inventory_reports", feature: "inventory" },
