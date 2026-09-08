@@ -132,6 +132,7 @@ export const unifiedSidebarConfig: SidebarConfig = {
                 { title: "Schedules", href: "/examination/schedules", icon: Calendar, permission: "manage_exam_schedules", feature: "academics" },
                 { title: "Results", href: "/examination/results", icon: Award, permission: "publish_results", feature: "academics" },
                 { title: "Grading Scales", href: "/examination/grading-scales", icon: Layers, permission: "manage_grading_scales", feature: "academics" },
+                { title: "Admit Cards", href: "/examination/admit-cards", icon: IdCard, permission: "manage_exam_schedules", feature: "academics" },
             ],
         },
 

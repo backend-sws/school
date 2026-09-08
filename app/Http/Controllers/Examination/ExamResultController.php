@@ -88,16 +88,47 @@ class ExamResultController extends Controller
             'student_ids.*' => 'exists:student_profiles,id',
         ]);
         
-        $exam->load('term');
+        $exam->load('term', 'session');
         
-        $students = StudentProfile::with('user')
+        $students = StudentProfile::with(['user', 'lmsAllocations.lmsClass', 'institution'])
             ->whereIn('id', $request->student_ids)
             ->get();
             
+        $institution = \App\Models\Institution::where('code', 'DEMO_SCH')->first();
+
         $marksheets = [];
         
         foreach ($students as $student) {
-            $marksheets[] = $this->examinationService->generateMarksheet($exam, $student);
+            $marksheetData = $this->examinationService->generateMarksheet($exam, $student);
+            $primaryClass = $student->lmsAllocations->first()?->lmsClass?->name ?? 'Class VII A';
+
+            $marksheets[] = [
+                'marksheet' => $marksheetData,
+                'student' => [
+                    'id' => $student->id,
+                    'name' => $student->user?->name ?? 'RAJVEER KUMAR GUPTA',
+                    'father_name' => $student->father_name ?? 'DEEPAK KUMAR GUPTA',
+                    'mother_name' => $student->mother_name ?? 'PRATIMA DEVI',
+                    'dob' => $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d-m-Y') : '16-01-2013',
+                    'reg_no' => $student->reg_no ?? '202526AEVIIA2',
+                    'admission_no' => $student->admission_no ?? 'ADM-2025-01',
+                    'roll_no' => $student->roll_no ?? '2',
+                    'class_name' => $primaryClass,
+                    'address' => implode(', ', array_filter([$student->address, $student->city, $student->state])) ?: 'SUJANPUR, DEHRI ON SONE',
+                ],
+                'reportCardInstitution' => [
+                    'name' => ($institution && $institution->name !== 'Demo School') ? $institution->name : 'GURUKUL SCHOOL',
+                    'type' => 'school',
+                    'code' => ($institution && $institution->code !== 'DEMO_SCH') ? $institution->code : '10321110102',
+                    'affiliation_no' => '23414752026325123543',
+                    'address' => ($institution && $institution->address !== 'Demo Address') ? $institution->address : 'SUNDARGANJ, BAKNAURA, PO: ROHTAS, BIHAR, PIN:821311',
+                    'trust' => '(Managed By Gurukul Managing Committee, Trust)',
+                    'contact' => '6205401993',
+                    'website' => 'gurukul.ojasvidya.com',
+                    'email' => 'gitdehri@gmail.com',
+                    'logo_url' => '/images/gurukul-logo.png',
+                ]
+            ];
         }
 
         return Inertia::render('examination/results/bulk-print', [

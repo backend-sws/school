@@ -1,29 +1,19 @@
 import { Head } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { GurukulReportCard } from "@/components/examination/GurukulReportCard";
+import { useEffect } from "react";
+import { GurukulAdmitCard, AdmitCardScheduleItem } from "@/components/examination/GurukulAdmitCard";
 
-interface BulkPrintProps {
+interface AdmitCardPrintProps {
   exam: any;
-  marksheets: {
-    marksheet: any;
+  lmsClass: any;
+  admitCards: {
     student: any;
+    schedules: AdmitCardScheduleItem[];
     institution?: any;
-    reportCardInstitution?: any;
   }[];
 }
 
-export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
-  const [reportType, setReportType] = useState<"half_yearly" | "final">("final");
-
+export default function AdmitCardsPrint({ exam, lmsClass, admitCards }: AdmitCardPrintProps) {
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const rType = urlParams.get("report_type") || urlParams.get("type");
-      if (rType === "half_yearly" || rType === "half") {
-        setReportType("half_yearly");
-      }
-    }
-
     const timer = setTimeout(() => {
       window.print();
     }, 600);
@@ -32,8 +22,8 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
 
   return (
     <>
-      <Head title={`Bulk Print (${reportType === "half_yearly" ? "Half Yearly" : "Annual"}): ${exam.name}`} />
-      
+      <Head title={`Admit Cards - ${lmsClass?.name} (${exam?.name})`} />
+
       <style dangerouslySetInnerHTML={{__html: `
         @page {
           size: A4 portrait;
@@ -50,7 +40,7 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
           .page-break:last-child { page-break-after: auto; break-after: auto; }
           #theme-root > div:last-child { display: none !important; }
           .printable-marksheet {
-            border: 1px solid #000 !important;
+            border: 2px solid #000 !important;
             box-shadow: none !important;
             width: 100% !important;
             max-width: 100% !important;
@@ -61,14 +51,13 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
       `}} />
 
       <div className="bg-white min-h-screen text-black print:bg-transparent p-4">
-        {marksheets.map((item, index) => (
-          <div key={item.student?.id || index} className="page-break max-w-5xl mx-auto mb-10 print:mb-0">
-            <GurukulReportCard
-              reportType={reportType}
-              institution={item.reportCardInstitution || item.institution}
+        {admitCards.map((item, index) => (
+          <div key={item.student?.id || index} className="page-break max-w-4xl mx-auto mb-10 print:mb-0">
+            <GurukulAdmitCard
+              institution={item.institution}
               student={item.student}
               exam={exam}
-              marksheet={item.marksheet}
+              schedules={item.schedules}
             />
           </div>
         ))}
@@ -77,4 +66,4 @@ export default function BulkPrint({ exam, marksheets }: BulkPrintProps) {
   );
 }
 
-BulkPrint.layout = (page: React.ReactNode) => <>{page}</>;
+AdmitCardsPrint.layout = (page: React.ReactNode) => <>{page}</>;

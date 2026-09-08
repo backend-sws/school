@@ -6,6 +6,7 @@ import marksEntry from './marks-entry'
 import marksheet from './marksheet'
 import results from './results'
 import marksheets from './marksheets'
+import admitCards from './admit-cards'
 /**
  * @see routes/web.php:511
  * @route '/examination'
@@ -86,6 +87,7 @@ marksEntry: Object.assign(marksEntry, marksEntry),
 marksheet: Object.assign(marksheet, marksheet),
 results: Object.assign(results, results),
 marksheets: Object.assign(marksheets, marksheets),
+admitCards: Object.assign(admitCards, admitCards),
 }
 
 export default examination

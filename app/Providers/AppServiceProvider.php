@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
             'admission_application' => \App\Models\AdmissionApplication::class,
         ]);
 
-        if (config('app.env') === 'production') {
+        if (config('app.env') === 'production' && str_starts_with((string) config('app.url'), 'https://')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
