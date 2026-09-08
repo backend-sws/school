@@ -40,6 +40,7 @@ export const studentEditSchema = z.object({
   stream_id: z.coerce.number().min(1, "Please select stream"),
   session_id: z.coerce.number().min(1, "Please select session"),
   roll_no: z.string().max(50).optional().nullable(),
+  admission_date: z.string().optional().nullable(),
   dob: z.string().optional().nullable(),
   gender: z.string().min(1, "Gender is required"),
   blood_group: z.string().optional().nullable(),

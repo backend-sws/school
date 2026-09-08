@@ -99,6 +99,7 @@ export function StudentEditDialog({
 
       // Student profile fields (flattened)
       roll_no: profile?.roll_no,
+      admission_date: profile?.admission_date ? String(profile.admission_date).split("T")[0] : "",
       current_semester: profile?.current_semester,
       dob: profile?.dob,
       gender: profile?.gender,

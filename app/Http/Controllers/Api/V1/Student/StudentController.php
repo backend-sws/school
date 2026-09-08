@@ -279,6 +279,7 @@ class StudentController extends BaseController
             'student_profile.father_name' => 'nullable|string|max:255',
             'student_profile.mother_name' => 'nullable|string|max:255',
             'student_profile.dob' => 'nullable|date',
+            'student_profile.admission_date' => 'nullable|date',
             'student_profile.gender' => 'nullable|string|in:Male,Female,Other',
             'student_profile.aadhar_no' => 'nullable|digits:12',
             'student_profile.nationality' => 'nullable|string',
@@ -673,8 +674,8 @@ class StudentController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             // User Fields
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:users,email,' . $id,
             'mobile' => 'nullable|string|max:20|unique:users,mobile,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
             'photo_url' => 'nullable|string|max:1000',
@@ -685,6 +686,7 @@ class StudentController extends BaseController
             'student_profile.father_name' => 'nullable|string|max:255',
             'student_profile.mother_name' => 'nullable|string|max:255',
             'student_profile.dob' => 'nullable|date',
+            'student_profile.admission_date' => 'nullable|date',
             'student_profile.gender' => 'nullable|string|in:Male,Female,Other',
             'student_profile.aadhar_no' => 'nullable|digits:12',
             'student_profile.nationality' => 'nullable|string',

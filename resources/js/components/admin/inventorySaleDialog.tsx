@@ -123,7 +123,7 @@ export function InventorySaleDialog({
     handleSubmit,
     formState: { errors },
   } = useForm<InventorySaleFormInputValues>({
-    resolver: zodResolver(InventorySaleFormSchema),
+    resolver: zodResolver(InventorySaleFormSchema) as any,
     defaultValues: INVENTORY_SALE_FORM_INITIAL as InventorySaleFormInputValues,
     mode: "onChange",
   });
@@ -495,7 +495,7 @@ export function InventorySaleDialog({
                       type="number"
                       min={0.001}
                       step="any"
-                      value={field.value ?? 1}
+                      value={(field.value as number | string | undefined) ?? 1}
                       onChange={(e) => field.onChange(e.target.value)}
                       placeholder="1"
                       className="h-9 bg-background"
@@ -516,7 +516,7 @@ export function InventorySaleDialog({
                       type="number"
                       min={0}
                       step="any"
-                      value={field.value ?? ""}
+                      value={(field.value as number | string | undefined) ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       placeholder="0.00"
                       className="h-9 bg-background"

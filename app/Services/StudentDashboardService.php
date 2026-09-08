@@ -423,9 +423,9 @@ class StudentDashboardService
 
             // 1. User Update
             $user->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'mobile' => $data['mobile'],
+                'name' => $data['name'] ?? $user->name,
+                'email' => $data['email'] ?? $user->email,
+                'mobile' => $data['mobile'] ?? $user->mobile,
                 'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
                 'photo_url' => $photoUrl ?? $user->photo_url,
                 'reg_no' => $data['reg_no'] ?? $user->reg_no,
@@ -438,6 +438,13 @@ class StudentDashboardService
                 $profileFields = collect($profileData)
                     ->except(['permanent_address', 'correspondence_address'])
                     ->toArray();
+
+                if (array_key_exists('admission_date', $profileFields) && empty($profileFields['admission_date'])) {
+                    $profileFields['admission_date'] = null;
+                }
+                if (array_key_exists('dob', $profileFields) && empty($profileFields['dob'])) {
+                    $profileFields['dob'] = null;
+                }
 
                 $user->studentProfile()->update($profileFields);
 

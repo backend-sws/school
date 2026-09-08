@@ -98,6 +98,7 @@ const StudentEdit = () => {
       stream_id: Number(profile?.stream_id ?? 0),
       session_id: Number(profile?.session_id ?? 0),
       roll_no: profile?.roll_no ?? "",
+      admission_date: profile?.admission_date ? String(profile.admission_date).split("T")[0] : "",
       dob: profile?.dob ?? "",
       gender: profile?.gender ?? "",
       blood_group: profile?.blood_group ?? "",

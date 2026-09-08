@@ -12,6 +12,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
+    PopoverAnchor,
 } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -185,69 +186,78 @@ export function SmartDateTimePicker({
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <div className={cn("w-full", className)}>
-                <Input
-                    type="text"
-                    value={inputValue}
-                    onChange={handleTypedInputChange}
-                    placeholder={placeholder || (
-                        mode === "time" ? "HH:mm" :
-                            mode === "year" ? "YYYY" :
-                                mode === "month" ? "MM/YYYY" : "DD/MM/YYYY"
-                    )}
-                    disabled={disabled}
-                    className={cn(
-                        "pr-14", // Extra padding for two icons
-                        !value && "text-muted-foreground",
-                        size === "sm" && "h-9",
-                        size === "default" && "h-10",
-                    )}
-                    onBlur={(e) => {
-                        if (!value || isNaN(value.getTime())) {
-                            setInputValue("")
-                            onChange(undefined)
-                        } else {
-                            setInputValue(format(value, getFormat(mode), { locale }))
+            <PopoverAnchor asChild>
+                <div className={cn("w-full", className)}>
+                    <Input
+                        type="text"
+                        value={inputValue}
+                        onClick={() => {
+                            if (!disabled) setIsOpen(true)
+                        }}
+                        onChange={handleTypedInputChange}
+                        placeholder={placeholder || (
+                            mode === "time" ? "HH:mm" :
+                                mode === "year" ? "YYYY" :
+                                    mode === "month" ? "MM/YYYY" : "DD/MM/YYYY"
+                        )}
+                        disabled={disabled}
+                        className={cn(
+                            "pr-14 cursor-pointer", // Extra padding for two icons
+                            !value && "text-muted-foreground",
+                            size === "sm" && "h-9",
+                            size === "default" && "h-10",
+                        )}
+                        onBlur={(e) => {
+                            if (!value || isNaN(value.getTime())) {
+                                setInputValue("")
+                                onChange(undefined)
+                            } else {
+                                setInputValue(format(value, getFormat(mode), { locale }))
+                            }
+                            if (onBlur) onBlur(e)
+                        }}
+                        rightElement={
+                            <div className="flex items-center gap-0.5 pointer-events-auto">
+                                {value && !disabled && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="p-1 h-7 w-7 hover:bg-muted rounded text-muted-foreground/60 hover:text-foreground transition-colors"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onChange(undefined)
+                                            setInputValue("")
+                                        }}
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                    </Button>
+                                )}
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="p-1.5 h-8 w-8 hover:bg-muted rounded text-muted-foreground/60 hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        disabled={disabled}
+                                    >
+                                        {mode === "time" ? (
+                                            <Clock className="h-4 w-4" />
+                                        ) : (
+                                            <CalendarIcon className="h-4 w-4" />
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                            </div>
                         }
-                        if (onBlur) onBlur(e)
-                    }}
-                    rightElement={
-                        <div className="flex items-center gap-0.5 pointer-events-auto">
-                            {value && !disabled && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="p-1 h-7 w-7 hover:bg-muted rounded text-muted-foreground/60 hover:text-foreground transition-colors"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        onChange(undefined)
-                                        setInputValue("")
-                                    }}
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                </Button>
-                            )}
-                            <PopoverTrigger asChild>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="p-1.5 h-8 w-8 hover:bg-muted rounded text-muted-foreground/60 hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    disabled={disabled}
-                                >
-                                    {mode === "time" ? (
-                                        <Clock className="h-4 w-4" />
-                                    ) : (
-                                        <CalendarIcon className="h-4 w-4" />
-                                    )}
-                                </Button>
-                            </PopoverTrigger>
-                        </div>
-                    }
-                />
-            </div>
-            <PopoverContent className="w-auto p-0 border-input shadow-none" align="start">
+                    />
+                </div>
+            </PopoverAnchor>
+            <PopoverContent
+                className="w-auto p-0 border-input shadow-none"
+                align="start"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+            >
                 <div className="flex flex-col sm:flex-row">
                     {(mode === "date" || mode === "datetime") && (
                         <div className="p-3">

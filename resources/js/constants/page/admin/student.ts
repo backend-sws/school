@@ -765,6 +765,14 @@ export const STUDENT_ADDITIONAL_FORM_LAYOUT = [
       "Unique registration or enrollment number assigned to the student at admission. Used for identity across fee, exams, and certificates. Must match the format used in your institution's system.",
   },
   {
+    name: "admission_date",
+    label: "Admission Date",
+    type: FORM_TYPE.DATE,
+    placeholder: "YYYY-MM-DD",
+    tooltip:
+      "Official date of admission for the student. Used in academic records, ID cards, and official reports.",
+  },
+  {
     name: "main_stream_id",
     label: "Main Stream",
     type: FORM_TYPE.DROPDOWN,
@@ -885,6 +893,7 @@ export const STUDENT_EDIT_PAYLOAD_PROFILE_KEYS = [
   "stream_id",
   "session_id",
   "roll_no",
+  "admission_date",
   "dob",
   "gender",
   "blood_group",
@@ -938,6 +947,10 @@ export function buildStudentEditPayload(formData: Record<string, unknown>): Reco
 
   if (typeof profile.dob === "string" && profile.dob) {
     profile.dob = profile.dob.split("T")[0];
+  }
+
+  if (typeof profile.admission_date === "string" && profile.admission_date) {
+    profile.admission_date = profile.admission_date.split("T")[0];
   }
 
   const docsObject = (formData.documents ?? {}) as Record<string, string>;

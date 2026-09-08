@@ -35,6 +35,10 @@ import { useDisclosure } from "@/hooks/useDisclosure";
 import { PermissionGate } from "@/components/PermissionGate";
 import { getStudentProfileDisplayConfig } from "@/constants/scopeTypeDisplay";
 import { TooltipWrapper } from "@/components/shared/TooltipWrapper";
+import { Input } from "@/components/ui/input";
+import { ModalDialog } from "@/components/shared/Modal";
+import { SmartDateTimePicker } from "@/components/ui/smart-datetime-picker";
+import { format } from "date-fns";
 import { cn, copyToClipboard } from "@/lib/utils";
 import { VerifiedDocumentsCard } from "@/components/student/VerifiedDocumentsCard";
 import Each from "@/components/Each";
@@ -206,6 +210,7 @@ function ConfigDrivenSection({
               const raw = resolveFieldValue(field.path, student, profile);
               const display = field.format ? field.format(raw, scopeType) : raw;
               const isEmailRow = field.key === "email" && !isVerified;
+              const isAdmissionDateRow = field.key === "admission_date";
 
               return (
                 <div key={field.key}>
@@ -216,6 +221,18 @@ function ConfigDrivenSection({
                     value={display}
                     mono={field.mono}
                   >
+                    {isAdmissionDateRow && onAction && (
+                      <TooltipWrapper content="Edit Admission Date">
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          className="h-7 w-7 text-primary hover:bg-primary/10"
+                          onClick={() => onAction("edit_admission_date")}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                      </TooltipWrapper>
+                    )}
                     {isEmailRow && onAction && (
                       <div className="flex items-center gap-1">
                         <TooltipWrapper content="Copy Verification Link">
@@ -261,6 +278,7 @@ function ConfigDrivenSection({
             const raw = resolveFieldValue(field.path, student, profile);
             const display = field.format ? field.format(raw, scopeType) : raw;
             const isEmailRow = field.key === "email" && !isVerified;
+            const isAdmissionDateRow = field.key === "admission_date";
 
             return (
               <div
@@ -273,6 +291,18 @@ function ConfigDrivenSection({
                   value={display}
                   mono={field.mono}
                 >
+                  {isAdmissionDateRow && onAction && (
+                    <TooltipWrapper content="Edit Admission Date">
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        className="h-7 w-7 text-primary hover:bg-primary/10"
+                        onClick={() => onAction("edit_admission_date")}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipWrapper>
+                  )}
                   {isEmailRow && onAction && (
                     <div className="flex items-center gap-1">
                       <TooltipWrapper content="Copy Link">
@@ -322,6 +352,19 @@ function formatAddress(addr: Record<string, unknown> | null | undefined): string
   return parts.length ? parts.join(", ") : "—";
 }
 
+function parseDateString(str?: string): Date | undefined {
+  if (!str) return undefined;
+  const parts = str.split("T")[0].split("-");
+  if (parts.length === 3) {
+    const [y, m, d] = parts.map(Number);
+    if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+      return new Date(y, m - 1, d);
+    }
+  }
+  const parsed = new Date(str);
+  return isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
 // ─── Action handler map ──────────────────────────────────────────────────────
 
 type ActionHandlers = Record<string, () => void>;
@@ -334,6 +377,8 @@ import { StudentClassProfileDrawer } from "@/components/admin/studentClassProfil
 const StudentShow = () => {
   const [servicesModalOpen, setServicesModalOpen] = useState(false);
   const [profile360Open, setProfile360Open] = useState(false);
+  const [admissionDateModalOpen, setAdmissionDateModalOpen] = useState(false);
+  const [admissionDateValue, setAdmissionDateValue] = useState("");
 
   const { props } = usePage();
   const id = (props as unknown as { id: string | number }).id;
@@ -410,6 +455,36 @@ const StudentShow = () => {
   const corrAddr = profile?.correspondence_address ?? profile?.correspondenceAddress;
   const isVerified = student?.effective_email_verified ?? student?.email_verified;
 
+  const updateAdmissionDateMutation = useMutation({
+    mutationFn: (newDate: string) =>
+      StudentApi.updateCandidate(id, {
+        name: student?.name,
+        email: student?.email,
+        mobile: student?.mobile,
+        student_profile: {
+          admission_date: newDate || null,
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["student-show", id] });
+      queryClient.invalidateQueries({ queryKey: StudentQueryKeys.all });
+      toast.success("Admission date updated successfully.");
+      setAdmissionDateModalOpen(false);
+    },
+    onError: (err: { response?: { data?: { message?: string } } }) => {
+      toast.error(
+        err?.response?.data?.message ?? "Failed to update admission date."
+      );
+    },
+  });
+
+  const handleOpenAdmissionDateModal = () => {
+    const rawDate = profile?.admission_date;
+    const formatted = rawDate ? String(rawDate).split("T")[0] : "";
+    setAdmissionDateValue(formatted);
+    setAdmissionDateModalOpen(true);
+  };
+
   // ─── Polymorphic configs ─────────────────────────────────────────────────
   const sections = getStudentShowSections(displayConfig);
   const heroPills = getHeroInfoPills(displayConfig);
@@ -418,6 +493,7 @@ const StudentShow = () => {
   const actionHandlers: ActionHandlers = {
     edit: () => {}, // handled via Link
     fee_ledger: () => {}, // handled via Link
+    edit_admission_date: handleOpenAdmissionDateModal,
     resend_verification: () => student && resendVerificationMutation.mutate(student.id),
     copy_link: () => student && copyLinkMutation.mutate(student.id),
     toggle_status: () =>
@@ -744,6 +820,36 @@ const StudentShow = () => {
             userId={student?.id}
             studentName={student?.name}
           />
+          <ModalDialog
+            open={admissionDateModalOpen}
+            onClose={setAdmissionDateModalOpen}
+            title="Edit Admission Date"
+            description={`Update admission date for ${student?.name ?? "student"}.`}
+            submitLabel="Save Changes"
+            isLoading={updateAdmissionDateMutation.isPending}
+            onPrimaryClick={() => updateAdmissionDateMutation.mutate(admissionDateValue)}
+            className="sm:max-w-md"
+          >
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-foreground uppercase tracking-wider block">
+                  Admission Date
+                </label>
+                <SmartDateTimePicker
+                  mode="date"
+                  value={parseDateString(admissionDateValue)}
+                  onChange={(date) => {
+                    setAdmissionDateValue(date ? format(date, "yyyy-MM-dd") : "");
+                  }}
+                  placeholder="Select admission date"
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Official date on which the student was admitted to the institution.
+                </p>
+              </div>
+            </div>
+          </ModalDialog>
         </>
       )}
     </>
