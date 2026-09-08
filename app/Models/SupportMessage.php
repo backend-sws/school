@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupportMessage extends Model
 {
+    const UPDATED_AT = null;
+
     protected $guarded = [];
 
     public function ticket()

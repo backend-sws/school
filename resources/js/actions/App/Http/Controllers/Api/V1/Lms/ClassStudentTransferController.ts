@@ -110,7 +110,7 @@ options.head = (args: { lms_class: number | { id: number } } | [lms_class: numbe
     options.form = optionsForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::transfer
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:111
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
 export const transfer = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -125,7 +125,7 @@ transfer.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::transfer
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:111
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
 transfer.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ transfer.url = (args: { lms_class: number | { id: number } } | [lms_class: numbe
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::transfer
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:111
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
 transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -168,7 +168,7 @@ transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: numb
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::transfer
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:111
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
     const transferForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -178,7 +178,7 @@ transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: numb
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentTransferController::transfer
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:111
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
         transferForm.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

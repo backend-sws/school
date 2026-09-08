@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 export const index = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 index.url = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions) => {
@@ -46,7 +46,7 @@ index.url = (args: { lms_class: number | { id: number }, student_user: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 index.get = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ index.get = (args: { lms_class: number | { id: number }, student_user: number | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 index.head = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -65,7 +65,7 @@ index.head = (args: { lms_class: number | { id: number }, student_user: number |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
     const indexForm = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ index.head = (args: { lms_class: number | { id: number }, student_user: number |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
         indexForm.get = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -84,7 +84,7 @@ index.head = (args: { lms_class: number | { id: number }, student_user: number |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::index
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:23
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:20
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
         indexForm.head = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -100,7 +100,7 @@ index.head = (args: { lms_class: number | { id: number }, student_user: number |
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::store
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:43
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:45
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 export const store = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::store
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:43
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:45
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 store.url = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions) => {
@@ -145,7 +145,7 @@ store.url = (args: { lms_class: number | { id: number }, student_user: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::store
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:43
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:45
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
 store.post = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -155,7 +155,7 @@ store.post = (args: { lms_class: number | { id: number }, student_user: number |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::store
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:43
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:45
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
     const storeForm = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -165,7 +165,7 @@ store.post = (args: { lms_class: number | { id: number }, student_user: number |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::store
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:43
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:45
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/leaves'
  */
         storeForm.post = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -176,7 +176,7 @@ store.post = (args: { lms_class: number | { id: number }, student_user: number |
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::updateStatus
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:190
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:197
  * @route '/api/v1/lms/leaves/{leave}/status'
  */
 export const updateStatus = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -191,7 +191,7 @@ updateStatus.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::updateStatus
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:190
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:197
  * @route '/api/v1/lms/leaves/{leave}/status'
  */
 updateStatus.url = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -224,7 +224,7 @@ updateStatus.url = (args: { leave: number | { id: number } } | [leave: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::updateStatus
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:190
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:197
  * @route '/api/v1/lms/leaves/{leave}/status'
  */
 updateStatus.patch = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -234,7 +234,7 @@ updateStatus.patch = (args: { leave: number | { id: number } } | [leave: number 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::updateStatus
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:190
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:197
  * @route '/api/v1/lms/leaves/{leave}/status'
  */
     const updateStatusForm = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -249,7 +249,7 @@ updateStatus.patch = (args: { leave: number | { id: number } } | [leave: number 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::updateStatus
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:190
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:197
  * @route '/api/v1/lms/leaves/{leave}/status'
  */
         updateStatusForm.patch = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -265,7 +265,7 @@ updateStatus.patch = (args: { leave: number | { id: number } } | [leave: number 
     updateStatus.form = updateStatusForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:243
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:250
  * @route '/api/v1/lms/leaves/{leave}'
  */
 export const destroy = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -280,7 +280,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:243
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:250
  * @route '/api/v1/lms/leaves/{leave}'
  */
 destroy.url = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -313,7 +313,7 @@ destroy.url = (args: { leave: number | { id: number } } | [leave: number | { id:
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:243
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:250
  * @route '/api/v1/lms/leaves/{leave}'
  */
 destroy.delete = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -323,7 +323,7 @@ destroy.delete = (args: { leave: number | { id: number } } | [leave: number | { 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:243
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:250
  * @route '/api/v1/lms/leaves/{leave}'
  */
     const destroyForm = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -338,7 +338,7 @@ destroy.delete = (args: { leave: number | { id: number } } | [leave: number | { 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\StudentLeaveApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:243
+ * @see app/Http/Controllers/Api/V1/Lms/StudentLeaveApplicationController.php:250
  * @route '/api/v1/lms/leaves/{leave}'
  */
         destroyForm.delete = (args: { leave: number | { id: number } } | [leave: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

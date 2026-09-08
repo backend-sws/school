@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ModalDialog } from "../shared/Modal";
 import { useForm } from "react-hook-form";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
@@ -19,6 +19,8 @@ import {
   Clock3,
 } from "lucide-react";
 import R2Api from "@/lib/api/r2Api";
+import { useAuth } from "@/hooks/use-can";
+import { cn } from "@/lib/utils";
 
 interface SupportTicketMessageDialogProps {
   open: boolean;
@@ -28,40 +30,69 @@ interface SupportTicketMessageDialogProps {
 }
 
 // Message bubble component for chat-like display
-function MessageBubble({ message }: { message: any }) {
-  const isUserMessage = message.user?.id === message.user?.id; // You should compare with current user
-  const timeAgo =
-    new Date(message.created_at).toLocaleDateString() +
-    " " +
-    new Date(message.created_at).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+function MessageBubble({
+  message,
+  currentUserId,
+}: {
+  message: any;
+  currentUserId?: number | string;
+}) {
+  const isUserMessage = Boolean(
+    currentUserId && Number(message.user?.id) === Number(currentUserId)
+  );
+  const timeAgo = message.created_at
+    ? new Date(message.created_at).toLocaleDateString() +
+      " " +
+      new Date(message.created_at).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
 
   return (
     <div
       className={`flex gap-3 mb-4 ${isUserMessage ? "flex-row-reverse" : ""}`}
     >
       <div
-        className={`max-w-xs px-4 py-3 rounded-lg ${
+        className={`max-w-sm sm:max-w-md px-4 py-3 rounded-xl shadow-xs ${
           isUserMessage
-            ? "bg-blue-500 text-white rounded-tr-none"
-            : "bg-gray-100 text-gray-900 rounded-tl-none"
+            ? "bg-primary text-primary-foreground rounded-tr-none"
+            : "bg-muted text-foreground border border-border/60 rounded-tl-none"
         }`}
       >
-        <p className="text-sm font-semibold mb-1">{message.user?.name}</p>
-        <p className="text-sm break-words">{message.message}</p>
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <p className="text-xs font-semibold">
+            {isUserMessage ? "You" : message.user?.name || "Support"}
+          </p>
+          {message.is_staff && !isUserMessage && (
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-normal">
+              Staff
+            </Badge>
+          )}
+        </div>
+        <p className="text-sm break-words whitespace-pre-wrap leading-relaxed">{message.message}</p>
         {message.attachment && (
-          <div className="mt-2 flex items-center gap-1 text-xs opacity-75">
-            <FileText className="size-3" />
-            <img
-              src={R2Api.imageSrc(message.attachment)}
-              className="underline hover:no-underline"
-            />
+          <div className="mt-2.5 pt-2 border-t border-current/20 flex items-center gap-1.5 text-xs">
+            <FileText className="size-3.5 shrink-0" />
+            <a
+              href={R2Api.imageSrc(message.attachment)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "underline hover:no-underline font-medium break-all",
+                isUserMessage
+                  ? "text-primary-foreground/90 hover:text-primary-foreground"
+                  : "text-primary hover:text-primary/80"
+              )}
+            >
+              View Attachment
+            </a>
           </div>
         )}
         <p
-          className={`text-xs mt-2 ${isUserMessage ? "text-blue-100" : "text-gray-500"}`}
+          className={`text-[10px] mt-2 ${
+            isUserMessage ? "text-primary-foreground/75 text-right" : "text-muted-foreground"
+          }`}
         >
           {timeAgo}
         </p>
@@ -94,6 +125,10 @@ export function SupportTicketMessageDialog({
   data,
   showpriority = true,
 }: SupportTicketMessageDialogProps) {
+  const { auth } = useAuth();
+  const currentUserId = auth?.user?.id;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const {
     control,
     handleSubmit,
@@ -126,8 +161,14 @@ export function SupportTicketMessageDialog({
       queryClient.invalidateQueries({
         queryKey: ["supportTicketDetail", ticketId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["SupportTicket"],
+      });
       toast.success("Reply posted successfully");
-      reset();
+      reset({
+        message: "",
+        attachment: "",
+      });
     },
     onError: (error: any) => {
       const message =
@@ -138,16 +179,33 @@ export function SupportTicketMessageDialog({
     },
   });
 
+  // Reset form when dialog opens or ticket changes
+  useEffect(() => {
+    if (open) {
+      reset({
+        message: "",
+        attachment: "",
+      });
+    }
+  }, [open, ticketId, reset]);
+
+  const ticket = ticketDetail?.data;
+  const isTicketClosed = ticket?.status === "closed";
+
+  // Auto scroll to bottom when messages load
+  useEffect(() => {
+    if (ticket?.messages?.length) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [ticket?.messages?.length]);
+
   const onSubmit = (formData: any) => {
-    if (!formData.message.trim()) {
+    if (!formData.message?.trim()) {
       toast.error("Please enter a message");
       return;
     }
     postReply(formData);
   };
-
-  const ticket = ticketDetail?.data;
-  const isTicketClosed = ticket?.status === "closed";
 
   return (
     <ModalDialog
@@ -155,11 +213,11 @@ export function SupportTicketMessageDialog({
       description={`Ticket #${ticket?.ticket_id || "..."}`}
       open={open}
       onClose={onClose}
-      handleSubmit={handleSubmit(onSubmit)}
+      handleSubmit={!isTicketClosed ? handleSubmit(onSubmit) : undefined}
       isLoading={isReplying || isLoadingDetail}
-      submitLabel="Post Reply"
+      submitLabel={isReplying ? "Posting..." : "Post Reply"}
       className="sm:max-w-2xl"
-      disabled={isTicketClosed}
+      primaryDisabled={isTicketClosed || isReplying}
     >
       {isLoadingDetail ? (
         <div className="space-y-4">
@@ -250,11 +308,18 @@ export function SupportTicketMessageDialog({
             <ScrollArea className="h-64 rounded-lg border p-4 ">
               <div className="space-y-4 pr-4">
                 {ticket?.messages && ticket.messages.length > 0 ? (
-                  ticket.messages.map((message: any) => (
-                    <MessageBubble key={message.id} message={message} />
-                  ))
+                  <>
+                    {ticket.messages.map((message: any) => (
+                      <MessageBubble
+                        key={message.id}
+                        message={message}
+                        currentUserId={currentUserId}
+                      />
+                    ))}
+                    <div ref={messagesEndRef} />
+                  </>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+                  <div className="flex items-center justify-center h-full min-h-[140px] text-muted-foreground text-sm">
                     <MessageSquare className="size-4 mr-2" />
                     No messages yet. Start the conversation!
                   </div>

@@ -494,8 +494,19 @@ class StudentLedgerController extends BaseController
 
     // ─── GET  /fees/ledger/download-receipt/{payment} ────────────────────
 
-    public function downloadReceipt(FeePayment $payment)
+    public function downloadReceipt(Request $request, FeePayment $payment)
     {
+        $user = $request->user();
+        $effectiveStudentId = \App\Support\EffectiveStudentContext::getEffectiveStudentId($user);
+
+        $hasStaffAccess = $user->hasAbility('accounts_room')
+            || $user->hasRole(['admin', 'super_admin'])
+            || $user->hasAnyPermission(['admin_desk', 'office_registry', 'accounts_room']);
+
+        if (!$hasStaffAccess && (int) $payment->user_id !== (int) $effectiveStudentId) {
+            abort(403, 'You are not authorized to download this receipt.');
+        }
+
         $payment->load('user');
         $student = $payment->user;
 
@@ -503,7 +514,8 @@ class StudentLedgerController extends BaseController
         $document = $this->assembleFeePaymentReceipt->assemble($payment, $student);
         $fileName = 'Receipt_' . ($payment->receipt_no ?? $payment->payment_id) . '.pdf';
 
-        return $this->financialPdfRenderer->renderDownload($document, $branding, $fileName);
+        return $this->financialPdfRenderer->renderDownload($document, $branding, $fileName)
+            ->header('Access-Control-Expose-Headers', 'Content-Disposition');
     }
 
     // ─── POST /fees/ledger/collect-advance ─────────────────────────────

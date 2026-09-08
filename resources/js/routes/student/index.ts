@@ -1013,7 +1013,7 @@ studentMyClassDetail.head = (args: { id: string | number } | [id: string | numbe
     
     studentMyClassDetail.form = studentMyClassDetailForm
 /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
 export const studentMyClassSubject = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1027,7 +1027,7 @@ studentMyClassSubject.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
 studentMyClassSubject.url = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions) => {
@@ -1052,7 +1052,7 @@ studentMyClassSubject.url = (args: { id: string | number, allocationId: string |
 }
 
 /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
 studentMyClassSubject.get = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1060,7 +1060,7 @@ studentMyClassSubject.get = (args: { id: string | number, allocationId: string |
     method: 'get',
 })
 /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
 studentMyClassSubject.head = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1069,7 +1069,7 @@ studentMyClassSubject.head = (args: { id: string | number, allocationId: string 
 })
 
     /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
     const studentMyClassSubjectForm = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1078,7 +1078,7 @@ studentMyClassSubject.head = (args: { id: string | number, allocationId: string 
     })
 
             /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
         studentMyClassSubjectForm.get = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1086,7 +1086,7 @@ studentMyClassSubject.head = (args: { id: string | number, allocationId: string 
             method: 'get',
         })
             /**
- * @see routes/student.php:120
+ * @see routes/student.php:121
  * @route '/student-portal/my-classes/{id}/subjects/{allocationId}'
  */
         studentMyClassSubjectForm.head = (args: { id: string | number, allocationId: string | number } | [id: string | number, allocationId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1101,7 +1101,7 @@ studentMyClassSubject.head = (args: { id: string | number, allocationId: string 
     
     studentMyClassSubject.form = studentMyClassSubjectForm
 /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
 export const studentMyClassRoom = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1115,7 +1115,7 @@ studentMyClassRoom.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
 studentMyClassRoom.url = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions) => {
@@ -1140,7 +1140,7 @@ studentMyClassRoom.url = (args: { id: string | number, roomId: string | number }
 }
 
 /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
 studentMyClassRoom.get = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1148,7 +1148,7 @@ studentMyClassRoom.get = (args: { id: string | number, roomId: string | number }
     method: 'get',
 })
 /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
 studentMyClassRoom.head = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1157,7 +1157,7 @@ studentMyClassRoom.head = (args: { id: string | number, roomId: string | number 
 })
 
     /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
     const studentMyClassRoomForm = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1166,7 +1166,7 @@ studentMyClassRoom.head = (args: { id: string | number, roomId: string | number 
     })
 
             /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
         studentMyClassRoomForm.get = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1174,7 +1174,7 @@ studentMyClassRoom.head = (args: { id: string | number, roomId: string | number 
             method: 'get',
         })
             /**
- * @see routes/student.php:129
+ * @see routes/student.php:130
  * @route '/student-portal/my-classes/{id}/rooms/{roomId}'
  */
         studentMyClassRoomForm.head = (args: { id: string | number, roomId: string | number } | [id: string | number, roomId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

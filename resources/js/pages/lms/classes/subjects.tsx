@@ -48,7 +48,10 @@ import { LmsClassesQueryKeys } from "@/lib/querykey/lmsClasses";
 import attendanceApi from "@/lib/api/attendanceApi";
 import { ClassAttendanceAnalyticsHeader } from "@/components/admin/classAttendanceAnalyticsHeader";
 import { ClassStudentRosterHub } from "@/components/admin/classStudentRosterHub";
-import { GraduationCap } from "lucide-react";
+import { StudentClassAttendanceHub } from "@/components/student/StudentClassAttendanceHub";
+import { StudentClassProfileDrawer } from "@/components/admin/studentClassProfileDrawer";
+import { StudentLeaveUploadDialog } from "@/components/admin/studentLeaveUploadDialog";
+import { GraduationCap, UploadCloud, Eye } from "lucide-react";
 
 const STUDENT_MY_CLASSES_BREADCRUMBS: BreadcrumbItem[] = [
   { title: "My Portal", href: "/student-portal/dashboard" },
@@ -56,6 +59,7 @@ const STUDENT_MY_CLASSES_BREADCRUMBS: BreadcrumbItem[] = [
 ];
 
 export type LmsClassPageLayoutConfig = {
+  isStudentPortal?: boolean;
   Layout: React.ComponentType<{ breadcrumbs: BreadcrumbItem[]; backHref?: string; backLabel?: string; children: React.ReactNode }>;
   layoutProps: { breadcrumbs: BreadcrumbItem[]; backHref?: string; backLabel?: string };
   getSubjectHref: (allocationId: number) => string;
@@ -132,18 +136,43 @@ function toDialogData(c: ClassDetail | undefined): LmsClassDialogData {
   };
 }
 
-type PageProps = { id: number };
+type PageProps = {
+  id: number;
+  back_href?: string;
+  back_label?: string;
+  is_student_portal?: boolean;
+};
 
 const LmsClassSubjects = () => {
-  const { props } = usePage<PageProps>();
+  const { props, url } = usePage<PageProps & { auth?: { permissions?: string[]; user?: any; effective_user?: any } }>();
   const classId = Number(props.id);
+  const isStudentPortal = Boolean(
+    props.is_student_portal ||
+    url.startsWith('/student-portal') ||
+    (!props.auth?.permissions?.includes('view_lms_classes') && props.auth?.permissions?.includes('portal'))
+  );
+  const effectiveUserId = props.auth?.effective_user?.id ?? props.auth?.user?.id;
+  const currentUserName = props.auth?.effective_user?.name ?? props.auth?.user?.name;
   const queryClient = useQueryClient();
   const editDialogDisclosure = useDisclosure<boolean>();
   const deleteDisclosure = useDisclosure<boolean>();
   const teacherDialogDisclosure = useDisclosure<boolean>();
   const attendanceDisclosure = useDisclosure<{ classId: number; allocationId?: number; mode?: "marking" | "reporting" }>();
   const subjectTeacherDisclosure = useDisclosure<boolean>();
-  const [activeMainView, setActiveMainView] = React.useState<"subjects" | "students">("subjects");
+  const [activeMainView, setActiveMainView] = React.useState<"subjects" | "students" | "attendance">("subjects");
+  const [studentLeaveDialogOpen, setStudentLeaveDialogOpen] = React.useState<boolean>(false);
+  const [studentProfileDrawerOpen, setStudentProfileDrawerOpen] = React.useState<boolean>(false);
+
+  // Student 360 profile query for attendance & leaves
+  const { data: student360Res } = useQuery({
+    queryKey: ["student-360-profile", classId, effectiveUserId],
+    queryFn: () => lmsApi.studentRoster.student360(classId, effectiveUserId!),
+    enabled: isStudentPortal && !!classId && !!effectiveUserId,
+  });
+  const student360Data = (student360Res as any)?.data;
+  const studentAttendance = student360Data?.attendance;
+  const studentAttendanceSummary = studentAttendance?.summary;
+  const studentAttendancePercentage = studentAttendanceSummary?.percentage ?? 0;
 
   const deleteMutation = useMutation({
     mutationFn: () => lmsApi.classes.destroy(classId),
@@ -211,7 +240,7 @@ const LmsClassSubjects = () => {
   const { data: attendanceData } = useQuery({
     queryKey: ["lms-class-attendance-today", classId, todayStr],
     queryFn: () => attendanceApi.getDaily({ lms_class_id: classId, date: todayStr }),
-    enabled: !!classId && !!classDetail && canViewAttendance,
+    enabled: !isStudentPortal && !!classId && !!classDetail && canViewAttendance,
   });
   const attendanceRaw = attendanceData as { data?: { summary?: { present: number; absent: number; total: number } } } | undefined;
   const attendanceSummary = attendanceRaw?.data?.summary;
@@ -234,6 +263,7 @@ const LmsClassSubjects = () => {
       classId,
     );
     return {
+      isStudentPortal: false,
       Layout: ({ children }: { children: React.ReactNode }) => <>{children}</>,
       layoutProps: { breadcrumbs },
       getSubjectHref: (allocationId: number) => `/lms/classes/${classId}/subjects/${allocationId}`,
@@ -248,6 +278,7 @@ const LmsClassSubjects = () => {
       { title: classDetail?.name ?? "Class", href: `/student-portal/my-classes/${classId}` },
     ];
     return {
+      isStudentPortal: true,
       Layout: ({ children }: { children: React.ReactNode }) => <>{children}</>,
       layoutProps: {
         breadcrumbs,
@@ -277,51 +308,80 @@ const LmsClassSubjects = () => {
     return (
       <Layout {...layoutProps}>
         <Head title={classDetail?.name ? `${classDetail.name} – ${classDetail.section}` : "LMS Class"} />
-        <PermissionGate can="create_lms_classes">
-          <LmsClassDialog
-            open={editDialogDisclosure.isOpen}
-            onClose={() => editDialogDisclosure.onClose()}
-            data={editDialogDisclosure.data ? toDialogData(classDetail) : undefined}
-            onSuccess={handleEditSuccess}
-          />
-          <LmsClassTeacherDialog
-            open={teacherDialogDisclosure.isOpen}
-            onClose={() => teacherDialogDisclosure.onClose()}
-            classId={classId}
-            currentTeacherId={classDetail?.class_teacher_id ?? undefined}
-            onSuccess={handleTeacherSuccess}
-          />
-        </PermissionGate>
+        {!isStudentPortal && (
+          <>
+            <PermissionGate can="create_lms_classes">
+              <LmsClassDialog
+                open={editDialogDisclosure.isOpen}
+                onClose={() => editDialogDisclosure.onClose()}
+                data={editDialogDisclosure.data ? toDialogData(classDetail) : undefined}
+                onSuccess={handleEditSuccess}
+              />
+              <LmsClassTeacherDialog
+                open={teacherDialogDisclosure.isOpen}
+                onClose={() => teacherDialogDisclosure.onClose()}
+                classId={classId}
+                currentTeacherId={classDetail?.class_teacher_id ?? undefined}
+                onSuccess={handleTeacherSuccess}
+              />
+            </PermissionGate>
 
-        <ConfirmDialog
-          open={deleteDisclosure.isOpen}
-          onOpenChange={(open) => !open && deleteDisclosure.onClose()}
-          title="Delete Section"
-          description={
-            classDetail?.name
-              ? `Are you sure you want to delete "${classDetail.name}"? This action cannot be undone.`
-              : "Are you sure you want to delete this section?"
-          }
-          onConfirm={() => deleteMutation.mutate()}
-          isLoading={deleteMutation.isPending}
-          confirmText="Delete"
-          variant="danger"
-        />
+            <ConfirmDialog
+              open={deleteDisclosure.isOpen}
+              onOpenChange={(open) => !open && deleteDisclosure.onClose()}
+              title="Delete Section"
+              description={
+                classDetail?.name
+                  ? `Are you sure you want to delete "${classDetail.name}"? This action cannot be undone.`
+                  : "Are you sure you want to delete this section?"
+              }
+              onConfirm={() => deleteMutation.mutate()}
+              isLoading={deleteMutation.isPending}
+              confirmText="Delete"
+              variant="danger"
+            />
 
-        <AttendanceSheet
-          key={attendanceDisclosure.isOpen ? `atnd-${attendanceDisclosure.data?.classId}-${attendanceDisclosure.data?.allocationId}-${attendanceDisclosure.data?.mode}` : 'atnd-closed'}
-          open={attendanceDisclosure.isOpen}
-          onClose={() => attendanceDisclosure.onClose()}
-          initialClassId={attendanceDisclosure.data?.classId}
-          initialAllocationId={attendanceDisclosure.data?.allocationId}
-          mode={attendanceDisclosure.data?.mode}
-        />
+            <AttendanceSheet
+              key={attendanceDisclosure.isOpen ? `atnd-${attendanceDisclosure.data?.classId}-${attendanceDisclosure.data?.allocationId}-${attendanceDisclosure.data?.mode}` : 'atnd-closed'}
+              open={attendanceDisclosure.isOpen}
+              onClose={() => attendanceDisclosure.onClose()}
+              initialClassId={attendanceDisclosure.data?.classId}
+              initialAllocationId={attendanceDisclosure.data?.allocationId}
+              mode={attendanceDisclosure.data?.mode}
+            />
 
-        <SubjectTeacherSheet
-          open={subjectTeacherDisclosure.isOpen}
-          onClose={() => subjectTeacherDisclosure.onClose()}
-          classId={classId}
-        />
+            <SubjectTeacherSheet
+              open={subjectTeacherDisclosure.isOpen}
+              onClose={() => subjectTeacherDisclosure.onClose()}
+              classId={classId}
+            />
+          </>
+        )}
+
+        {isStudentPortal && effectiveUserId && (
+          <>
+            <StudentLeaveUploadDialog
+              open={studentLeaveDialogOpen}
+              onClose={() => setStudentLeaveDialogOpen(false)}
+              classId={classId}
+              userId={effectiveUserId}
+              studentName={currentUserName}
+              isStudent={true}
+              onSuccess={() => {
+                queryClient.invalidateQueries({ queryKey: ["student-360-profile", classId, effectiveUserId] });
+              }}
+            />
+
+            <StudentClassProfileDrawer
+              open={studentProfileDrawerOpen}
+              onClose={() => setStudentProfileDrawerOpen(false)}
+              classId={classId}
+              userId={effectiveUserId}
+              studentName={currentUserName}
+              isStudent={true}
+            />
+          </>
+        )}
 
         <PageContainer maxWidth="6xl" className="">
           {showBackLinkInContent && backLink && (
@@ -344,23 +404,25 @@ const LmsClassSubjects = () => {
             }}>
               <FilterBar.Renderer config={{ filters: [], search: { name: "search", placeholder: CONTENT.searchPlaceholder as string } }} />
             </FilterBar>
-            <ActionsDropdown
-              permission="create_lms_classes"
-              actions={[
-                { label: CONTENT.editBtn as string, icon: Pencil, onClick: () => editDialogDisclosure.onOpen(true) },
-                { label: "Assign Class Teacher", icon: User2, onClick: () => teacherDialogDisclosure.onOpen(true) },
-                { label: "Assign Subject Teachers", icon: Users, onClick: () => subjectTeacherDisclosure.onOpen(true), separator: true },
-                { label: "Student 360° Roster", icon: GraduationCap, onClick: () => setActiveMainView("students"), separator: true },
-                { label: "Mark Attendance", icon: ClipboardCheck, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "marking" }), permission: "mark_attendance", separator: true },
-                { label: "Daily Register", icon: Calendar, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "reporting" }), permission: "view_attendance" },
-                { label: "Monthly Register (Excel)", icon: Download, onClick: handleExportMonthly, permission: "view_attendance" },
-                { label: "Delete Section", icon: Trash2, onClick: () => deleteDisclosure.onOpen(true), permission: "delete_lms_classes", separator: true },
-              ]}
-            />
+            {!isStudentPortal && (
+              <ActionsDropdown
+                permission="create_lms_classes"
+                actions={[
+                  { label: CONTENT.editBtn as string, icon: Pencil, onClick: () => editDialogDisclosure.onOpen(true) },
+                  { label: "Assign Class Teacher", icon: User2, onClick: () => teacherDialogDisclosure.onOpen(true) },
+                  { label: "Assign Subject Teachers", icon: Users, onClick: () => subjectTeacherDisclosure.onOpen(true), separator: true },
+                  { label: "Student 360° Roster", icon: GraduationCap, onClick: () => setActiveMainView("students"), separator: true },
+                  { label: "Mark Attendance", icon: ClipboardCheck, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "marking" }), permission: "mark_attendance", separator: true },
+                  { label: "Daily Register", icon: Calendar, onClick: () => attendanceDisclosure.onOpen({ classId, mode: "reporting" }), permission: "view_attendance" },
+                  { label: "Monthly Register (Excel)", icon: Download, onClick: handleExportMonthly, permission: "view_attendance" },
+                  { label: "Delete Section", icon: Trash2, onClick: () => deleteDisclosure.onOpen(true), permission: "delete_lms_classes", separator: true },
+                ]}
+              />
+            )}
           </MainPageHeader>
 
-          {/* ── Class Attendance & Engagement Analytics Hub ────────────────────────── */}
-          {classDetail && (
+          {/* ── Class Attendance & Engagement Analytics Hub (Staff / Teachers Only) ── */}
+          {!isStudentPortal && classDetail && (
             <div className="mt-6">
               <ClassAttendanceAnalyticsHeader
                 classId={classId}
@@ -374,8 +436,8 @@ const LmsClassSubjects = () => {
             </div>
           )}
 
-          {/* ── Main View Segmented Switcher ────────────────────────────────────── */}
-          {classDetail && (
+          {/* ── Main View Segmented Switcher (Staff / Teachers Only) ── */}
+          {!isStudentPortal && classDetail && (
             <div className="mt-8 flex items-center justify-between border-b border-border/60 pb-3">
               <div className="flex items-center gap-2 p-1 rounded-2xl bg-muted/30 border border-border/60">
                 <button
@@ -408,6 +470,122 @@ const LmsClassSubjects = () => {
             </div>
           )}
 
+          {/* ── Student Quick Attendance & Action Banner (Student Portal Only) ── */}
+          {isStudentPortal && classDetail && (
+            <div className="mt-6 rounded-2xl border border-border/70 bg-gradient-to-r from-primary/5 via-card to-background p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-center gap-3.5">
+                <div
+                  className={cn(
+                    "flex size-12 shrink-0 items-center justify-center rounded-2xl border font-extrabold text-base shadow-xs",
+                    studentAttendancePercentage >= 75
+                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                      : studentAttendancePercentage >= 60
+                      ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                      : "bg-rose-500/10 text-rose-600 border-rose-500/30"
+                  )}
+                >
+                  {studentAttendancePercentage}%
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-bold text-foreground">
+                      My Attendance: {studentAttendancePercentage >= 75 ? "On Track (≥75%)" : "Low Attendance Alert"}
+                    </p>
+                    <Badge variant="outline" className="text-[10px] py-0 h-4 border-emerald-500/30 text-emerald-600 bg-emerald-500/5 font-bold">
+                      {studentAttendanceSummary?.present ?? 0} Present
+                    </Badge>
+                    <Badge variant="outline" className="text-[10px] py-0 h-4 border-rose-500/30 text-rose-600 bg-rose-500/5 font-bold">
+                      {studentAttendanceSummary?.absent ?? 0} Absent
+                    </Badge>
+                    {(studentAttendanceSummary?.leave ?? 0) > 0 && (
+                      <Badge variant="outline" className="text-[10px] py-0 h-4 border-blue-500/30 text-blue-600 bg-blue-500/5 font-bold">
+                        {studentAttendanceSummary?.leave} Leaves
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Calculated across {studentAttendanceSummary?.total_recorded_dates ?? 0} registered class days.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  size="sm"
+                  onClick={() => setStudentLeaveDialogOpen(true)}
+                  className="rounded-xl text-xs font-bold gap-1.5 bg-primary text-primary-foreground shadow-sm h-8"
+                >
+                  <UploadCloud className="size-3.5" />
+                  Apply for Leave
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setActiveMainView(activeMainView === "attendance" ? "subjects" : "attendance")}
+                  className="rounded-xl text-xs font-bold gap-1.5 border-border/80 h-8"
+                >
+                  {activeMainView === "attendance" ? (
+                    <>
+                      <BookOpen className="size-3.5 text-primary" />
+                      View Subjects
+                    </>
+                  ) : (
+                    <>
+                      <Calendar className="size-3.5 text-primary" />
+                      View Full Register
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Student View Segmented Switcher (Student Portal Only) ── */}
+          {isStudentPortal && classDetail && (
+            <div className="mt-6 flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 p-1 rounded-2xl bg-muted/30 border border-border/60">
+                <button
+                  type="button"
+                  onClick={() => setActiveMainView("subjects")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+                    activeMainView === "subjects"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <BookOpen className="size-4" />
+                  Subjects & Learning Material ({allocations.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveMainView("attendance")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer",
+                    activeMainView === "attendance"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <Calendar className="size-4" />
+                  My Attendance & Leaves ({studentAttendancePercentage}%)
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setStudentProfileDrawerOpen(true)}
+                  className="rounded-xl text-xs font-bold gap-1.5 border-border/80 h-8"
+                >
+                  <Eye className="size-3.5 text-muted-foreground" />
+                  360° Profile
+                </Button>
+              </div>
+            </div>
+          )}
+
           {classLoading && (
             <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-border/60 bg-muted/5 mt-6">
               <div className="flex flex-col items-center gap-4 text-muted-foreground">
@@ -419,12 +597,30 @@ const LmsClassSubjects = () => {
 
           {!classLoading && classDetail && (
             <div className="mt-6 space-y-12">
-              {activeMainView === "students" ? (
-                /* --- Student 360° Roster Hub --- */
+              {!isStudentPortal && activeMainView === "students" ? (
+                /* --- Student 360° Roster Hub (Staff Only) --- */
                 <ClassStudentRosterHub classId={classId} className={classDetail.name} />
+              ) : isStudentPortal && activeMainView === "attendance" ? (
+                /* --- Student Attendance & Leaves Hub (Student Portal) --- */
+                <StudentClassAttendanceHub
+                  classId={classId}
+                  className={classDetail.name}
+                  userId={effectiveUserId!}
+                  studentName={currentUserName}
+                  onOpenUploadLeave={() => setStudentLeaveDialogOpen(true)}
+                  onOpenProfileDrawer={() => setStudentProfileDrawerOpen(true)}
+                />
               ) : (
                 /* --- Subject Cards --- */
-                <section className="space-y-8">
+                <section className="space-y-6">
+                  {isStudentPortal && (
+                    <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                      <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                        <BookOpen className="size-4 text-primary" />
+                        <span>Subjects & Learning Material ({allocations.length})</span>
+                      </div>
+                    </div>
+                  )}
 
                 {allocationsLoading ? (
                   <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -528,15 +724,9 @@ const LmsClassSubjects = () => {
   }
 
   return (
-    <PermissionGate can="portal" fallback={
-      <LmsClassLayoutConfigContext.Provider value={adminConfig}>
-        <LmsClassPageContent />
-      </LmsClassLayoutConfigContext.Provider>
-    }>
-      <LmsClassLayoutConfigContext.Provider value={studentConfig}>
-        <LmsClassPageContent />
-      </LmsClassLayoutConfigContext.Provider>
-    </PermissionGate>
+    <LmsClassLayoutConfigContext.Provider value={isStudentPortal ? studentConfig : adminConfig}>
+      <LmsClassPageContent />
+    </LmsClassLayoutConfigContext.Provider>
   );
 };
 

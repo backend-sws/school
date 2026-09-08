@@ -325,6 +325,7 @@ class FeeCollectionService
             $admDue = (float) ($admissionApp->due_amount ?? $this->engine->calculateDue($admAmount, $admDiscount, $admPaid));
 
             $admissionSummary = [
+                'id'               => $admissionApp->id,
                 'application_id'   => $admissionApp->application_id,
                 'admission_date'   => $admissionApp->admission_date?->toDateString(),
                 'total_amount'     => $admAmount,

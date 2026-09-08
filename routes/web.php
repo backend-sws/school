@@ -489,7 +489,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/courses', fn() => Inertia::render('lms/courses/index'))->name('courses.index');
                 Route::get('/classes', fn() => Inertia::render('lms/classes/index'))->name('classes.index');
                 Route::get('/classes/stream/{streamId}', fn($streamId) => Inertia::render('lms/classes/stream/index', ['streamId' => (int) $streamId]))->name('classes.stream')->whereNumber('streamId');
-                Route::get('/classes/{id}', fn($id) => Inertia::render('lms/classes/subjects', ['id' => (int) $id, 'back_href' => '/lms/classes', 'back_label' => 'Back to Classes']))->name('classes.show');
+                Route::get('/classes/{id}', fn($id) => Inertia::render('lms/classes/subjects', ['id' => (int) $id, 'back_href' => '/lms/classes', 'back_label' => 'Back to Classes', 'is_student_portal' => false]))->name('classes.show');
                 Route::get('/classes/{id}/subjects/{allocationId}', fn($id, $allocationId) => Inertia::render('lms/classes/subjects/show', ['id' => (int) $id, 'allocationId' => (int) $allocationId, 'back_href' => '/lms/classes/' . (int) $id, 'back_label' => 'Back to Class']))->name('classes.subjects.show')->whereNumber('allocationId');
                 Route::get('/classes/{id}/rooms/{roomId}', fn($id, $roomId) => Inertia::render('lms/classes/rooms/show', ['id' => (int) $id, 'roomId' => $roomId]))->name('classes.rooms.show');
             });

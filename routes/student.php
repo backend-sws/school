@@ -115,6 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'id' => (int) request()->route('id'),
                 'back_href' => $backHref,
                 'back_label' => $backLabel,
+                'is_student_portal' => true,
             ]);
         })->name('student-my-class-detail')->whereNumber('id');
         Route::get('/my-classes/{id}/subjects/{allocationId}', function () {

@@ -29,7 +29,11 @@ class ClassStudentRosterController extends BaseController
     public function studentsSummary(Request $request, LmsClass $lms_class): JsonResponse
     {
         $user = $request->user();
-        if (!LmsClass::userCanAccessForRead($user, $lms_class->id)) {
+        $canViewRoster = $user->hasAbility('view_lms_classes')
+            || $user->hasAbility('manage_lms_enrollments')
+            || LmsClass::userCanGradeInClass($user, $lms_class->id);
+
+        if (!$canViewRoster) {
             return $this->forbidden('You do not have permission to view this classroom roster.');
         }
 
@@ -123,6 +127,7 @@ class ClassStudentRosterController extends BaseController
                 'user_id',
                 DB::raw('COUNT(*) as total_leaves_applied'),
                 DB::raw("SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_leaves"),
+                DB::raw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_leaves"),
                 DB::raw('SUM(total_days) as total_leave_days')
             )
             ->groupBy('user_id')
@@ -195,6 +200,7 @@ class ClassStudentRosterController extends BaseController
                 'leaves' => [
                     'applied_count' => $leaveCount,
                     'approved_count' => $approvedLeaveCount,
+                    'pending_count' => (int) ($leaveData?->pending_leaves ?? 0),
                     'total_days' => $totalLeaveDays,
                 ],
             ];
@@ -217,6 +223,7 @@ class ClassStudentRosterController extends BaseController
                 'total_class_tests' => $totalClassTests,
                 'total_recorded_dates' => $totalClassRecordedDates,
                 'average_class_attendance' => $avgAttendance,
+                'pending_leaves_count' => (int) $leavesAgg->sum('pending_leaves'),
             ],
             'students' => $studentsList,
         ]);
@@ -230,7 +237,12 @@ class ClassStudentRosterController extends BaseController
     public function student360(Request $request, LmsClass $lms_class, User $student_user): JsonResponse
     {
         $user = $request->user();
-        if (!LmsClass::userCanAccessForRead($user, $lms_class->id) && $user->id !== $student_user->id) {
+        $isOwn = $user->id === $student_user->id;
+        $canStaffView = $user->hasAbility('view_lms_classes')
+            || $user->hasAbility('manage_lms_enrollments')
+            || LmsClass::userCanGradeInClass($user, $lms_class->id);
+
+        if (!$isOwn && !$canStaffView) {
             return $this->forbidden('You do not have permission to view this student profile.');
         }
 

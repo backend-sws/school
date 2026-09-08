@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
   FileText,
   Trash2,
   Calendar,
+  Clock,
   CheckCircle2,
   Loader2,
   Paperclip,
@@ -52,6 +53,7 @@ export interface StudentLeaveUploadDialogProps {
   studentName?: string;
   onSuccess?: () => void;
   defaultCategory?: string;
+  isStudent?: boolean;
 }
 
 export type DocumentCategoryKey =
@@ -193,6 +195,7 @@ export function StudentLeaveUploadDialog({
   studentName,
   onSuccess,
   defaultCategory = "leave",
+  isStudent = false,
 }: StudentLeaveUploadDialogProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -206,8 +209,8 @@ export function StudentLeaveUploadDialog({
   const [toDate, setToDate] = useState(todayStr);
   const [leaveType, setLeaveType] = useState("casual");
   const [reason, setReason] = useState("");
-  const [status, setStatus] = useState("approved");
-  const [autoMark, setAutoMark] = useState(true);
+  const [status, setStatus] = useState(isStudent ? "pending" : "approved");
+  const [autoMark, setAutoMark] = useState(isStudent ? false : true);
   const [adminRemarks, setAdminRemarks] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -215,16 +218,26 @@ export function StudentLeaveUploadDialog({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploadingFile, setIsUploadingFile] = useState<boolean>(false);
 
+  // Filter categories for students vs staff (students only see leave, medical, parent letter)
+  const availableCategories = useMemo(() => {
+    if (isStudent) {
+      return DOCUMENT_CATEGORIES.filter((c) =>
+        ["leave", "medical", "parent_letter"].includes(c.key)
+      );
+    }
+    return DOCUMENT_CATEGORIES;
+  }, [isStudent]);
+
   // Category Configuration
   const currentCategoryConfig =
-    DOCUMENT_CATEGORIES.find((c) => c.key === selectedCategory) || DOCUMENT_CATEGORIES[0];
+    availableCategories.find((c) => c.key === selectedCategory) || availableCategories[0];
 
   const handleCategorySelect = (catKey: DocumentCategoryKey) => {
     setSelectedCategory(catKey);
-    const cat = DOCUMENT_CATEGORIES.find((c) => c.key === catKey);
+    const cat = availableCategories.find((c) => c.key === catKey);
     if (cat) {
       setLeaveType(cat.types[0]?.value || "other");
-      setAutoMark(cat.isLeaveByDefault);
+      setAutoMark(isStudent ? false : cat.isLeaveByDefault);
     }
   };
 
@@ -353,7 +366,7 @@ export function StudentLeaveUploadDialog({
     },
   });
 
-  const isLeaveFlow = selectedCategory === "leave" || selectedCategory === "medical";
+  const isLeaveFlow = isStudent || selectedCategory === "leave" || selectedCategory === "medical" || selectedCategory === "parent_letter";
 
   return (
     <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
@@ -368,14 +381,15 @@ export function StudentLeaveUploadDialog({
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <DialogTitle className="text-sm sm:text-base font-bold text-foreground truncate">
-                    Upload Physical Copy / Document
+                    {isStudent ? "Apply for Leave / Upload Slip" : "Upload Physical Copy / Document"}
                   </DialogTitle>
                   <Badge variant="outline" className="text-[9px] font-bold py-0 h-4 bg-primary/10 text-primary border-primary/30 flex items-center gap-1">
                     <Cloud className="size-2.5" /> R2 Direct
                   </Badge>
                 </div>
                 <DialogDescription className="text-[11px] text-muted-foreground truncate mt-0.5">
-                  Archiving record for <span className="font-semibold text-foreground">{studentName || "Student"}</span>
+                  {isStudent ? "Submitting application for " : "Archiving record for "}
+                  <span className="font-semibold text-foreground">{studentName || "Student"}</span>
                 </DialogDescription>
               </div>
             </div>
@@ -388,13 +402,18 @@ export function StudentLeaveUploadDialog({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                Document Category
+                {isStudent ? "Application Type" : "Document Category"}
               </Label>
-              <span className="text-[10px] text-muted-foreground">8 categories available</span>
+              <span className="text-[10px] text-muted-foreground">
+                {availableCategories.length} {isStudent ? "options" : "categories"} available
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-              {DOCUMENT_CATEGORIES.map((cat) => {
+            <div className={cn(
+              "grid gap-1.5",
+              isStudent ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-4"
+            )}>
+              {availableCategories.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.key;
                 return (
@@ -403,7 +422,7 @@ export function StudentLeaveUploadDialog({
                     type="button"
                     onClick={() => handleCategorySelect(cat.key)}
                     className={cn(
-                      "flex items-center gap-2 p-1.5 rounded-xl border text-left transition-all cursor-pointer",
+                      "flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer",
                       isSelected
                         ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary text-foreground font-bold"
                         : "border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 text-muted-foreground"
@@ -411,7 +430,7 @@ export function StudentLeaveUploadDialog({
                   >
                     <div
                       className={cn(
-                        "size-6 rounded-lg flex items-center justify-center shrink-0 border transition-colors",
+                        "size-7 rounded-lg flex items-center justify-center shrink-0 border transition-colors",
                         cat.color
                       )}
                     >
@@ -421,6 +440,11 @@ export function StudentLeaveUploadDialog({
                       <span className="text-[11px] font-bold text-foreground truncate block leading-tight">
                         {cat.label}
                       </span>
+                      {isStudent && (
+                        <span className="text-[9px] text-muted-foreground truncate block mt-0.5">
+                          {cat.sublabel}
+                        </span>
+                      )}
                     </div>
                   </button>
                 );
@@ -431,7 +455,9 @@ export function StudentLeaveUploadDialog({
           {/* Specific Document Type & Document Title */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
-              <Label className="text-[11px] font-semibold text-foreground">Specific Document Type</Label>
+              <Label className="text-[11px] font-semibold text-foreground">
+                {isStudent ? "Leave Reason Category" : "Specific Document Type"}
+              </Label>
               <Select value={leaveType} onValueChange={setLeaveType}>
                 <SelectTrigger className="h-8 rounded-lg bg-background border-border/80 font-medium text-xs">
                   <SelectValue placeholder="Select type" />
@@ -448,13 +474,18 @@ export function StudentLeaveUploadDialog({
 
             <div className="space-y-1">
               <Label className="text-[11px] font-semibold text-foreground">
-                Document Title <span className="text-[10px] text-muted-foreground font-normal">(Optional)</span>
+                {isStudent ? "Short Title / Subject" : "Document Title"}{" "}
+                <span className="text-[10px] text-muted-foreground font-normal">(Optional)</span>
               </Label>
               <Input
                 type="text"
                 value={docTitle}
                 onChange={(e) => setDocTitle(e.target.value)}
-                placeholder="e.g. Dr. Verma Slip / Marksheet"
+                placeholder={
+                  isStudent
+                    ? "e.g. Sickness / Sister's Wedding / Out of station"
+                    : "e.g. Dr. Verma Slip / Marksheet"
+                }
                 className="h-8 rounded-lg bg-background border-border/80 font-medium text-xs"
               />
             </div>
@@ -501,10 +532,14 @@ export function StudentLeaveUploadDialog({
                 </div>
                 <div className="min-w-0 text-left">
                   <p className="text-xs font-bold text-foreground leading-tight">
-                    Click to browse or drag & drop scan / photo
+                    {isStudent
+                      ? "Click to attach handwritten letter or doctor prescription"
+                      : "Click to browse or drag & drop scan / photo"}
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
-                    Medical slips, parent letters, TC copy, bank challan, Govt ID or PDF
+                    {isStudent
+                      ? "Doctor prescription, hospital slip, parent note, or handwritten leave application"
+                      : "Medical slips, parent letters, TC copy, bank challan, Govt ID or PDF"}
                   </p>
                 </div>
               </div>
@@ -622,27 +657,41 @@ export function StudentLeaveUploadDialog({
             />
           </div>
 
-          {/* Auto-mark Attendance Toggle - Compact */}
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-2.5 flex items-start gap-2.5">
-            <Checkbox
-              id="auto-mark-doc"
-              checked={autoMark}
-              onCheckedChange={(c) => setAutoMark(!!c)}
-              className="mt-0.5 rounded-md border-primary text-primary"
-            />
-            <div className="space-y-0.5 select-none cursor-pointer" onClick={() => setAutoMark(!autoMark)}>
-              <Label htmlFor="auto-mark-doc" className="text-xs font-bold text-foreground cursor-pointer">
-                {isLeaveFlow
-                  ? "Auto-mark Attendance Register as 'On Leave' (L)"
-                  : "Mark Attendance as Leave for this Date / Period"}
-              </Label>
-              <p className="text-[10px] text-muted-foreground leading-snug">
-                {isLeaveFlow
-                  ? `Automatically marks the student's register records as "Leave" from ${fromDate} to ${toDate || fromDate}.`
-                  : `Keep unchecked to archive document without modifying register records.`}
-              </p>
+          {/* Auto-mark Attendance Toggle - Compact (Staff only) or Student Notice */}
+          {isStudent ? (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex items-start gap-2.5">
+              <Clock className="size-4 text-primary shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold text-foreground">
+                  Teacher Approval Required
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-snug">
+                  Your leave application or medical slip will be submitted with "Pending" status. Once your class teacher reviews and approves it, your attendance register will be marked accordingly.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-2.5 flex items-start gap-2.5">
+              <Checkbox
+                id="auto-mark-doc"
+                checked={autoMark}
+                onCheckedChange={(c) => setAutoMark(!!c)}
+                className="mt-0.5 rounded-md border-primary text-primary"
+              />
+              <div className="space-y-0.5 select-none cursor-pointer" onClick={() => setAutoMark(!autoMark)}>
+                <Label htmlFor="auto-mark-doc" className="text-xs font-bold text-foreground cursor-pointer">
+                  {isLeaveFlow
+                    ? "Auto-mark Attendance Register as 'On Leave' (L)"
+                    : "Mark Attendance as Leave for this Date / Period"}
+                </Label>
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  {isLeaveFlow
+                    ? `Automatically marks the student's register records as "Leave" from ${fromDate} to ${toDate || fromDate}.`
+                    : `Keep unchecked to archive document without modifying register records.`}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer - Fixed & Compact */}
@@ -671,7 +720,7 @@ export function StudentLeaveUploadDialog({
             ) : (
               <>
                 <CheckCircle2 className="size-3.5" />
-                Save & Preserve Document
+                {isStudent ? "Submit Leave Request" : "Save & Preserve Document"}
               </>
             )}
           </Button>

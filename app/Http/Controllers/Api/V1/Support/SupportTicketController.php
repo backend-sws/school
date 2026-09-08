@@ -140,7 +140,13 @@ class SupportTicketController extends BaseController
     {
         $ticket = SupportTicket::with(['messages.user:id,name', 'user:id,name', 'closedBy:id,name'])->findOrFail($id);
 
-        if (!auth()->user()->hasAbility('view_all_support_tickets') && $ticket->user_id !== auth()->id()) {
+        $user = auth()->user();
+        $canManage = $user->hasAbility('view_all_support_tickets')
+            || $user->hasAbility('update_support_tickets')
+            || $user->hasAbility('close_support_tickets')
+            || $user->isSuperAdmin();
+
+        if (!$canManage && $ticket->user_id !== $user->id) {
             return $this->error('Unauthorized', 403);
         }
 
@@ -166,9 +172,15 @@ class SupportTicketController extends BaseController
             'attachment' => 'nullable|string', // 2MB limit
         ]);
         $ticket = SupportTicket::findOrFail($id);
+        $user = $request->user();
 
-        // Security check: only ticket owner or user with view_all_support_tickets can reply
-        if (!$request->user()->hasAbility('view_all_support_tickets') && $ticket->user_id !== $request->user()->id) {
+        $canManage = $user->hasAbility('view_all_support_tickets')
+            || $user->hasAbility('update_support_tickets')
+            || $user->hasAbility('close_support_tickets')
+            || $user->isSuperAdmin();
+
+        // Security check: only ticket owner or staff with support permissions can reply
+        if (!$canManage && $ticket->user_id !== $user->id) {
             return $this->error('Unauthorized', 403);
         }
 
@@ -176,18 +188,21 @@ class SupportTicketController extends BaseController
             return $this->error('Ticket is closed', 422);
         }
 
+        $isStaff = $user->id !== $ticket->user_id || $canManage;
+
         $message = SupportMessage::create([
             'support_ticket_id' => $ticket->id,
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'message' => $request->message,
-            'attachment' => $request->attachment
+            'attachment' => $request->attachment,
+            'is_staff' => $isStaff,
         ]);
 
-        if ($request->user()->hasAbility('update_support_tickets')) {
+        if ($canManage) {
             $ticket->update(['status' => 'in-progress']);
         }
 
-        return $this->success($message, 'Response posted successfully');
+        return $this->success($message->load('user:id,name'), 'Response posted successfully');
     }
 
     /**
@@ -203,7 +218,8 @@ class SupportTicketController extends BaseController
      */
     public function updatePriority(Request $request, $id)
     {
-        if (!$request->user()->hasAbility('update_support_tickets')) {
+        $user = $request->user();
+        if (!$user->hasAbility('update_support_tickets') && !$user->isSuperAdmin()) {
             return $this->error('Unauthorized', 403);
         }
 
@@ -226,15 +242,22 @@ class SupportTicketController extends BaseController
      */
     public function close(Request $request, $id)
     {
-        if (!$request->user()->hasAbility('close_support_tickets')) {
+        $ticket = SupportTicket::findOrFail($id);
+        $user = $request->user();
+
+        $canManage = $user->hasAbility('close_support_tickets')
+            || $user->hasAbility('update_support_tickets')
+            || $user->isSuperAdmin();
+
+        // Allow ticket owner to close their own ticket as well
+        if (!$canManage && $ticket->user_id !== $user->id) {
             return $this->error('Unauthorized', 403);
         }
 
-        $ticket = SupportTicket::findOrFail($id);
         $ticket->update([
             'status' => 'closed',
             'closed_on' => now(),
-            'closed_by' => $request->user()->id
+            'closed_by' => $user->id
         ]);
 
         return $this->successWithMap($ticket, 'passthrough', 'Ticket closed successfully');

@@ -359,7 +359,12 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
 
     const rowActionHandlers: RowActionHandlers = {
         resendReceipt: (paymentId, via) => resendReceiptMutation.mutate({ paymentId, via }),
-        downloadReceipt: (paymentId) => window.open(`/api/v1/fees/ledger/download-receipt/${paymentId}`, "_blank"),
+        downloadReceipt: (paymentId: number) => {
+            const endpoint = isStudentPortal
+                ? `/api/v1/student/financial-ledger/receipt/${paymentId}`
+                : `/api/v1/fees/ledger/download-receipt/${paymentId}`;
+            window.open(endpoint, "_blank");
+        },
         copyLink: () => {
             const url = `${window.location.origin}/accounts/fee-hub/students?student=${studentId}`;
             navigator.clipboard.writeText(url);
@@ -478,21 +483,34 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                 {/* ─── Admission Fee Summary ───────────────────────────────── */}
                 {admissionSummary && (
                     <div className="max-w-[1400px] mx-auto w-full space-y-3">
-                        <div className="flex items-center gap-2 px-1">
-                            <Receipt className="size-4 text-muted-foreground" />
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Admission Fee Summary</h3>
-                            {admissionSummary.payment_status && (
-                                <Badge
-                                    variant={admissionSummary.payment_status === "success" ? "default" : "secondary"}
-                                    className={cn(
-                                        "text-[9px] font-bold uppercase tracking-wider",
-                                        admissionSummary.payment_status === "success"
-                                            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                                            : "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                                    )}
+                        <div className="flex items-center justify-between px-1">
+                            <div className="flex items-center gap-2">
+                                <Receipt className="size-4 text-muted-foreground" />
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Admission Fee Summary</h3>
+                                {admissionSummary.payment_status && (
+                                    <Badge
+                                        variant={admissionSummary.payment_status === "success" ? "default" : "secondary"}
+                                        className={cn(
+                                            "text-[9px] font-bold uppercase tracking-wider",
+                                            admissionSummary.payment_status === "success"
+                                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                                : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                                        )}
+                                    >
+                                        {admissionSummary.payment_status === "success" ? "Paid" : "Pending"}
+                                    </Badge>
+                                )}
+                            </div>
+                            {admissionSummary.payment_status === "success" && (admissionSummary.id || admissionSummary.application_id) && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 px-3 rounded-lg text-xs font-semibold gap-1.5 border-primary/20 text-primary hover:bg-primary/5 shadow-none"
+                                    onClick={() => window.open(`/api/v1/student/admission/${admissionSummary.id || admissionSummary.application_id}/download-receipt`, "_blank")}
                                 >
-                                    {admissionSummary.payment_status === "success" ? "Paid" : "Pending"}
-                                </Badge>
+                                    <Download className="size-3.5" />
+                                    <span>Download Receipt</span>
+                                </Button>
                             )}
                         </div>
                         <Card className="rounded-xl border shadow-sm overflow-hidden">
@@ -788,7 +806,24 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                 <TableCell className="text-center py-4 border-r">
                                                                     <div className="flex items-center justify-center gap-1.5">
                                                                         {isStudentPortal ? (
-                                                                            <span className="text-muted-foreground text-[10px]">No Actions</span>
+                                                                            row.payment_id ? (
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            variant="outline"
+                                                                                            size="sm"
+                                                                                            className="h-7 px-2.5 rounded-lg text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 flex items-center gap-1.5 text-[11px] font-semibold shadow-none transition-colors"
+                                                                                            onClick={() => rowActionHandlers.downloadReceipt(row.payment_id)}
+                                                                                        >
+                                                                                            <Download className="size-3.5 text-amber-600" />
+                                                                                            <span>Receipt</span>
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>Download Fee Receipt (PDF)</TooltipContent>
+                                                                                </Tooltip>
+                                                                            ) : (
+                                                                                <span className="text-muted-foreground/60 text-[11px] font-medium">—</span>
+                                                                            )
                                                                         ) : row.payment_id
                                                                             ? <PaidRowActions row={row} handlers={rowActionHandlers} />
                                                                             : <UnpaidRowActions row={row} handlers={rowActionHandlers} isPending={sendReminderMutation.isPending} />
@@ -904,8 +939,23 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                             display = (
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
-                                                                        <div className="inline-flex flex-col items-center cursor-help">
-                                                                            <span className="text-[11px] font-mono font-bold text-primary">{rawVal}</span>
+                                                                        <div
+                                                                            className={cn(
+                                                                                "inline-flex flex-col items-center",
+                                                                                row.payment_id ? "cursor-pointer group/rcp" : "cursor-help"
+                                                                            )}
+                                                                            onClick={() => {
+                                                                                if (row.payment_id) {
+                                                                                    rowActionHandlers.downloadReceipt(row.payment_id);
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            <span className={cn(
+                                                                                "text-[11px] font-mono font-bold text-primary",
+                                                                                row.payment_id && "group-hover/rcp:underline"
+                                                                            )}>
+                                                                                {rawVal}
+                                                                            </span>
                                                                             {row.remarks && (
                                                                                 <span className="text-[9px] text-muted-foreground truncate max-w-[120px] italic">
                                                                                     "{row.remarks}"
@@ -914,7 +964,10 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                         </div>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent side="top" className="max-w-xs text-xs p-2.5 space-y-1">
-                                                                        <div className="font-bold text-foreground">Receipt: {rawVal}</div>
+                                                                        <div className="font-bold text-foreground">
+                                                                            Receipt: {rawVal}
+                                                                            {row.payment_id && <span className="ml-1 text-[10px] text-primary font-normal">(Click to download)</span>}
+                                                                        </div>
                                                                         {row.payment_mode && (
                                                                             <div className="text-[11px] uppercase font-bold text-muted-foreground">Mode: {row.payment_mode}</div>
                                                                         )}

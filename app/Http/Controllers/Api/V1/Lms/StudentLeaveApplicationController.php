@@ -17,13 +17,15 @@ use Illuminate\Validation\Rule;
 
 class StudentLeaveApplicationController extends BaseController
 {
-    /**
-     * List all leave applications for a student in a class.
-     */
     public function index(Request $request, LmsClass $lms_class, User $student_user): JsonResponse
     {
         $user = $request->user();
-        if (!LmsClass::userCanAccessForRead($user, $lms_class->id) && $user->id !== $student_user->id) {
+        $isOwn = $user->id === $student_user->id;
+        $canStaffView = $user->hasAbility('view_lms_classes')
+            || $user->hasAbility('manage_lms_enrollments')
+            || LmsClass::userCanGradeInClass($user, $lms_class->id);
+
+        if (!$isOwn && !$canStaffView) {
             return $this->forbidden('You do not have permission to view leave applications.');
         }
 
@@ -106,8 +108,13 @@ class StudentLeaveApplicationController extends BaseController
 
         $institutionId = (int) ($lms_class->institution_id ?? config('ems.default_institution_id', 1));
         $sessionId = (int) ($lms_class->session_id ?? $student_user->studentProfile?->session_id);
-        $status = $validated['status'] ?? 'approved';
-        $autoMark = filter_var($validated['auto_marked_attendance'] ?? ($documentCategory === 'leave'), FILTER_VALIDATE_BOOLEAN);
+        $isStaff = $currentUser->hasAbility('update_lms_classes')
+            || $currentUser->hasAbility('create_lms_classes')
+            || $currentUser->hasAbility('mark_attendance')
+            || LmsClass::userCanGradeInClass($currentUser, $lms_class->id);
+
+        $status = $isStaff ? ($validated['status'] ?? 'approved') : 'pending';
+        $autoMark = $isStaff ? filter_var($validated['auto_marked_attendance'] ?? ($documentCategory === 'leave'), FILTER_VALIDATE_BOOLEAN) : false;
 
         $leave = DB::transaction(function () use (
             $institutionId,

@@ -3,16 +3,24 @@
 namespace App\Http\Controllers\Api\V1\StudentDashboard;
 
 use App\Http\Controllers\Api\V1\BaseController;
+use App\Models\FeePayment;
 use App\Services\ApiResponseMapService;
 use App\Services\FeeCollectionService;
+use App\Services\FinancialDocuments\AssembleFeePaymentReceipt;
+use App\Services\FinancialDocuments\FinancialPdfRenderer;
+use App\Services\InstitutionBrandingService;
 use App\Support\EffectiveStudentContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StudentFinancialLedgerController extends BaseController
 {
-    public function __construct(private FeeCollectionService $feeCollectionService)
-    {
+    public function __construct(
+        private FeeCollectionService $feeCollectionService,
+        private InstitutionBrandingService $brandingService,
+        private AssembleFeePaymentReceipt $assembleFeePaymentReceipt,
+        private FinancialPdfRenderer $financialPdfRenderer,
+    ) {
     }
 
     public function index(Request $request): JsonResponse
@@ -108,5 +116,25 @@ class StudentFinancialLedgerController extends BaseController
                 'last_page' => (int) ceil(count($matrix) / max(1, $perPage)),
             ],
         ]);
+    }
+
+    public function downloadReceipt(Request $request, FeePayment $payment)
+    {
+        $student = EffectiveStudentContext::getEffectiveUser($request->user());
+        if (!$student) {
+            return $this->unauthorized('Unauthorized.');
+        }
+
+        if ((int) $payment->user_id !== (int) $student->id) {
+            return $this->forbidden('You are not authorized to download this receipt.');
+        }
+
+        $payment->load('user');
+        $branding = $this->brandingService->resolve($payment->institution_id);
+        $document = $this->assembleFeePaymentReceipt->assemble($payment, $student);
+        $fileName = 'Receipt_' . ($payment->receipt_no ?? $payment->payment_id) . '.pdf';
+
+        return $this->financialPdfRenderer->renderDownload($document, $branding, $fileName)
+            ->header('Access-Control-Expose-Headers', 'Content-Disposition');
     }
 }

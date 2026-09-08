@@ -231,7 +231,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::postReply
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:162
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:168
  * @route '/api/v1/support/tickets/{id}/reply'
  */
 export const postReply = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -246,7 +246,7 @@ postReply.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::postReply
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:162
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:168
  * @route '/api/v1/support/tickets/{id}/reply'
  */
 postReply.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ postReply.url = (args: { id: string | number } | [id: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::postReply
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:162
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:168
  * @route '/api/v1/support/tickets/{id}/reply'
  */
 postReply.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -284,7 +284,7 @@ postReply.post = (args: { id: string | number } | [id: string | number ] | strin
 
     /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::postReply
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:162
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:168
  * @route '/api/v1/support/tickets/{id}/reply'
  */
     const postReplyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -294,7 +294,7 @@ postReply.post = (args: { id: string | number } | [id: string | number ] | strin
 
             /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::postReply
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:162
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:168
  * @route '/api/v1/support/tickets/{id}/reply'
  */
         postReplyForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ postReply.post = (args: { id: string | number } | [id: string | number ] | strin
     postReply.form = postReplyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::close
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:227
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:243
  * @route '/api/v1/support/tickets/{id}/close'
  */
 export const close = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -320,7 +320,7 @@ close.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::close
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:227
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:243
  * @route '/api/v1/support/tickets/{id}/close'
  */
 close.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -348,7 +348,7 @@ close.url = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::close
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:227
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:243
  * @route '/api/v1/support/tickets/{id}/close'
  */
 close.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -358,7 +358,7 @@ close.post = (args: { id: string | number } | [id: string | number ] | string | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::close
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:227
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:243
  * @route '/api/v1/support/tickets/{id}/close'
  */
     const closeForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -368,7 +368,7 @@ close.post = (args: { id: string | number } | [id: string | number ] | string | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::close
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:227
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:243
  * @route '/api/v1/support/tickets/{id}/close'
  */
         closeForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -379,7 +379,7 @@ close.post = (args: { id: string | number } | [id: string | number ] | string | 
     close.form = closeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::updatePriority
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:204
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:219
  * @route '/api/v1/support/tickets/{id}/priority'
  */
 export const updatePriority = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -394,7 +394,7 @@ updatePriority.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::updatePriority
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:204
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:219
  * @route '/api/v1/support/tickets/{id}/priority'
  */
 updatePriority.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -422,7 +422,7 @@ updatePriority.url = (args: { id: string | number } | [id: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::updatePriority
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:204
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:219
  * @route '/api/v1/support/tickets/{id}/priority'
  */
 updatePriority.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -432,7 +432,7 @@ updatePriority.patch = (args: { id: string | number } | [id: string | number ] |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::updatePriority
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:204
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:219
  * @route '/api/v1/support/tickets/{id}/priority'
  */
     const updatePriorityForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -447,7 +447,7 @@ updatePriority.patch = (args: { id: string | number } | [id: string | number ] |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Support\SupportTicketController::updatePriority
- * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:204
+ * @see app/Http/Controllers/Api/V1/Support/SupportTicketController.php:219
  * @route '/api/v1/support/tickets/{id}/priority'
  */
         updatePriorityForm.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -25,6 +25,7 @@ import {
   Phone,
   School,
   ArrowRightLeft,
+  Clock,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import lmsApi from "@/lib/api/lmsApi";
@@ -42,7 +43,8 @@ interface ClassStudentRosterHubProps {
 export function ClassStudentRosterHub({ classId, className }: ClassStudentRosterHubProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"roll" | "attendance" | "tests">("roll");
-  const [selectedStudent, setSelectedStudent] = useState<{ id: number; name: string } | null>(null);
+  const [filterPendingOnly, setFilterPendingOnly] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<{ id: number; name: string; defaultTab?: string } | null>(null);
   const [leaveUploadStudent, setLeaveUploadStudent] = useState<{ id: number; name: string } | null>(null);
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [transferDialogOpen, setTransferDialogOpen] = useState<boolean>(false);
@@ -61,6 +63,9 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
   // Filter & Sort
   const filteredStudents = useMemo(() => {
     let list = students.filter((s) => {
+      if (filterPendingOnly && (s.leaves?.pending_count ?? 0) <= 0) {
+        return false;
+      }
       if (!search.trim()) return true;
       const q = search.toLowerCase();
       return (
@@ -85,7 +90,7 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
     });
 
     return list;
-  }, [students, search, sortBy]);
+  }, [students, search, sortBy, filterPendingOnly]);
 
   return (
     <div className="space-y-6">
@@ -155,6 +160,36 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Pending Leaves Review Alert Banner (if any pending) ─────── */}
+      {(stats?.pending_leaves_count ?? 0) > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+          <div className="flex items-center gap-3">
+            <div className="size-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Clock className="size-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-foreground">
+                {stats.pending_leaves_count} Student Leave Application{stats.pending_leaves_count > 1 ? "s" : ""} Awaiting Review
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Students have submitted leave applications that require teacher review and approval.
+              </p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => setFilterPendingOnly(!filterPendingOnly)}
+            className={cn(
+              "h-8 rounded-xl font-bold text-xs gap-1.5 shadow-xs transition-all shrink-0 self-start sm:self-auto",
+              filterPendingOnly ? "bg-amber-600 hover:bg-amber-700 text-white" : "bg-amber-500 hover:bg-amber-600 text-white"
+            )}
+          >
+            <Clock className="size-3.5" />
+            {filterPendingOnly ? "Show All Students" : `Filter Pending (${stats.pending_leaves_count})`}
+          </Button>
+        </div>
+      )}
 
       {/* ── Search & Sorting Toolbar ──────────────────────────────── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl border border-border/70 bg-card shadow-sm">
@@ -372,10 +407,17 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
 
                   {/* Physical Leaves Badge & Quick Upload */}
                   <div className="col-span-2 sm:col-span-1 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-1.5">
-                    <Badge variant="outline" className="text-xs font-bold gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30">
-                      <FileText className="size-3 text-amber-600" />
-                      {s.leaves?.applied_count ?? 0} Leave Slips
-                    </Badge>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge variant="outline" className="text-xs font-bold gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30">
+                        <FileText className="size-3 text-amber-600" />
+                        {s.leaves?.applied_count ?? 0} Slips
+                      </Badge>
+                      {(s.leaves?.pending_count ?? 0) > 0 && (
+                        <Badge className="text-[10px] font-extrabold bg-amber-500 text-white animate-pulse px-2 py-0">
+                          {s.leaves.pending_count} Pending
+                        </Badge>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => setLeaveUploadStudent({ id: s.user_id, name: s.name })}
@@ -388,7 +430,23 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
                 </div>
 
                 {/* 360 & Transfer Action Buttons */}
-                <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-border/40">
+                <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-border/40 flex-wrap">
+                  {(s.leaves?.pending_count ?? 0) > 0 && (
+                    <Button
+                      size="sm"
+                      onClick={() =>
+                        setSelectedStudent({
+                          id: s.user_id,
+                          name: s.name,
+                          defaultTab: "attendance",
+                        })
+                      }
+                      className="h-9 rounded-xl font-bold text-xs gap-1.5 bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                    >
+                      <Clock className="size-3.5" />
+                      Review Leave ({s.leaves.pending_count})
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
@@ -423,6 +481,7 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
         userId={selectedStudent?.id}
         classId={classId}
         studentName={selectedStudent?.name}
+        defaultTab={selectedStudent?.defaultTab}
       />
 
       {/* ── Quick Leave Upload Modal ──────────────────────────────── */}

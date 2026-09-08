@@ -6,6 +6,16 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +48,8 @@ import {
   FolderOpen,
   Filter,
   Download,
+  Check,
+  X,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import lmsApi from "@/lib/api/lmsApi";
@@ -53,6 +65,8 @@ interface StudentClassProfileDrawerProps {
   userId?: number;
   classId?: number;
   studentName?: string;
+  isStudent?: boolean;
+  defaultTab?: string;
 }
 
 export function StudentClassProfileDrawer({
@@ -61,9 +75,17 @@ export function StudentClassProfileDrawer({
   userId,
   classId,
   studentName,
+  isStudent = false,
+  defaultTab,
 }: StudentClassProfileDrawerProps) {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>(defaultTab || "overview");
+
+  React.useEffect(() => {
+    if (open && defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [open, defaultTab]);
 
   // Selected session in Lifetime Journey (if inspecting past class)
   const [selectedHistoryClassId, setSelectedHistoryClassId] = useState<number | null>(null);
@@ -90,6 +112,23 @@ export function StudentClassProfileDrawer({
     url: null,
     name: null,
   });
+
+  // Rejection Dialog State
+  const [rejectDialog, setRejectDialog] = useState<{
+    open: boolean;
+    leaveId: number | null;
+    studentName?: string;
+    leaveType?: string;
+    dateRange?: string;
+    remarks: string;
+  }>({
+    open: false,
+    leaveId: null,
+    remarks: "",
+  });
+
+  // Delete Confirmation Dialog State
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   // Effective classId: uses selected historical class if switched, else current classId
   const effectiveClassId = selectedHistoryClassId ?? classId;
@@ -126,6 +165,41 @@ export function StudentClassProfileDrawer({
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to delete document record.");
+    },
+  });
+
+  // Approve / Reject leave mutation
+  const updateLeaveStatusMutation = useMutation({
+    mutationFn: ({
+      leaveId,
+      status,
+      adminRemarks,
+      syncAttendance = true,
+    }: {
+      leaveId: number;
+      status: "approved" | "rejected";
+      adminRemarks?: string;
+      syncAttendance?: boolean;
+    }) =>
+      lmsApi.studentRoster.updateLeaveStatus(leaveId, {
+        status,
+        admin_remarks: adminRemarks,
+        sync_attendance: syncAttendance,
+      }),
+    onSuccess: (_, variables) => {
+      toast.success(
+        variables.status === "approved"
+          ? "Leave application approved and attendance register synchronized."
+          : "Leave application marked as rejected."
+      );
+      queryClient.invalidateQueries({ queryKey: ["student-360-profile", effectiveClassId, userId] });
+      queryClient.invalidateQueries({ queryKey: ["lms-class-students-summary", classId] });
+      queryClient.invalidateQueries({ queryKey: ["lms-class-attendance-today", classId] });
+      queryClient.invalidateQueries({ queryKey: ["attendance-monthly-matrix", classId] });
+      queryClient.invalidateQueries({ queryKey: ["student-own-attendance-hub"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to update leave application status.");
     },
   });
 
@@ -706,7 +780,7 @@ export function StudentClassProfileDrawer({
                                   <Icon className="size-5" />
                                 </div>
 
-                                <div className="space-y-1 min-w-0">
+                                <div className="space-y-1.5 min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <Badge variant="outline" className={cn("capitalize text-xs font-bold border", meta.badgeClass)}>
                                       {meta.label}
@@ -714,6 +788,22 @@ export function StudentClassProfileDrawer({
                                     <span className="font-bold text-xs text-foreground truncate max-w-xs">
                                       {title}
                                     </span>
+
+                                    {/* Leave Approval Status Badge */}
+                                    {item.status === "approved" ? (
+                                      <Badge className="text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 py-0 h-5">
+                                        ✓ Approved
+                                      </Badge>
+                                    ) : item.status === "rejected" ? (
+                                      <Badge className="text-[10px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30 py-0 h-5">
+                                        ✕ Rejected
+                                      </Badge>
+                                    ) : (
+                                      <Badge className="text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 py-0 h-5">
+                                        ⏳ Pending Approval
+                                      </Badge>
+                                    )}
+
                                     <span className="font-medium text-xs text-muted-foreground flex items-center gap-1">
                                       <Calendar className="size-3" />
                                       {item.from_date}
@@ -739,6 +829,12 @@ export function StudentClassProfileDrawer({
                                     "{item.reason}"
                                   </p>
 
+                                  {item.admin_remarks && (
+                                    <p className="text-[11px] text-muted-foreground bg-muted/40 px-2.5 py-1 rounded-lg border border-border/40 inline-block">
+                                      <span className="font-semibold text-foreground">Teacher Remark:</span> {item.admin_remarks}
+                                    </p>
+                                  )}
+
                                   <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-wrap">
                                     <span>Recorded {item.created_at}</span>
                                     {item.approved_by && <span>• Approved by {item.approved_by}</span>}
@@ -749,7 +845,90 @@ export function StudentClassProfileDrawer({
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center flex-wrap">
+                                {/* Staff Approve / Reject Actions */}
+                                {!isStudent && (
+                                  <div className="flex items-center gap-1.5">
+                                    {item.status === "pending" ? (
+                                      <>
+                                        <Button
+                                          size="sm"
+                                          onClick={() =>
+                                            updateLeaveStatusMutation.mutate({
+                                              leaveId: item.id,
+                                              status: "approved",
+                                              syncAttendance: true,
+                                            })
+                                          }
+                                          disabled={updateLeaveStatusMutation.isPending}
+                                          className="h-8 gap-1 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                                          title="Approve leave and record in attendance register as Leave (L)"
+                                        >
+                                          <Check className="size-3.5" />
+                                          Approve
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => {
+                                            setRejectDialog({
+                                              open: true,
+                                              leaveId: item.id,
+                                              studentName: student?.name,
+                                              leaveType: title,
+                                              dateRange: `${item.from_date}${item.to_date && item.from_date !== item.to_date ? ` to ${item.to_date}` : ""}`,
+                                              remarks: "",
+                                            });
+                                          }}
+                                          disabled={updateLeaveStatusMutation.isPending}
+                                          className="h-8 gap-1 text-xs font-bold rounded-xl border-rose-500/30 text-rose-600 hover:bg-rose-500/10"
+                                          title="Reject leave application"
+                                        >
+                                          <X className="size-3.5" />
+                                          Reject
+                                        </Button>
+                                      </>
+                                    ) : item.status === "approved" ? (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          setRejectDialog({
+                                            open: true,
+                                            leaveId: item.id,
+                                            studentName: student?.name,
+                                            leaveType: title,
+                                            dateRange: `${item.from_date}${item.to_date && item.from_date !== item.to_date ? ` to ${item.to_date}` : ""}`,
+                                            remarks: "Approval revoked by teacher",
+                                          });
+                                        }}
+                                        disabled={updateLeaveStatusMutation.isPending}
+                                        className="h-8 text-[11px] text-muted-foreground hover:text-rose-600"
+                                        title="Revoke approval"
+                                      >
+                                        Revoke
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() =>
+                                          updateLeaveStatusMutation.mutate({
+                                            leaveId: item.id,
+                                            status: "approved",
+                                            syncAttendance: true,
+                                          })
+                                        }
+                                        disabled={updateLeaveStatusMutation.isPending}
+                                        className="h-8 text-[11px] text-muted-foreground hover:text-emerald-600"
+                                        title="Re-approve"
+                                      >
+                                        Approve
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
+
                                 {item.document_url ? (
                                   <Button
                                     size="sm"
@@ -777,16 +956,18 @@ export function StudentClassProfileDrawer({
                                   </span>
                                 )}
 
-                                <Button
-                                  size="icon-sm"
-                                  variant="ghost"
-                                  onClick={() => deleteLeaveMutation.mutate(item.id)}
-                                  disabled={deleteLeaveMutation.isPending}
-                                  className="size-8 rounded-xl text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10"
-                                  title="Delete record"
-                                >
-                                  <Trash2 className="size-3.5" />
-                                </Button>
+                                {!isStudent && (
+                                  <Button
+                                    size="icon-sm"
+                                    variant="ghost"
+                                    onClick={() => setDeleteConfirmId(item.id)}
+                                    disabled={deleteLeaveMutation.isPending}
+                                    className="size-8 rounded-xl text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10"
+                                    title="Delete record"
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           );
@@ -1111,8 +1292,132 @@ export function StudentClassProfileDrawer({
           userId={userId}
           studentName={student?.name || studentName}
           defaultCategory={uploadCategory}
+          isStudent={isStudent}
         />
       )}
+
+      {/* ── Rejection Remarks Modal Dialog ────────────────────────── */}
+      <Dialog
+        open={rejectDialog.open}
+        onOpenChange={(isOpen) => !isOpen && setRejectDialog((prev) => ({ ...prev, open: false }))}
+      >
+        <DialogContent className="sm:max-w-md rounded-3xl border-border/80 p-6 shadow-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="size-11 rounded-2xl bg-rose-500/10 text-rose-600 flex items-center justify-center border border-rose-500/20 shrink-0">
+                <X className="size-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-extrabold text-foreground">
+                  Reject Leave Request
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  {rejectDialog.studentName ? `${rejectDialog.studentName} • ` : ""}
+                  {rejectDialog.leaveType || "Leave Request"}
+                  {rejectDialog.dateRange ? ` (${rejectDialog.dateRange})` : ""}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-2 py-3">
+            <Label className="text-xs font-bold text-foreground">
+              Rejection Reason or Remarks (Optional)
+            </Label>
+            <Textarea
+              value={rejectDialog.remarks}
+              onChange={(e) => setRejectDialog((prev) => ({ ...prev, remarks: e.target.value }))}
+              placeholder="e.g. Doctor's medical certificate missing, prior approval required, dates invalid..."
+              rows={3}
+              className="rounded-2xl border-border/70 text-xs resize-none placeholder:text-muted-foreground/60"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              These remarks will be displayed on the student's leave ledger in their portal.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setRejectDialog((prev) => ({ ...prev, open: false }))}
+              disabled={updateLeaveStatusMutation.isPending}
+              className="rounded-xl text-xs font-semibold h-9"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (!rejectDialog.leaveId) return;
+                updateLeaveStatusMutation.mutate(
+                  {
+                    leaveId: rejectDialog.leaveId,
+                    status: "rejected",
+                    adminRemarks: rejectDialog.remarks.trim() || undefined,
+                  },
+                  {
+                    onSettled: () => setRejectDialog((prev) => ({ ...prev, open: false })),
+                  }
+                );
+              }}
+              disabled={updateLeaveStatusMutation.isPending}
+              className="rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white gap-1.5 h-9 shadow-sm"
+            >
+              <X className="size-3.5" />
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Delete Leave / Document Confirmation Dialog ─────────────── */}
+      <Dialog open={!!deleteConfirmId} onOpenChange={(isOpen) => !isOpen && setDeleteConfirmId(null)}>
+        <DialogContent className="sm:max-w-md rounded-3xl border-border/80 p-6 shadow-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="size-11 rounded-2xl bg-rose-500/10 text-rose-600 flex items-center justify-center border border-rose-500/20 shrink-0">
+                <Trash2 className="size-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-extrabold text-foreground">
+                  Delete Document Record?
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  This will permanently delete this leave application and its uploaded scan from Cloudflare R2 vault.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <DialogFooter className="gap-2 sm:gap-2 pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeleteConfirmId(null)}
+              disabled={deleteLeaveMutation.isPending}
+              className="rounded-xl text-xs font-semibold h-9"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (!deleteConfirmId) return;
+                deleteLeaveMutation.mutate(deleteConfirmId, {
+                  onSettled: () => setDeleteConfirmId(null),
+                });
+              }}
+              disabled={deleteLeaveMutation.isPending}
+              className="rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white gap-1.5 h-9 shadow-sm"
+            >
+              <Trash2 className="size-3.5" />
+              Delete Record
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

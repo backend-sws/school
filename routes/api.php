@@ -290,6 +290,9 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 });
             });
 
+            // Fee receipt download (authorized for staff or payment owner)
+            Route::get('fees/ledger/download-receipt/{payment}', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'downloadReceipt']);
+
             // ─── Accounts Room ─────────────────────────────────────────
             Route::middleware(config('route_permissions.middleware.accounts_room'))->group(function () {
                 Route::post('fee-types/restore-defaults', [\App\Http\Controllers\Api\V1\Fees\FeeTypeController::class, 'restoreDefaults']);
@@ -307,7 +310,6 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::post('fees/ledger/resend-receipt', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'resendReceipt']);
                 Route::post('fees/ledger/mark-as-paid', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'markAsPaid']);
                 Route::post('fees/ledger/revert-payment', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'revertPayment']);
-                Route::get('fees/ledger/download-receipt/{payment}', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'downloadReceipt']);
                 Route::get('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'index']);
                 Route::post('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'store']);
                 Route::post('fees/ad-hoc-charges/bulk-delete', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'bulkDestroy']);
@@ -692,6 +694,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
             // Transactions
             Route::get('transactions', [\App\Http\Controllers\Api\V1\StudentDashboard\StudentTransactionController::class, 'index']);
             Route::get('financial-ledger', [\App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::class, 'index']);
+            Route::get('financial-ledger/receipt/{payment}', [\App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::class, 'downloadReceipt']);
 
             //Notices
             Route::get('notices', [\App\Http\Controllers\Api\V1\StudentDashboard\StudentNoticeController::class, 'index']);

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
 const globalStudent36076a4f8a9841682272968e364ec5a14f0 = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
 globalStudent36076a4f8a9841682272968e364ec5a14f0.url = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.url = (args: { student_user: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
 globalStudent36076a4f8a9841682272968e364ec5a14f0.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -58,7 +58,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.get = (args: { student_user: nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
 globalStudent36076a4f8a9841682272968e364ec5a14f0.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -68,7 +68,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.head = (args: { student_user: n
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
     const globalStudent36076a4f8a9841682272968e364ec5a14f0Form = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,7 +78,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.head = (args: { student_user: n
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
         globalStudent36076a4f8a9841682272968e364ec5a14f0Form.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -87,7 +87,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.head = (args: { student_user: n
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/students/{student_user}/global-360'
  */
         globalStudent36076a4f8a9841682272968e364ec5a14f0Form.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -103,7 +103,7 @@ globalStudent36076a4f8a9841682272968e364ec5a14f0.head = (args: { student_user: n
     globalStudent36076a4f8a9841682272968e364ec5a14f0.form = globalStudent36076a4f8a9841682272968e364ec5a14f0Form
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
 const globalStudent360eb1075d1aa588d16b165ba52ec1e6183 = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -118,7 +118,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
 globalStudent360eb1075d1aa588d16b165ba52ec1e6183.url = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -151,7 +151,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.url = (args: { student_user: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
 globalStudent360eb1075d1aa588d16b165ba52ec1e6183.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -160,7 +160,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.get = (args: { student_user: nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
 globalStudent360eb1075d1aa588d16b165ba52ec1e6183.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -170,7 +170,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.head = (args: { student_user: n
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
     const globalStudent360eb1075d1aa588d16b165ba52ec1e6183Form = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -180,7 +180,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.head = (args: { student_user: n
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
         globalStudent360eb1075d1aa588d16b165ba52ec1e6183Form.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -189,7 +189,7 @@ globalStudent360eb1075d1aa588d16b165ba52ec1e6183.head = (args: { student_user: n
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::globalStudent360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:244
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:256
  * @route '/api/v1/lms/students/{student_user}/global-360'
  */
         globalStudent360eb1075d1aa588d16b165ba52ec1e6183Form.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -216,7 +216,7 @@ export const globalStudent360 = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
 const lifetimeHistory0516f07d65ba8f483984d156c0dd1420 = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -231,7 +231,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
 lifetimeHistory0516f07d65ba8f483984d156c0dd1420.url = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -264,7 +264,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.url = (args: { student_user: num
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
 lifetimeHistory0516f07d65ba8f483984d156c0dd1420.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -273,7 +273,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.get = (args: { student_user: num
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
 lifetimeHistory0516f07d65ba8f483984d156c0dd1420.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -283,7 +283,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.head = (args: { student_user: nu
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
     const lifetimeHistory0516f07d65ba8f483984d156c0dd1420Form = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -293,7 +293,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.head = (args: { student_user: nu
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
         lifetimeHistory0516f07d65ba8f483984d156c0dd1420Form.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -302,7 +302,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.head = (args: { student_user: nu
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/students/{student_user}/lifetime-history'
  */
         lifetimeHistory0516f07d65ba8f483984d156c0dd1420Form.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -318,7 +318,7 @@ lifetimeHistory0516f07d65ba8f483984d156c0dd1420.head = (args: { student_user: nu
     lifetimeHistory0516f07d65ba8f483984d156c0dd1420.form = lifetimeHistory0516f07d65ba8f483984d156c0dd1420Form
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
 const lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9 = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -333,7 +333,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
 lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.url = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -366,7 +366,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.url = (args: { student_user: num
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
 lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -375,7 +375,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.get = (args: { student_user: num
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
 lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -385,7 +385,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.head = (args: { student_user: nu
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
     const lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9Form = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -395,7 +395,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.head = (args: { student_user: nu
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
         lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9Form.get = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -404,7 +404,7 @@ lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9.head = (args: { student_user: nu
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::lifetimeHistory
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:283
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:295
  * @route '/api/v1/lms/students/{student_user}/lifetime-history'
  */
         lifetimeHistorye69e66ed3023fa30c5114ecbb30e6fe9Form.head = (args: { student_user: number | { id: number } } | [student_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -533,7 +533,7 @@ studentsSummary.head = (args: { lms_class: number | { id: number } } | [lms_clas
     studentsSummary.form = studentsSummaryForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
 export const student360 = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -548,7 +548,7 @@ student360.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
 student360.url = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions) => {
@@ -578,7 +578,7 @@ student360.url = (args: { lms_class: number | { id: number }, student_user: numb
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
 student360.get = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -587,7 +587,7 @@ student360.get = (args: { lms_class: number | { id: number }, student_user: numb
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
 student360.head = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -597,7 +597,7 @@ student360.head = (args: { lms_class: number | { id: number }, student_user: num
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
     const student360Form = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -607,7 +607,7 @@ student360.head = (args: { lms_class: number | { id: number }, student_user: num
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
         student360Form.get = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -616,7 +616,7 @@ student360.head = (args: { lms_class: number | { id: number }, student_user: num
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\ClassStudentRosterController::student360
- * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:230
+ * @see app/Http/Controllers/Api/V1/Lms/ClassStudentRosterController.php:237
  * @route '/api/v1/lms/classes/{lms_class}/students/{student_user}/360'
  */
         student360Form.head = (args: { lms_class: number | { id: number }, student_user: number | { id: number } } | [lms_class: number | { id: number }, student_user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

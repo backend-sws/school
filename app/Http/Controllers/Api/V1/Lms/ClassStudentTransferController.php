@@ -29,8 +29,13 @@ class ClassStudentTransferController extends BaseController
     public function options(Request $request, LmsClass $lms_class): JsonResponse
     {
         $user = $request->user();
-        if (!LmsClass::userCanAccessForRead($user, $lms_class->id)) {
-            return $this->forbidden('You do not have permission to view this classroom.');
+        $canAccess = $user->hasAbility('manage_lms_enrollments')
+            || $user->hasAbility('edit_lms_classes')
+            || $user->hasAbility('view_lms_classes')
+            || LmsClass::userCanGradeInClass($user, $lms_class->id);
+
+        if (!$canAccess) {
+            return $this->forbidden('You do not have permission to view this classroom transfer options.');
         }
 
         $institutionId = (int) ($lms_class->institution_id ?? InstitutionContext::getActiveInstitutionId($user));
@@ -111,7 +116,12 @@ class ClassStudentTransferController extends BaseController
     public function transfer(Request $request, LmsClass $lms_class): JsonResponse
     {
         $user = $request->user();
-        if (!$user->hasAbility('manage_lms_enrollments') && !$user->hasAbility('edit_lms_classes') && !LmsClass::userCanAccessForRead($user, $lms_class->id)) {
+        $canTransfer = $user->hasAbility('manage_lms_enrollments')
+            || $user->hasAbility('edit_lms_classes')
+            || $user->hasAbility('create_lms_classes')
+            || LmsClass::userCanGradeInClass($user, $lms_class->id);
+
+        if (!$canTransfer) {
             return $this->forbidden('You do not have permission to transfer students.');
         }
 
