@@ -34,6 +34,8 @@ export interface GurukulReportCardProps {
     website?: string;
     email?: string;
     logo_url?: string;
+    place?: string;
+    city?: string;
   };
   student?: {
     name?: string;
@@ -92,29 +94,26 @@ export function GurukulReportCard({
     reportType === "half_yearly" ||
     (ex.term?.name?.toLowerCase().includes("half") && reportType !== "final" && reportType !== "annual");
 
-  const schoolCode = (inst.code && inst.code !== "DEMO_SCH") ? inst.code : "10321110102";
-  const affiliationNo = inst.affiliation_no || "23414752026325123543";
-  const schoolName = (inst.name && inst.name !== "Demo School" && inst.name !== "Demo Organization") ? inst.name : "GURUKUL SCHOOL";
-  const schoolAddress =
-    (inst.address && inst.address !== "Demo Address")
-      ? inst.address
-      : "SUNDARGANJ, BAKNAURA, PO: ROHTAS, BIHAR, PIN:821311";
-  const schoolTrust =
-    inst.trust || "(Managed By Gurukul Managing Committee, Trust)";
+  const schoolCode = inst.code || "";
+  const affiliationNo = inst.affiliation_no || "";
+  const schoolName = inst.name || "INSTITUTION NAME";
+  const schoolAddress = inst.address || "";
+  const schoolTrust = inst.trust || "";
   const contactNo = inst.contact || "";
-  const website = "gurukul.ojasvidya.com";
+  const website = inst.website || "";
   const email = inst.email || "";
-  const logoUrl = inst.logo_url || "/images/gurukul-logo.png";
+  const logoUrl = inst.logo_url || "";
+  const placeName = inst.place || (inst.city ? inst.city.toUpperCase() : (inst.name ? inst.name.toUpperCase() : "CAMPUS"));
 
-  const studentName = stud.name || "RAJVEER KUMAR GUPTA";
-  const motherName = stud.mother_name || "PRATIMA DEVI";
-  const fatherName = stud.father_name || "DEEPAK KUMAR GUPTA";
-  const dob = stud.dob || "16-01-2013";
-  const marksheetNo = stud.reg_no || stud.admission_no || "202526AEVIIA2";
-  const slNo = stud.sl_no || "2";
-  const className = stud.class_name || "VII 'A'";
-  const rollNo = stud.roll_no || "2";
-  const address = stud.address || "KATAR";
+  const studentName = stud.name || "—";
+  const motherName = stud.mother_name || "—";
+  const fatherName = stud.father_name || "—";
+  const dob = stud.dob || "—";
+  const marksheetNo = stud.reg_no || stud.admission_no || "—";
+  const slNo = stud.sl_no || stud.roll_no || "1";
+  const className = stud.class_name || "—";
+  const rollNo = stud.roll_no || "—";
+  const address = stud.address || "—";
 
   const sessionName = ex.session?.name || "2025-26";
 
@@ -215,48 +214,58 @@ export function GurukulReportCard({
     <div className="w-full bg-white dark:bg-white text-black dark:text-black p-4 md:p-6 rounded-none border border-black dark:border-black font-serif shadow-sm printable-marksheet text-xs select-none [&_th]:text-black [&_th]:dark:text-black [&_td]:text-black [&_td]:dark:text-black [&_div]:text-black [&_div]:dark:text-black [&_span]:text-black [&_span]:dark:text-black [&_p]:text-black [&_p]:dark:text-black [&_table]:bg-white [&_table]:dark:bg-white">
       {/* Top Red Header */}
       <div className="flex justify-between items-baseline font-bold text-xs mb-1" style={{ color: "#D32F2F" }}>
-        <div className="font-extrabold">School Code : {schoolCode}</div>
-        <div className="text-base md:text-xl font-extrabold tracking-tight text-center uppercase">
+        <div className="font-extrabold">{schoolCode ? `School Code : ${schoolCode}` : ""}</div>
+        <div className="text-base md:text-xl font-extrabold tracking-tight text-center uppercase flex-1 px-2">
           {isHalfYearly ? "HALF YEARLY" : "ANNUAL"} REPORT CARD FOR ACADEMIC SESSION {sessionName}
         </div>
-        <div className="font-extrabold text-right">Affiliation No : {affiliationNo}</div>
+        <div className="font-extrabold text-right">{affiliationNo ? `Affiliation No : ${affiliationNo}` : ""}</div>
       </div>
 
       {/* School Logo & Title Block */}
       <div className="flex items-center justify-between my-1">
-        <div className="w-28 flex-shrink-0 flex items-center justify-start">
-          <img
-            src={logoUrl}
-            alt="School Logo"
-            className="h-20 w-auto object-contain"
-            onError={(e) => {
-              (e.target as HTMLElement).style.display = "none";
-            }}
-          />
+        <div className="w-24 md:w-28 flex-shrink-0 flex items-center justify-start">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="School Logo"
+              className="h-16 md:h-20 w-auto object-contain"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = "none";
+              }}
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full border-2 border-black flex items-center justify-center font-bold text-xl text-black">
+              {schoolName.charAt(0)}
+            </div>
+          )}
         </div>
         <div className="text-center flex-1 px-2">
           <h1
-            className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight leading-none mb-1"
+            className="text-2xl md:text-4xl font-extrabold uppercase tracking-tight leading-none mb-1"
             style={{ color: "#0D1B68" }}
           >
             {schoolName}
           </h1>
-          <p className="font-bold text-xs md:text-sm text-black dark:text-black uppercase">
-            {schoolAddress}
-          </p>
-          <p className="font-bold text-xs text-black dark:text-black mt-0.5">
-            {schoolTrust}
-          </p>
+          {schoolAddress && (
+            <p className="font-bold text-xs md:text-sm text-black dark:text-black uppercase">
+              {schoolAddress}
+            </p>
+          )}
+          {schoolTrust && (
+            <p className="font-bold text-xs text-black dark:text-black mt-0.5">
+              {schoolTrust}
+            </p>
+          )}
         </div>
-        <div className="w-28 flex-shrink-0" />
+        <div className="w-24 md:w-28 flex-shrink-0" />
       </div>
 
       {/* Contact & Marksheet Info Row */}
-      <div className="flex justify-between items-center text-xs font-bold py-1 mb-2 border-t border-b border-black dark:border-black text-black dark:text-black bg-white dark:bg-white">
-        <div className="w-1/4 text-left">Marksheet No: <span className="font-black text-sm ml-4">{marksheetNo}</span></div>
-        <div className="w-1/4 text-center">Contact No: <span className="font-black">{contactNo}</span></div>
-        <div className="w-1/4 text-center">Website:<span className="font-black underline ml-1">{website}</span></div>
-        <div className="w-1/4 text-right">Email:<span className="font-black underline ml-1">{email}</span></div>
+      <div className="flex flex-wrap justify-between items-center text-xs font-bold py-1 mb-2 border-t border-b border-black dark:border-black text-black dark:text-black bg-white dark:bg-white gap-2">
+        <div className="text-left">Marksheet No: <span className="font-black text-sm ml-2">{marksheetNo}</span></div>
+        {contactNo && <div className="text-center">Contact No: <span className="font-black ml-1">{contactNo}</span></div>}
+        {website && <div className="text-center">Website:<span className="font-black underline ml-1">{website}</span></div>}
+        {email && <div className="text-right">Email:<span className="font-black underline ml-1">{email}</span></div>}
       </div>
 
       {/* Student Details Grid */}
@@ -547,7 +556,7 @@ export function GurukulReportCard({
       {/* Footer Signatures */}
       <div className="flex justify-between items-end pt-4 font-bold text-xs px-2 text-black dark:text-black bg-white dark:bg-white">
         <div className="space-y-1 text-black dark:text-black">
-          <div>PLACE: GURUKUL SCHOOL, SUJANPUR</div>
+          <div>PLACE: {placeName}</div>
           <div>DATE : {new Date().toLocaleDateString("en-GB")}</div>
         </div>
         <div className="text-center font-extrabold uppercase text-black dark:text-black">

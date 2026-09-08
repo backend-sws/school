@@ -13,8 +13,17 @@ use App\Support\InstitutionContext;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use App\Services\ExaminationService;
+
 class ExamAdmitCardController extends Controller
 {
+    protected $examinationService;
+
+    public function __construct(ExaminationService $examinationService)
+    {
+        $this->examinationService = $examinationService;
+    }
+
     /**
      * Helper to compute ordinal sitting text (1st, 2nd, 3rd, etc.)
      */
@@ -189,7 +198,8 @@ class ExamAdmitCardController extends Controller
             }
         }
 
-        $institution = Institution::where('code', 'DEMO_SCH')->first();
+        $institutionData = $this->examinationService->getReportCardInstitution($exam->institution_id);
+        $institutionData['reg_no'] = $institutionData['affiliation_no'] ?? '';
 
         $students = StudentProfile::with('user')
             ->whereIn('id', $request->student_ids)
@@ -205,26 +215,18 @@ class ExamAdmitCardController extends Controller
             $admitCards[] = [
                 'student' => [
                     'id' => $student->id,
-                    'name' => strtoupper($student->user->name ?? 'UNKNOWN'),
+                    'name' => strtoupper($student->user?->name ?? 'UNKNOWN'),
                     'father_name' => strtoupper($student->father_name ?? '—'),
                     'mother_name' => strtoupper($student->mother_name ?? '—'),
                     'roll_no' => $student->roll_no ?? '—',
-                    'reg_no' => $student->reg_no ?? $student->admission_no ?? '23414752026325123543',
+                    'reg_no' => $student->reg_no ?? $student->admission_no ?? '—',
                     'admission_no' => $student->admission_no ?? '—',
                     'class_name' => $enrollment?->lmsClass?->name ?? $lmsClass->name ?? '—',
                     'section' => $enrollment?->section ?? 'A',
-                    'photo_url' => $student->user->avatar_url ?? null,
+                    'photo_url' => $student->user?->avatar_url ?? null,
                 ],
                 'schedules' => $schedules,
-                'institution' => [
-                    'name' => $institution?->name ?? 'GURUKUL SCHOOL',
-                    'code' => $institution?->code ?? 'DEMO_SCH',
-                    'reg_no' => '23414752026325123543',
-                    'address' => 'At:Sundarganj, Baknaura, Rohtas, Bihar, 821311',
-                    'trust' => '(Managed by Gurukul Managing Committee (Trust), Dehri on Sone)',
-                    'contact' => 'Contact: +91 7739018091',
-                    'logo_url' => '/images/gurukul-logo.png',
-                ],
+                'institution' => $institutionData,
             ];
         }
 

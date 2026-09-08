@@ -46,6 +46,22 @@ export const COLLEGE_PROFILE_BASIC_INFO_GROUP = [
         maxLength: 11,
     },
     {
+        name: "affiliation_no",
+        label: "Affiliation / Registration No.",
+        type: FORM_TYPE.TEXT,
+        placeholder: "e.g., 23414752026325123543",
+        tooltip: "CBSE / ICSE / State Board Affiliation or Registration Number for marksheets and certificates",
+        maxLength: 100,
+    },
+    {
+        name: "trust_name",
+        label: "Managing Committee / Trust Name",
+        type: FORM_TYPE.TEXT,
+        placeholder: "e.g., Managed By Gurukul Managing Committee, Trust",
+        tooltip: "Parent trust or managing committee printed on report cards and official documents",
+        maxLength: 255,
+    },
+    {
         name: "established_year",
         label: "Established Year",
         type: FORM_TYPE.NUMBER,

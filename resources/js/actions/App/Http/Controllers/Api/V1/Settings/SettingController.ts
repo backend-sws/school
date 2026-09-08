@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::index
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:60
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:62
  * @route '/api/v1/settings'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
 export const getByGroup = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ getByGroup.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
 getByGroup.url = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ getByGroup.url = (args: { group: string | number } | [group: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
 getByGroup.get = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ getByGroup.get = (args: { group: string | number } | [group: string | number ] |
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
 getByGroup.head = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ getByGroup.head = (args: { group: string | number } | [group: string | number ] 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
     const getByGroupForm = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ getByGroup.head = (args: { group: string | number } | [group: string | number ] 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
         getByGroupForm.get = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ getByGroup.head = (args: { group: string | number } | [group: string | number ] 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::getByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:157
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:159
  * @route '/api/v1/settings/group/{group}'
  */
         getByGroupForm.head = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ getByGroup.head = (args: { group: string | number } | [group: string | number ] 
     getByGroup.form = getByGroupForm
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::updateByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:218
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:220
  * @route '/api/v1/settings/group/{group}'
  */
 export const updateByGroup = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ updateByGroup.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::updateByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:218
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:220
  * @route '/api/v1/settings/group/{group}'
  */
 updateByGroup.url = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ updateByGroup.url = (args: { group: string | number } | [group: string | number 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::updateByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:218
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:220
  * @route '/api/v1/settings/group/{group}'
  */
 updateByGroup.post = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -229,7 +229,7 @@ updateByGroup.post = (args: { group: string | number } | [group: string | number
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::updateByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:218
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:220
  * @route '/api/v1/settings/group/{group}'
  */
     const updateByGroupForm = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -239,7 +239,7 @@ updateByGroup.post = (args: { group: string | number } | [group: string | number
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::updateByGroup
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:218
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:220
  * @route '/api/v1/settings/group/{group}'
  */
         updateByGroupForm.post = (args: { group: string | number } | [group: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -250,7 +250,7 @@ updateByGroup.post = (args: { group: string | number } | [group: string | number
     updateByGroup.form = updateByGroupForm
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::store
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:92
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:94
  * @route '/api/v1/settings'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -265,7 +265,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::store
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:92
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:94
  * @route '/api/v1/settings'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::store
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:92
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:94
  * @route '/api/v1/settings'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -284,7 +284,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::store
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:92
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:94
  * @route '/api/v1/settings'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -294,7 +294,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::store
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:92
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:94
  * @route '/api/v1/settings'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::update
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:320
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:322
  * @route '/api/v1/settings'
  */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -320,7 +320,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::update
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:320
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:322
  * @route '/api/v1/settings'
  */
 update.url = (options?: RouteQueryOptions) => {
@@ -329,7 +329,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::update
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:320
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:322
  * @route '/api/v1/settings'
  */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -339,7 +339,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::update
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:320
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:322
  * @route '/api/v1/settings'
  */
     const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -354,7 +354,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::update
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:320
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:322
  * @route '/api/v1/settings'
  */
         updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -370,7 +370,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
 export const show = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -385,7 +385,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
 show.url = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -413,7 +413,7 @@ show.url = (args: { key: string | number } | [key: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
 show.get = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -422,7 +422,7 @@ show.get = (args: { key: string | number } | [key: string | number ] | string | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
 show.head = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -432,7 +432,7 @@ show.head = (args: { key: string | number } | [key: string | number ] | string |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
     const showForm = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -442,7 +442,7 @@ show.head = (args: { key: string | number } | [key: string | number ] | string |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
         showForm.get = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -451,7 +451,7 @@ show.head = (args: { key: string | number } | [key: string | number ] | string |
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Settings\SettingController::show
- * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:118
+ * @see app/Http/Controllers/Api/V1/Settings/SettingController.php:120
  * @route '/api/v1/settings/{key}'
  */
         showForm.head = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

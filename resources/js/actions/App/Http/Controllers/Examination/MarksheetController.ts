@@ -100,7 +100,7 @@ show.head = (args: { exam: number | { id: number }, student: number | { id: numb
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
 export const studentView = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -115,7 +115,7 @@ studentView.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
 studentView.url = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -148,7 +148,7 @@ studentView.url = (args: { exam: number | { id: number } } | [exam: number | { i
 
 /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
 studentView.get = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ studentView.get = (args: { exam: number | { id: number } } | [exam: number | { i
 })
 /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
 studentView.head = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -167,7 +167,7 @@ studentView.head = (args: { exam: number | { id: number } } | [exam: number | { 
 
     /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
     const studentViewForm = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -177,7 +177,7 @@ studentView.head = (args: { exam: number | { id: number } } | [exam: number | { 
 
             /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
         studentViewForm.get = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -186,7 +186,7 @@ studentView.head = (args: { exam: number | { id: number } } | [exam: number | { 
         })
             /**
 * @see \App\Http\Controllers\Examination\MarksheetController::studentView
- * @see app/Http/Controllers/Examination/MarksheetController.php:66
+ * @see app/Http/Controllers/Examination/MarksheetController.php:54
  * @route '/student-portal/exams/{exam}/marksheet'
  */
         studentViewForm.head = (args: { exam: number | { id: number } } | [exam: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

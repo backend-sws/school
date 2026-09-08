@@ -39,6 +39,8 @@ export const collegeProfileSchema = z.object({
       (val) => !val || /^\d{11}$/.test(val),
       "UDISE code must be exactly 11 digits"
     ),
+  affiliation_no: safeOptionalString(100, "Affiliation No"),
+  trust_name: safeOptionalString(255, "Trust / Managing Committee"),
   established_year: numericStringOptional(),
   college_logo: z.any().optional(),
   receipt_header: z.any().optional(),

@@ -38,6 +38,8 @@ class Institution extends Model
         'established_year',
         'medium_of_instruction',
         'affiliation_board',
+        'affiliation_no',
+        'trust_name',
         'location_type',
         'management_type',
         'status',

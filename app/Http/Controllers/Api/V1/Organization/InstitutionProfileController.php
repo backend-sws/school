@@ -79,7 +79,9 @@ class InstitutionProfileController
                 'is_brand' => false,
                 'type_label' => self::institutionTypeLabel($type),
                 'profile_settings_title' => self::profileSettingsTitle($type),
-                // Extra from settings
+                // Extra from settings & institutions
+                'affiliation_no' => $institution?->affiliation_no ?? $settings['affiliation_no'] ?? '',
+                'trust_name' => $institution?->trust_name ?? $settings['trust_name'] ?? '',
                 'short_name' => $settings['college_short_name'] ?? '',
                 'motto' => $settings['college_motto'] ?? '',
                 'established' => $settings['established_year'] ?? '',

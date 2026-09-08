@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::index
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:33
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:42
  * @route '/examination/admit-cards'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
 export const bulkPrint = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ bulkPrint.definition = {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
 bulkPrint.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ bulkPrint.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
 bulkPrint.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ bulkPrint.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
 bulkPrint.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -121,7 +121,7 @@ bulkPrint.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
 bulkPrint.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -131,7 +131,7 @@ bulkPrint.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
     const bulkPrintForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ bulkPrint.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
         bulkPrintForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -150,7 +150,7 @@ bulkPrint.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
         bulkPrintForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -159,7 +159,7 @@ bulkPrint.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Examination\ExamAdmitCardController::bulkPrint
- * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:145
+ * @see app/Http/Controllers/Examination/ExamAdmitCardController.php:154
  * @route '/examination/admit-cards/bulk-print'
  */
         bulkPrintForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

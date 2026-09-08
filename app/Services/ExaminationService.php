@@ -3,8 +3,12 @@
 namespace App\Services;
 
 use App\Models\Exam;
+use App\Models\Institution;
 use App\Models\LmsClass;
+use App\Models\Setting;
 use App\Models\StudentProfile;
+use App\Support\InstitutionContext;
+use App\Http\Controllers\Api\V1\Organization\InstitutionProfileController;
 
 class ExaminationService
 {
@@ -217,6 +221,67 @@ class ExaminationService
             'rank' => $rank,
             'all_passed' => $allPassed,
             'result_status' => $resultStatus,
+        ];
+    }
+
+    /**
+     * Get dynamic institution details for printing report cards and admit cards.
+     */
+    public function getReportCardInstitution(?int $institutionId = null): array
+    {
+        $id = $institutionId ?: InstitutionContext::getActiveInstitutionId();
+        $institution = $id ? Institution::find($id) : null;
+
+        if (!$institution) {
+            $institution = Institution::first();
+        }
+
+        // Settings fallbacks
+        $generalSettings = Setting::where('institution_id', $institution?->id)
+            ->where('setting_group', 'general')
+            ->pluck('setting_value', 'setting_key')
+            ->toArray();
+
+        $socialSettings = Setting::where('institution_id', $institution?->id)
+            ->where('setting_group', 'social')
+            ->pluck('setting_value', 'setting_key')
+            ->toArray();
+
+        $name = $institution?->name ?: ($generalSettings['college_name'] ?? config('app.name'));
+        $code = $institution?->code ?: ($generalSettings['college_code'] ?? $institution?->udise_code ?? '');
+        $affiliationNo = $institution?->affiliation_no ?: ($generalSettings['affiliation_no'] ?? '');
+        $trustName = $institution?->trust_name ?: ($generalSettings['trust_name'] ?? $generalSettings['college_motto'] ?? '');
+
+        $addressParts = array_filter([
+            $institution?->address ?: ($socialSettings['full_address'] ?? null),
+            $institution?->city ?: ($socialSettings['contact_city'] ?? null),
+            $institution?->state ?: ($socialSettings['contact_state'] ?? null),
+            ($institution?->pincode ?: ($socialSettings['contact_pincode'] ?? null)) ? 'PIN: ' . ($institution?->pincode ?: $socialSettings['contact_pincode']) : null,
+        ]);
+        $address = implode(', ', $addressParts);
+
+        $contact = $institution?->phone ?: ($socialSettings['contact_phone'] ?? '');
+        $email = $institution?->email ?: ($socialSettings['contact_email'] ?? '');
+        $website = $institution?->website ?: ($socialSettings['college_website'] ?? config('app.url'));
+
+        $rawLogo = $institution?->logo_url ?: ($generalSettings['college_logo'] ?? null);
+        $logoUrl = $rawLogo ? InstitutionProfileController::resolveLogoUrl($rawLogo) : null;
+
+        $place = $institution?->city ? strtoupper($institution->city) : ($name ? strtoupper($name) : 'CAMPUS');
+
+        return [
+            'id' => $institution?->id,
+            'name' => $name,
+            'code' => $code,
+            'affiliation_no' => $affiliationNo,
+            'address' => $address,
+            'trust' => $trustName,
+            'contact' => $contact,
+            'website' => $website,
+            'email' => $email,
+            'logo_url' => $logoUrl,
+            'place' => $place,
+            'established_year' => $institution?->established_year ?: ($generalSettings['established_year'] ?? ''),
         ];
     }
 }

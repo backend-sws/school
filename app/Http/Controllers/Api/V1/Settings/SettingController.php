@@ -23,6 +23,8 @@ const COLLEGE_TABLE_SYNC_MAP = [
     'college_name' => 'name',
     'college_code' => 'code',
     'college_logo' => 'logo_url',
+    'affiliation_no' => 'affiliation_no',
+    'trust_name' => 'trust_name',
     // social group (digital-presence.tsx)
     'contact_email' => 'email',
     'contact_phone' => 'phone',

@@ -14,10 +14,12 @@ export interface GurukulAdmitCardProps {
     name?: string;
     code?: string;
     reg_no?: string;
+    affiliation_no?: string;
     address?: string;
     trust?: string;
     contact?: string;
     logo_url?: string;
+    established_year?: string | number;
   };
   student?: {
     name?: string;
@@ -48,23 +50,22 @@ export function GurukulAdmitCard({
   const stud = student || {};
   const ex = exam || {};
 
-  const schoolName = (inst.name && inst.name !== "Demo School" && inst.name !== "Demo Organization")
-    ? inst.name
-    : "GURUKUL SCHOOL";
-  const schoolAddress = inst.address || "At:Sundarganj, Baknaura, Rohtas, Bihar, 821311";
-  const schoolTrust = inst.trust || "(Managed by Gurukul Managing Committee (Trust), Dehri on Sone)";
-  const contactNo = inst.contact || "Contact: +91 7739018091";
-  const logoUrl = inst.logo_url || "/images/gurukul-logo.png";
-  const regNo = inst.reg_no || inst.affiliation_no || "23414752026325123543";
+  const schoolName = inst.name || "INSTITUTION NAME";
+  const schoolAddress = inst.address || "";
+  const schoolTrust = inst.trust || "";
+  const contactNo = inst.contact ? (inst.contact.startsWith("Contact") ? inst.contact : `Contact: ${inst.contact}`) : "";
+  const logoUrl = inst.logo_url || "";
+  const regNo = inst.reg_no || inst.affiliation_no || "";
+  const estdYear = inst.established_year ? `ESTD.${inst.established_year}` : "";
 
-  const examTitle = ex.name ? ex.name.toUpperCase() : "SA-I (HALF YEARLY)";
-  const sessionName = ex.session?.name || "2026-27";
+  const examTitle = ex.name ? ex.name.toUpperCase() : "EXAMINATION";
+  const sessionName = ex.session?.name || "";
 
-  const studentName = stud.name || "STUDENT NAME";
-  const fatherName = stud.father_name || "FATHER NAME";
-  const className = stud.class_name || "VII";
+  const studentName = stud.name || "—";
+  const fatherName = stud.father_name || "—";
+  const className = stud.class_name || "—";
   const sectionName = stud.section || "";
-  const rollNo = stud.roll_no || "";
+  const rollNo = stud.roll_no || "—";
 
   // Helper to render superscript for sitting (1st -> 1<sup>st</sup>)
   const renderSitting = (sittingStr?: string) => {
@@ -82,43 +83,48 @@ export function GurukulAdmitCard({
   };
 
   // Fallback demo schedules if none provided
-  const scheduleList: AdmitCardScheduleItem[] = schedules.length > 0 ? schedules : [
-    { subject_name: "SANSKRIT", sitting: "1st", exam_date: "16-09-2026", day: "WEDNESDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "HINDI", sitting: "1st", exam_date: "17-09-2026", day: "THURSDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "ENGLISH", sitting: "1st", exam_date: "18-09-2026", day: "FRIDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "MATHEMATICS", sitting: "1st", exam_date: "19-09-2026", day: "SATURDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "SOCIAL SCIENCE", sitting: "1st", exam_date: "21-09-2026", day: "MONDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "SCIENCE", sitting: "1st", exam_date: "22-09-2026", day: "TUESDAY", timing: "09:30 A.M TO 11:30 A.M" },
-    { subject_name: "G.K/COMPUTER", sitting: "2nd", exam_date: "23-09-2026", day: "WEDNESDAY", timing: "11:40 A.M TO 01:40 P.M" },
-    { subject_name: "ORAL TEST", sitting: "1st", exam_date: "23-09-2026", day: "WEDNESDAY", timing: "09:30 A.M TO 11:30 A.M" },
-  ];
+  const scheduleList: AdmitCardScheduleItem[] = schedules;
 
   return (
     <div className="printable-marksheet max-w-4xl mx-auto border-2 border-black p-3 bg-white text-black font-sans text-xs leading-tight select-none">
       {/* Top Header line: ESTD & REG NO */}
-      <div className="flex justify-between items-center font-bold text-[11px] mb-1">
-        <span>ESTD.2026</span>
-        <span>REG NO:{regNo}</span>
-      </div>
+      {(estdYear || regNo) ? (
+        <div className="flex justify-between items-center font-bold text-[11px] mb-1">
+          <span>{estdYear}</span>
+          <span>{regNo ? `REG NO: ${regNo}` : ""}</span>
+        </div>
+      ) : null}
 
       {/* Main Header with Logo */}
       <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-1">
         <div className="w-16 flex-shrink-0 flex justify-center">
-          <img src={logoUrl} alt="Logo" className="h-16 w-16 object-contain" />
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="h-16 w-16 object-contain" />
+          ) : (
+            <div className="w-14 h-14 rounded-full border-2 border-black flex items-center justify-center font-bold text-lg text-black">
+              {schoolName.charAt(0)}
+            </div>
+          )}
         </div>
         <div className="flex-1 text-center px-2">
           <h1 className="text-xl sm:text-2xl font-black tracking-wide font-serif text-black uppercase">
             {schoolName}
           </h1>
-          <p className="text-[11px] font-semibold text-black leading-tight">
-            {schoolAddress}
-          </p>
-          <p className="text-[10px] text-black leading-tight">
-            {schoolTrust}
-          </p>
-          <p className="text-[11px] font-bold text-black leading-tight">
-            {contactNo}
-          </p>
+          {schoolAddress ? (
+            <p className="text-[11px] font-semibold text-black leading-tight">
+              {schoolAddress}
+            </p>
+          ) : null}
+          {schoolTrust ? (
+            <p className="text-[10px] text-black leading-tight">
+              {schoolTrust}
+            </p>
+          ) : null}
+          {contactNo ? (
+            <p className="text-[11px] font-bold text-black leading-tight">
+              {contactNo}
+            </p>
+          ) : null}
         </div>
         <div className="w-16 flex-shrink-0" />
       </div>

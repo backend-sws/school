@@ -26,37 +26,25 @@ class MarksheetController extends Controller
         $student->load(['user', 'lmsAllocations.lmsClass', 'institution']);
         $marksheetData = $this->examinationService->generateMarksheet($exam, $student);
         
-        $institution = $student->institution ?: \App\Models\Institution::where('code', 'DEMO_SCH')->first();
-
-        $primaryClass = $student->lmsAllocations->first()?->lmsClass?->name ?? 'Class VII A';
+        $institutionData = $this->examinationService->getReportCardInstitution($exam->institution_id ?: $student->institution_id);
+        $primaryClass = $student->lmsAllocations->first()?->lmsClass?->name ?? '—';
 
         return Inertia::render('examination/marksheet/show', [
             'marksheet' => $marksheetData,
             'exam' => $exam->load('term', 'session'),
             'student' => [
                 'id' => $student->id,
-                'name' => $student->user?->name ?? 'RAJVEER KUMAR GUPTA',
-                'father_name' => $student->father_name ?? 'DEEPAK KUMAR GUPTA',
-                'mother_name' => $student->mother_name ?? 'PRATIMA DEVI',
-                'dob' => $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d-m-Y') : '16-01-2013',
-                'reg_no' => $student->reg_no ?? '202526AEVIIA2',
-                'admission_no' => $student->admission_no ?? 'ADM-2025-01',
-                'roll_no' => $student->roll_no ?? '2',
+                'name' => $student->user?->name ?? '—',
+                'father_name' => $student->father_name ?? '—',
+                'mother_name' => $student->mother_name ?? '—',
+                'dob' => $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d-m-Y') : '—',
+                'reg_no' => $student->reg_no ?? $student->admission_no ?? '—',
+                'admission_no' => $student->admission_no ?? '—',
+                'roll_no' => $student->roll_no ?? '—',
                 'class_name' => $primaryClass,
-                'address' => implode(', ', array_filter([$student->address, $student->city, $student->state])) ?: 'SUJANPUR, DEHRI ON SONE',
+                'address' => implode(', ', array_filter([$student->address, $student->city, $student->state])) ?: '—',
             ],
-            'reportCardInstitution' => [
-                'name' => ($institution && $institution->name !== 'Demo School') ? $institution->name : 'GURUKUL SCHOOL',
-                'type' => 'school',
-                'code' => ($institution && $institution->code !== 'DEMO_SCH') ? $institution->code : '10321110102',
-                'affiliation_no' => '23414752026325123543',
-                'address' => ($institution && $institution->address !== 'Demo Address') ? $institution->address : 'SUNDARGANJ, BAKNAURA, PO: ROHTAS, BIHAR, PIN:821311',
-                'trust' => '(Managed By Gurukul Managing Committee, Trust)',
-                'contact' => '6205401993',
-                'website' => 'gurukul.ojasvidya.com',
-                'email' => 'gitdehri@gmail.com',
-                'logo_url' => '/images/gurukul-logo.png',
-            ]
+            'reportCardInstitution' => $institutionData,
         ]);
     }
 
@@ -75,36 +63,25 @@ class MarksheetController extends Controller
         }
 
         $marksheetData = $this->examinationService->generateMarksheet($exam, $student);
-        $institution = $student->institution ?: \App\Models\Institution::where('code', 'DEMO_SCH')->first();
-        $primaryClass = $student->lmsAllocations->first()?->lmsClass?->name ?? 'Class VII A';
+        $institutionData = $this->examinationService->getReportCardInstitution($exam->institution_id ?: $student->institution_id);
+        $primaryClass = $student->lmsAllocations->first()?->lmsClass?->name ?? '—';
 
         return Inertia::render('examination/marksheet/student-view', [
             'marksheet' => $marksheetData,
             'exam' => $exam->load('term', 'session'),
             'student' => [
                 'id' => $student->id,
-                'name' => $student->user?->name ?? 'RAJVEER KUMAR GUPTA',
-                'father_name' => $student->father_name ?? 'DEEPAK KUMAR GUPTA',
-                'mother_name' => $student->mother_name ?? 'PRATIMA DEVI',
-                'dob' => $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d-m-Y') : '16-01-2013',
-                'reg_no' => $student->reg_no ?? '202526AEVIIA2',
-                'admission_no' => $student->admission_no ?? 'ADM-2025-01',
-                'roll_no' => $student->roll_no ?? '2',
+                'name' => $student->user?->name ?? '—',
+                'father_name' => $student->father_name ?? '—',
+                'mother_name' => $student->mother_name ?? '—',
+                'dob' => $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d-m-Y') : '—',
+                'reg_no' => $student->reg_no ?? $student->admission_no ?? '—',
+                'admission_no' => $student->admission_no ?? '—',
+                'roll_no' => $student->roll_no ?? '—',
                 'class_name' => $primaryClass,
-                'address' => implode(', ', array_filter([$student->address, $student->city, $student->state])) ?: 'SUJANPUR, DEHRI ON SONE',
+                'address' => implode(', ', array_filter([$student->address, $student->city, $student->state])) ?: '—',
             ],
-            'reportCardInstitution' => [
-                'name' => ($institution && $institution->name !== 'Demo School') ? $institution->name : 'GURUKUL SCHOOL',
-                'type' => 'school',
-                'code' => ($institution && $institution->code !== 'DEMO_SCH') ? $institution->code : '10321110102',
-                'affiliation_no' => '23414752026325123543',
-                'address' => ($institution && $institution->address !== 'Demo Address') ? $institution->address : 'SUNDARGANJ, BAKNAURA, PO: ROHTAS, BIHAR, PIN:821311',
-                'trust' => '(Managed By Gurukul Managing Committee, Trust)',
-                'contact' => '6205401993',
-                'website' => 'gurukul.ojasvidya.com',
-                'email' => 'gitdehri@gmail.com',
-                'logo_url' => '/images/gurukul-logo.png',
-            ]
+            'reportCardInstitution' => $institutionData,
         ]);
     }
 }
