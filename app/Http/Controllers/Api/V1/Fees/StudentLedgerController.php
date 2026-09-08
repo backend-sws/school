@@ -267,7 +267,7 @@ class StudentLedgerController extends BaseController
             try {
                 $recipients = $this->recipientResolver->recipientsForStudent($student);
                 foreach ($recipients as $notifiable) {
-                    $notifiable->notify((new FeePaymentReceiptNotification($student, $payment))->afterCommit());
+                    $notifiable->notify(new FeePaymentReceiptNotification($student, $payment));
                 }
             } catch (\Throwable $e) {
                 \Log::warning('collectPayment: receipt notification failed', [
@@ -309,7 +309,7 @@ class StudentLedgerController extends BaseController
 
         try {
             foreach ($recipients as $notifiable) {
-                $notifiable->notify((new FeePaymentReceiptNotification($student, $payment))->afterCommit());
+                $notifiable->notify(new FeePaymentReceiptNotification($student, $payment));
             }
         } catch (\Throwable $e) {
             \Log::warning('resendReceipt: notification failed', [

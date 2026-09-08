@@ -19,12 +19,6 @@ class FeePaymentReceiptNotification extends Notification implements ShouldQueue
 
     public string $notificationType = 'fee_payment_receipt';
 
-    public bool $afterCommit = true;
-
-    public int $tries = 3;
-
-    public int $timeout = 60;
-
     public function __construct(
         public User $student,
         public FeePayment $payment,
