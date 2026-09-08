@@ -932,6 +932,32 @@ function normalizeAddressVal(val: unknown): Record<string, unknown> {
   return val != null && typeof val === "object" && !Array.isArray(val) ? (val as Record<string, unknown>) : {};
 }
 
+function safeFormatDateOnly(val: unknown): string | undefined {
+  if (!val) return undefined;
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (!trimmed) return undefined;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      return trimmed;
+    }
+    const d = new Date(trimmed);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+    return trimmed.split("T")[0];
+  }
+  if (val instanceof Date && !isNaN(val.getTime())) {
+    const y = val.getFullYear();
+    const m = String(val.getMonth() + 1).padStart(2, "0");
+    const day = String(val.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+  return undefined;
+}
+
 /**
  * Builds the API payload from student edit form data. Keeps payload shape in config.
  */
@@ -945,12 +971,12 @@ export function buildStudentEditPayload(formData: Record<string, unknown>): Reco
     (v) => v === undefined
   ) as Record<string, unknown>;
 
-  if (typeof profile.dob === "string" && profile.dob) {
-    profile.dob = profile.dob.split("T")[0];
+  if (profile.dob) {
+    profile.dob = safeFormatDateOnly(profile.dob) ?? profile.dob;
   }
 
-  if (typeof profile.admission_date === "string" && profile.admission_date) {
-    profile.admission_date = profile.admission_date.split("T")[0];
+  if (profile.admission_date) {
+    profile.admission_date = safeFormatDateOnly(profile.admission_date) ?? profile.admission_date;
   }
 
   const docsObject = (formData.documents ?? {}) as Record<string, string>;
