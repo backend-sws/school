@@ -5,6 +5,20 @@ import { SmartDateTimePicker } from "@/components/ui/smart-datetime-picker";
 import { BaseFieldProps, PREMIUM_INPUT_CLASSES } from "../types";
 import { FieldError } from "@/components/ui/field-error";
 
+function parseLocalDate(val?: string | Date | null): Date | undefined {
+  if (!val) return undefined;
+  if (val instanceof Date) return isNaN(val.getTime()) ? undefined : val;
+  const str = String(val).trim();
+  if (!str) return undefined;
+  const datePart = str.split("T")[0];
+  const parts = datePart.split("-").map(Number);
+  if (parts.length === 3 && !parts.some(isNaN)) {
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? undefined : d;
+}
+
 export const DateTimeRenderers = (props: BaseFieldProps) => {
   const {
     type,
@@ -23,8 +37,8 @@ export const DateTimeRenderers = (props: BaseFieldProps) => {
         <div className="w-full">
           <SmartDateTimePicker
             mode="date"
-            value={value ? new Date(value as string) : undefined}
-            onChange={(date) => onChange(date ? date.toISOString() : "")}
+            value={parseLocalDate(value as string)}
+            onChange={(date) => onChange(date ? format(date, "yyyy-MM-dd") : "")}
             onBlur={onBlur}
             disabled={disabled}
             placeholder={placeholder || "Select date"}
@@ -87,8 +101,8 @@ export const DateTimeRenderers = (props: BaseFieldProps) => {
         <div className="w-full">
           <SmartDateTimePicker
             mode="month"
-            value={value ? new Date(value as string) : undefined}
-            onChange={(date) => onChange(date ? date.toISOString() : "")}
+            value={parseLocalDate(value as string)}
+            onChange={(date) => onChange(date ? format(date, "yyyy-MM") : "")}
             onBlur={onBlur}
             disabled={disabled}
             placeholder={placeholder || "Select month"}

@@ -439,11 +439,23 @@ class StudentDashboardService
                     ->except(['permanent_address', 'correspondence_address'])
                     ->toArray();
 
-                if (array_key_exists('admission_date', $profileFields) && empty($profileFields['admission_date'])) {
-                    $profileFields['admission_date'] = null;
+                if (array_key_exists('admission_date', $profileFields)) {
+                    if (empty($profileFields['admission_date'])) {
+                        $profileFields['admission_date'] = null;
+                    } else {
+                        $profileFields['admission_date'] = \Carbon\Carbon::parse($profileFields['admission_date'])
+                            ->timezone(config('app.timezone', 'Asia/Kolkata'))
+                            ->format('Y-m-d');
+                    }
                 }
-                if (array_key_exists('dob', $profileFields) && empty($profileFields['dob'])) {
-                    $profileFields['dob'] = null;
+                if (array_key_exists('dob', $profileFields)) {
+                    if (empty($profileFields['dob'])) {
+                        $profileFields['dob'] = null;
+                    } else {
+                        $profileFields['dob'] = \Carbon\Carbon::parse($profileFields['dob'])
+                            ->timezone(config('app.timezone', 'Asia/Kolkata'))
+                            ->format('Y-m-d');
+                    }
                 }
 
                 $user->studentProfile()->update($profileFields);
