@@ -31,6 +31,7 @@ const inventoryApi = {
     update: (id: string | number, data: Record<string, unknown>) =>
       api.put(`${BASE}/items/${id}`, data),
     destroy: (id: string | number) => api.delete(`${BASE}/items/${id}`),
+    batches: (id: string | number) => api.get(`${BASE}/items/${id}/batches`),
   },
   movements: {
     index: (params?: Record<string, unknown>) =>

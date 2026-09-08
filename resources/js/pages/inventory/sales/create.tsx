@@ -37,6 +37,12 @@ type ItemOption = {
   current_quantity: number;
   selling_price?: number;
   location?: string;
+  inventory_category_id?: number;
+  category?: {
+    id: number;
+    name: string;
+    is_sellable?: boolean;
+  };
 };
 
 const InventorySalesCreate = () => {
@@ -45,15 +51,35 @@ const InventorySalesCreate = () => {
   const [buyerName, setBuyerName] = useState<string>("");
   const [remarks, setRemarks] = useState<string>("");
   const [lines, setLines] = useState<LineRow[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedItemId, setSelectedItemId] = useState<string>("");
   const [qty, setQty] = useState<string>("1");
   const [unitPrice, setUnitPrice] = useState<string>("");
 
-  const { data: itemsRes } = useQuery({
-    queryKey: ["inventory-items-list"],
-    queryFn: () => inventoryApi.items.index({ per_page: 500 }),
+  const { data: catRes } = useQuery({
+    queryKey: ["inventory-categories-for-sale"],
+    queryFn: () => inventoryApi.categories.index({ per_page: 200, for_sale: true }),
   });
-  const items: ItemOption[] = itemsRes?.data ?? [];
+  const rawCategories = (catRes as Record<string, any>)?.data ?? [];
+  const sellableCategories = useMemo(() => {
+    return Array.isArray(rawCategories) ? rawCategories.filter((c: any) => c.is_sellable !== false) : [];
+  }, [rawCategories]);
+
+  const { data: itemsRes } = useQuery({
+    queryKey: ["inventory-items-for-sale"],
+    queryFn: () => inventoryApi.items.index({ per_page: 500, for_sale: true } as any),
+  });
+  const rawItems: ItemOption[] = itemsRes?.data ?? [];
+  const items: ItemOption[] = useMemo(() => {
+    return Array.isArray(rawItems) ? rawItems.filter((i) => !i.category || i.category.is_sellable !== false) : [];
+  }, [rawItems]);
+
+  const filteredItems = useMemo(() => {
+    if (!selectedCategoryId) return items;
+    return items.filter(
+      (i) => String(i.inventory_category_id ?? i.category?.id) === selectedCategoryId
+    );
+  }, [items, selectedCategoryId]);
 
   const selectedItem = useMemo(
     () => items.find((i) => i.id === Number(selectedItemId)),
@@ -198,6 +224,35 @@ const InventorySalesCreate = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-2 items-end">
+                <div className="min-w-[160px]">
+                  <Label className="text-xs">Category</Label>
+                  <select
+                    value={selectedCategoryId}
+                    onChange={(e) => {
+                      const newCat = e.target.value;
+                      setSelectedCategoryId(newCat);
+                      if (newCat && selectedItem) {
+                        const itemCat = String(selectedItem.inventory_category_id ?? selectedItem.category?.id ?? "");
+                        if (itemCat && itemCat !== newCat) {
+                          setSelectedItemId("");
+                          setUnitPrice("");
+                        }
+                      }
+                    }}
+                    className="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+                  >
+                    <option value="">All Categories</option>
+                    <Each
+                      of={sellableCategories}
+                      keyExtractor={(c: any) => String(c.id)}
+                      render={(c: any) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} {c.code ? `(${c.code})` : ""}
+                        </option>
+                      )}
+                    />
+                  </select>
+                </div>
                 <div className="min-w-[180px]">
                   <Label className="text-xs">Item</Label>
                   <select
@@ -207,19 +262,26 @@ const InventorySalesCreate = () => {
                       const item = items.find(
                         (i) => i.id === Number(e.target.value)
                       );
-                      if (item) setUnitPrice(String(item.selling_price ?? ""));
+                      if (item) {
+                        setUnitPrice(String(item.selling_price ?? ""));
+                        const catId = String(item.inventory_category_id ?? item.category?.id ?? "");
+                        if (catId && !selectedCategoryId) {
+                          setSelectedCategoryId(catId);
+                        }
+                      }
                     }}
                     className="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
                   >
                     <option value="">Select item</option>
                     <Each
-                      of={items}
+                      of={filteredItems}
                       keyExtractor={(i) => String(i.id)}
                       render={(i) => {
                         const loc = i.location ? ` • 📍 Loc: ${i.location}` : "";
+                        const cat = i.category?.name ? `[${i.category.name}] ` : "";
                         return (
                           <option key={i.id} value={i.id}>
-                            {i.name} {i.code ? `(${i.code})` : ""} — Stock: {i.current_quantity}{loc}
+                            {cat}{i.name} {i.code ? `(${i.code})` : ""} — Stock: {i.current_quantity}{loc}
                           </option>
                         );
                       }}

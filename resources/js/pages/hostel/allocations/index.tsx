@@ -297,12 +297,23 @@ const HostelAllocationsIndex = () => {
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium text-sm">{row.room?.hostel?.name ?? 'N/A'}</span>
-                            <span className="text-xs text-muted-foreground">Room {row.room?.room_number ?? 'N/A'} (Bed {row.bed?.bed_label ?? 'N/A'})</span>
+                            <span className="text-xs text-muted-foreground">Room {row.room?.room_number ?? 'N/A'} (Bed {row.bed?.bed_label ?? 'Auto'})</span>
+                            {row.mess_plan && (
+                              <span className="text-[11px] text-primary/90 font-medium mt-0.5 flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+                                {row.mess_plan.name} ({row.mess_plan.type})
+                              </span>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col gap-0.5">
-                            <span className="font-semibold text-sm text-foreground">₹{Number(row.monthly_amount ?? row.room?.monthly_fee ?? 0).toFixed(2)}</span>
+                            <span className="font-semibold text-sm text-foreground">₹{Number(row.monthly_amount ?? row.room?.monthly_fee ?? 0).toFixed(2)}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                            {row.mess_plan && (
+                              <span className="text-[10px] text-muted-foreground">
+                                Room: ₹{Number(row.room_monthly_amount ?? row.room?.monthly_fee ?? 0).toFixed(0)} + Mess: ₹{Number(row.mess_monthly_amount ?? row.mess_plan.monthly_fee ?? 0).toFixed(0)}
+                              </span>
+                            )}
                             {row.due_amount && row.due_amount > 0 ? (
                               <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/30 px-1.5 py-0.5 rounded w-fit">Due: ₹{Number(row.due_amount).toFixed(2)}</span>
                             ) : (

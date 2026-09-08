@@ -59,7 +59,7 @@ export function ModalDialog({
 
       <Separator className="bg-border/50" />
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0 bg-background/50">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 min-h-0 bg-background/50">
         <div className="relative z-10">
           {children}
         </div>

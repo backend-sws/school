@@ -16,7 +16,7 @@ import { InventoryCategoryFormSchema, type InventoryCategoryFormValues } from "@
 interface InventoryCategoryDialogProps {
   open: boolean;
   onClose: (open: boolean) => void;
-  data?: { id: number; name: string; code?: string; description?: string } | null;
+  data?: { id: number; name: string; code?: string; description?: string; is_sellable?: boolean } | null;
 }
 
 export function InventoryCategoryDialog({ open, onClose, data }: InventoryCategoryDialogProps) {
@@ -48,6 +48,7 @@ export function InventoryCategoryDialog({ open, onClose, data }: InventoryCatego
         name: categoryDetail.name ?? "",
         code: categoryDetail.code ?? "",
         description: categoryDetail.description ?? "",
+        is_sellable: categoryDetail.is_sellable !== false,
       });
     } else {
       reset(INVENTORY_CATEGORY_FORM_INITIAL);

@@ -16,16 +16,22 @@ class HostelAllocation extends Model
         'user_id',
         'hostel_room_id',
         'hostel_bed_id',
+        'hostel_mess_plan_id',
         'check_in_date',
         'check_out_date',
         'status',
         'remarks',
         'monthly_amount',
+        'room_monthly_amount',
+        'mess_monthly_amount',
     ];
 
     protected $casts = [
         'check_in_date' => 'date',
         'check_out_date' => 'date',
+        'monthly_amount' => 'decimal:2',
+        'room_monthly_amount' => 'decimal:2',
+        'mess_monthly_amount' => 'decimal:2',
     ];
 
     public function user(): BelongsTo
@@ -41,6 +47,11 @@ class HostelAllocation extends Model
     public function bed(): BelongsTo
     {
         return $this->belongsTo(HostelBed::class, 'hostel_bed_id');
+    }
+
+    public function messPlan(): BelongsTo
+    {
+        return $this->belongsTo(HostelMessPlan::class, 'hostel_mess_plan_id');
     }
 
     public function scopeActive(Builder $query): Builder

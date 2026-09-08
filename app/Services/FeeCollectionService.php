@@ -141,6 +141,7 @@ class FeeCollectionService
         if (self::$bulkHostelAllocations === null) {
             self::$bulkHostelAllocations = \App\Models\HostelAllocation::where('institution_id', $institutionId)
                 ->whereIn('status', ['active', 'checked_out'])
+                ->with(['room', 'messPlan'])
                 ->get()
                 ->groupBy('user_id')
                 ->all();
@@ -659,6 +660,11 @@ class FeeCollectionService
                 'admission_fee'        => $rowAdmissionFee,
                 'transport_fee'        => $rowTransportFee,
                 'hostel_fee'           => $rowHostelFee,
+                'hostel_breakdown'     => $hostel ? [
+                    'room_amount'    => (float) ($hostel->room_monthly_amount ?? $hostel->room?->monthly_fee ?? 0),
+                    'mess_amount'    => (float) ($hostel->mess_monthly_amount ?? $hostel->messPlan?->monthly_fee ?? 0),
+                    'mess_plan_name' => $hostel->messPlan?->name ?? null,
+                ] : null,
                 'other_fees'           => $rowOtherFees,
                 'expected_particulars' => $monthParticulars,
                 'monthly_total'        => $monthExpected,

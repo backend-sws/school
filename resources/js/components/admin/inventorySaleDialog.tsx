@@ -5,6 +5,8 @@ import { ModalDialog } from "../shared/Modal";
 import Each from "../Each";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SearchableSelectField } from "@/components/searchableSelectInput";
 import {
   Table,
@@ -24,7 +26,6 @@ import { StudentQueryKeys } from "@/lib/querykey/student";
 import {
   INVENTORY_SALE_FORM_INITIAL,
   INVENTORY_SALE_DIALOG_FORM_LAYOUT,
-  INVENTORY_SALE_LINE_ADD_LAYOUT,
 } from "@/constants/page/admin/inventory";
 import {
   InventorySaleFormSchema,
@@ -45,6 +46,12 @@ type ItemOption = {
   selling_price?: number;
   gst_rate?: number;
   location?: string;
+  inventory_category_id?: number;
+  category?: {
+    id: number;
+    name: string;
+    is_sellable?: boolean;
+  };
 };
 
 type SaleLine = {
@@ -89,9 +96,10 @@ function buildItemOptions(items: ItemOption[]) {
     { key: "select-item", text: "Select item", value: "" },
     ...items.map((i) => {
       const loc = i.location ? ` • 📍 Loc: ${i.location}` : "";
+      const cat = i.category?.name ? `[${i.category.name}] ` : "";
       return {
         key: String(i.id),
-        text: `${i.name} ${i.code ? `(${i.code})` : ""} — Stock: ${i.current_quantity}${loc}`,
+        text: `${cat}${i.name} ${i.code ? `(${i.code})` : ""} — Stock: ${i.current_quantity}${loc}`,
         value: String(i.id),
       };
     }),
@@ -153,13 +161,47 @@ export function InventorySaleDialog({
     }
   }, [buyerInfo, buyerType, setValue]);
 
-  // ── Inventory items (for line-item picker) ───────────────────
-  const { data: itemsRes } = useQuery({
-    queryKey: InventoryQueryKeys.itemsList(),
-    queryFn: () => inventoryApi.items.index({ per_page: 500 }),
+  // ── Categories (available for sale) ─────────────────────────
+  const { data: categoriesRes } = useQuery({
+    queryKey: ["inventory-categories-for-sale"],
+    queryFn: () => inventoryApi.categories.index({ per_page: 200, for_sale: true }),
     enabled: open,
   });
-  const items: ItemOption[] = (itemsRes as Record<string, any>)?.data ?? [];
+  const rawCategories = (categoriesRes as Record<string, any>)?.data ?? [];
+  const sellableCategories = useMemo(() => {
+    return Array.isArray(rawCategories) ? rawCategories.filter((c: any) => c.is_sellable !== false) : [];
+  }, [rawCategories]);
+
+  const [categoryFilter, setCategoryFilter] = React.useState<string>("");
+
+  const categoryOptions = useMemo(() => {
+    return [
+      { key: "all", text: "All Categories", value: "" },
+      ...sellableCategories.map((c: any) => ({
+        key: String(c.id),
+        text: c.name + (c.code ? ` (${c.code})` : ""),
+        value: String(c.id),
+      })),
+    ];
+  }, [sellableCategories]);
+
+  // ── Inventory items (for line-item picker) ───────────────────
+  const { data: itemsRes } = useQuery({
+    queryKey: [...InventoryQueryKeys.itemsList(), "for-sale"],
+    queryFn: () => inventoryApi.items.index({ per_page: 500, for_sale: true } as any),
+    enabled: open,
+  });
+  const rawItems: ItemOption[] = (itemsRes as Record<string, any>)?.data ?? [];
+  const items: ItemOption[] = useMemo(() => {
+    return Array.isArray(rawItems) ? rawItems.filter((i) => !i.category || i.category.is_sellable !== false) : [];
+  }, [rawItems]);
+
+  const filteredItems = useMemo(() => {
+    if (!categoryFilter) return items;
+    return items.filter(
+      (i) => String(i.inventory_category_id ?? i.category?.id) === String(categoryFilter)
+    );
+  }, [items, categoryFilter]);
 
   const selectedItem = useMemo(
     () => items.find((i) => i.id === Number(newItemId)) ?? null,
@@ -180,7 +222,7 @@ export function InventorySaleDialog({
     }
   }, [newItemId, selectedItem, gstInclusive, computedUnitPrice, setValue]);
 
-  const itemSelectOptions = useMemo(() => buildItemOptions(items), [items]);
+  const itemSelectOptions = useMemo(() => buildItemOptions(filteredItems), [filteredItems]);
 
   // ── Line management ──────────────────────────────────────────
   const addLine = useCallback(() => {
@@ -286,7 +328,7 @@ export function InventorySaleDialog({
       isLoading={storeMutation.isPending}
       submitLabel="Create sale & collect payment"
       primaryDisabled={lines.length === 0}
-      className="sm:max-w-[600px]"
+      className="sm:max-w-[700px] w-full"
     >
       <div className="space-y-4">
         {/* ── Buyer Section ── */}
@@ -353,78 +395,171 @@ export function InventorySaleDialog({
         </div>
 
         {/* ── Line Items Section ── */}
-        <div>
-          <h3 className="text-sm font-semibold mb-3">Line items</h3>
-
-          {/* GST inclusive checkbox */}
-          <div className="mb-3">
-            <Each
-              of={INVENTORY_SALE_LINE_ADD_LAYOUT.slice(0, 1)}
-              keyExtractor={(f) => f.name}
-              render={(form) => (
-                <div className="w-full">
-                  <ControlledFormComponent<InventorySaleFormInputValues>
-                    {...form}
-                    control={control}
-                  />
-                </div>
-              )}
-            />
+        <div className="space-y-2.5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">Line items</h3>
+            {lines.length > 0 && (
+              <span className="text-xs text-muted-foreground font-medium">
+                {lines.length} {lines.length === 1 ? "item" : "items"} added
+              </span>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_80px_100px_auto] sm:items-end">
-            <div className="form-field-container w-full min-w-[200px]">
-              <label className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1 block">Item</label>
-              <Controller
-                control={control}
-                name="new_item_id"
-                render={({ field }) => (
-                  <SearchableSelectField
-                    value={field.value}
-                    onChange={(val) => {
-                      field.onChange(val);
-                      const item = items.find((i) => String(i.id) === String(val));
-                      if (item) {
-                        setValue("new_unit_price", resolveUnitPrice(item, gstInclusive));
+          {/* Add Item Card Container */}
+          <div className="p-3.5 rounded-xl bg-muted/40 border border-border/70 space-y-3">
+            {/* Top row: Category & Item */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              <div className="sm:col-span-4 space-y-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 block">
+                  Category
+                </label>
+                <SearchableSelectField
+                  value={categoryFilter}
+                  onChange={(val) => {
+                    const newCat = String(val ?? "");
+                    setCategoryFilter(newCat);
+                    if (newCat && selectedItem) {
+                      const itemCatId = String(selectedItem.inventory_category_id ?? selectedItem.category?.id ?? "");
+                      if (itemCatId && itemCatId !== newCat) {
+                        setValue("new_item_id", "");
+                        setValue("new_unit_price", "");
                       }
-                    }}
-                    options={itemSelectOptions.filter((o) => o.value !== "")}
-                    placeholder="Select item"
-                    className="w-full"
-                  />
-                )}
-              />
-            </div>
-            <Each
-              of={INVENTORY_SALE_LINE_ADD_LAYOUT.slice(2)}
-              keyExtractor={(f) => f.name}
-              render={(form) => (
-                <ControlledFormComponent<InventorySaleFormInputValues>
-                  {...form}
-                  control={control}
+                    }
+                  }}
+                  options={categoryOptions}
+                  placeholder="All Categories"
+                  searchPlaceholder="Search category..."
+                  className="w-full bg-background"
                 />
-              )}
-            />
-            <Button type="button" onClick={addLine} size="sm" className="h-9">
-              <Plus className="size-4" />
-              Add
-            </Button>
-          </div>
-
-          {selectedItem && (
-            <div className="mt-2.5 p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
-                <MapPin className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-                <span>Storage Location:</span>
-                <span className="font-semibold text-amber-950 dark:text-amber-100 bg-amber-200/50 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
-                  {selectedItem.location || "Not specified"}
-                </span>
               </div>
-              <div className="text-muted-foreground text-[11px]">
-                Available Stock: <span className="font-semibold text-foreground">{selectedItem.current_quantity}</span>
+
+              <div className="sm:col-span-8 space-y-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 block">
+                  Item <span className="text-destructive">*</span>
+                </label>
+                <Controller
+                  control={control}
+                  name="new_item_id"
+                  render={({ field }) => (
+                    <SearchableSelectField
+                      value={field.value}
+                      onChange={(val) => {
+                        field.onChange(val);
+                        const item = items.find((i) => String(i.id) === String(val));
+                        if (item) {
+                          setValue("new_unit_price", resolveUnitPrice(item, gstInclusive));
+                          const itemCatId = String(item.inventory_category_id ?? item.category?.id ?? "");
+                          if (itemCatId && !categoryFilter) {
+                            setCategoryFilter(itemCatId);
+                          }
+                        }
+                      }}
+                      options={itemSelectOptions.filter((o) => o.value !== "")}
+                      placeholder="Select item to sell..."
+                      searchPlaceholder="Search item name or code..."
+                      emptyText={categoryFilter ? "No sellable items in this category" : "No sellable items found"}
+                      className="w-full bg-background"
+                    />
+                  )}
+                />
               </div>
             </div>
-          )}
+
+            {/* Storage Location & Available Stock pill (if item selected) */}
+            {selectedItem && (
+              <div className="p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
+                  <MapPin className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <span>Storage Location:</span>
+                  <span className="font-semibold text-amber-950 dark:text-amber-100 bg-amber-200/50 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                    {selectedItem.location || "Not specified"}
+                  </span>
+                </div>
+                <div className="text-muted-foreground text-[11px]">
+                  Available Stock: <span className="font-semibold text-foreground">{selectedItem.current_quantity}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom row: Qty, Unit Price, GST Inclusive, and Add Button */}
+            <div className="flex flex-wrap items-end gap-3 pt-0.5">
+              <div className="w-24 space-y-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 block">
+                  Qty <span className="text-destructive">*</span>
+                </label>
+                <Controller
+                  control={control}
+                  name="new_qty"
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      min={0.001}
+                      step="any"
+                      value={field.value ?? 1}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder="1"
+                      className="h-9 bg-background"
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="w-32 space-y-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 block">
+                  Unit Price (₹)
+                </label>
+                <Controller
+                  control={control}
+                  name="new_unit_price"
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      min={0}
+                      step="any"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder="0.00"
+                      className="h-9 bg-background"
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pb-2">
+                <Controller
+                  control={control}
+                  name="gst_inclusive"
+                  render={({ field }) => (
+                    <Checkbox
+                      id="gst_inclusive_check"
+                      checked={!!field.value}
+                      onCheckedChange={(checked) => field.onChange(!!checked)}
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="gst_inclusive_check"
+                  className="text-xs font-medium cursor-pointer text-muted-foreground hover:text-foreground select-none"
+                  title="When checked, price includes GST"
+                >
+                  GST Inclusive
+                </label>
+              </div>
+
+              <div className="ml-auto">
+                <Button
+                  type="button"
+                  onClick={addLine}
+                  size="sm"
+                  className="h-9 px-4 font-medium gap-1.5 shadow-sm"
+                  disabled={!watch("new_item_id")}
+                >
+                  <Plus className="size-4" />
+                  Add to Sale
+                </Button>
+              </div>
+            </div>
+          </div>
 
           {errors.lines?.message && (
             <p className="text-xs text-destructive mt-1">{errors.lines.message}</p>

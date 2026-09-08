@@ -32,7 +32,8 @@ class HostelAllocationController extends BaseController
                 'user.studentProfile.currentEnrollments.lmsClass:id,name,code',
                 'room:id,room_number,hostel_id,type,monthly_fee',
                 'room.hostel:id,name,code',
-                'bed:id,bed_label'
+                'bed:id,bed_label',
+                'messPlan:id,name,type,monthly_fee',
             ]);
 
         if ($request->filled('hostel_id')) {
@@ -134,6 +135,7 @@ class HostelAllocationController extends BaseController
             'user_id' => 'required|exists:users,id',
             'hostel_room_id' => 'required|exists:hostel_rooms,id',
             'hostel_bed_id' => 'nullable|exists:hostel_beds,id',
+            'hostel_mess_plan_id' => 'nullable|exists:hostel_mess_plans,id',
             'check_in_date' => 'required|date',
             'remarks' => 'nullable|string',
         ]);
@@ -161,8 +163,21 @@ class HostelAllocationController extends BaseController
                 return $this->error('The selected room is fully occupied.', 422);
             }
 
-            // Assign monthly_amount from the room's fee
-            $validated['monthly_amount'] = (float) ($room->monthly_fee ?? 0.0);
+            // Assign room, mess, and total monthly_amount
+            $roomAmount = (float) ($room->monthly_fee ?? 0.0);
+            $messAmount = 0.0;
+            if (!empty($validated['hostel_mess_plan_id'])) {
+                $messPlan = \App\Models\HostelMessPlan::where('institution_id', $validated['institution_id'])
+                    ->where('is_active', true)
+                    ->find($validated['hostel_mess_plan_id']);
+                if ($messPlan) {
+                    $messAmount = (float) ($messPlan->monthly_fee ?? 0.0);
+                }
+            }
+
+            $validated['room_monthly_amount'] = $roomAmount;
+            $validated['mess_monthly_amount'] = $messAmount;
+            $validated['monthly_amount'] = $roomAmount + $messAmount;
 
             // If bed is specified, check if it's vacant
             if (isset($validated['hostel_bed_id'])) {
@@ -196,9 +211,10 @@ class HostelAllocationController extends BaseController
 
             $allocation->load([
                 'user:id,name,email',
-                'room:id,room_number,hostel_id,type',
+                'room:id,room_number,hostel_id,type,monthly_fee',
                 'room.hostel:id,name,code',
-                'bed:id,bed_label'
+                'bed:id,bed_label',
+                'messPlan:id,name,type,monthly_fee',
             ]);
 
             return $this->created($allocation, 'Allocation created successfully');
@@ -215,7 +231,8 @@ class HostelAllocationController extends BaseController
             'user',
             'room',
             'room.hostel',
-            'bed'
+            'bed',
+            'messPlan',
         ]);
 
         return $this->successWithMap($hostel_allocation, 'passthrough');
@@ -230,13 +247,31 @@ class HostelAllocationController extends BaseController
         $validated = $request->validate([
             'check_out_date' => 'nullable|date|after_or_equal:check_in_date',
             'status' => 'sometimes|string|in:active,checked_out,cancelled',
+            'hostel_mess_plan_id' => 'nullable|exists:hostel_mess_plans,id',
             'remarks' => 'nullable|string',
         ]);
 
         return DB::transaction(function () use ($validated, $hostel_allocation) {
             $oldStatus = $hostel_allocation->status;
             
+            if (array_key_exists('hostel_mess_plan_id', $validated)) {
+                $messPlanId = $validated['hostel_mess_plan_id'];
+                $messAmount = 0.0;
+                if ($messPlanId) {
+                    $messPlan = \App\Models\HostelMessPlan::where('institution_id', $hostel_allocation->institution_id)
+                        ->find($messPlanId);
+                    if ($messPlan) {
+                        $messAmount = (float) ($messPlan->monthly_fee ?? 0.0);
+                    }
+                }
+                $roomAmount = (float) ($hostel_allocation->room_monthly_amount ?? $hostel_allocation->room->monthly_fee ?? 0.0);
+                $validated['room_monthly_amount'] = $roomAmount;
+                $validated['mess_monthly_amount'] = $messAmount;
+                $validated['monthly_amount'] = $roomAmount + $messAmount;
+            }
+
             $hostel_allocation->update($validated);
+            $hostel_allocation->load(['messPlan', 'room', 'bed', 'user']);
 
             // Handle bed status based on allocation status changes
             if (isset($validated['status']) && $oldStatus === 'active' && in_array($validated['status'], ['checked_out', 'cancelled'])) {

@@ -17,6 +17,16 @@ class InventoryItemController extends BaseController
 
         $query = InventoryItem::query()->with('category');
 
+        // Filter items available for sale (excludes non-sellable categories)
+        if ($request->boolean('for_sale')) {
+            $query->where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereHas('category', function ($cq) {
+                        $cq->where('is_sellable', true);
+                    })->orWhereNull('inventory_category_id');
+                });
+        }
+
         // 1. Category filter
         if ($request->filled('category_id') && $request->category_id !== 'all') {
             $query->where('inventory_category_id', $request->category_id);
@@ -130,7 +140,11 @@ class InventoryItemController extends BaseController
             return $this->forbidden('You do not have permission to view inventory items.');
         }
 
-        return $this->successWithMap($inventory_item->load(['category', 'movements' => fn($q) => $q->latest('created_at')->limit(50)->with('performer')]), 'passthrough');
+        return $this->successWithMap($inventory_item->load([
+            'category',
+            'batches' => fn($q) => $q->orderBy('received_at', 'desc')->orderBy('id', 'desc'),
+            'movements' => fn($q) => $q->latest('created_at')->limit(50)->with('performer')
+        ]), 'passthrough');
     }
 
     public function update(Request $request, InventoryItem $inventory_item): JsonResponse
@@ -168,5 +182,16 @@ class InventoryItemController extends BaseController
 
         $inventory_item->delete();
         return $this->success(null, 'Item deleted');
+    }
+
+    public function batches(Request $request, InventoryItem $inventory_item): JsonResponse
+    {
+        $batches = \App\Models\InventoryBatch::where('inventory_item_id', $inventory_item->id)
+            ->where('remaining_quantity', '>', 0)
+            ->orderBy('received_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return $this->success($batches, 'Success');
     }
 }

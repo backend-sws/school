@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::exportMethod
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:110
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:111
  * @route '/api/v1/hostel/allocations/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:127
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:128
  * @route '/api/v1/hostel/allocations'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:127
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:128
  * @route '/api/v1/hostel/allocations'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:127
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:128
  * @route '/api/v1/hostel/allocations'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:127
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:128
  * @route '/api/v1/hostel/allocations'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:127
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:128
  * @route '/api/v1/hostel/allocations'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 export const show = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 show.url = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ show.url = (args: { hostel_allocation: number | { id: number } } | [hostel_alloc
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 show.get = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ show.get = (args: { hostel_allocation: number | { id: number } } | [hostel_alloc
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 show.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ show.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allo
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
     const showForm = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ show.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allo
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         showForm.get = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ show.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allo
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:208
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         showForm.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ show.head = (args: { hostel_allocation: number | { id: number } } | [hostel_allo
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 export const update = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -329,7 +329,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 update.url = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ update.url = (args: { hostel_allocation: number | { id: number } } | [hostel_all
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 update.put = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -371,7 +371,7 @@ update.put = (args: { hostel_allocation: number | { id: number } } | [hostel_all
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -381,7 +381,7 @@ update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_a
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
     const updateForm = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -396,7 +396,7 @@ update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_a
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         updateForm.put = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -410,7 +410,7 @@ update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_a
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:224
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:241
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         updateForm.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -426,7 +426,7 @@ update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_a
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:257
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 export const destroy = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -441,7 +441,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:257
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 destroy.url = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -474,7 +474,7 @@ destroy.url = (args: { hostel_allocation: number | { id: number } } | [hostel_al
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:257
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -484,7 +484,7 @@ destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:257
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
     const destroyForm = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -499,7 +499,7 @@ destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:257
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         destroyForm.delete = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

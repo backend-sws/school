@@ -705,11 +705,36 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                 <Each
                                                     of={admissionFeeColumns}
                                                     keyExtractor={(col) => col.key}
-                                                    render={(col) => (
-                                                        <TableCell className="text-right py-4 tabular-nums text-sm font-medium border-r opacity-80">
-                                                            {formatCurrency(row[col.rowField!] ?? 0, col.format === "currency-positive")}
-                                                        </TableCell>
-                                                    )}
+                                                    render={(col) => {
+                                                        const val = row[col.rowField!] ?? 0;
+                                                        const isHostelBreakdown = col.key === "hostel_fee" && row.hostel_breakdown && (row.hostel_breakdown.mess_amount > 0 || row.hostel_breakdown.room_amount > 0);
+                                                        return (
+                                                            <TableCell className="text-right py-4 tabular-nums text-sm font-medium border-r opacity-80">
+                                                                {isHostelBreakdown && Number(val) > 0 ? (
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <span className="cursor-help underline decoration-dotted decoration-primary/50 underline-offset-4 font-semibold text-foreground">
+                                                                                {formatCurrency(val, col.format === "currency-positive")}
+                                                                            </span>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent side="top" className="text-xs p-2.5 space-y-1.5 bg-popover text-popover-foreground border shadow-md">
+                                                                            <p className="font-bold border-b pb-1 text-foreground">Hostel & Mess Breakdown</p>
+                                                                            <div className="flex justify-between gap-4 text-muted-foreground">
+                                                                                <span>Room Rent:</span>
+                                                                                <span className="font-semibold text-foreground">{formatCurrency(row.hostel_breakdown.room_amount)}</span>
+                                                                            </div>
+                                                                            <div className="flex justify-between gap-4 text-muted-foreground">
+                                                                                <span>Mess ({row.hostel_breakdown.mess_plan_name || 'Dining'}):</span>
+                                                                                <span className="font-semibold text-foreground">{formatCurrency(row.hostel_breakdown.mess_amount)}</span>
+                                                                            </div>
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                ) : (
+                                                                    formatCurrency(val, col.format === "currency-positive")
+                                                                )}
+                                                            </TableCell>
+                                                        );
+                                                    }}
                                                 />
                                                 {/* Dynamic Particulars */}
                                                 <Each

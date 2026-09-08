@@ -153,7 +153,7 @@ export const MATRIX_STATIC_COLUMNS: MatrixColumnConfig[] = [
 export const MATRIX_ADMISSION_COLUMNS: MatrixColumnConfig[] = [
     { key: "admission_fee", label: "Admission", align: "right", type: "static", rowField: "admission_fee", format: "currency-positive" },
     { key: "transport_fee", label: "Transport", align: "right", type: "static", rowField: "transport_fee", format: "currency-positive" },
-    { key: "hostel_fee", label: "Hostel", align: "right", type: "static", rowField: "hostel_fee", format: "currency-positive" },
+    { key: "hostel_fee", label: "Hostel & Mess", align: "right", type: "static", rowField: "hostel_fee", format: "currency-positive" },
     { key: "other_fees", label: "Other", align: "right", type: "static", rowField: "other_fees", format: "currency-positive" },
 ];
 

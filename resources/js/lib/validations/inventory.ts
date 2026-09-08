@@ -12,6 +12,7 @@ export const InventoryCategoryFormSchema = z.object({
   name: safeRequiredString(100, "Name is required"),
   code: safeOptionalString(50, "Code"),
   description: safeOptionalString(500, "Description"),
+  is_sellable: z.boolean().optional(),
 });
 
 export const InventoryItemFormSchema = z.object({

@@ -17,6 +17,10 @@ class InventoryCategoryController extends BaseController
 
         $query = InventoryCategory::query();
 
+        if ($request->boolean('for_sale')) {
+            $query->where('is_sellable', true);
+        }
+
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
             $query->where(function ($q) use ($search) {
@@ -41,7 +45,14 @@ class InventoryCategoryController extends BaseController
             'name' => 'required|string|max:100',
             'code' => 'nullable|string|max:50',
             'description' => 'nullable|string',
+            'is_sellable' => 'nullable|boolean',
         ]);
+
+        if ($request->has('is_sellable')) {
+            $validated['is_sellable'] = $request->boolean('is_sellable');
+        } else {
+            $validated['is_sellable'] = true;
+        }
 
         $category = InventoryCategory::create($validated);
         return $this->created($category, 'Category created successfully');
@@ -66,7 +77,12 @@ class InventoryCategoryController extends BaseController
             'name' => 'sometimes|string|max:100',
             'code' => 'nullable|string|max:50',
             'description' => 'nullable|string',
+            'is_sellable' => 'nullable|boolean',
         ]);
+
+        if ($request->has('is_sellable')) {
+            $validated['is_sellable'] = $request->boolean('is_sellable');
+        }
 
         $inventory_category->update($validated);
         return $this->successWithMap($inventory_category, 'passthrough', 'Category updated successfully');

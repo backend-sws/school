@@ -116,6 +116,7 @@ export const INVENTORY_CATEGORY_FORM_INITIAL = {
   name: "",
   code: "",
   description: "",
+  is_sellable: true,
 };
 
 export const INVENTORY_CATEGORY_DIALOG_FORM_LAYOUT = [
@@ -143,6 +144,13 @@ export const INVENTORY_CATEGORY_DIALOG_FORM_LAYOUT = [
     placeholder: "Optional description",
     rows: 3,
     tooltip: "Optional notes about this category.",
+  },
+  {
+    name: "is_sellable",
+    label: "Available for Sale",
+    type: FORM_TYPE.CHECKBOX,
+    helperText: "Allow items in this category to be sold to students/parents. Uncheck for internal/office/lab use.",
+    tooltip: "When unchecked, items belonging to this category will not be listed in Sales.",
   },
 ];
 

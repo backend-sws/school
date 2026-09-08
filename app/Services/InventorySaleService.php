@@ -76,11 +76,18 @@ class InventorySaleService
             }
 
             $item = InventoryItem::withoutGlobalScopes()
+                ->with('category')
                 ->where('institution_id', $institutionId)
                 ->find($itemId);
 
             if (! $item) {
                 throw ValidationException::withMessages(["lines.{$idx}" => ['Item not found or not in this institution.']]);
+            }
+
+            if ($item->category && $item->category->is_sellable === false) {
+                throw ValidationException::withMessages([
+                    "lines.{$idx}" => ["Item '{$item->name}' belongs to category '{$item->category->name}' which is marked for internal use only and cannot be sold."],
+                ]);
             }
 
             if ($item->current_quantity < $quantity) {

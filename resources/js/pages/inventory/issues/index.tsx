@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filter-bar";
-import { LogOut, Plus, Eye, RotateCcw, User, Package, CheckCircle } from "lucide-react";
+import { LogOut, Plus, Eye, RotateCcw, User, Package, CheckCircle, IndianRupee, Layers } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -47,6 +47,21 @@ interface IssueRow {
   purpose?: string;
   issued_at: string;
   remarks?: string;
+  total_cost?: string | number;
+  unit_cost?: string | number;
+  issue_batches?: {
+    id: number;
+    quantity: number;
+    unit_cost: number;
+    amount: number;
+    batch?: {
+      id: number;
+      batch_no: string;
+      unit_cost: number;
+      received_at?: string;
+      supplier_name?: string;
+    };
+  }[];
   item?: { id: number; name: string; code?: string; unit?: string };
   issuedToUser?: { id: number; name: string };
   issuedBy?: { id: number; name: string };
@@ -207,6 +222,62 @@ const InventoryIssuesIndex = () => {
                   <p className="text-[10px] text-muted-foreground">{detailRow.item?.unit ?? "units"}</p>
                 </div>
               </div>
+
+              {detailRow.total_cost && Number(detailRow.total_cost) > 0 && (
+                <div className="flex items-center justify-between rounded-lg border bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 px-3 py-2 text-xs">
+                  <span className="text-muted-foreground flex items-center gap-1 font-medium">
+                    <IndianRupee className="size-3.5 text-emerald-600" /> Total Issue Value (FIFO):
+                  </span>
+                  <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-sm">
+                    ₹{Number(detailRow.total_cost).toFixed(2)}
+                    {detailRow.unit_cost && Number(detailRow.unit_cost) > 0 && (
+                      <span className="text-[10px] font-normal text-muted-foreground ml-1">
+                        (Avg ₹{Number(detailRow.unit_cost).toFixed(2)}/{detailRow.item?.unit ?? "unit"})
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
+
+              {detailRow.issue_batches && detailRow.issue_batches.length > 0 && (
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                    <Layers className="size-3 text-primary" /> Consumed FIFO Batches:
+                  </p>
+                  <div className="rounded-md border overflow-hidden text-xs">
+                    <table className="w-full">
+                      <thead className="bg-muted/50 text-[11px]">
+                        <tr>
+                          <th className="text-left px-2.5 py-1.5 font-medium">Batch / Source</th>
+                          <th className="text-right px-2 py-1.5 font-medium">Qty</th>
+                          <th className="text-right px-2 py-1.5 font-medium">Rate</th>
+                          <th className="text-right px-2.5 py-1.5 font-medium">Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y font-mono text-[11px]">
+                        {detailRow.issue_batches.map((ib, idx) => (
+                          <tr key={idx}>
+                            <td className="px-2.5 py-1">
+                              <div className="font-semibold text-foreground font-sans">{ib.batch?.batch_no ?? `Batch #${ib.id}`}</div>
+                              {ib.batch?.received_at && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  {new Date(ib.batch.received_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                                  {ib.batch.supplier_name ? ` • ${ib.batch.supplier_name}` : ""}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-2 py-1 text-right">{Number(ib.quantity).toFixed(2)}</td>
+                            <td className="px-2 py-1 text-right">₹{Number(ib.unit_cost).toFixed(2)}</td>
+                            <td className="px-2.5 py-1 text-right font-semibold text-emerald-600 dark:text-emerald-400">
+                              ₹{Number(ib.amount).toFixed(2)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {detailRow.remarks && (
                 <div className="text-xs text-muted-foreground bg-muted/30 rounded-md p-3">
@@ -428,8 +499,15 @@ const InventoryIssuesIndex = () => {
                         {row.item?.code && <p className="text-xs text-muted-foreground font-mono">{row.item.code}</p>}
                       </TableCell>
                       <TableCell className="font-mono font-semibold text-rose-600 dark:text-rose-400">
-                        {Number(row.quantity).toFixed(3)}
-                        <span className="text-[10px] font-normal text-muted-foreground ml-1">{row.item?.unit ?? ""}</span>
+                        <div>
+                          {Number(row.quantity).toFixed(3)}
+                          <span className="text-[10px] font-normal text-muted-foreground ml-1">{row.item?.unit ?? ""}</span>
+                        </div>
+                        {row.total_cost && Number(row.total_cost) > 0 && (
+                          <div className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                            ₹{Number(row.total_cost).toFixed(2)}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <p className="font-medium">{row.issuedToUser?.name ?? row.issued_to_name ?? "—"}</p>

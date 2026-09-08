@@ -46,7 +46,7 @@ export function SearchableSelectField({
     className,
     emptyText = "No results found",
     searchPlaceholder,
-    listMaxHeight = "max-h-[150px]",
+    listMaxHeight = "max-h-[220px]",
 }: SearchableSelectProps) {
     const [open, setOpen] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState("");
@@ -74,9 +74,10 @@ export function SearchableSelectField({
     }, [open]);
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover modal={true} open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
+                    type="button"
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
@@ -88,28 +89,30 @@ export function SearchableSelectField({
                         className
                     )}
                 >
-                    <span className="truncate">
+                    <span className="truncate text-left">
                         {selectedOption ? selectedOption.text : placeholder}
                     </span>
                     <ChevronDown
                         className={cn(
-                            "ml-2 size-4 shrink-0 opacity-50 transition-transform",
+                            "ml-2 size-3.5 shrink-0 opacity-50 transition-transform",
                             open && "rotate-180"
                         )}
                     />
                 </Button>
             </PopoverTrigger>
             <PopoverContent
-                className="w-[var(--radix-popover-trigger-width)] p-0"
+                className="w-[var(--radix-popover-trigger-width)] min-w-[260px] p-0 z-[1200]"
                 align="start"
                 sideOffset={4}
+                onOpenAutoFocus={(e) => e.preventDefault()}
             >
-                <Command shouldFilter={false}>
+                <Command shouldFilter={false} className="w-full">
                     <CommandInput
                         placeholder={resolvedSearchPlaceholder}
                         value={searchQuery}
                         onValueChange={setSearchQuery}
-                        className="h-9 border-b rounded-none"
+                        wrapperClassName="h-9 px-3 gap-2"
+                        className="py-1 text-xs"
                     />
                     <CommandList
                         className={cn(
@@ -119,7 +122,7 @@ export function SearchableSelectField({
                         onWheel={(e) => e.stopPropagation()}
                         onTouchMove={(e) => e.stopPropagation()}
                     >
-                        <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                        <CommandEmpty className="py-4 text-center text-xs text-muted-foreground">
                             {emptyText}
                         </CommandEmpty>
                         <CommandGroup className="p-1">
@@ -128,18 +131,22 @@ export function SearchableSelectField({
                                 return (
                                     <CommandItem
                                         key={option.key}
-                                        value={String(option.value)}
+                                        value={String(option.key || option.text || option.value)}
                                         onSelect={() => {
                                             onChange(option.value);
                                             setOpen(false);
                                         }}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setOpen(false);
+                                        }}
                                         className={cn(
-                                            "flex items-center justify-between rounded-md px-2 py-1.5 cursor-pointer",
+                                            "flex items-center justify-between rounded-md px-2 py-1.5 cursor-pointer text-xs",
                                             isSelected && "bg-primary/10 text-primary font-medium"
                                         )}
                                     >
-                                        <span>{option.text}</span>
-                                        {isSelected && <Check className="size-4 shrink-0 text-primary" />}
+                                        <span className="truncate mr-2">{option.text}</span>
+                                        {isSelected && <Check className="size-3.5 shrink-0 text-primary" />}
                                     </CommandItem>
                                 );
                             })}

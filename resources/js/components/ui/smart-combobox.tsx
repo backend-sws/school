@@ -68,13 +68,17 @@ export function SmartCombobox({
 
     const filteredOptions = React.useMemo(() => {
         if (!inputValue.trim()) return options;
+        const selectedOption = options.find((o) => String(o.value) === String(value));
+        if (selectedOption && inputValue.trim().toLowerCase() === getOptionLabel(selectedOption).trim().toLowerCase()) {
+            return options;
+        }
         const query = inputValue.toLowerCase();
         return options.filter(
             (o) =>
                 getOptionLabel(o).toLowerCase().includes(query) ||
                 String(o.value).toLowerCase().includes(query)
         );
-    }, [options, inputValue, getOptionLabel]);
+    }, [options, inputValue, value, getOptionLabel]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -119,7 +123,10 @@ export function SmartCombobox({
                             placeholder={isPremium ? "" : placeholder}
                             value={inputValue}
                             onChange={handleInputChange}
-                            onFocus={() => setOpen(true)}
+                            onFocus={(e) => {
+                                setOpen(true);
+                                e.target.select();
+                            }}
                             onBlur={onBlur}
                             className={cn(
                                 "flex w-full transition-all focus-visible:outline-none font-medium text-xs bg-transparent border-none p-0 text-foreground/90 h-auto placeholder:text-muted-foreground/30",

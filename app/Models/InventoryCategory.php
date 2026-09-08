@@ -16,6 +16,11 @@ class InventoryCategory extends Model
         'name',
         'code',
         'description',
+        'is_sellable',
+    ];
+
+    protected $casts = [
+        'is_sellable' => 'boolean',
     ];
 
     public function institution(): BelongsTo

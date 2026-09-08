@@ -450,6 +450,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::apiResource('categories', \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::class)->parameters(['categories' => 'inventory_category']);
                 Route::apiResource('locations', \App\Http\Controllers\Api\V1\Inventory\InventoryLocationController::class)->parameters(['locations' => 'inventory_location']);
                 Route::apiResource('items', \App\Http\Controllers\Api\V1\Inventory\InventoryItemController::class)->parameters(['items' => 'inventory_item']);
+                Route::get('items/{inventory_item}/batches', [\App\Http\Controllers\Api\V1\Inventory\InventoryItemController::class, 'batches'])->whereNumber('inventory_item');
                 Route::get('movements', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'index']);
                 Route::post('movements', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'store']);
                 Route::get('movements/{inventory_movement}', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'show'])->whereNumber('inventory_movement');

@@ -22,6 +22,8 @@ class InventoryIssue extends Model
         'department',
         'purpose',
         'returned_quantity',
+        'total_cost',
+        'unit_cost',
         'issued_by',
         'issued_at',
         'remarks',
@@ -32,6 +34,8 @@ class InventoryIssue extends Model
         'quantity' => 'decimal:3',
         'quantity_after' => 'decimal:3',
         'returned_quantity' => 'decimal:3',
+        'total_cost' => 'decimal:2',
+        'unit_cost' => 'decimal:2',
         'issued_at' => 'date',
     ];
 
@@ -58,6 +62,11 @@ class InventoryIssue extends Model
     public function movement(): BelongsTo
     {
         return $this->belongsTo(InventoryMovement::class, 'movement_id');
+    }
+
+    public function issueBatches()
+    {
+        return $this->hasMany(InventoryIssueBatch::class, 'inventory_issue_id')->with('batch');
     }
 
     /**

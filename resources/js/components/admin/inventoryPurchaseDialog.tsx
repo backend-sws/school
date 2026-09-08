@@ -14,17 +14,12 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ShoppingCart, Plus, Trash2, IndianRupee, Package } from "lucide-react";
+import { SearchableSelectField } from "@/components/searchableSelectInput";
+import { ShoppingCart, Plus, Trash2, IndianRupee, Package, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 interface PurchaseLine {
+  category_id?: string;
   inventory_item_id: string;
   quantity: string;
   unit_cost: string;
@@ -37,13 +32,14 @@ interface InventoryPurchaseDialogProps {
 }
 
 const PAYMENT_MODES = [
-  { value: "cash", label: "Cash" },
-  { value: "upi", label: "UPI" },
-  { value: "bank", label: "Bank Transfer" },
-  { value: "cheque", label: "Cheque" },
+  { key: "cash", value: "cash", text: "Cash" },
+  { key: "upi", value: "upi", text: "UPI" },
+  { key: "bank", value: "bank", text: "Bank Transfer" },
+  { key: "cheque", value: "cheque", text: "Cheque" },
 ];
 
 const emptyLine = (): PurchaseLine => ({
+  category_id: "",
   inventory_item_id: "",
   quantity: "",
   unit_cost: "",
@@ -59,16 +55,51 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
   const [remarks, setRemarks] = useState("");
   const [lines, setLines] = useState<PurchaseLine[]>([emptyLine()]);
 
+  // Load items
   const { data: itemsData } = useQuery({
     queryKey: ["inventory-items-all"],
     queryFn: () => inventoryApi.items.index({ per_page: 500 }),
     enabled: open,
   });
 
+  // Load categories
+  const { data: categoriesData } = useQuery({
+    queryKey: ["inventory-categories-all"],
+    queryFn: () => inventoryApi.categories.index({ per_page: 500 }),
+    enabled: open,
+  });
+
+  const categories = useMemo(() => {
+    const raw = (categoriesData as any)?.data?.data ?? (categoriesData as any)?.data ?? categoriesData ?? [];
+    return Array.isArray(raw) ? raw : [];
+  }, [categoriesData]);
+
+  const categorySelectOptions = useMemo(() => {
+    return [
+      { key: "all", value: "", text: "All Categories" },
+      ...categories.map((c: any) => ({
+        key: String(c.id),
+        value: String(c.id),
+        text: c.name + (c.code ? ` (${c.code})` : ""),
+      })),
+    ];
+  }, [categories]);
+
   const itemOptions = useMemo(() => {
     const raw = (itemsData as any)?.data?.data ?? (itemsData as any)?.data ?? itemsData ?? [];
     return Array.isArray(raw) ? raw : [];
   }, [itemsData]);
+
+  const getItemOptionsForLine = (catId?: string) => {
+    const filtered = catId
+      ? itemOptions.filter((it: any) => String(it.inventory_category_id) === String(catId))
+      : itemOptions;
+    return filtered.map((item: any) => ({
+      key: String(item.id),
+      value: String(item.id),
+      text: `${item.name}${item.code ? ` (${item.code})` : ""}${item.unit ? ` [${item.unit}]` : ""}`,
+    }));
+  };
 
   const totalCost = useMemo(() => {
     return lines.reduce((sum, l) => {
@@ -109,14 +140,45 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
   const addLine = () => setLines((prev) => [...prev, emptyLine()]);
 
   const removeLine = (i: number) =>
-    setLines((prev) => prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev);
+    setLines((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev));
 
   const updateLine = (i: number, field: keyof PurchaseLine, value: string) =>
-    setLines((prev) => prev.map((l, idx) => idx === i ? { ...l, [field]: value } : l));
+    setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, [field]: value } : l)));
+
+  const handleCategoryChange = (i: number, newCatId: string) => {
+    setLines((prev) =>
+      prev.map((l, idx) => {
+        if (idx !== i) return l;
+        const currentItem = itemOptions.find((it: any) => String(it.id) === l.inventory_item_id);
+        const itemBelongsToNewCat =
+          !newCatId || (currentItem && String(currentItem.inventory_category_id) === String(newCatId));
+        return {
+          ...l,
+          category_id: newCatId,
+          inventory_item_id: itemBelongsToNewCat ? l.inventory_item_id : "",
+          unit_cost: itemBelongsToNewCat ? l.unit_cost : "",
+        };
+      })
+    );
+  };
+
+  const handleItemChange = (i: number, newItemId: string) => {
+    const item = itemOptions.find((it: any) => String(it.id) === String(newItemId));
+    setLines((prev) =>
+      prev.map((l, idx) => {
+        if (idx !== i) return l;
+        return {
+          ...l,
+          inventory_item_id: newItemId,
+          category_id: l.category_id || (item?.inventory_category_id ? String(item.inventory_category_id) : ""),
+          unit_cost: l.unit_cost || (item?.purchase_price ? String(item.purchase_price) : ""),
+        };
+      })
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validate lines
     const validLines = lines.filter((l) => l.inventory_item_id && parseFloat(l.quantity) > 0);
     if (validLines.length === 0) {
       toast.error("Please add at least one item with quantity.");
@@ -145,7 +207,7 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[800px] md:max-w-[860px] max-w-[96vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShoppingCart className="size-5 text-primary" />
@@ -158,7 +220,7 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Header fields */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="supplier-name">Supplier / Shop Name</Label>
               <Input
@@ -189,16 +251,13 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
             </div>
             <div className="space-y-2">
               <Label htmlFor="payment-mode">Payment Mode</Label>
-              <Select value={paymentMode} onValueChange={setPaymentMode}>
-                <SelectTrigger id="payment-mode">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PAYMENT_MODES.map((m) => (
-                    <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelectField
+                value={paymentMode}
+                onChange={(val) => setPaymentMode(val || "cash")}
+                options={PAYMENT_MODES}
+                placeholder="Select payment mode"
+                searchPlaceholder="Search mode..."
+              />
             </div>
           </div>
 
@@ -214,15 +273,28 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
               </Button>
             </div>
 
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="rounded-lg border overflow-x-auto">
+              <table className="w-full text-sm min-w-[700px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="text-left px-3 py-2 font-medium text-xs w-2/5">Item <span className="text-destructive">*</span></th>
-                    <th className="text-left px-3 py-2 font-medium text-xs w-1/5">Quantity <span className="text-destructive">*</span></th>
-                    <th className="text-left px-3 py-2 font-medium text-xs w-1/5">Unit Cost (₹)</th>
-                    <th className="text-right px-3 py-2 font-medium text-xs w-1/5">Amount</th>
-                    <th className="w-8" />
+                    <th className="text-left px-3 py-2 font-medium text-xs w-[26%]">
+                      <span className="flex items-center gap-1">
+                        <Layers className="size-3 text-muted-foreground" /> Category
+                      </span>
+                    </th>
+                    <th className="text-left px-3 py-2 font-medium text-xs w-[32%]">
+                      Item <span className="text-destructive">*</span>
+                    </th>
+                    <th className="text-left px-3 py-2 font-medium text-xs w-[17%]">
+                      Quantity <span className="text-destructive">*</span>
+                    </th>
+                    <th className="text-left px-3 py-2 font-medium text-xs w-[14%]">
+                      Unit Cost (₹)
+                    </th>
+                    <th className="text-right px-3 py-2 font-medium text-xs w-[11%]">
+                      Amount
+                    </th>
+                    <th className="w-8 px-1" />
                   </tr>
                 </thead>
                 <tbody>
@@ -233,22 +305,28 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
                     const item = getItemById(line.inventory_item_id);
                     return (
                       <tr key={i} className="border-t">
-                        <td className="px-2 py-1.5">
-                          <select
-                            className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-                            value={line.inventory_item_id}
-                            onChange={(e) => updateLine(i, "inventory_item_id", e.target.value)}
-                            required
-                          >
-                            <option value="">— Select item —</option>
-                            {itemOptions.map((item: any) => (
-                              <option key={item.id} value={String(item.id)}>
-                                {item.name}{item.code ? ` (${item.code})` : ""}
-                              </option>
-                            ))}
-                          </select>
+                        <td className="px-2 py-1.5 align-middle">
+                          <SearchableSelectField
+                            value={line.category_id || ""}
+                            onChange={(val) => handleCategoryChange(i, String(val ?? ""))}
+                            options={categorySelectOptions}
+                            placeholder="All Categories"
+                            searchPlaceholder="Search category..."
+                            className="h-8 text-xs"
+                          />
                         </td>
-                        <td className="px-2 py-1.5">
+                        <td className="px-2 py-1.5 align-middle">
+                          <SearchableSelectField
+                            value={line.inventory_item_id}
+                            onChange={(val) => handleItemChange(i, String(val ?? ""))}
+                            options={getItemOptionsForLine(line.category_id)}
+                            placeholder="Select item..."
+                            searchPlaceholder="Search item name / code..."
+                            className="h-8 text-xs"
+                            emptyText={line.category_id ? "No items in category" : "No items found"}
+                          />
+                        </td>
+                        <td className="px-2 py-1.5 align-middle">
                           <div className="flex items-center gap-1">
                             <Input
                               type="number"
@@ -260,10 +338,14 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
                               placeholder="0"
                               required
                             />
-                            {item?.unit && <span className="text-[10px] text-muted-foreground whitespace-nowrap">{item.unit}</span>}
+                            {item?.unit && (
+                              <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                                {item.unit}
+                              </span>
+                            )}
                           </div>
                         </td>
-                        <td className="px-2 py-1.5">
+                        <td className="px-2 py-1.5 align-middle">
                           <Input
                             type="number"
                             min="0"
@@ -274,13 +356,18 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
                             placeholder="0.00"
                           />
                         </td>
-                        <td className="px-3 py-1.5 text-right font-mono text-sm font-medium">
+                        <td className="px-3 py-1.5 text-right font-mono text-xs font-semibold align-middle whitespace-nowrap">
                           {amount > 0 ? `₹${amount.toFixed(2)}` : "—"}
                         </td>
-                        <td className="px-2 py-1.5">
+                        <td className="px-1 py-1.5 align-middle text-center">
                           {lines.length > 1 && (
-                            <Button type="button" size="icon-sm" variant="ghost" onClick={() => removeLine(i)}
-                              className="text-destructive hover:bg-destructive/10 hover:text-destructive size-6">
+                            <Button
+                              type="button"
+                              size="icon-sm"
+                              variant="ghost"
+                              onClick={() => removeLine(i)}
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive size-6"
+                            >
                               <Trash2 className="size-3" />
                             </Button>
                           )}
@@ -291,14 +378,18 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
                 </tbody>
                 <tfoot className="border-t-2 bg-muted/30">
                   <tr>
-                    <td colSpan={3} className="px-3 py-2 text-right text-sm font-semibold text-muted-foreground">Total Cost</td>
+                    <td colSpan={4} className="px-3 py-2 text-right text-sm font-semibold text-muted-foreground">
+                      Total Cost
+                    </td>
                     <td className="px-3 py-2 text-right font-bold text-emerald-600 dark:text-emerald-400">
                       {totalCost > 0 ? (
-                        <span className="flex items-center justify-end gap-0.5">
+                        <span className="flex items-center justify-end gap-0.5 font-mono text-sm">
                           <IndianRupee className="size-3.5" />
                           {totalCost.toFixed(2)}
                         </span>
-                      ) : "—"}
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td />
                   </tr>

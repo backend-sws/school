@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Inventory;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\InventoryBatch;
 use App\Models\InventoryItem;
 use App\Models\InventoryMovement;
 use App\Models\InventoryPurchase;
@@ -152,10 +153,31 @@ class InventoryPurchaseController extends BaseController
                 'remarks'        => $validated['remarks'] ?? null,
             ]);
 
-            // Create lines
+            // Create lines and FIFO batches
             foreach ($linesData as $lineData) {
                 $lineData['inventory_purchase_id'] = $purchase->id;
-                InventoryPurchaseLine::create($lineData);
+                $createdLine = InventoryPurchaseLine::create($lineData);
+
+                // Create FIFO Batch
+                InventoryBatch::create([
+                    'institution_id'    => $institutionId,
+                    'inventory_item_id' => $createdLine->inventory_item_id,
+                    'batch_no'          => $validated['bill_no'] ? ($validated['bill_no'] . '-L' . $createdLine->id) : ('BATCH-' . date('Ymd', strtotime($validated['purchased_at'])) . '-' . $createdLine->id),
+                    'purchase_line_id'  => $createdLine->id,
+                    'received_quantity' => $createdLine->quantity,
+                    'remaining_quantity'=> $createdLine->quantity,
+                    'unit_cost'         => $createdLine->unit_cost,
+                    'received_at'       => $validated['purchased_at'],
+                    'supplier_name'     => $validated['supplier_name'] ?? null,
+                    'status'            => 'active',
+                ]);
+
+                // Update item's reference purchase_price if available
+                if ($createdLine->unit_cost > 0) {
+                    InventoryItem::where('id', $createdLine->inventory_item_id)->update([
+                        'purchase_price' => $createdLine->unit_cost,
+                    ]);
+                }
             }
 
             // Update movement reference_id to purchase id

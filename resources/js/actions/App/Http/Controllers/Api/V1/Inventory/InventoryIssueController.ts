@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::index
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:16
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:18
  * @route '/api/v1/inventory/issues'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:86
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:88
  * @route '/api/v1/inventory/issues'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:86
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:88
  * @route '/api/v1/inventory/issues'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:86
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:88
  * @route '/api/v1/inventory/issues'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:86
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:88
  * @route '/api/v1/inventory/issues'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:86
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:88
  * @route '/api/v1/inventory/issues'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
 export const show = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
 show.url = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { inventory_issue: number | { id: number } } | [inventory_issu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
 show.get = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { inventory_issue: number | { id: number } } | [inventory_issu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
 show.head = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { inventory_issue: number | { id: number } } | [inventory_iss
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
     const showForm = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { inventory_issue: number | { id: number } } | [inventory_iss
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
         showForm.get = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { inventory_issue: number | { id: number } } | [inventory_iss
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:167
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
         showForm.head = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { inventory_issue: number | { id: number } } | [inventory_iss
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::recordReturn
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:182
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
 export const recordReturn = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -251,7 +251,7 @@ recordReturn.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::recordReturn
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:182
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
 recordReturn.url = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ recordReturn.url = (args: { inventory_issue: number | { id: number } } | [invent
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::recordReturn
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:182
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
 recordReturn.post = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -294,7 +294,7 @@ recordReturn.post = (args: { inventory_issue: number | { id: number } } | [inven
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::recordReturn
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:182
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
     const recordReturnForm = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -304,7 +304,7 @@ recordReturn.post = (args: { inventory_issue: number | { id: number } } | [inven
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::recordReturn
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:182
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
         recordReturnForm.post = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

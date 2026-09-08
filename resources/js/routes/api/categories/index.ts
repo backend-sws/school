@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:34
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:38
  * @route '/api/v1/inventory/categories'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:34
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:38
  * @route '/api/v1/inventory/categories'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:34
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:38
  * @route '/api/v1/inventory/categories'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:34
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:38
  * @route '/api/v1/inventory/categories'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:34
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:38
  * @route '/api/v1/inventory/categories'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 export const show = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 show.url = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { inventory_category: number | { id: number } } | [inventory_c
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 show.get = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { inventory_category: number | { id: number } } | [inventory_c
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 show.head = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { inventory_category: number | { id: number } } | [inventory_
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
     const showForm = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { inventory_category: number | { id: number } } | [inventory_
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
         showForm.get = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { inventory_category: number | { id: number } } | [inventory_
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:50
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:61
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
         showForm.head = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { inventory_category: number | { id: number } } | [inventory_
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 export const update = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 update.url = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { inventory_category: number | { id: number } } | [inventory
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 update.put = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { inventory_category: number | { id: number } } | [inventory
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 update.patch = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { inventory_category: number | { id: number } } | [invento
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
     const updateForm = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { inventory_category: number | { id: number } } | [invento
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
         updateForm.put = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { inventory_category: number | { id: number } } | [invento
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:59
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:70
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
         updateForm.patch = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { inventory_category: number | { id: number } } | [invento
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::destroy
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:75
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:91
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 export const destroy = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::destroy
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:75
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:91
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 destroy.url = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { inventory_category: number | { id: number } } | [inventor
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::destroy
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:75
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:91
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
 destroy.delete = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { inventory_category: number | { id: number } } | [inven
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::destroy
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:75
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:91
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
     const destroyForm = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { inventory_category: number | { id: number } } | [inven
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryCategoryController::destroy
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:75
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryCategoryController.php:91
  * @route '/api/v1/inventory/categories/{inventory_category}'
  */
         destroyForm.delete = (args: { inventory_category: number | { id: number } } | [inventory_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -53,4 +53,18 @@ class InventoryItem extends Model
     {
         return $this->hasMany(InventoryMovement::class, 'inventory_item_id');
     }
+
+    public function batches(): HasMany
+    {
+        return $this->hasMany(InventoryBatch::class, 'inventory_item_id');
+    }
+
+    public function activeBatches(): HasMany
+    {
+        return $this->hasMany(InventoryBatch::class, 'inventory_item_id')
+            ->where('status', 'active')
+            ->where('remaining_quantity', '>', 0)
+            ->orderBy('received_at', 'asc')
+            ->orderBy('id', 'asc');
+    }
 }

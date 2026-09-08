@@ -61,6 +61,7 @@ export interface HostelAllocation {
     user_id: number;
     hostel_room_id: number;
     hostel_bed_id: number | null;
+    hostel_mess_plan_id?: number | null;
     check_in_date: string;
     check_out_date: string | null;
     status: "active" | "checked_out" | "cancelled";
@@ -68,7 +69,10 @@ export interface HostelAllocation {
     user?: { id: number; name: string; email: string; student_profile?: any };
     room?: Partial<HostelRoom>;
     bed?: Partial<HostelBed>;
+    mess_plan?: Partial<HostelMessPlan>;
     monthly_amount?: number;
+    room_monthly_amount?: number;
+    mess_monthly_amount?: number;
     due_amount?: number;
 }
 

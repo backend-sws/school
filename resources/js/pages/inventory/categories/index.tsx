@@ -30,12 +30,14 @@ import {
 } from "@/constants/page/admin/inventory";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { INVENTORY_CATEGORIES_GUIDE } from "@/constants/guides/inventory";
+import { Badge } from "@/components/ui/badge";
 import React from 'react';
 
 const COLUMNS = [
   { key: "serial", label: "#" },
   { key: "name", label: "Name" },
   { key: "code", label: "Code" },
+  { key: "is_sellable", label: "Sale Status" },
   { key: "action", label: "Actions" },
 ];
 
@@ -45,7 +47,7 @@ const InventoryCategoriesIndex = () => {
   const queryClient = useQueryClient();
 useRegisterGuide(INVENTORY_CATEGORIES_GUIDE);
   const { filter, handleFilter } = useSearchFilter(INITIAL_FILTERS);
-  const categoryDisclosure = useDisclosure<{ id: number; name: string; code?: string; description?: string } | null>();
+  const categoryDisclosure = useDisclosure<{ id: number; name: string; code?: string; description?: string; is_sellable?: boolean } | null>();
   const deleteDisclosure = useDisclosure<{ id: number; name: string }>();
 
   const { data, isLoading } = useQuery({
@@ -146,7 +148,7 @@ useRegisterGuide(INVENTORY_CATEGORIES_GUIDE);
                   fallback={
                     <TableSkeletonLoader columns={COLUMNS.length} />
                   }
-                  render={(row: { id: number; name: string; code?: string; description?: string }, index) => (
+                  render={(row: { id: number; name: string; code?: string; description?: string; is_sellable?: boolean }, index) => (
                     <TableRow key={row.id} className="hover:bg-muted/50">
                       <TableCell className="w-16 text-muted-foreground font-mono text-sm">
                         {getSerialNumber(
@@ -157,6 +159,17 @@ useRegisterGuide(INVENTORY_CATEGORIES_GUIDE);
                       </TableCell>
                       <TableCell className="font-medium">{row.name}</TableCell>
                       <TableCell className="text-muted-foreground">{row.code ?? "—"}</TableCell>
+                      <TableCell>
+                        {row.is_sellable !== false ? (
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 font-medium text-xs">
+                            Available for Sale
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 font-medium text-xs">
+                            Internal Use Only
+                          </Badge>
+                        )}
+                      </TableCell>
                       <TableCell className="w-1/6">
                         <div className="flex items-center gap-0.5">
                           <PermissionGate can="update_inventory_categories">

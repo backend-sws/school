@@ -267,7 +267,7 @@ export default function AdvancePaymentModal({
                                     </TableHead>
                                     <TableHead className="py-2 text-[10px] font-bold uppercase tracking-wider">Month</TableHead>
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Transport</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Hostel</TableHead>
+                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Hostel & Mess</TableHead>
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Other</TableHead>
                                     <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider pr-4">Amount Due</TableHead>
                                 </TableRow>

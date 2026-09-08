@@ -70,7 +70,7 @@ class StudentLedgerExport implements FromArray, WithStyles, ShouldAutoSize, With
                 'Previous Dues (Rs.)',
                 'Tuition / Monthly (Rs.)',
                 'Transport (Rs.)',
-                'Hostel (Rs.)',
+                'Hostel & Mess (Rs.)',
                 'Other Fees (Rs.)',
                 'Monthly Total (Rs.)',
                 'Total Payable (Rs.)',

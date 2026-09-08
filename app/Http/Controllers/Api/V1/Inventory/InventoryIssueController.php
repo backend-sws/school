@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Inventory;
 
 use App\Http\Controllers\Api\V1\BaseController;
-use App\Models\InventoryItem;
+use App\Models\InventoryBatch;
 use App\Models\InventoryIssue;
+use App\Models\InventoryIssueBatch;
+use App\Models\InventoryItem;
 use App\Models\InventoryMovement;
 use App\Support\InstitutionContext;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +22,7 @@ class InventoryIssueController extends BaseController
         }
 
         $query = InventoryIssue::query()
-            ->with(['item', 'issuedToUser', 'issuedBy'])
+            ->with(['item', 'issuedToUser', 'issuedBy', 'issueBatches.batch'])
             ->orderBy('issued_at', 'desc')
             ->orderBy('id', 'desc');
 
@@ -119,9 +121,56 @@ class InventoryIssueController extends BaseController
                 abort(422, "Insufficient stock. Available: {$item->current_quantity}, Requested: {$qty}");
             }
 
-            // Decrement stock
+            // Decrement item overall current_quantity
             $item->decrement('current_quantity', $qty);
             $newQty = (float) $item->fresh()->current_quantity;
+
+            // FIFO Batch Deduction
+            $activeBatches = InventoryBatch::where('inventory_item_id', $item->id)
+                ->where('remaining_quantity', '>', 0)
+                ->orderBy('received_at', 'asc')
+                ->orderBy('id', 'asc')
+                ->lockForUpdate()
+                ->get();
+
+            $remainingToDeduct = $qty;
+            $totalCost = 0;
+            $issueBatchesData = [];
+
+            foreach ($activeBatches as $batch) {
+                if ($remainingToDeduct <= 0) {
+                    break;
+                }
+
+                $deductQty = min((float)$batch->remaining_quantity, $remainingToDeduct);
+                $batchAmount = round($deductQty * (float)$batch->unit_cost, 2);
+                $totalCost += $batchAmount;
+
+                $newBatchRemaining = (float)$batch->remaining_quantity - $deductQty;
+                $batch->remaining_quantity = $newBatchRemaining;
+                if ($newBatchRemaining <= 0.0001) {
+                    $batch->status = 'exhausted';
+                }
+                $batch->save();
+
+                $issueBatchesData[] = [
+                    'inventory_batch_id' => $batch->id,
+                    'quantity'           => $deductQty,
+                    'unit_cost'          => (float)$batch->unit_cost,
+                    'amount'             => $batchAmount,
+                    'created_at'         => now(),
+                ];
+
+                $remainingToDeduct -= $deductQty;
+            }
+
+            // Fallback for any unbatched stock
+            if ($remainingToDeduct > 0.0001) {
+                $fallbackRate = (float)($item->purchase_price ?? 0);
+                $totalCost += round($remainingToDeduct * $fallbackRate, 2);
+            }
+
+            $unitCost = $qty > 0 ? round($totalCost / $qty, 2) : 0;
 
             // Create inventory movement (issue)
             $movement = InventoryMovement::create([
@@ -135,12 +184,14 @@ class InventoryIssueController extends BaseController
                 'remarks'           => $validated['remarks'] ?? null,
             ]);
 
-            // Create issue record
+            // Create issue record with FIFO cost
             $issue = InventoryIssue::create([
                 'institution_id'    => $institutionId,
                 'inventory_item_id' => $item->id,
                 'quantity'          => $qty,
                 'quantity_after'    => $newQty,
+                'total_cost'        => $totalCost,
+                'unit_cost'         => $unitCost,
                 'issued_to_user_id' => $validated['issued_to_user_id'] ?? null,
                 'issued_to_name'    => $validated['issued_to_name'] ?? null,
                 'department'        => $validated['department'] ?? null,
@@ -152,6 +203,12 @@ class InventoryIssueController extends BaseController
                 'movement_id'       => $movement->id,
             ]);
 
+            // Save consumed batches
+            foreach ($issueBatchesData as $bData) {
+                $bData['inventory_issue_id'] = $issue->id;
+                InventoryIssueBatch::create($bData);
+            }
+
             // Back-link movement to this issue
             $movement->update(['reference_id' => $issue->id]);
 
@@ -159,7 +216,7 @@ class InventoryIssueController extends BaseController
         });
 
         return $this->created(
-            $issue->load(['item', 'issuedToUser', 'issuedBy']),
+            $issue->load(['item', 'issuedToUser', 'issuedBy', 'issueBatches.batch']),
             'Item issued successfully'
         );
     }
@@ -171,7 +228,7 @@ class InventoryIssueController extends BaseController
         }
 
         return $this->success(
-            $inventory_issue->load(['item', 'issuedToUser', 'issuedBy']),
+            $inventory_issue->load(['item', 'issuedToUser', 'issuedBy', 'issueBatches.batch']),
             'Success'
         );
     }
@@ -221,10 +278,28 @@ class InventoryIssueController extends BaseController
             ]);
 
             $inventory_issue->increment('returned_quantity', $returnQty);
+
+            // Restore batch remaining quantities in reverse order (LIFO return)
+            $issueBatches = InventoryIssueBatch::where('inventory_issue_id', $inventory_issue->id)
+                ->orderBy('id', 'desc')
+                ->get();
+            $restoreRemaining = $returnQty;
+            foreach ($issueBatches as $ib) {
+                if ($restoreRemaining <= 0) break;
+                $batch = InventoryBatch::find($ib->inventory_batch_id);
+                if ($batch) {
+                    $canRestore = min($restoreRemaining, (float)$ib->quantity);
+                    $batch->increment('remaining_quantity', $canRestore);
+                    if ($batch->status === 'exhausted' && (float)$batch->remaining_quantity > 0) {
+                        $batch->update(['status' => 'active']);
+                    }
+                    $restoreRemaining -= $canRestore;
+                }
+            }
         });
 
         return $this->success(
-            $inventory_issue->fresh(['item', 'issuedToUser', 'issuedBy']),
+            $inventory_issue->fresh(['item', 'issuedToUser', 'issuedBy', 'issueBatches.batch']),
             'Return recorded successfully'
         );
     }
