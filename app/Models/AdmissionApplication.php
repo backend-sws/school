@@ -90,30 +90,33 @@ class AdmissionApplication extends Model
         'hostel_bed_id',
     ];
 
-    protected $casts = [
-        'dob' => 'date',
-        'amount' => 'decimal:2',
-        'transport_amount' => 'decimal:2',
-        'hostel_amount' => 'decimal:2',
-        'cash_amount' => 'decimal:2',
-        'online_amount' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
-        'due_amount' => 'decimal:2',
-        'address_snapshot' => 'array',
-        'payment_date' => 'datetime',
-        'processed_at' => 'datetime',
-        'submitted_at' => 'datetime',
-        'subject_preferences' => 'array',
-        'previous_marks' => 'decimal:2',
-        'guardian_snapshot' => 'array',
-        'has_tc' => 'boolean',
-        'has_government_portal' => 'boolean',
-        'hostel_required' => 'boolean',
-        'admission_date' => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'fee_breakdown' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'dob' => 'date:Y-m-d',
+            'amount' => 'decimal:2',
+            'transport_amount' => 'decimal:2',
+            'hostel_amount' => 'decimal:2',
+            'cash_amount' => 'decimal:2',
+            'online_amount' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'due_amount' => 'decimal:2',
+            'address_snapshot' => 'array',
+            'payment_date' => 'datetime',
+            'processed_at' => 'datetime',
+            'submitted_at' => 'datetime',
+            'subject_preferences' => 'array',
+            'previous_marks' => 'decimal:2',
+            'guardian_snapshot' => 'array',
+            'has_tc' => 'boolean',
+            'has_government_portal' => 'boolean',
+            'hostel_required' => 'boolean',
+            'admission_date' => 'date:Y-m-d',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'fee_breakdown' => 'array',
+        ];
+    }
 
     // --- Relationships ---
 

@@ -53,12 +53,18 @@ class UserController extends BaseController
             $query->where('status', $request->status);
         }
 
-        // 2. Search by Name or Email 
+        // 2. Search by Name, Email, Mobile, Reg No, or Student Roll No
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                    ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(COALESCE(mobile, "")) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                    ->orWhereHas('studentProfile', function ($sq) use ($search) {
+                        $sq->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(COALESCE(roll_no, "")) LIKE ?', [$search]);
+                    });
             });
         }
 

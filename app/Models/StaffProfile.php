@@ -32,13 +32,16 @@ class StaffProfile extends Model
         'status',
     ];
 
-    protected $casts = [
-        'joining_date' => 'date',
-        'dob' => 'date',
-        'status' => 'integer',
-        'category' => 'integer',
-        'trained_status' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'joining_date' => 'date:Y-m-d',
+            'dob' => 'date:Y-m-d',
+            'status' => 'integer',
+            'category' => 'integer',
+            'trained_status' => 'boolean',
+        ];
+    }
 
     /** User relationship */
     public function user(): BelongsTo
