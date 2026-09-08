@@ -99,6 +99,7 @@ class FeeDuesController extends BaseController
         $enrollments = $query->with(['user', 'lmsClass'])->get();
 
         $list = [];
+        $allDuesList = [];
         foreach ($enrollments as $enrollment) {
             $student = $enrollment->user;
             if (!$student) {
@@ -136,11 +137,7 @@ class FeeDuesController extends BaseController
                     $status = 'overdue';
                 }
 
-                if ($statusFilter && $status !== $statusFilter) {
-                    continue;
-                }
-
-                $list[] = [
+                $dueItem = [
                     'user_id' => $student->id,
                     'student_name' => $student->name,
                     'reg_no' => $student->reg_no,
@@ -153,6 +150,14 @@ class FeeDuesController extends BaseController
                     'balance' => $balance,
                     'status' => $status,
                 ];
+
+                $allDuesList[] = $dueItem;
+
+                if ($statusFilter && $status !== $statusFilter) {
+                    continue;
+                }
+
+                $list[] = $dueItem;
             }
         }
 
@@ -161,11 +166,11 @@ class FeeDuesController extends BaseController
         $filteredList = app(ApiResponseMapService::class)->filterCollection($list, 'fee_dues_index');
         $pagedList = array_slice($filteredList, max(0, ($page - 1) * $perPage), $perPage);
 
-        // Stats calculation
+        // Stats calculation (based on all dues in current period/class context, not cut off by statusFilter)
         $totalExpected = 0;
         $totalPaid = 0;
         $totalBalance = 0;
-        foreach ($filteredList as $item) {
+        foreach ($allDuesList as $item) {
             $totalExpected += (float) $item['expected_amount'];
             $totalPaid += (float) $item['paid_amount'];
             $totalBalance += (float) $item['balance'];

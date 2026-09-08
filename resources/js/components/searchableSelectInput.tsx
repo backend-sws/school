@@ -25,6 +25,7 @@ interface SearchableSelectProps {
     className?: string;
     emptyText?: string;
     searchPlaceholder?: string;
+    listMaxHeight?: string;
 }
 
 /** Detects if options look like years (all numeric, 4 digits) for smarter placeholder */
@@ -45,6 +46,7 @@ export function SearchableSelectField({
     className,
     emptyText = "No results found",
     searchPlaceholder,
+    listMaxHeight = "max-h-[150px]",
 }: SearchableSelectProps) {
     const [open, setOpen] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState("");
@@ -109,7 +111,14 @@ export function SearchableSelectField({
                         onValueChange={setSearchQuery}
                         className="h-9 border-b rounded-none"
                     />
-                    <CommandList className="max-h-[240px] overscroll-contain">
+                    <CommandList
+                        className={cn(
+                            "overflow-y-auto overscroll-contain custom-scrollbar",
+                            listMaxHeight
+                        )}
+                        onWheel={(e) => e.stopPropagation()}
+                        onTouchMove={(e) => e.stopPropagation()}
+                    >
                         <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
                             {emptyText}
                         </CommandEmpty>

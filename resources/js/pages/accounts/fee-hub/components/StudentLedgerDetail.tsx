@@ -3,6 +3,7 @@ import { usePage } from "@inertiajs/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getInstitutionLabels } from "@/constants/scopeTypeDisplay";
 import api from "@/lib/api/api";
+import R2Api from "@/lib/api/r2Api";
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from "@/components/ui/table";
@@ -232,6 +233,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const [selectedSession, setSelectedSession] = useState<string | null>(null);
     const [revertingRow, setRevertingRow] = useState<any>(null);
     const [revertingAdHoc, setRevertingAdHoc] = useState<any>(null);
+    const [photoError, setPhotoError] = useState(false);
 
     // ─── Data Fetching ───────────────────────────────────────────────────────
     const { data: ledgerRes, isLoading, isError } = useQuery({
@@ -284,6 +286,13 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     // ─── Derived Data ────────────────────────────────────────────────────────
     const data = (ledgerRes as any)?.data || null;
     const student = data?.student || {};
+    const studentPhoto =
+        student.photo_url ||
+        student.avatar_url ||
+        student.avatar ||
+        student.student_profile?.photo_url ||
+        student.studentProfile?.photo_url ||
+        student.user?.photo_url;
     const matrix = data?.matrix || [];
     const classInfo = data?.class || {};
     const admissionSummary = data?.admission_summary || null;
@@ -303,6 +312,10 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
         ? ADMISSION_METRICS.filter(m => !m.conditionalOnPositive || Number(admissionSummary?.[m.field] ?? 0) > 0)
         : [];
     const admissionFeeColumns = MATRIX_ADMISSION_COLUMNS;
+
+    useEffect(() => {
+        setPhotoError(false);
+    }, [studentPhoto]);
 
     useEffect(() => {
         if (student.name && onLoaded) onLoaded(student.name);
@@ -388,8 +401,17 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                     <CardContent className="p-8">
                         <div className="max-w-[1400px] mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                             <div className="flex items-start gap-6">
-                                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/10 ring-2 ring-primary/20 text-3xl font-black text-primary shadow-inner">
-                                    {student.name?.charAt(0)}
+                                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/10 ring-2 ring-primary/20 text-3xl font-black text-primary shadow-inner overflow-hidden">
+                                    {studentPhoto && !photoError ? (
+                                        <img
+                                            src={R2Api.imageSrc(studentPhoto)}
+                                            alt={student.name || "Student"}
+                                            className="size-full object-cover"
+                                            onError={() => setPhotoError(true)}
+                                        />
+                                    ) : (
+                                        student.name?.charAt(0)
+                                    )}
                                 </div>
                                 <div className="space-y-3">
                                     <div>

@@ -38,6 +38,8 @@ const inventoryApi = {
     show: (id: string | number) => api.get(`${BASE}/movements/${id}`),
     store: (data: Record<string, unknown>) =>
       api.post(`${BASE}/movements`, data),
+    revert: (id: string | number, data?: { reason?: string }) =>
+      api.post(`${BASE}/movements/${id}/revert`, data ?? {}),
   },
   reports: {
     lowStock: (params?: Record<string, unknown>) => api.get(`${BASE}/reports/low-stock`, { params }),

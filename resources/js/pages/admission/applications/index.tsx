@@ -100,6 +100,10 @@ const ApplicationsIndex = () => {
     ...INITIAL_APPLICATION_FILTERS,
   });
 
+  const handleFilterChange = (updates: Record<string, any>) => {
+    handleFilter({ ...updates, page: 1 });
+  };
+
   const filterConfig = useFilterRegistry("admission_applications");
 
   const listParams: ApplicationListParams = useMemo(() => buildParams(APPLICATION_FILTER_MAPPING), [filter, buildParams]);
@@ -113,9 +117,28 @@ const ApplicationsIndex = () => {
   const meta = (data as { meta?: { current_page: number; last_page: number; total: number; per_page?: number } })?.meta;
   const stats = (data as any)?.meta?.stats ?? { total_applications: 0, approved_applications: 0, pending_applications: 0, total_collection: 0 };
 
-  const handleFilterChange = (updates: Record<string, unknown>) => {
-    handleFilter({ ...updates, page: 1 });
+  const currentStatus = String(filter.status || "all");
+  const currentPaymentStatus = String(filter.payment_status || "all");
+
+  const handleCardClick = (type: "all" | "approved" | "pending" | "paid") => {
+    if (type === "all") {
+      handleFilter({ status: "all", payment_status: "all", page: 1 });
+    } else if (type === "approved") {
+      const next = currentStatus === "approved" ? "all" : "approved";
+      handleFilter({ status: next, payment_status: "all", page: 1 });
+    } else if (type === "pending") {
+      const next = currentStatus === "pending" ? "all" : "pending";
+      handleFilter({ status: next, payment_status: "all", page: 1 });
+    } else if (type === "paid") {
+      const next = currentPaymentStatus === "paid" ? "all" : "paid";
+      handleFilter({ payment_status: next, status: "all", page: 1 });
+    }
   };
+
+  const isTotalActive = (currentStatus === "all" || !filter.status) && (currentPaymentStatus === "all" || !filter.payment_status);
+  const isApprovedActive = currentStatus === "approved";
+  const isPendingActive = currentStatus === "pending";
+  const isCollectionActive = currentPaymentStatus === "paid";
 
   return (
     <>
@@ -133,11 +156,28 @@ const ApplicationsIndex = () => {
 
           {!isStudent && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("all")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("all"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isTotalActive
+                    ? "ring-2 ring-primary/70 bg-primary/[0.03] dark:bg-primary/[0.06]"
+                    : "bg-white dark:bg-card hover:border-primary/40"
+                }`}
+              >
                 <CardContent className="p-6 flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Applications</p>
-                    <p className="text-2xl font-black text-foreground">{stats.total_applications}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Applications</p>
+                      {isTotalActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-primary border-primary/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.total_applications}</p>
                   </div>
                   <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                     <FileText className="size-5" />
@@ -145,11 +185,28 @@ const ApplicationsIndex = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("approved")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("approved"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isApprovedActive
+                    ? "ring-2 ring-emerald-500/70 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-emerald-500/40"
+                }`}
+              >
                 <CardContent className="p-6 flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Approved</p>
-                    <p className="text-2xl font-black text-foreground">{stats.approved_applications}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Approved</p>
+                      {isApprovedActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-emerald-600 border-emerald-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.approved_applications}</p>
                   </div>
                   <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="size-5" />
@@ -157,11 +214,28 @@ const ApplicationsIndex = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("pending")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("pending"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isPendingActive
+                    ? "ring-2 ring-amber-500/70 bg-amber-500/[0.04] dark:bg-amber-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-amber-500/40"
+                }`}
+              >
                 <CardContent className="p-6 flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Pending</p>
-                    <p className="text-2xl font-black text-foreground">{stats.pending_applications}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Pending</p>
+                      {isPendingActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-amber-600 border-amber-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.pending_applications}</p>
                   </div>
                   <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                     <Clock className="size-5" />
@@ -169,11 +243,28 @@ const ApplicationsIndex = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("paid")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("paid"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isCollectionActive
+                    ? "ring-2 ring-indigo-500/70 bg-indigo-500/[0.04] dark:bg-indigo-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-indigo-500/40"
+                }`}
+              >
                 <CardContent className="p-6 flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Collection</p>
-                    <p className="text-2xl font-black text-foreground">₹{stats.total_collection.toLocaleString()}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Collection</p>
+                      {isCollectionActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-indigo-600 border-indigo-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : `₹${stats.total_collection.toLocaleString()}`}</p>
                   </div>
                   <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                     <Coins className="size-5" />

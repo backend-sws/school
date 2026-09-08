@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IdCardVerifyApi } from "@/lib/api/idCardApi";
 import { IdCardQueryKeys } from "@/lib/querykey/idCard";
 import { ID_CARD_CONTENT } from "@/constants/idCard/formConfig";
+import R2Api from "@/lib/api/r2Api";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, AlertTriangle, Shield, Loader2 } from "lucide-react";
@@ -87,17 +88,19 @@ const VerifyIdCard = ({ token }: { token: string }) => {
 
                                 {/* Photo + Identity */}
                                 <div className="flex items-center gap-4">
-                                    {card.photo_url ? (
-                                        <img
-                                            src={card.photo_url}
-                                            alt="Photo"
-                                            className="w-16 h-20 rounded-md object-cover border"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-20 rounded-md bg-muted flex items-center justify-center text-muted-foreground text-xs">
-                                            No Photo
-                                        </div>
-                                    )}
+                                    <div className="relative w-16 h-20 rounded-md overflow-hidden bg-muted flex items-center justify-center text-muted-foreground text-xs border shrink-0">
+                                        <span>No Photo</span>
+                                        {card.photo_url && (
+                                            <img
+                                                src={R2Api.imageSrc(card.photo_url)}
+                                                alt="Photo"
+                                                className="absolute inset-0 w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = "none";
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                     <div>
                                         <p className="font-semibold text-lg">{card.name}</p>
                                         <p className="text-sm font-mono text-muted-foreground">{card.reg_no}</p>

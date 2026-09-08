@@ -25,19 +25,20 @@ interface InventoryItemDialogProps {
   onClose: (open: boolean) => void;
   data?: {
     id: number;
-    name: string;
+    name?: string;
     code?: string;
     unit?: string;
-    min_stock?: number;
+    min_stock?: number | string;
     location?: string;
     description?: string;
     is_active?: boolean;
     inventory_category_id?: number;
-    selling_price?: number;
-    purchase_price?: number;
-    margin_percentage?: number;
-    gst_rate?: number;
+    selling_price?: number | string;
+    purchase_price?: number | string;
+    margin_percentage?: number | string;
+    gst_rate?: number | string;
     hsn_code?: string;
+    [key: string]: any;
   } | null;
 }
 

@@ -53,6 +53,15 @@ class InventoryReportController extends BaseController
             'total_deficit' => (float) $totalDeficit,
         ];
 
+        // 4. Stock Status filter (applied after stats calculation so cards remain stable)
+        if ($request->filled('stock_status') && $request->stock_status !== 'all') {
+            if ($request->stock_status === 'out_of_stock') {
+                $query->where('current_quantity', '<=', 0);
+            } elseif ($request->stock_status === 'warning_stock') {
+                $query->where('current_quantity', '>', 0);
+            }
+        }
+
         $paginator = $query->orderBy('current_quantity', 'asc')
             ->paginate($request->input('per_page', 15));
 

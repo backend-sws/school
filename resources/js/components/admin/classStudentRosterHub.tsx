@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { StudentClassProfileDrawer } from "./studentClassProfileDrawer";
 import { StudentLeaveUploadDialog } from "./studentLeaveUploadDialog";
 import { ClassStudentTransferDialog } from "./classStudentTransferDialog";
+import R2Api from "@/lib/api/r2Api";
 
 interface ClassStudentRosterHubProps {
   classId: number;
@@ -300,12 +301,18 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
                     className="size-4.5 rounded-md border-border/80 data-[state=checked]:bg-primary shrink-0"
                   />
                   <div className="relative size-13 shrink-0 rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted flex items-center justify-center shadow-sm">
-                    {s.photo_url ? (
-                      <img src={s.photo_url} alt={s.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="font-black text-sm text-primary uppercase">
-                        {s.name?.slice(0, 2)}
-                      </span>
+                    <span className="font-black text-sm text-primary uppercase select-none">
+                      {s.name?.slice(0, 2)}
+                    </span>
+                    {s.photo_url && (
+                      <img
+                        src={R2Api.imageSrc(s.photo_url)}
+                        alt={s.name}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
                     )}
                   </div>
 

@@ -22,12 +22,18 @@ class InventoryMovement extends Model
         'reference_id',
         'performed_by',
         'remarks',
+        'is_reverted',
+        'reverted_at',
+        'reverted_by',
+        'revert_reason',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
         'quantity_after' => 'decimal:3',
         'reference_id' => 'integer',
+        'is_reverted' => 'boolean',
+        'reverted_at' => 'datetime',
     ];
 
     public function institution(): BelongsTo
@@ -43,5 +49,10 @@ class InventoryMovement extends Model
     public function performer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'performed_by');
+    }
+
+    public function revertedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reverted_by');
     }
 }

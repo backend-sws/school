@@ -23,6 +23,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import Each from "@/components/Each";
 import { toast } from "sonner";
+import R2Api from "@/lib/api/r2Api";
 import { cn } from "@/lib/utils";
 
 const { show: CONTENT } = ID_CARD_CONTENT;
@@ -241,17 +242,19 @@ const ShowCard = ({ id }: { id: number }) => {
                             <CardContent className="space-y-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                                     <div className="shrink-0">
-                                        {card?.photo_url ? (
-                                            <img
-                                                src={card.photo_url}
-                                                alt="Card holder photo"
-                                                className="w-24 h-32 rounded-lg object-cover border shadow-sm"
-                                            />
-                                        ) : (
-                                            <div className="w-24 h-32 rounded-lg bg-muted flex items-center justify-center text-muted-foreground text-xs border">
-                                                No Photo
-                                            </div>
-                                        )}
+                                        <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-muted flex items-center justify-center text-muted-foreground text-xs border shadow-sm">
+                                            <span>No Photo</span>
+                                            {card?.photo_url && (
+                                                <img
+                                                    src={R2Api.imageSrc(card.photo_url)}
+                                                    alt="Card holder photo"
+                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = "none";
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="min-w-0 space-y-1">
                                         <p className="font-semibold text-lg truncate">

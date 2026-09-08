@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:100
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:104
  * @route '/api/v1/hostel/complaints'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:100
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:104
  * @route '/api/v1/hostel/complaints'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:100
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:104
  * @route '/api/v1/hostel/complaints'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:100
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:104
  * @route '/api/v1/hostel/complaints'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::store
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:100
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:104
  * @route '/api/v1/hostel/complaints'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 export const show = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 show.url = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { hostel_complaint: number | { id: number } } | [hostel_compla
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 show.get = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { hostel_complaint: number | { id: number } } | [hostel_compla
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 show.head = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { hostel_complaint: number | { id: number } } | [hostel_compl
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
     const showForm = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { hostel_complaint: number | { id: number } } | [hostel_compl
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
         showForm.get = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { hostel_complaint: number | { id: number } } | [hostel_compl
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::show
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:130
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:134
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
         showForm.head = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { hostel_complaint: number | { id: number } } | [hostel_compl
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 export const update = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 update.url = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { hostel_complaint: number | { id: number } } | [hostel_comp
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 update.put = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { hostel_complaint: number | { id: number } } | [hostel_comp
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 update.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_co
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
     const updateForm = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_co
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
         updateForm.put = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_co
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::update
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:145
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:149
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
         updateForm.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { hostel_complaint: number | { id: number } } | [hostel_co
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:166
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:170
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 export const destroy = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:166
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:170
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 destroy.url = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { hostel_complaint: number | { id: number } } | [hostel_com
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:166
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:170
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
 destroy.delete = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { hostel_complaint: number | { id: number } } | [hostel_
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:166
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:170
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
     const destroyForm = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { hostel_complaint: number | { id: number } } | [hostel_
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelComplaintController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:166
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelComplaintController.php:170
  * @route '/api/v1/hostel/complaints/{hostel_complaint}'
  */
         destroyForm.delete = (args: { hostel_complaint: number | { id: number } } | [hostel_complaint: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

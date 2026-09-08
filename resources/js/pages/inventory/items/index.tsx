@@ -16,7 +16,7 @@ import {
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
 import { Head, Link } from "@inertiajs/react";
-import { Boxes, Eye, Pencil, Plus, Trash2, Package, Layers, AlertTriangle, XCircle } from "lucide-react";
+import { Boxes, Eye, Pencil, Plus, Trash2, Package, Layers, AlertTriangle, XCircle, IndianRupee } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FORM_TYPE } from "@/constants";
 import useSearchFilter from "@/hooks/useSearchfilter";
@@ -40,6 +40,8 @@ const COLUMNS = [
   { key: "category", label: "Category" },
   { key: "quantity", label: "Stock" },
   { key: "min_stock", label: "Min Stock" },
+  { key: "price", label: "Price (Cost / Sell)" },
+  { key: "stock_value", label: "Stock Value" },
   { key: "action", label: "Actions" },
 ];
 
@@ -49,6 +51,7 @@ const INITIAL_FILTERS = {
   search: "",
   search_by: "name",
   category_id: "",
+  stock_status: "all",
 };
 
 type ItemRow = {
@@ -63,6 +66,8 @@ type ItemRow = {
   location?: string;
   description?: string;
   is_active?: boolean;
+  purchase_price?: number | string;
+  selling_price?: number | string;
 };
 
 const InventoryItemsIndex = () => {
@@ -78,6 +83,7 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
       inventoryApi.items.index({
         ...filter,
         category_id: filter.category_id || undefined,
+        stock_status: filter.stock_status === "all" ? undefined : filter.stock_status,
       }),
   });
 
@@ -158,6 +164,16 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
   }), [categoryOptions]);
 
   const stats = data?.meta?.stats;
+  const currentStockStatus = (filter.stock_status as string) || "all";
+
+  const handleCardClick = (targetStatus: string) => {
+    if (targetStatus === "all") {
+      handleFilter({ stock_status: "all", page: 1 });
+    } else {
+      const nextStatus = currentStockStatus === targetStatus ? "all" : targetStatus;
+      handleFilter({ stock_status: nextStatus, page: 1 });
+    }
+  };
 
   return (
     <>
@@ -188,63 +204,206 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
             icon={Boxes}
             guidance={INVENTORY_ITEMS_GUIDE}
           />
-          {/* ── Analytics Stats Section ── */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* ── Analytics Stats Section (Clickable to Filter) ── */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {/* 1. Total Items */}
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("all")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCardClick("all");
+                }
+              }}
+              className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+                currentStockStatus === "all"
+                  ? "ring-2 ring-primary/60 border-primary/50 bg-primary/[0.04] shadow-sm"
+                  : "hover:border-primary/40 hover:bg-muted/20"
+              }`}
+            >
               <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Items</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Total Items
+                    </span>
+                    {currentStockStatus === "all" && (
+                      <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        All
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-2xl font-bold tracking-tight">
                     {isLoading ? "..." : (stats?.total_items_count ?? 0)}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground">Unique items cataloged</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Unique items {currentStockStatus === "all" ? "• Active" : "• Click to view all"}
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-200">
                   <Package className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            {/* 2. Total Stock */}
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("in_stock")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCardClick("in_stock");
+                }
+              }}
+              className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+                currentStockStatus === "in_stock"
+                  ? "ring-2 ring-emerald-500/60 border-emerald-500/50 bg-emerald-500/[0.04] shadow-sm"
+                  : "hover:border-emerald-500/40 hover:bg-muted/20"
+              }`}
+            >
               <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Stock</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Total Stock
+                    </span>
+                    {currentStockStatus === "in_stock" && (
+                      <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                        In Stock
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
                     {isLoading ? "..." : (stats?.total_stock_quantity ?? 0)}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground">Cumulative items in stock</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Cumulative units {currentStockStatus === "in_stock" ? "• Filtered" : "• Click to filter"}
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200">
                   <Layers className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            {/* 3. Total Stock Value (Rupees) */}
+            <Card
+              className="transition-all duration-200 hover:shadow-md relative overflow-hidden group border-indigo-500/30 bg-indigo-500/[0.03]"
+            >
               <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Low Stock</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Stock Value
+                    </span>
+                    <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                      Cost (₹)
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
+                    {isLoading
+                      ? "..."
+                      : `₹${Number(stats?.total_stock_value ?? 0).toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}`}
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground">
+                    Retail: ₹{Number(stats?.total_retail_value ?? 0).toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-200">
+                  <IndianRupee className="size-5" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 3. Low Stock */}
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("low_stock")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCardClick("low_stock");
+                }
+              }}
+              className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+                currentStockStatus === "low_stock"
+                  ? "ring-2 ring-amber-500/60 border-amber-500/50 bg-amber-500/[0.04] shadow-sm"
+                  : "hover:border-amber-500/40 hover:bg-muted/20"
+              }`}
+            >
+              <CardContent className="p-5 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Low Stock
+                    </span>
+                    {currentStockStatus === "low_stock" && (
+                      <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                        Filtered
+                      </span>
+                    )}
+                  </div>
                   <h3 className={`text-2xl font-bold tracking-tight ${stats?.low_stock_count > 0 ? "text-amber-600 dark:text-amber-400" : ""}`}>
                     {isLoading ? "..." : (stats?.low_stock_count ?? 0)}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground">Below safety threshold</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Below safety threshold {currentStockStatus === "low_stock" ? "• Filtered (click to reset)" : "• Click to filter"}
+                  </p>
                 </div>
-                <div className={`p-3 rounded-xl ${stats?.low_stock_count > 0 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-muted text-muted-foreground"}`}>
+                <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform duration-200 ${stats?.low_stock_count > 0 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-muted text-muted-foreground"}`}>
                   <AlertTriangle className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            {/* 4. Out of Stock */}
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("out_of_stock")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCardClick("out_of_stock");
+                }
+              }}
+              className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+                currentStockStatus === "out_of_stock"
+                  ? "ring-2 ring-destructive/60 border-destructive/50 bg-destructive/[0.04] shadow-sm"
+                  : "hover:border-destructive/40 hover:bg-muted/20"
+              }`}
+            >
               <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Out of Stock</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Out of Stock
+                    </span>
+                    {currentStockStatus === "out_of_stock" && (
+                      <span className="text-[10px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
+                        Filtered
+                      </span>
+                    )}
+                  </div>
                   <h3 className={`text-2xl font-bold tracking-tight ${stats?.out_of_stock_count > 0 ? "text-destructive" : ""}`}>
                     {isLoading ? "..." : (stats?.out_of_stock_count ?? 0)}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground">Out of stock items</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Out of stock items {currentStockStatus === "out_of_stock" ? "• Filtered (click to reset)" : "• Click to filter"}
+                  </p>
                 </div>
-                <div className={`p-3 rounded-xl ${stats?.out_of_stock_count > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}>
+                <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform duration-200 ${stats?.out_of_stock_count > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}>
                   <XCircle className="size-5" />
                 </div>
               </CardContent>
@@ -315,6 +474,48 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
                       </TableCell>
                       <TableCell className="font-mono text-muted-foreground">
                         {Number(row.min_stock ?? 0)}
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        <div>
+                          <span className="font-medium">
+                            ₹{Number(row.purchase_price ?? 0).toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                          </span>
+                          {row.selling_price ? (
+                            <span className="text-[11px] text-muted-foreground block">
+                              Sell: ₹{Number(row.selling_price).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </span>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        <div>
+                          <span className="font-bold text-foreground">
+                            ₹{(
+                              Number(row.current_quantity ?? 0) *
+                              Number(row.purchase_price ?? row.selling_price ?? 0)
+                            ).toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                          </span>
+                          {row.selling_price && Number(row.current_quantity ?? 0) > 0 ? (
+                            <span className="text-[11px] text-muted-foreground block">
+                              Retail: ₹{(
+                                Number(row.current_quantity ?? 0) *
+                                Number(row.selling_price)
+                              ).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </span>
+                          ) : null}
+                        </div>
                       </TableCell>
                       <TableCell className="w-1/6">
                         <div className="flex items-center gap-0.5">

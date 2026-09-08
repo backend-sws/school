@@ -32,18 +32,7 @@ class InventoryItemController extends BaseController
             $query->where('location', 'like', '%' . $request->location . '%');
         }
 
-        // 4. Stock status filter
-        if ($request->filled('stock_status') && $request->stock_status !== 'all') {
-            if ($request->stock_status === 'in_stock') {
-                $query->where('current_quantity', '>', 0);
-            } elseif ($request->stock_status === 'out_of_stock') {
-                $query->where('current_quantity', '=', 0);
-            } elseif ($request->stock_status === 'low_stock') {
-                $query->whereColumn('current_quantity', '<=', 'min_stock');
-            }
-        }
-
-        // 5. General Search (Matches name or code)
+        // 4. General Search (Matches name or code)
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
             $query->where(function ($q) use ($search) {
@@ -52,7 +41,7 @@ class InventoryItemController extends BaseController
             });
         }
 
-        // Calculate dynamic stats before pagination
+        // Calculate dynamic stats before applying stock status filter
         $statsQuery = clone $query;
         $totalItems = $statsQuery->count();
         $totalStock = (int) $statsQuery->sum('current_quantity');
@@ -63,12 +52,28 @@ class InventoryItemController extends BaseController
         $outOfStockQuery = clone $query;
         $outOfStockCount = $outOfStockQuery->where('current_quantity', '=', 0)->count();
 
+        $totalStockValue = (float) ((clone $statsQuery)->selectRaw('SUM(COALESCE(current_quantity, 0) * COALESCE(NULLIF(purchase_price, 0), selling_price, 0)) as total_value')->value('total_value') ?? 0);
+        $totalRetailValue = (float) ((clone $statsQuery)->selectRaw('SUM(COALESCE(current_quantity, 0) * COALESCE(selling_price, 0)) as total_value')->value('total_value') ?? 0);
+
         $stats = [
             'total_items_count' => (int) $totalItems,
             'total_stock_quantity' => (int) $totalStock,
+            'total_stock_value' => round($totalStockValue, 2),
+            'total_retail_value' => round($totalRetailValue, 2),
             'low_stock_count' => (int) $lowStockCount,
             'out_of_stock_count' => (int) $outOfStockCount,
         ];
+
+        // 5. Stock status filter
+        if ($request->filled('stock_status') && $request->stock_status !== 'all') {
+            if ($request->stock_status === 'in_stock') {
+                $query->where('current_quantity', '>', 0);
+            } elseif ($request->stock_status === 'out_of_stock') {
+                $query->where('current_quantity', '=', 0);
+            } elseif ($request->stock_status === 'low_stock') {
+                $query->whereColumn('current_quantity', '<=', 'min_stock');
+            }
+        }
 
         $paginator = $query->orderBy('name', 'asc')->paginate($request->input('per_page', 15));
 

@@ -157,73 +157,158 @@ export default function DuesOverduePage() {
                     />
 
                     {/* Analytics Summary Cards */}
-                    <div className="grid gap-4 md:grid-cols-4 my-6">
-                        {/* 1. Total Expected */}
-                        {/* 1. Total Expected */}
-                        <Card className="relative overflow-hidden bg-white dark:bg-card border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Total Expected</p>
-                                    <h3 className="text-xl font-bold text-foreground tabular-nums flex items-center">
-                                        <IndianRupee className="size-4 mr-0.5 text-primary" />
-                                        {Number(duesData?.stats?.total_expected ?? 0).toLocaleString()}
-                                    </h3>
-                                </div>
-                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
-                                    <ReceiptText className="size-5 text-primary" />
-                                </div>
-                            </CardContent>
-                        </Card>
+                    {/* Analytics Summary Cards */}
+                    {(() => {
+                        const currentStatus = filter.statusFilter || "all";
+                        const handleCardClick = (targetStatus: string) => {
+                            if (targetStatus === "all") {
+                                handleFilter({ statusFilter: "all", page: 1 });
+                            } else {
+                                const next = currentStatus === targetStatus ? "all" : targetStatus;
+                                handleFilter({ statusFilter: next, page: 1 });
+                            }
+                        };
+                        const isTotalActive = currentStatus === "all";
+                        const isPaidActive = currentStatus === "paid";
+                        const isOverdueActive = currentStatus === "overdue";
 
-                        {/* 2. Total Paid */}
-                        <Card className="relative overflow-hidden bg-white dark:bg-card border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Total Paid</p>
-                                    <h3 className="text-xl font-bold text-green-600 tabular-nums flex items-center">
-                                        <IndianRupee className="size-4 mr-0.5 text-green-500" />
-                                        {Number(duesData?.stats?.total_paid ?? 0).toLocaleString()}
-                                    </h3>
-                                </div>
-                                <div className="h-10 w-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/10">
-                                    <IndianRupee className="size-5 text-green-600" />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        return (
+                            <div className="grid gap-4 md:grid-cols-4 my-6">
+                                {/* 1. Total Expected */}
+                                <Card
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => handleCardClick("all")}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("all"); } }}
+                                    className={`relative overflow-hidden border-border/50 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                                        isTotalActive
+                                            ? "ring-2 ring-primary/70 bg-primary/[0.03] dark:bg-primary/[0.06]"
+                                            : "bg-white dark:bg-card hover:border-primary/40"
+                                    }`}
+                                >
+                                    <CardContent className="p-5 flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-1.5">
+                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Total Expected</p>
+                                                {isTotalActive && (
+                                                    <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-primary border-primary/30">
+                                                        Active
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <h3 className="text-xl font-bold text-foreground tabular-nums flex items-center">
+                                                <IndianRupee className="size-4 mr-0.5 text-primary" />
+                                                {isLoading ? "..." : Number(duesData?.stats?.total_expected ?? 0).toLocaleString()}
+                                            </h3>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
+                                            <ReceiptText className="size-5 text-primary" />
+                                        </div>
+                                    </CardContent>
+                                </Card>
 
-                        {/* 3. Outstanding Dues */}
-                        <Card className="relative overflow-hidden bg-white dark:bg-card border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Outstanding Dues</p>
-                                    <h3 className="text-xl font-bold text-rose-600 tabular-nums flex items-center">
-                                        <IndianRupee className="size-4 mr-0.5 text-rose-500" />
-                                        {Number(duesData?.stats?.total_balance ?? 0).toLocaleString()}
-                                    </h3>
-                                </div>
-                                <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/10">
-                                    <AlertCircle className="size-5 text-rose-600" />
-                                </div>
-                            </CardContent>
-                        </Card>
+                                {/* 2. Total Paid */}
+                                <Card
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => handleCardClick("paid")}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("paid"); } }}
+                                    className={`relative overflow-hidden border-border/50 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                                        isPaidActive
+                                            ? "ring-2 ring-emerald-500/70 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08]"
+                                            : "bg-white dark:bg-card hover:border-emerald-500/40"
+                                    }`}
+                                >
+                                    <CardContent className="p-5 flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-1.5">
+                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Total Paid</p>
+                                                {isPaidActive && (
+                                                    <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-emerald-600 border-emerald-500/30">
+                                                        Active
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <h3 className="text-xl font-bold text-emerald-600 tabular-nums flex items-center">
+                                                <IndianRupee className="size-4 mr-0.5 text-emerald-500" />
+                                                {isLoading ? "..." : Number(duesData?.stats?.total_paid ?? 0).toLocaleString()}
+                                            </h3>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/10">
+                                            <IndianRupee className="size-5 text-emerald-600" />
+                                        </div>
+                                    </CardContent>
+                                </Card>
 
-                        {/* 4. Collection Rate */}
-                        <Card className="relative overflow-hidden bg-white dark:bg-card border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Collection Rate</p>
-                                    <h3 className="text-xl font-bold text-purple-600 tabular-nums">
-                                        {duesData?.stats?.collection_percentage ?? 0}%
-                                    </h3>
-                                </div>
-                                <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/10">
-                                    <Badge variant="secondary" className="px-1.5 py-0.5 text-[10px] bg-purple-100 text-purple-700 hover:bg-purple-100 font-bold border-purple-200">
-                                        Active
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                                {/* 3. Outstanding Dues */}
+                                <Card
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => handleCardClick("overdue")}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("overdue"); } }}
+                                    className={`relative overflow-hidden border-border/50 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                                        isOverdueActive
+                                            ? "ring-2 ring-rose-500/70 bg-rose-500/[0.04] dark:bg-rose-500/[0.08]"
+                                            : "bg-white dark:bg-card hover:border-rose-500/40"
+                                    }`}
+                                >
+                                    <CardContent className="p-5 flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-1.5">
+                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Outstanding Dues</p>
+                                                {isOverdueActive && (
+                                                    <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-rose-600 border-rose-500/30">
+                                                        Active
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <h3 className="text-xl font-bold text-rose-600 tabular-nums flex items-center">
+                                                <IndianRupee className="size-4 mr-0.5 text-rose-500" />
+                                                {isLoading ? "..." : Number(duesData?.stats?.total_balance ?? 0).toLocaleString()}
+                                            </h3>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/10">
+                                            <AlertCircle className="size-5 text-rose-600" />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                {/* 4. Collection Rate */}
+                                <Card
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => handleCardClick("paid")}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("paid"); } }}
+                                    className={`relative overflow-hidden border-border/50 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                                        isPaidActive
+                                            ? "ring-2 ring-purple-500/70 bg-purple-500/[0.04] dark:bg-purple-500/[0.08]"
+                                            : "bg-white dark:bg-card hover:border-purple-500/40"
+                                    }`}
+                                >
+                                    <CardContent className="p-5 flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-1.5">
+                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">Collection Rate</p>
+                                                {isPaidActive && (
+                                                    <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-purple-600 border-purple-500/30">
+                                                        Active
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <h3 className="text-xl font-bold text-purple-600 tabular-nums">
+                                                {isLoading ? "..." : `${duesData?.stats?.collection_percentage ?? 0}%`}
+                                            </h3>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/10">
+                                            <Badge variant="secondary" className="px-1.5 py-0.5 text-[10px] bg-purple-100 text-purple-700 hover:bg-purple-100 font-bold border-purple-200">
+                                                Active
+                                            </Badge>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        );
+                    })()}
 
                     <Card>
                         <CardHeader className="pb-4" id="dues-filter-card">

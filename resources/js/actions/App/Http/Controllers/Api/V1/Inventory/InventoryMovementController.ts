@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:39
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:47
  * @route '/api/v1/inventory/movements'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:39
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:47
  * @route '/api/v1/inventory/movements'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:39
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:47
  * @route '/api/v1/inventory/movements'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:39
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:47
  * @route '/api/v1/inventory/movements'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:39
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:47
  * @route '/api/v1/inventory/movements'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
 export const show = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
 show.url = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { inventory_movement: number | { id: number } } | [inventory_m
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
 show.get = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { inventory_movement: number | { id: number } } | [inventory_m
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
 show.head = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { inventory_movement: number | { id: number } } | [inventory_
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
     const showForm = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { inventory_movement: number | { id: number } } | [inventory_
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
         showForm.get = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { inventory_movement: number | { id: number } } | [inventory_
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:93
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:101
  * @route '/api/v1/inventory/movements/{inventory_movement}'
  */
         showForm.head = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -234,6 +234,85 @@ show.head = (args: { inventory_movement: number | { id: number } } | [inventory_
         })
     
     show.form = showForm
-const InventoryMovementController = { index, store, show }
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:110
+ * @route '/api/v1/inventory/movements/{inventory_movement}/revert'
+ */
+export const revert = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: revert.url(args, options),
+    method: 'post',
+})
+
+revert.definition = {
+    methods: ["post"],
+    url: '/api/v1/inventory/movements/{inventory_movement}/revert',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:110
+ * @route '/api/v1/inventory/movements/{inventory_movement}/revert'
+ */
+revert.url = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { inventory_movement: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { inventory_movement: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    inventory_movement: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        inventory_movement: typeof args.inventory_movement === 'object'
+                ? args.inventory_movement.id
+                : args.inventory_movement,
+                }
+
+    return revert.definition.url
+            .replace('{inventory_movement}', parsedArgs.inventory_movement.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:110
+ * @route '/api/v1/inventory/movements/{inventory_movement}/revert'
+ */
+revert.post = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: revert.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:110
+ * @route '/api/v1/inventory/movements/{inventory_movement}/revert'
+ */
+    const revertForm = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: revert.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryMovementController.php:110
+ * @route '/api/v1/inventory/movements/{inventory_movement}/revert'
+ */
+        revertForm.post = (args: { inventory_movement: number | { id: number } } | [inventory_movement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: revert.url(args, options),
+            method: 'post',
+        })
+    
+    revert.form = revertForm
+const InventoryMovementController = { index, store, show, revert }
 
 export default InventoryMovementController

@@ -869,14 +869,6 @@ class StudentController extends BaseController
                   ->where('status', 'active');
             });
         }
-        if (isset($filters['is_verified'])) {
-            $filters['is_verified']
-                ? $statsQuery->whereNotNull('email_verified_at')
-                : $statsQuery->whereNull('email_verified_at');
-        }
-        if (isset($filters['status'])) {
-            $statsQuery->where('status', $filters['status']);
-        }
         if (!empty($filters['abc_status'])) {
             $statsQuery->whereHas('studentProfile', function ($q) use ($filters) {
                 if ($filters['abc_status'] === 'registered') {

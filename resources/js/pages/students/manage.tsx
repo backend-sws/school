@@ -31,6 +31,7 @@ import { STUDENTS_GUIDE, STUDENT_LIST_GUIDE } from "@/constants/guides/students"
 import { StudentQueryKeys } from "@/lib/querykey/student";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const ManageStudent = () => {
@@ -152,6 +153,29 @@ const ManageStudent = () => {
   };
 
 
+  const currentStatus = String(filter.status ?? "all");
+  const currentEmailVerified = String(filter.email_verified ?? "all");
+
+  const handleCardClick = (type: "all" | "active" | "verified" | "unverified") => {
+    if (type === "all") {
+      handleFilter({ status: "all", email_verified: "all", page: 1 });
+    } else if (type === "active") {
+      const next = currentStatus === "1" ? "all" : "1";
+      handleFilter({ status: next, email_verified: "all", page: 1 });
+    } else if (type === "verified") {
+      const next = currentEmailVerified === "1" ? "all" : "1";
+      handleFilter({ email_verified: next, status: "all", page: 1 });
+    } else if (type === "unverified") {
+      const next = currentEmailVerified === "0" ? "all" : "0";
+      handleFilter({ email_verified: next, status: "all", page: 1 });
+    }
+  };
+
+  const isTotalActive = (currentStatus === "all" || !filter.status) && (currentEmailVerified === "all" || !filter.email_verified);
+  const isActiveStudentsActive = currentStatus === "1";
+  const isVerifiedActive = currentEmailVerified === "1";
+  const isUnverifiedActive = currentEmailVerified === "0";
+
   return (
     <>
       <Head title="Student Management" />
@@ -175,11 +199,28 @@ const ManageStudent = () => {
 
           {/* Analytics stats cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("all")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("all"); } }}
+              className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                isTotalActive
+                  ? "ring-2 ring-primary/70 bg-primary/[0.03] dark:bg-primary/[0.06]"
+                  : "bg-white dark:bg-card hover:border-primary/40"
+              }`}
+            >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Students</p>
-                  <p className="text-2xl font-black text-foreground">{stats.total_students}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Students</p>
+                    {isTotalActive && (
+                      <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-primary border-primary/30">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.total_students}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                   <Users className="size-5" />
@@ -187,11 +228,28 @@ const ManageStudent = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("active")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("active"); } }}
+              className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                isActiveStudentsActive
+                  ? "ring-2 ring-emerald-500/70 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08]"
+                  : "bg-white dark:bg-card hover:border-emerald-500/40"
+              }`}
+            >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Students</p>
-                  <p className="text-2xl font-black text-foreground">{stats.active_students}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Students</p>
+                    {isActiveStudentsActive && (
+                      <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-emerald-600 border-emerald-500/30">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.active_students}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <UserCheck className="size-5" />
@@ -199,11 +257,28 @@ const ManageStudent = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("verified")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("verified"); } }}
+              className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                isVerifiedActive
+                  ? "ring-2 ring-indigo-500/70 bg-indigo-500/[0.04] dark:bg-indigo-500/[0.08]"
+                  : "bg-white dark:bg-card hover:border-indigo-500/40"
+              }`}
+            >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Verified Email</p>
-                  <p className="text-2xl font-black text-foreground">{stats.verified_students}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Verified Email</p>
+                    {isVerifiedActive && (
+                      <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-indigo-600 border-indigo-500/30">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.verified_students}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                   <CheckCircle2 className="size-5" />
@@ -211,11 +286,28 @@ const ManageStudent = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+            <Card
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick("unverified")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("unverified"); } }}
+              className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                isUnverifiedActive
+                  ? "ring-2 ring-red-500/70 bg-red-500/[0.04] dark:bg-red-500/[0.08]"
+                  : "bg-white dark:bg-card hover:border-red-500/40"
+              }`}
+            >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Unverified</p>
-                  <p className="text-2xl font-black text-foreground">{stats.unverified_students}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Unverified</p>
+                    {isUnverifiedActive && (
+                      <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-red-600 border-red-500/30">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.unverified_students}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400">
                   <ShieldAlert className="size-5" />

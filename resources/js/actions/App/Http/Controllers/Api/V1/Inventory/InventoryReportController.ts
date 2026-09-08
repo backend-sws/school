@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
 export const exportLowStock = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ exportLowStock.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
 exportLowStock.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ exportLowStock.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
 exportLowStock.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ exportLowStock.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
 exportLowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ exportLowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
     const exportLowStockForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ exportLowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
         exportLowStockForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ exportLowStock.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryReportController::exportLowStock
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:73
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryReportController.php:82
  * @route '/api/v1/inventory/reports/low-stock/export'
  */
         exportLowStockForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

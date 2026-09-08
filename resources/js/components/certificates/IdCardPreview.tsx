@@ -4,6 +4,7 @@ import { ID_CARD_CONTENT } from "@/constants/idCard/formConfig";
 import { cn } from "@/lib/utils";
 import { User, QrCode } from "lucide-react";
 import { useInstitution } from "@/hooks/use-institution";
+import R2Api from "@/lib/api/r2Api";
 
 const EDITOR = ID_CARD_CONTENT.editor;
 
@@ -82,9 +83,9 @@ export const IdCardPreview: React.FC<IdCardPreviewProps> = ({
 
     const isLive = !!studentData;
     // Merge: real data overrides placeholders
-    const s = isLive
+    const s = studentData
         ? { ...EMPTY_CARD_DATA, ...studentData }
-        : { ...ID_CARD_PLACEHOLDER, ...studentData };
+        : { ...ID_CARD_PLACEHOLDER };
 
     const hasField = (key: string) => selectedFields.includes(key);
     const hasBackField = (key: string) => backFields.includes(key);
@@ -138,13 +139,19 @@ export const IdCardPreview: React.FC<IdCardPreviewProps> = ({
                     {/* Profile Section */}
                     <div className="flex-1 px-4 -mt-7 flex flex-col items-center">
                         {hasField("photo") && (
-                            <div className="size-24 rounded-[24px] bg-card border-4 border-background shadow-lg flex items-center justify-center overflow-hidden z-20">
-                                {s.photo_url ? (
-                                    <img src={s.photo_url} alt={s.name} className="size-full object-cover" />
-                                ) : (
-                                    <div className="size-full bg-muted flex items-center justify-center text-muted-foreground">
-                                        <User className="size-10 opacity-20" />
-                                    </div>
+                            <div className="size-24 rounded-[24px] bg-card border-4 border-background shadow-lg flex items-center justify-center overflow-hidden z-20 relative">
+                                <div className="size-full bg-muted flex items-center justify-center text-muted-foreground">
+                                    <User className="size-10 opacity-20" />
+                                </div>
+                                {s.photo_url && (
+                                    <img
+                                        src={R2Api.imageSrc(s.photo_url)}
+                                        alt={s.name}
+                                        className="absolute inset-0 size-full object-cover"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = "none";
+                                        }}
+                                    />
                                 )}
                             </div>
                         )}
@@ -241,14 +248,14 @@ export const IdCardPreview: React.FC<IdCardPreviewProps> = ({
     );
 };
 
-const FieldRow = ({ label, value }: { label: string; value: string }) => (
+const FieldRow = ({ label, value }: { label: string; value?: string }) => (
     <div className="flex flex-col items-center">
         <span className="text-[8px] uppercase font-black tracking-widest text-muted-foreground/40 leading-none mb-0.5">{label}</span>
         <span className="text-[10px] font-bold text-foreground leading-tight tracking-tight">{value}</span>
     </div>
 );
 
-const BackFieldRow = ({ label, value }: { label: string; value: string }) => (
+const BackFieldRow = ({ label, value }: { label: string; value?: string }) => (
     <div className="flex flex-col gap-0.5">
         <span className="text-[8px] uppercase font-black tracking-widest text-muted-foreground/40">{label}</span>
         <span className="text-xs font-semibold text-foreground">{value}</span>

@@ -20,7 +20,7 @@ class InventoryMovementController extends BaseController
             return $this->forbidden('You do not have permission to view stock movements.');
         }
 
-        $query = InventoryMovement::query()->with(['item', 'performer']);
+        $query = InventoryMovement::query()->with(['item', 'performer', 'revertedBy']);
 
         if ($request->filled('item_id')) {
             $query->where('inventory_item_id', $request->item_id);
@@ -28,6 +28,14 @@ class InventoryMovementController extends BaseController
 
         if ($request->filled('type')) {
             $query->where('type', $request->type);
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'reverted') {
+                $query->where('is_reverted', true);
+            } elseif ($request->status === 'active') {
+                $query->where('is_reverted', false);
+            }
         }
 
         return $this->paginatedWithMap(
@@ -87,7 +95,7 @@ class InventoryMovementController extends BaseController
             ]);
         });
 
-        return $this->created($movement->load(['item', 'performer']), 'Movement recorded successfully');
+        return $this->created($movement->load(['item', 'performer', 'revertedBy']), 'Movement recorded successfully');
     }
 
     public function show(Request $request, InventoryMovement $inventory_movement): JsonResponse
@@ -96,6 +104,66 @@ class InventoryMovementController extends BaseController
             return $this->forbidden('You do not have permission to view stock movements.');
         }
 
-        return $this->successWithMap($inventory_movement->load(['item', 'performer']), 'passthrough');
+        return $this->successWithMap($inventory_movement->load(['item', 'performer', 'revertedBy']), 'passthrough');
+    }
+
+    public function revert(Request $request, InventoryMovement $inventory_movement): JsonResponse
+    {
+        if (! $request->user()->hasAbility('create_inventory_movements')) {
+            return $this->forbidden('You do not have permission to revert stock movements.');
+        }
+
+        if ($inventory_movement->is_reverted) {
+            return $this->error('This movement has already been reverted.', 422);
+        }
+
+        $request->validate([
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        $item = $inventory_movement->item;
+        if (! $item) {
+            return $this->error('Associated inventory item not found.', 404);
+        }
+
+        $qty = (float) $inventory_movement->quantity;
+
+        // Determine original delta applied by this movement
+        $origDelta = match ($inventory_movement->type) {
+            'receive', 'return' => $qty,
+            'issue' => -abs($qty),
+            'adjust' => $qty,
+            default => 0,
+        };
+
+        // Reversal delta is the opposite
+        $reverseDelta = -$origDelta;
+
+        $newQuantity = (float) $item->current_quantity + $reverseDelta;
+        if ($newQuantity < 0) {
+            return $this->error(
+                "Cannot revert movement: insufficient stock in inventory. Resulting stock for '{$item->name}' would become {$newQuantity}. Current stock is {$item->current_quantity}.",
+                422
+            );
+        }
+
+        $reason = $request->input('reason') ? trim($request->input('reason')) : 'Reverted by user';
+
+        DB::transaction(function () use ($inventory_movement, $item, $reverseDelta, $reason) {
+            $item->increment('current_quantity', $reverseDelta);
+
+            $inventory_movement->update([
+                'is_reverted' => true,
+                'reverted_at' => now(),
+                'reverted_by' => auth()->id(),
+                'revert_reason' => $reason,
+            ]);
+        });
+
+        return $this->successWithMap(
+            $inventory_movement->fresh(['item', 'performer', 'revertedBy']),
+            'passthrough',
+            'Stock movement reverted successfully.'
+        );
     }
 }

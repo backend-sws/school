@@ -163,7 +163,11 @@ export function SmartCombobox({
                     disablePortal={true}
                 >
                     <Command shouldFilter={false} className="bg-popover flex-1 flex flex-col overflow-hidden">
-                        <CommandList className="max-h-[240px] overflow-y-auto overscroll-contain">
+                        <CommandList
+                            className="max-h-[160px] overflow-y-auto overscroll-contain custom-scrollbar"
+                            onWheel={(e) => e.stopPropagation()}
+                            onTouchMove={(e) => e.stopPropagation()}
+                        >
                             {filteredOptions.length === 0 ? (
                                 <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
                                     {emptyText}

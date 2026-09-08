@@ -453,6 +453,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('movements', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'index']);
                 Route::post('movements', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'store']);
                 Route::get('movements/{inventory_movement}', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'show'])->whereNumber('inventory_movement');
+                Route::post('movements/{inventory_movement}/revert', [\App\Http\Controllers\Api\V1\Inventory\InventoryMovementController::class, 'revert'])->whereNumber('inventory_movement');
                  Route::get('reports/low-stock/export', [\App\Http\Controllers\Api\V1\Inventory\InventoryReportController::class, 'exportLowStock']);
                 Route::get('reports/low-stock', [\App\Http\Controllers\Api\V1\Inventory\InventoryReportController::class, 'lowStock']);
                 Route::get('sales', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'index']);

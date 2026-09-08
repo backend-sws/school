@@ -61,6 +61,16 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
   };
 
   const stats = data?.meta?.stats;
+  const currentPaymentStatus = (filter.payment_status as string) || "all";
+
+  const handleCardClick = (targetStatus: string) => {
+    if (targetStatus === "all") {
+      handleFilter({ payment_status: "all", page: 1 });
+    } else {
+      const nextStatus = currentPaymentStatus === targetStatus ? "all" : targetStatus;
+      handleFilter({ payment_status: nextStatus, page: 1 });
+    }
+  };
 
   return (
     <>
@@ -74,63 +84,158 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
           subtitle="View and manage asset sales and transactions."
         />
 
-        {/* ── Analytics Stats Section ── */}
+        {/* ── Analytics Stats Section (Clickable to Filter) ── */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* 1. Total Sales */}
+          <Card
+            role="button"
+            tabIndex={0}
+            onClick={() => handleCardClick("all")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick("all");
+              }
+            }}
+            className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+              currentPaymentStatus === "all"
+                ? "ring-2 ring-primary/60 border-primary/50 bg-primary/[0.04] shadow-sm"
+                : "hover:border-primary/40 hover:bg-muted/20"
+            }`}
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Sales</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Total Sales
+                  </span>
+                  {currentPaymentStatus === "all" && (
+                    <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      All
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-2xl font-bold tracking-tight">
                   {isLoading ? "..." : (stats?.total_sales_count ?? 0)}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">Transactions executed</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Transactions executed {currentPaymentStatus === "all" ? "• Active" : "• Click to view all"}
+                </p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10 text-primary">
+              <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-200">
                 <Receipt className="size-5" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* 2. Total Revenue */}
+          <Card
+            role="button"
+            tabIndex={0}
+            onClick={() => handleCardClick("all")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick("all");
+              }
+            }}
+            className="cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group hover:border-emerald-500/40 hover:bg-muted/20"
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Revenue</span>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Total Revenue
+                </span>
                 <h3 className="text-2xl font-bold tracking-tight">
                   {isLoading ? "..." : `₹${Number(stats?.total_revenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </h3>
                 <p className="text-[10px] text-muted-foreground">Sum of all sale values</p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200">
                 <DollarSign className="size-5" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* 3. Amount Paid */}
+          <Card
+            role="button"
+            tabIndex={0}
+            onClick={() => handleCardClick("paid")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick("paid");
+              }
+            }}
+            className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+              currentPaymentStatus === "paid"
+                ? "ring-2 ring-emerald-500/60 border-emerald-500/50 bg-emerald-500/[0.04] shadow-sm"
+                : "hover:border-emerald-500/40 hover:bg-muted/20"
+            }`}
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount Paid</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Amount Paid
+                  </span>
+                  {currentPaymentStatus === "paid" && (
+                    <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                      Filtered
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
                   {isLoading ? "..." : `₹${Number(stats?.total_paid ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">Paid amount collected</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Paid amount collected {currentPaymentStatus === "paid" ? "• Filtered (click to reset)" : "• Click to filter paid"}
+                </p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200">
                 <CreditCard className="size-5" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* 4. Amount Pending */}
+          <Card
+            role="button"
+            tabIndex={0}
+            onClick={() => handleCardClick("pending")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick("pending");
+              }
+            }}
+            className={`cursor-pointer select-none transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden group ${
+              currentPaymentStatus === "pending"
+                ? "ring-2 ring-amber-500/60 border-amber-500/50 bg-amber-500/[0.04] shadow-sm"
+                : "hover:border-amber-500/40 hover:bg-muted/20"
+            }`}
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount Pending</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Amount Pending
+                  </span>
+                  {currentPaymentStatus === "pending" && (
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                      Filtered
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
                   {isLoading ? "..." : `₹${Number(stats?.total_pending ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">Awaiting payment settlement</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Awaiting settlement {currentPaymentStatus === "pending" ? "• Filtered (click to reset)" : "• Click to filter pending"}
+                </p>
               </div>
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform duration-200">
                 <Clock className="size-5" />
               </div>
             </CardContent>

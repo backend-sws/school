@@ -62,43 +62,84 @@ const InventoryItemsShow = ({ id }: PageProps) => {
             </Button>
           </PermissionGate>
         </div>
-        <Card>
-          <CardHeader>
-            <h3 className="font-medium">Details</h3>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p>
-              <span className="text-muted-foreground">Category:</span>{" "}
-              {item.category?.name ?? "—"}
-            </p>
-            <p>
-              <span className="text-muted-foreground">Unit:</span>{" "}
-              {item.unit ?? "piece"}
-            </p>
-            <p>
-              <span className="text-muted-foreground">Current quantity:</span>{" "}
-              <span className="font-mono font-medium">
-                {Number(item.current_quantity ?? 0)}
-              </span>
-            </p>
-            <p>
-              <span className="text-muted-foreground">Min stock:</span>{" "}
-              {Number(item.min_stock ?? 0)}
-            </p>
-            {item.location && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <h3 className="font-medium">Details</h3>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
               <p>
-                <span className="text-muted-foreground">Location:</span>{" "}
-                {item.location}
+                <span className="text-muted-foreground">Category:</span>{" "}
+                {item.category?.name ?? "—"}
               </p>
-            )}
-            {item.description && (
               <p>
-                <span className="text-muted-foreground">Description:</span>{" "}
-                {item.description}
+                <span className="text-muted-foreground">Unit:</span>{" "}
+                {item.unit ?? "piece"}
               </p>
-            )}
-          </CardContent>
-        </Card>
+              <p>
+                <span className="text-muted-foreground">Current quantity:</span>{" "}
+                <span className="font-mono font-medium">
+                  {Number(item.current_quantity ?? 0)}
+                </span>
+              </p>
+              <p>
+                <span className="text-muted-foreground">Min stock:</span>{" "}
+                {Number(item.min_stock ?? 0)}
+              </p>
+              {item.location && (
+                <p>
+                  <span className="text-muted-foreground">Location:</span>{" "}
+                  {item.location}
+                </p>
+              )}
+              {item.description && (
+                <p>
+                  <span className="text-muted-foreground">Description:</span>{" "}
+                  {item.description}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <h3 className="font-medium">Pricing & Valuation</h3>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p>
+                <span className="text-muted-foreground">Purchase Price (Cost):</span>{" "}
+                <span className="font-mono font-medium">
+                  ₹{Number(item.purchase_price ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                </span>
+              </p>
+              <p>
+                <span className="text-muted-foreground">Selling Price:</span>{" "}
+                <span className="font-mono font-medium">
+                  ₹{Number(item.selling_price ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                </span>
+              </p>
+              {item.margin_percentage !== undefined && item.margin_percentage !== null && (
+                <p>
+                  <span className="text-muted-foreground">Margin:</span>{" "}
+                  <span className="font-mono">{Number(item.margin_percentage)}%</span>
+                </p>
+              )}
+              <div className="pt-2 border-t space-y-1">
+                <p className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium">Current Stock Value (Cost):</span>{" "}
+                  <span className="font-mono font-bold text-base text-foreground">
+                    ₹{(Number(item.current_quantity ?? 0) * Number(item.purchase_price ?? item.selling_price ?? 0)).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                </p>
+                <p className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>Current Stock Value (Retail):</span>{" "}
+                  <span className="font-mono font-medium">
+                    ₹{(Number(item.current_quantity ?? 0) * Number(item.selling_price ?? 0)).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
             <h3 className="font-medium">Recent movements</h3>

@@ -177,7 +177,12 @@ const R2Api = {
   /** URL for img src when image_url is an R2 path (uploads/...). */
   imageSrc: (imageUrl: string | undefined): string => {
     if (!imageUrl) return "";
-    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    if (
+      imageUrl.startsWith("http://") ||
+      imageUrl.startsWith("https://") ||
+      imageUrl.startsWith("blob:") ||
+      imageUrl.startsWith("data:")
+    ) {
       return imageUrl;
     }
     if (imageUrl.startsWith("/")) {

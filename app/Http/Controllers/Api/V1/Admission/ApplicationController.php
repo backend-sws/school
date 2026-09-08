@@ -107,10 +107,15 @@ class ApplicationController extends BaseController
         // 1c. Filter by Application Type (new / re-admission)
         $query->when($request->filled('application_type') && $request->application_type !== 'all', fn($q) => $q->where('application_type', $request->application_type));
 
-        // 2. Filter by Process Status (UI "Status" dropdown)
-        $query->when($request->filled('status') && $request->status !== 'all', fn($q) => $q->where('process_status', $request->status));
+        // 2. Filter by Process Status (UI "Status" dropdown / Card click)
+        $query->when($request->filled('status') && $request->status !== 'all', function ($q) use ($request) {
+            if ($request->status === 'approved') {
+                return $q->whereIn('process_status', ['approved', 'admitted', 'completed']);
+            }
+            return $q->where('process_status', $request->status);
+        });
 
-        // 3. Filter by Payment Status (UI "Payment" dropdown)
+        // 3. Filter by Payment Status (UI "Payment" dropdown / Card click)
         $query->when($request->filled('payment_status') && $request->payment_status !== 'all', fn($q) => $q->where('payment_status', $request->payment_status));
 
         // 4. Filter by Date Range (Submitted On column)
@@ -144,9 +149,12 @@ class ApplicationController extends BaseController
 
         $data = app(\App\Services\ApiResponseMapService::class)->filterCollection($paginator->items(), 'application_index');
 
-        // Dynamic stats calculations
+        // Dynamic stats calculations (unrestricted by status/payment_status so cards remain consistent)
         $statsQuery = AdmissionApplication::query()->where('institution_id', $institutionId);
 
+        if ($request->user()->hasAbility('portal')) {
+            $statsQuery->where('user_id', $request->user()->id);
+        }
         if ($request->filled('session_id') && $request->session_id !== 'all') {
             $statsQuery->where('session_id', $request->session_id);
         }
@@ -155,12 +163,6 @@ class ApplicationController extends BaseController
         }
         if ($request->filled('stream_id') && $request->stream_id !== 'all') {
             $statsQuery->whereHas('admissionHead', fn($sq) => $sq->where('stream_id', $request->stream_id));
-        }
-        if ($request->filled('status') && $request->status !== 'all') {
-            $statsQuery->where('process_status', $request->status);
-        }
-        if ($request->filled('payment_status') && $request->payment_status !== 'all') {
-            $statsQuery->where('payment_status', $request->payment_status);
         }
         if ($request->filled('start_date')) {
             $statsQuery->where('submitted_at', '>=', $request->start_date . ' 00:00:00');

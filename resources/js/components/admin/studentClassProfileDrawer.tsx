@@ -45,6 +45,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { LeaveDocumentPreviewDialog } from "./leaveDocumentPreviewDialog";
 import { StudentLeaveUploadDialog } from "./studentLeaveUploadDialog";
+import R2Api from "@/lib/api/r2Api";
 
 interface StudentClassProfileDrawerProps {
   open: boolean;
@@ -248,14 +249,16 @@ export function StudentClassProfileDrawer({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="relative size-16 shrink-0 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-md bg-muted flex items-center justify-center">
-                  {student?.photo_url ? (
+                  <User className="size-8 text-muted-foreground" />
+                  {student?.photo_url && (
                     <img
-                      src={student.photo_url}
+                      src={R2Api.imageSrc(student.photo_url)}
                       alt={student.name}
-                      className="h-full w-full object-cover"
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
-                  ) : (
-                    <User className="size-8 text-muted-foreground" />
                   )}
                   <span
                     className={cn(

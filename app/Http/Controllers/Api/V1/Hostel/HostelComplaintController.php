@@ -31,7 +31,11 @@ class HostelComplaintController extends BaseController
             ]);
 
         if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
+            if ($request->status === 'resolved') {
+                $query->whereIn('status', ['resolved', 'closed']);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
         if ($request->filled('hostel_id') && $request->hostel_id !== 'all') {

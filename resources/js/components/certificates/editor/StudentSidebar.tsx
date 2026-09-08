@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Each from "@/components/Each";
 import { cn } from "@/lib/utils";
 import { ID_CARD_CONTENT } from "@/constants/idCard/formConfig";
+import R2Api from "@/lib/api/r2Api";
 
 const EDITOR = ID_CARD_CONTENT.editor;
 import type { IdCardStudentData } from "@/components/certificates/IdCardPreview";
@@ -154,17 +155,19 @@ const StudentSidebar: React.FC<StudentSidebarProps> = ({
                                     />
 
                                     {/* Avatar */}
-                                    <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                        {student.photo_url ? (
+                                    <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0 relative overflow-hidden">
+                                        <span className="text-[10px] font-bold text-muted-foreground select-none">
+                                            {getInitials(student.name)}
+                                        </span>
+                                        {student.photo_url && (
                                             <img
-                                                src={student.photo_url}
+                                                src={R2Api.imageSrc(student.photo_url)}
                                                 alt={student.name}
-                                                className="size-full rounded-full object-cover"
+                                                className="absolute inset-0 size-full rounded-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = "none";
+                                                }}
                                             />
-                                        ) : (
-                                            <span className="text-[10px] font-bold text-muted-foreground">
-                                                {getInitials(student.name)}
-                                            </span>
                                         )}
                                     </div>
 

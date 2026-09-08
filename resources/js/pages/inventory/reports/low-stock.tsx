@@ -17,6 +17,7 @@ import { useRegisterGuide } from '@/components/GuideProvider';
 import { INVENTORY_LOW_STOCK_GUIDE } from "@/constants/guides/inventory";
 import React, { useMemo } from 'react';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { FilterBar } from "@/components/filter-bar";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { FORM_TYPE } from "@/constants";
@@ -31,12 +32,13 @@ const COLUMNS = [
   { key: "action", label: "Action" },
 ];
 
-const INITIAL_FILTERS = { page: 1, per_page: 15, search: "", category_id: "all", max_quantity: "" };
+const INITIAL_FILTERS = { page: 1, per_page: 15, search: "", category_id: "all", max_quantity: "", stock_status: "all" };
 
 const FILTER_MAPPING = {
   category_id: { paramName: "category_id", skipValues: ["all"] },
   search: { paramName: "search", skipValues: [""] },
   max_quantity: { paramName: "max_quantity", skipValues: [""] },
+  stock_status: { paramName: "stock_status", skipValues: ["all"] },
   per_page: { paramName: "per_page" },
   page: { paramName: "page" },
 };
@@ -136,55 +138,141 @@ const InventoryLowStock = () => {
         </MainPageHeader>
 
         {/* Analytics stats cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Low Stock</p>
-                <p className="text-2xl font-black text-foreground">{stats.total_low_stock}</p>
-              </div>
-              <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <AlertTriangle className="size-5" />
-              </div>
-            </CardContent>
-          </Card>
+        {(() => {
+          const currentStatus = String(filter.stock_status || "all");
+          const handleCardClick = (targetStatus: "all" | "out_of_stock" | "warning_stock") => {
+            if (targetStatus === "all") {
+              handleFilter({ stock_status: "all", page: 1 });
+            } else {
+              const next = currentStatus === targetStatus ? "all" : targetStatus;
+              handleFilter({ stock_status: next, page: 1 });
+            }
+          };
 
-          <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Out of Stock</p>
-                <p className="text-2xl font-black text-foreground">{stats.out_of_stock}</p>
-              </div>
-              <div className="p-3 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400">
-                <ShieldAlert className="size-5" />
-              </div>
-            </CardContent>
-          </Card>
+          const isTotalActive = currentStatus === "all";
+          const isOutOfStockActive = currentStatus === "out_of_stock";
+          const isWarningStockActive = currentStatus === "warning_stock";
 
-          <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Warning Stock</p>
-                <p className="text-2xl font-black text-foreground">{stats.warning_stock}</p>
-              </div>
-              <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                <Clock className="size-5" />
-              </div>
-            </CardContent>
-          </Card>
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("all")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("all"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isTotalActive
+                    ? "ring-2 ring-amber-500/70 bg-amber-500/[0.04] dark:bg-amber-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-amber-500/40"
+                }`}
+              >
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Low Stock</p>
+                      {isTotalActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-amber-600 border-amber-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.total_low_stock}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                    <AlertTriangle className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Deficit Qty</p>
-                <p className="text-2xl font-black text-foreground">{stats.total_deficit}</p>
-              </div>
-              <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                <TrendingDown className="size-5" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("out_of_stock")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("out_of_stock"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isOutOfStockActive
+                    ? "ring-2 ring-red-500/70 bg-red-500/[0.04] dark:bg-red-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-red-500/40"
+                }`}
+              >
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Out of Stock</p>
+                      {isOutOfStockActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-red-600 border-red-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.out_of_stock}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400">
+                    <ShieldAlert className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("warning_stock")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("warning_stock"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isWarningStockActive
+                    ? "ring-2 ring-blue-500/70 bg-blue-500/[0.04] dark:bg-blue-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-blue-500/40"
+                }`}
+              >
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Warning Stock</p>
+                      {isWarningStockActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-blue-600 border-blue-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.warning_stock}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                    <Clock className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => handleCardClick("warning_stock")}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("warning_stock"); } }}
+                className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                  isWarningStockActive
+                    ? "ring-2 ring-indigo-500/70 bg-indigo-500/[0.04] dark:bg-indigo-500/[0.08]"
+                    : "bg-white dark:bg-card hover:border-indigo-500/40"
+                }`}
+              >
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Deficit Qty</p>
+                      {isWarningStockActive && (
+                        <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-indigo-600 border-indigo-500/30">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.total_deficit}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                    <TrendingDown className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
 
         <Card>
           <CardHeader className="pb-4">

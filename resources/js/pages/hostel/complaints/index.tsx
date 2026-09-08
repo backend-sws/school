@@ -139,55 +139,142 @@ const HostelComplaintsIndex = () => {
           />
 
           {/* Analytics stats cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Complaints</p>
-                  <p className="text-2xl font-black text-foreground">{stats.total_complaints}</p>
-                </div>
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <MessageSquare className="size-5" />
-                </div>
-              </CardContent>
-            </Card>
+          {(() => {
+            const currentStatus = String(filter.status || "all");
+            const handleCardClick = (targetStatus: "all" | "open" | "in_progress" | "resolved") => {
+              if (targetStatus === "all") {
+                handleFilter({ status: "all", page: 1 });
+              } else {
+                const next = currentStatus === targetStatus ? "all" : targetStatus;
+                handleFilter({ status: next, page: 1 });
+              }
+            };
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Pending/Open</p>
-                  <p className="text-2xl font-black text-foreground">{stats.open_complaints}</p>
-                </div>
-                <div className="p-3 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400">
-                  <AlertCircle className="size-5" />
-                </div>
-              </CardContent>
-            </Card>
+            const isTotalActive = currentStatus === "all";
+            const isOpenActive = currentStatus === "open";
+            const isInProgressActive = currentStatus === "in_progress";
+            const isResolvedActive = currentStatus === "resolved";
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">In Progress</p>
-                  <p className="text-2xl font-black text-foreground">{stats.in_progress_complaints}</p>
-                </div>
-                <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                  <Clock className="size-5" />
-                </div>
-              </CardContent>
-            </Card>
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleCardClick("all")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("all"); } }}
+                  className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                    isTotalActive
+                      ? "ring-2 ring-primary/70 bg-primary/[0.03] dark:bg-primary/[0.06]"
+                      : "bg-white dark:bg-card hover:border-primary/40"
+                  }`}
+                >
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Complaints</p>
+                        {isTotalActive && (
+                          <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-primary border-primary/30">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.total_complaints}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                      <MessageSquare className="size-5" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Resolved</p>
-                  <p className="text-2xl font-black text-foreground">{stats.resolved_complaints}</p>
-                </div>
-                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 className="size-5" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                <Card
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleCardClick("open")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("open"); } }}
+                  className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                    isOpenActive
+                      ? "ring-2 ring-red-500/70 bg-red-500/[0.04] dark:bg-red-500/[0.08]"
+                      : "bg-white dark:bg-card hover:border-red-500/40"
+                  }`}
+                >
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Pending/Open</p>
+                        {isOpenActive && (
+                          <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-red-600 border-red-500/30">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.open_complaints}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400">
+                      <AlertCircle className="size-5" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleCardClick("in_progress")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("in_progress"); } }}
+                  className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                    isInProgressActive
+                      ? "ring-2 ring-amber-500/70 bg-amber-500/[0.04] dark:bg-amber-500/[0.08]"
+                      : "bg-white dark:bg-card hover:border-amber-500/40"
+                  }`}
+                >
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">In Progress</p>
+                        {isInProgressActive && (
+                          <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-amber-600 border-amber-500/30">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.in_progress_complaints}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      <Clock className="size-5" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleCardClick("resolved")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick("resolved"); } }}
+                  className={`border-border/50 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 select-none ${
+                    isResolvedActive
+                      ? "ring-2 ring-emerald-500/70 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08]"
+                      : "bg-white dark:bg-card hover:border-emerald-500/40"
+                  }`}
+                >
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Resolved</p>
+                        {isResolvedActive && (
+                          <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-bold text-emerald-600 border-emerald-500/30">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-2xl font-black text-foreground">{isLoading ? "..." : stats.resolved_complaints}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="size-5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })()}
 
           <div className="flex justify-end gap-2">
             <Button
