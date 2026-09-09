@@ -53,7 +53,7 @@ export function ExpenseDialog({ open, onClose, expense }: ExpenseDialogProps) {
     formState: { errors },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(permittedSchema) as any,
-    defaultValues: EXPENSE_DEFAULT_VALUES as ExpenseFormData,
+    defaultValues: EXPENSE_DEFAULT_VALUES as any,
     mode: "onChange",
   });
 
@@ -96,7 +96,7 @@ export function ExpenseDialog({ open, onClose, expense }: ExpenseDialogProps) {
           status: expense.status || "pending",
         });
       } else {
-        reset(EXPENSE_DEFAULT_VALUES as ExpenseFormData);
+        reset(EXPENSE_DEFAULT_VALUES);
       }
       setUploading(false);
       setUploadProgress(0);
@@ -172,7 +172,7 @@ export function ExpenseDialog({ open, onClose, expense }: ExpenseDialogProps) {
             Invoice / Receipt Attachment
           </label>
           <R2FileUpload
-            value={attachmentPath}
+            value={attachmentPath ?? undefined}
             onChange={(path) => setValue("attachment", path, { shouldValidate: true })}
             disabled={uploading}
             maxSizeLabel="Max 5MB (PDF, PNG, JPG)"

@@ -14,11 +14,12 @@ import { toast } from "sonner";
 interface LmsAssignmentDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId?: number;
 }
 
-export function LmsAssignmentDialog({ open, onClose, classId, allocationId }: LmsAssignmentDialogProps) {
+export function LmsAssignmentDialog({ open, onClose, onSuccess, classId, allocationId }: LmsAssignmentDialogProps) {
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<LmsAssignmentFormValues>({
     resolver: zodResolver(LmsAssignmentSchema) as Resolver<LmsAssignmentFormValues>,
@@ -40,9 +41,13 @@ export function LmsAssignmentDialog({ open, onClose, classId, allocationId }: Lm
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.assignments(classId) });
+      if (allocationId != null) {
+        queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.assignments(classId, { allocation_id: allocationId }) });
+      }
       toast.success("Curriculum item created successfully!");
       reset();
       onClose();
+      onSuccess?.();
     },
   });
 

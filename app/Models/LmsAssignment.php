@@ -31,6 +31,43 @@ class LmsAssignment extends Model
         'sort_order' => 'integer',
     ];
 
+    protected $appends = [
+        'file_url',
+        'my_submission',
+    ];
+
+    public function getFileUrlAttribute(): ?string
+    {
+        if (empty($this->file_path)) {
+            return null;
+        }
+
+        if (str_starts_with($this->file_path, 'http://') || str_starts_with($this->file_path, 'https://')) {
+            return $this->file_path;
+        }
+
+        $r2Url = config('filesystems.disks.r2.url');
+        if (!empty($r2Url)) {
+            return rtrim($r2Url, '/') . '/' . ltrim($this->file_path, '/');
+        }
+
+        return '/api/v1/r2/asset?path=' . urlencode($this->file_path);
+    }
+
+    public function getMySubmissionAttribute(): ?LmsAssignmentSubmission
+    {
+        $userId = auth()->id();
+        if (!$userId) {
+            return null;
+        }
+
+        if ($this->relationLoaded('submissions')) {
+            return $this->submissions->firstWhere('user_id', $userId);
+        }
+
+        return $this->submissions()->where('user_id', $userId)->first();
+    }
+
     public function lmsClass(): BelongsTo
     {
         return $this->belongsTo(LmsClass::class, 'lms_class_id');

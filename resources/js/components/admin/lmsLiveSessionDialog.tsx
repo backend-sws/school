@@ -2,7 +2,7 @@ import React from "react";
 import { ModalDialog } from "../shared/Modal";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
 import Each from "@/components/Each";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import lmsApi from "@/lib/api/lmsApi";
@@ -14,14 +14,15 @@ import { toast } from "sonner";
 interface LmsLiveSessionDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId?: number;
 }
 
-export function LmsLiveSessionDialog({ open, onClose, classId, allocationId }: LmsLiveSessionDialogProps) {
+export function LmsLiveSessionDialog({ open, onClose, onSuccess, classId, allocationId }: LmsLiveSessionDialogProps) {
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<LmsLiveSessionFormValues>({
-    resolver: zodResolver(LmsLiveSessionSchema),
+    resolver: zodResolver(LmsLiveSessionSchema) as Resolver<LmsLiveSessionFormValues>,
     defaultValues: { title: "", scheduled_at: "", ends_at: "", meeting_url: "", meeting_provider: "" },
     mode: "onChange",
   });
@@ -38,6 +39,7 @@ export function LmsLiveSessionDialog({ open, onClose, classId, allocationId }: L
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.liveSessions(classId) });
+      onSuccess?.();
       toast.success("Live session scheduled successfully!");
       reset();
       onClose();

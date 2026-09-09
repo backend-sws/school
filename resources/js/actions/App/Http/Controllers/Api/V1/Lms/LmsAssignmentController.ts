@@ -98,7 +98,7 @@ index.head = (args: { lms_class_id: string | number } | [lms_class_id: string | 
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:44
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:53
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments'
  */
 export const store = (args: { lms_class_id: string | number } | [lms_class_id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:44
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:53
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments'
  */
 store.url = (args: { lms_class_id: string | number } | [lms_class_id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -141,7 +141,7 @@ store.url = (args: { lms_class_id: string | number } | [lms_class_id: string | n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:44
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:53
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments'
  */
 store.post = (args: { lms_class_id: string | number } | [lms_class_id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -151,7 +151,7 @@ store.post = (args: { lms_class_id: string | number } | [lms_class_id: string | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:44
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:53
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments'
  */
     const storeForm = (args: { lms_class_id: string | number } | [lms_class_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -161,7 +161,7 @@ store.post = (args: { lms_class_id: string | number } | [lms_class_id: string | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:44
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:53
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments'
  */
         storeForm.post = (args: { lms_class_id: string | number } | [lms_class_id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.post = (args: { lms_class_id: string | number } | [lms_class_id: string | 
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 export const show = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -187,7 +187,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 show.url = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -213,7 +213,7 @@ show.url = (args: { lms_class_id: string | number, id: string | number } | [lms_
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 show.get = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -222,7 +222,7 @@ show.get = (args: { lms_class_id: string | number, id: string | number } | [lms_
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 show.head = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -232,7 +232,7 @@ show.head = (args: { lms_class_id: string | number, id: string | number } | [lms
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
     const showForm = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -242,7 +242,7 @@ show.head = (args: { lms_class_id: string | number, id: string | number } | [lms
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
         showForm.get = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -251,7 +251,7 @@ show.head = (args: { lms_class_id: string | number, id: string | number } | [lms
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:91
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:100
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
         showForm.head = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -267,7 +267,7 @@ show.head = (args: { lms_class_id: string | number, id: string | number } | [lms
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:105
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:114
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 export const update = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -282,7 +282,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:105
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:114
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 update.url = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -308,7 +308,7 @@ update.url = (args: { lms_class_id: string | number, id: string | number } | [lm
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:105
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:114
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 update.put = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -318,7 +318,7 @@ update.put = (args: { lms_class_id: string | number, id: string | number } | [lm
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:105
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:114
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
     const updateForm = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -333,7 +333,7 @@ update.put = (args: { lms_class_id: string | number, id: string | number } | [lm
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:105
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:114
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
         updateForm.put = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -349,7 +349,7 @@ update.put = (args: { lms_class_id: string | number, id: string | number } | [lm
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:133
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:142
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 export const destroy = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -364,7 +364,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:133
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:142
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 destroy.url = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -390,7 +390,7 @@ destroy.url = (args: { lms_class_id: string | number, id: string | number } | [l
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:133
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:142
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
 destroy.delete = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -400,7 +400,7 @@ destroy.delete = (args: { lms_class_id: string | number, id: string | number } |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:133
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:142
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
     const destroyForm = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -415,7 +415,7 @@ destroy.delete = (args: { lms_class_id: string | number, id: string | number } |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:133
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentController.php:142
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{id}'
  */
         destroyForm.delete = (args: { lms_class_id: string | number, id: string | number } | [lms_class_id: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

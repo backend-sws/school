@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useMemo } from "react";
 import { Play, AlertCircle, RefreshCw, Maximize, Minimize, Volume2, VolumeX } from "lucide-react";
 import { parseYouTubeUrl, youtubeEmbedUrl } from "@/constants/shared/mediaTypes";
 import { cn } from "@/lib/utils";
+import R2Api from "@/lib/api/r2Api";
 
 // ── Source Detection ────────────────────────────────────────────
 type VideoSourceType = "youtube" | "direct" | "none";
@@ -21,8 +22,7 @@ function detectSource(videoUrl?: string | null, filePath?: string | null): Detec
   }
   // 2. R2/storage file path
   if (filePath) {
-    // If it's already a full URL, use as-is; otherwise, prefix with /storage/
-    const src = filePath.startsWith("http") ? filePath : `/storage/${filePath.replace(/^\/+/, "")}`;
+    const src = filePath.startsWith("http") ? filePath : R2Api.imageSrc(filePath);
     return { type: "direct", src };
   }
   return { type: "none", src: "" };

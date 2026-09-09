@@ -25,9 +25,18 @@ class LmsAssignmentController extends BaseController
             return $this->error('Class not found.', 404);
         }
 
+        $userId = $request->user()?->id;
         $query = LmsAssignment::query()
             ->where('lms_class_id', $lms_class_id)
-            ->with(['createdBy:id,name'])
+            ->with([
+                'createdBy:id,name',
+                'submissions' => function ($q) use ($userId) {
+                    if ($userId) {
+                        $q->where('user_id', $userId);
+                    }
+                },
+            ])
+            ->withCount('submissions')
             ->orderBy('sort_order');
 
         if ($request->filled('allocation_id')) {

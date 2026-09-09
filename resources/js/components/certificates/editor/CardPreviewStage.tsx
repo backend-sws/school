@@ -22,6 +22,7 @@ interface CardPreviewStageProps {
     backFields: string[];
     studentData: IdCardStudentData | null;
     studentName?: string;
+    verificationUrl?: string;
 }
 
 const MIN_ZOOM = 0.3;
@@ -41,6 +42,7 @@ const CardPreviewStage: React.FC<CardPreviewStageProps> = ({
     backFields,
     studentData,
     studentName,
+    verificationUrl,
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [zoom, setZoom] = useState(0.65);
@@ -152,6 +154,7 @@ const CardPreviewStage: React.FC<CardPreviewStageProps> = ({
                     activeSide="front"
                     studentData={studentData}
                     studentName={studentName}
+                    verificationUrl={verificationUrl}
                 />
             </div>
 

@@ -445,6 +445,7 @@ export function LmsTestQuestionManager({ open, onClose, classId, testId, testTit
                 : lmsApi.tests.storeQuestion(classId, testId, data),
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: ["lms-questions", classId, testId] });
+            queryClient.invalidateQueries({ queryKey: ["lms-class-tests", classId] });
             toast.success(selectedQuestion ? "Question updated" : "Question created");
             if (!selectedQuestion) {
                 setIsCreating(false);
@@ -460,6 +461,7 @@ export function LmsTestQuestionManager({ open, onClose, classId, testId, testTit
         mutationFn: (id: number) => lmsApi.tests.destroyQuestion(classId, testId, id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["lms-questions", classId, testId] });
+            queryClient.invalidateQueries({ queryKey: ["lms-class-tests", classId] });
             toast.success("Question removed");
             setSelectedQuestion(null);
             setIsCreating(false);
@@ -474,6 +476,7 @@ export function LmsTestQuestionManager({ open, onClose, classId, testId, testTit
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["lms-questions", classId, testId] });
+            queryClient.invalidateQueries({ queryKey: ["lms-class-tests", classId] });
             toast.success("Question duplicated");
         }
     });

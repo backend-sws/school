@@ -14,11 +14,12 @@ import { toast } from "sonner";
 interface LmsTestDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId?: number;
 }
 
-export function LmsTestDialog({ open, onClose, classId, allocationId }: LmsTestDialogProps) {
+export function LmsTestDialog({ open, onClose, onSuccess, classId, allocationId }: LmsTestDialogProps) {
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<LmsTestFormValues>({
     resolver: zodResolver(LmsTestSchema) as Resolver<LmsTestFormValues>,
@@ -37,9 +38,13 @@ export function LmsTestDialog({ open, onClose, classId, allocationId }: LmsTestD
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.tests(classId) });
+      if (allocationId != null) {
+        queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.tests(classId, { allocation_id: allocationId }) });
+      }
       toast.success("Test created successfully!");
       reset();
       onClose();
+      onSuccess?.();
     },
   });
 

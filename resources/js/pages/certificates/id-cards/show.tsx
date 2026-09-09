@@ -1,30 +1,55 @@
 import { Head } from "@inertiajs/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { IdCardApi } from "@/lib/api/idCardApi";
 import { IdCardQueryKeys } from "@/lib/querykey/idCard";
 import { ID_CARD_SHOW_BREADCRUMBS } from "@/constants/page/idCard";
 import { CARD_STATUS_VARIANT, ID_CARD_CONTENT } from "@/constants/idCard/formConfig";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import CardPreviewStage from "@/components/certificates/editor/CardPreviewStage";
-import type { IdCardHolderData } from "@/components/certificates/IdCardPreview";
+import { IdCardFront, IdCardBack, type IdCardHolderData } from "@/components/certificates/IdCardPreview";
 import {
     getSnapshotDisplayFields,
     getSnapshotFieldValue,
     parseSnapshotData,
 } from "@/lib/idCard/snapshotDisplay";
-import { IdCard as IdCardIcon, Download, RefreshCcw, Ban, Loader2 } from "lucide-react";
+import {
+    IdCard as IdCardIcon,
+    Download,
+    RefreshCcw,
+    Ban,
+    Loader2,
+    ChevronDown,
+    Printer,
+    FileText,
+    Image as ImageIcon,
+    CreditCard,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import Each from "@/components/Each";
 import { toast } from "sonner";
 import R2Api from "@/lib/api/r2Api";
 import { cn } from "@/lib/utils";
+import {
+    exportIdCardToPdf,
+    exportIdCardSideToPng,
+    exportBothSidesToPng,
+    printIdCardDirectly,
+} from "@/lib/idCard/idCardDownload";
 
 const { show: CONTENT } = ID_CARD_CONTENT;
 
@@ -37,6 +62,9 @@ function formatDate(value?: string | null) {
 const ShowCard = ({ id }: { id: number }) => {
     const queryClient = useQueryClient();
     const revokeDisclosure = useDisclosure();
+    const [exportingType, setExportingType] = useState<string | null>(null);
+    const frontExportRef = useRef<HTMLDivElement>(null);
+    const backExportRef = useRef<HTMLDivElement>(null);
 
     const { data, isLoading, isError } = useQuery({
         queryKey: IdCardQueryKeys.cards.detail(id),
@@ -115,26 +143,164 @@ const ShowCard = ({ id }: { id: number }) => {
         },
     });
 
-    const handleDownload = async () => {
+    const handleFrontendDownload = async (
+        format: "cr80-pdf" | "a4-pdf" | "png-front" | "png-back" | "png-both" | "print" = "cr80-pdf"
+    ) => {
+        if (!frontExportRef.current || !backExportRef.current) {
+            toast.error("Card elements are not ready for export. Please wait a moment.");
+            return;
+        }
+
+        const regNo = String(snapshot?.reg_no || id);
+        const filename = `id-card-${regNo}`;
+        const studentTitle = String(snapshot?.name || "Student ID Card");
+
+        setExportingType(format);
+        const toastId = toast.loading("Generating pixel-perfect ID card...");
+
         try {
-            const res = await IdCardApi.download(id);
-            const url = window.URL.createObjectURL(new Blob([res.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `id-card-${snapshot?.reg_no ?? id}.pdf`;
-            link.click();
-            window.URL.revokeObjectURL(url);
-        } catch {
-            toast.error("Download failed");
+            if (format === "cr80-pdf") {
+                await exportIdCardToPdf(frontExportRef.current, backExportRef.current, {
+                    filename,
+                    format: "cr80",
+                });
+                toast.success("Standard ID Card PDF downloaded (Pixel-Perfect)!", { id: toastId });
+            } else if (format === "a4-pdf") {
+                await exportIdCardToPdf(frontExportRef.current, backExportRef.current, {
+                    filename,
+                    format: "a4",
+                    title: `${card?.template?.name || "ID CARD"}`,
+                    subtitle: `${studentTitle} (${regNo})`,
+                });
+                toast.success("A4 Sheet PDF downloaded!", { id: toastId });
+            } else if (format === "png-front") {
+                await exportIdCardSideToPng(frontExportRef.current, filename, "front");
+                toast.success("Front card image downloaded!", { id: toastId });
+            } else if (format === "png-back") {
+                await exportIdCardSideToPng(backExportRef.current, filename, "back");
+                toast.success("Back card image downloaded!", { id: toastId });
+            } else if (format === "png-both") {
+                await exportBothSidesToPng(frontExportRef.current, backExportRef.current, filename);
+                toast.success("Both sides image downloaded!", { id: toastId });
+            } else if (format === "print") {
+                await printIdCardDirectly(
+                    frontExportRef.current,
+                    backExportRef.current,
+                    `${studentTitle} - ID Card`
+                );
+                toast.success("Print dialog opened!", { id: toastId });
+            }
+        } catch (err) {
+            console.error("Failed to export pixel-perfect ID card:", err);
+            toast.error("Frontend generation failed. Downloading fallback PDF...", { id: toastId });
+            // Fallback to backend download
+            try {
+                const res = await IdCardApi.download(id);
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `id-card-${snapshot?.reg_no ?? id}.pdf`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+            } catch {
+                toast.error("Download failed completely.");
+            }
+        } finally {
+            setExportingType(null);
         }
     };
 
     const actionButtons = (
         <>
-            <Button variant="outline" size="sm" onClick={handleDownload}>
-                <Download className="size-4" />
-                <span>{CONTENT.downloadBtn}</span>
-            </Button>
+            <DropdownMenu>
+                <div className="inline-flex rounded-lg shadow-sm">
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => handleFrontendDownload("cr80-pdf")}
+                        disabled={!!exportingType}
+                        className="rounded-r-none pr-3 font-semibold cursor-pointer"
+                    >
+                        {exportingType === "cr80-pdf" ? (
+                            <Loader2 className="size-4 animate-spin mr-1.5" />
+                        ) : (
+                            <Download className="size-4 mr-1.5" />
+                        )}
+                        <span>{CONTENT.downloadBtn}</span>
+                    </Button>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="default"
+                            size="sm"
+                            className="rounded-l-none border-l border-primary-foreground/20 px-2 cursor-pointer"
+                            disabled={!!exportingType}
+                        >
+                            <ChevronDown className="size-3.5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                </div>
+                <DropdownMenuContent align="end" className="w-64 p-1.5">
+                    <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-2 py-1">
+                        Pixel-Perfect PDF
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("cr80-pdf")}
+                        className="cursor-pointer py-2 rounded-md"
+                    >
+                        <CreditCard className="size-4 mr-2.5 text-primary shrink-0" />
+                        <div className="flex flex-col">
+                            <span className="font-semibold text-xs">Standard ID Card (CR80)</span>
+                            <span className="text-[10px] text-muted-foreground">54×86mm plastic card ready</span>
+                        </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("a4-pdf")}
+                        className="cursor-pointer py-2 rounded-md"
+                    >
+                        <FileText className="size-4 mr-2.5 text-indigo-500 shrink-0" />
+                        <div className="flex flex-col">
+                            <span className="font-semibold text-xs">A4 Sheet with Cut Marks</span>
+                            <span className="text-[10px] text-muted-foreground">Side-by-side for lamination</span>
+                        </div>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator className="my-1" />
+                    <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-2 py-1">
+                        High-Res Images (300 DPI)
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("png-both")}
+                        className="cursor-pointer text-xs py-1.5 rounded-md font-medium"
+                    >
+                        <ImageIcon className="size-4 mr-2.5 text-emerald-500 shrink-0" />
+                        Both Sides Image (PNG)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("png-front")}
+                        className="cursor-pointer text-xs py-1.5 rounded-md font-medium"
+                    >
+                        <ImageIcon className="size-4 mr-2.5 text-blue-500 shrink-0" />
+                        Front Side Image (PNG)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("png-back")}
+                        className="cursor-pointer text-xs py-1.5 rounded-md font-medium"
+                    >
+                        <ImageIcon className="size-4 mr-2.5 text-cyan-500 shrink-0" />
+                        Back Side Image (PNG)
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator className="my-1" />
+                    <DropdownMenuItem
+                        onClick={() => handleFrontendDownload("print")}
+                        className="cursor-pointer text-xs py-1.5 rounded-md font-medium"
+                    >
+                        <Printer className="size-4 mr-2.5 text-amber-500 shrink-0" />
+                        Print ID Card Directly
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button
                 variant="outline"
                 size="sm"
@@ -230,6 +396,7 @@ const ShowCard = ({ id }: { id: number }) => {
                                 backFields={backFields}
                                 studentData={holderData}
                                 studentName={String(snapshot.name ?? "")}
+                                verificationUrl={card?.verification_url}
                             />
                         </CardContent>
                     </Card>
@@ -332,6 +499,38 @@ const ShowCard = ({ id }: { id: number }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Hidden Off-Screen Container for 100% Pixel-Perfect Export */}
+            {templatePreviewData && (
+                <div
+                    aria-hidden="true"
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: "-9999px",
+                        opacity: 0,
+                        pointerEvents: "none",
+                        zIndex: -9999,
+                    }}
+                >
+                    <IdCardFront
+                        ref={frontExportRef}
+                        data={templatePreviewData}
+                        selectedFields={frontFields}
+                        studentData={holderData}
+                        verificationUrl={card?.verification_url}
+                        noShadow
+                    />
+                    <IdCardBack
+                        ref={backExportRef}
+                        data={templatePreviewData}
+                        selectedFields={backFields}
+                        studentData={holderData}
+                        verificationUrl={card?.verification_url}
+                        noShadow
+                    />
+                </div>
+            )}
         </>
     );
 };

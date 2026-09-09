@@ -56,7 +56,7 @@ export function InventoryItemDialog({ open, onClose, data }: InventoryItemDialog
     setValue,
     formState: { errors },
   } = useForm<InventoryItemFormInputValues>({
-    resolver: zodResolver(InventoryItemFormSchema),
+    resolver: zodResolver(InventoryItemFormSchema) as any,
     defaultValues: INVENTORY_ITEM_FORM_INITIAL as InventoryItemFormInputValues,
     mode: "onChange",
   });
@@ -271,7 +271,7 @@ export function InventoryItemDialog({ open, onClose, data }: InventoryItemDialog
       title={isEditMode ? "Edit Item" : "Add Item"}
       open={open}
       onClose={onClose}
-      handleSubmit={handleSubmit((data) => onSubmit(data as InventoryItemFormValues))}
+      handleSubmit={handleSubmit((data: any) => onSubmit(data as unknown as InventoryItemFormValues))}
       isLoading={isSaving || (isEditMode && isLoadingDetail)}
       className="sm:max-w-[520px]"
     >

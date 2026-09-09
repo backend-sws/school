@@ -36,6 +36,10 @@ class IdCard extends Model
         'printed_at'    => 'datetime',
     ];
 
+    protected $appends = [
+        'verification_url',
+    ];
+
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);

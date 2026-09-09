@@ -1,18 +1,18 @@
 import React, { useState, useMemo, useRef } from "react";
 import { isSameDay, startOfDay } from "date-fns";
 
-import { Head, usePage } from "@inertiajs/react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Head, Link, usePage } from "@inertiajs/react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Each from "@/components/Each";
 import {
   ArrowRight,
   ClipboardList,
   FileText,
-  Film,
   Hash,
   Layers,
   Megaphone,
+  MoreVertical,
   Paperclip,
   Pencil,
   Play,
@@ -21,9 +21,16 @@ import {
   Video,
   BookOpen,
   X,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Download,
+  ExternalLink,
+  Send,
+  Star,
+  Trash2,
+  CheckCircle2,
+  Clock,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import lmsApi from "@/lib/api/lmsApi";
 import { LMS_SUBJECT_DETAIL_TABS } from "@/constants/page/admin/lms";
@@ -37,6 +44,10 @@ import { LmsAnnouncementDialog } from "@/components/admin/lmsAnnouncementDialog"
 import { LmsMaterialDialog } from "@/components/admin/lmsMaterialDialog";
 import { LmsRecordingDialog } from "@/components/admin/lmsRecordingDialog";
 import { LmsTestQuestionManager } from "@/components/admin/lmsTestQuestionManager";
+import { LmsAssignmentSubmissionsDialog } from "@/components/admin/lmsAssignmentSubmissionsDialog";
+import { LmsAssignmentSubmitDialog } from "@/components/student/lmsAssignmentSubmitDialog";
+import { LmsTestTakingView } from "@/components/student/lmsTestTakingView";
+import { StudentClassProfileDrawer } from "@/components/admin/studentClassProfileDrawer";
 import { PageContainer } from "@/components/shared/page/PageContainer";
 import { FilterBar } from "@/components/filter-bar";
 import useSearchFilter from "@/hooks/useSearchfilter";
@@ -49,11 +60,20 @@ import { Calendar } from "@/components/ui/calendar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LmsClassesQueryKeys } from "@/lib/querykey/lmsClasses";
 import { useInstitutionContent } from "@/hooks/useInstitutionContent";
+import R2Api from "@/lib/api/r2Api";
 import {
   LMS_CLASSES_PERMISSIONS,
   getLmsSubjectDetailContent,
   getLmsSubjectDetailBreadcrumbs,
 } from "@/constants/lmsClasses/formConfig";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "sonner";
 
 const STUDENT_MY_CLASSES_BREADCRUMBS = [
   { title: "My Portal", href: "/student-portal/dashboard" },
@@ -75,12 +95,44 @@ type AllocationItem = {
   instructor: { id: number; name: string } | null;
 };
 
-type AssignmentRow = { id: number; title: string; type: string; due_at?: string | null; max_score?: number | string | null };
+type SubmissionSummary = {
+  id: number;
+  status: "draft" | "submitted" | "graded";
+  score?: number | string | null;
+  feedback?: string | null;
+  notes?: string | null;
+  file_path?: string | null;
+  file_url?: string | null;
+  submitted_at?: string | null;
+  attempt_number?: number;
+  submission_history?: Array<{
+    attempt: number;
+    submitted_at: string;
+    file_path?: string | null;
+    file_url?: string | null;
+    notes?: string | null;
+    score?: number | string | null;
+    feedback?: string | null;
+    status?: string;
+  }>;
+};
+
+type AssignmentRow = {
+  id: number;
+  title: string;
+  type: string;
+  due_at?: string | null;
+  max_score?: number | string | null;
+  file_path?: string | null;
+  file_url?: string | null;
+  my_submission?: SubmissionSummary | null;
+  submissions_count?: number;
+};
 type TestRow = { id: number; title: string; duration_minutes?: number | null; max_attempts?: number; questions_count?: number; available_from?: string | null };
 type LiveSessionRow = { id: number; title: string; scheduled_at?: string | null; meeting_url?: string | null };
-type RecordingRow = { id: number; title: string; video_url?: string | null; file_path?: string | null; published_at?: string | null };
+type RecordingRow = { id: number; title: string; video_url?: string | null; file_path?: string | null; file_url?: string | null; published_at?: string | null };
 type AnnouncementRow = { id: number; title: string; body?: string | null; published_at?: string | null };
-type MaterialRow = { id: number; title: string; file_path: string };
+type MaterialRow = { id: number; title: string; file_path: string; file_url?: string | null };
 
 type TabId = "announcements" | "curriculum" | "assessments" | "sessions" | "recordings" | "resources" | "students";
 
@@ -100,6 +152,9 @@ const LmsSubjectShow = () => {
   const materialDialog = useDisclosure<boolean>();
   const recordingDialog = useDisclosure<boolean>();
   const questionManagerDisclosure = useDisclosure<{ testId: number; testTitle: string }>();
+  const submissionsDisclosure = useDisclosure<AssignmentRow>();
+  const submitAssignmentDisclosure = useDisclosure<AssignmentRow>();
+  const testTakingDisclosure = useDisclosure<{ testId: number }>();
   const { filter, handleFilterBykey } = useSearchFilter({
     type: "all",
     search: "",
@@ -110,6 +165,9 @@ const LmsSubjectShow = () => {
   const canSeeStudentsTab = useCan("create_lms_classes");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const calendarRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const [deleteTarget, setDeleteTarget] = useState<{ type: "announcement" | "assignment" | "test" | "session" | "recording" | "material"; id: number; title: string } | null>(null);
+  const [selectedStudentForProfile, setSelectedStudentForProfile] = useState<{ id: number; name: string } | null>(null);
 
   // ─── Queries (centralized keys) ──────────────────────
   const { data: classData, isLoading } = useQuery({
@@ -177,6 +235,63 @@ const LmsSubjectShow = () => {
   const announcements = ((announcementsRes as { data?: AnnouncementRow[] })?.data ?? []) as AnnouncementRow[];
   const materials = ((materialsRes as { data?: MaterialRow[] })?.data ?? []) as MaterialRow[];
 
+  // ─── Delete mutation ──────────────────────────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: () => {
+      if (!deleteTarget) throw new Error("No target");
+      const { type, id } = deleteTarget;
+      if (type === "announcement") return lmsApi.announcements.destroy(classId, id);
+      if (type === "assignment") return lmsApi.assignments.destroy(classId, id);
+      if (type === "test") return lmsApi.tests.destroy(classId, id);
+      if (type === "session") return lmsApi.liveSessions.destroy(classId, id);
+      if (type === "recording") return lmsApi.recordings.destroy(classId, id);
+      return lmsApi.materials.destroy(classId, id);
+    },
+    onSuccess: () => {
+      toast.success("Deleted successfully.");
+      setDeleteTarget(null);
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.assignments(classId) });
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.tests(classId) });
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.liveSessions(classId) });
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.recordings(classId) });
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.announcements(classId) });
+      queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.materials(classId) });
+    },
+    onError: () => toast.error("Failed to delete. Please try again."),
+  });
+
+  const getFileUrl = (filePath?: string | null) => {
+    if (!filePath) return "#";
+    return R2Api.imageSrc(filePath);
+  };
+
+  const downloadFile = async (e: React.MouseEvent, url: string, filename?: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!url || url === "#") return;
+
+    try {
+      const toastId = toast.loading("Downloading file...");
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch file");
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      const rawName = filename || url.split("/").pop()?.split("?")[0] || "download";
+      const ext = url.split("/").pop()?.split("?")[0]?.split(".").pop();
+      link.download = rawName.includes(".") ? rawName : (ext ? `${rawName}.${ext}` : rawName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      toast.dismiss(toastId);
+      toast.success("Download completed");
+    } catch {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   // --- Filtering Logic ---
   const filteredAnnouncements = useMemo(() => {
     if (!selectedDate) return announcements;
@@ -224,7 +339,7 @@ const LmsSubjectShow = () => {
       return [
         ...STUDENT_MY_CLASSES_BREADCRUMBS,
         { title: classDetail?.name ?? "Class", href: `/student-portal/my-classes/${classId}` },
-        { title: subjectName, href: `/lms/classes/${classId}/subjects/${allocationId}` },
+        { title: subjectName, href: `/student-portal/my-classes/${classId}/subjects/${allocationId}` },
       ];
     }
     return getLmsSubjectDetailBreadcrumbs(
@@ -260,7 +375,37 @@ const LmsSubjectShow = () => {
             testId={questionManagerDisclosure.data?.testId ?? 0}
             testTitle={questionManagerDisclosure.data?.testTitle ?? ""}
           />
+          <LmsAssignmentSubmissionsDialog
+            open={submissionsDisclosure.isOpen}
+            onClose={() => submissionsDisclosure.onClose()}
+            classId={classId}
+            assignment={submissionsDisclosure.data ?? null}
+          />
+          <ConfirmDialog
+            open={!!deleteTarget}
+            onClose={() => setDeleteTarget(null)}
+            title={`Delete ${deleteTarget?.type ?? "item"}`}
+            description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+            onConfirm={() => deleteMutation.mutate()}
+            isLoading={deleteMutation.isPending}
+            variant="danger"
+            confirmText="Delete"
+          />
         </PermissionGate>
+      )}
+      <LmsAssignmentSubmitDialog
+        open={submitAssignmentDisclosure.isOpen}
+        onClose={() => submitAssignmentDisclosure.onClose()}
+        classId={classId}
+        assignment={submitAssignmentDisclosure.data ?? null}
+      />
+      {testTakingDisclosure.isOpen && testTakingDisclosure.data && (
+        <LmsTestTakingView
+          open={testTakingDisclosure.isOpen}
+          onClose={() => testTakingDisclosure.onClose()}
+          classId={classId}
+          testId={testTakingDisclosure.data.testId}
+        />
       )}
       <PageContainer maxWidth="2xl" className="space-y-8">
         {isLoading && (
@@ -476,19 +621,33 @@ const LmsSubjectShow = () => {
                     }
                     render={(a) => (
                       <Card className="rounded-2xl border-border/40 bg-white/50 backdrop-blur-sm p-5 hover:border-amber-500/20 transition-all min-h-[7.5rem] flex flex-col">
-                        <div className="flex gap-4 flex-1 min-h-0">
+                        <div className="flex gap-3 flex-1 min-h-0">
                           <div className="size-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
                             <Megaphone className="size-5" />
                           </div>
-                          <div className="flex-1 min-w-0 space-y-3">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                              <h4 className="font-bold text-lg leading-tight line-clamp-2">{a.title}</h4>
-                              {a.published_at && (
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground whitespace-nowrap">
-                                  {new Date(a.published_at).toLocaleDateString(undefined, { dateStyle: 'long' })}
-                                </p>
-                              )}
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="font-bold text-base leading-tight line-clamp-2 flex-1">{a.title}</h4>
+                              <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon-sm" className="size-6 rounded-lg shrink-0 opacity-60 hover:opacity-100">
+                                      <MoreVertical className="size-3.5" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="rounded-xl">
+                                    <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "announcement", id: a.id, title: a.title })}>
+                                      <Trash2 className="size-3.5" />Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </PermissionGate>
                             </div>
+                            {a.published_at && (
+                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                {new Date(a.published_at).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                              </p>
+                            )}
                             {a.body && (
                               <p className="text-sm text-foreground/80 leading-relaxed line-clamp-3">
                                 {a.body}
@@ -544,23 +703,121 @@ const LmsSubjectShow = () => {
                               <div className="size-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary shrink-0">
                                 <FileText className="size-5" />
                               </div>
-                              <Badge variant="outline" className="rounded-xl border-border/60 bg-white text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 shrink-0">
-                                {a.type}
-                              </Badge>
+                              <div className="flex items-center gap-1 shrink-0">
+                                <Badge variant="outline" className="rounded-xl border-border/60 bg-white text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5">
+                                  {a.type}
+                                </Badge>
+                                <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon-sm" className="size-6 rounded-lg opacity-60 hover:opacity-100">
+                                        <MoreVertical className="size-3.5" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="rounded-xl">
+                                      <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "assignment", id: a.id, title: a.title })}>
+                                        <Trash2 className="size-3.5" />Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </PermissionGate>
+                              </div>
                             </div>
-                            <h4 className="text-lg font-bold tracking-tight line-clamp-2">{a.title}</h4>
+                            <h4 className="text-base font-bold tracking-tight line-clamp-2">{a.title}</h4>
                             <div className="flex items-center gap-2 text-muted-foreground/80">
                               <CalendarIcon className="size-3.5 shrink-0" />
                               <span className="text-xs font-bold uppercase tracking-tighter">Due: {a.due_at ? new Date(a.due_at).toLocaleDateString() : "No date"}</span>
                             </div>
                             {a.max_score != null && String(a.max_score).trim() !== "" && (
-                              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Max {a.max_score} pts</p>
+                              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1"><Star className="size-3" />Max {a.max_score} pts</p>
                             )}
-                            <div className="pt-1 mt-auto">
-                              <Button variant="ghost" size="sm" className="w-full justify-between rounded-xl hover:bg-primary/5 hover:text-primary font-bold text-xs uppercase tracking-widest transition-all">
-                                {CONTENT.viewSubmissionsBtn}
-                                <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-                              </Button>
+                            {a.file_path && (
+                              <div className="pt-1">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 px-2 text-[10px] font-bold text-primary bg-primary/5 hover:bg-primary hover:text-white rounded-lg gap-1 transition-all"
+                                  onClick={(e) => downloadFile(e, (a as any).file_url || getFileUrl(a.file_path), a.title)}
+                                >
+                                  <Download className="size-3" />Attachment
+                                </Button>
+                              </div>
+                            )}
+                            {a.my_submission && (
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <Badge
+                                  className={cn(
+                                    "rounded-full text-[10px] font-black uppercase tracking-wider px-2 py-0.5 border",
+                                    a.my_submission.status === "graded"
+                                      ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20"
+                                      : "bg-blue-500/10 text-blue-700 border-blue-500/20"
+                                  )}
+                                >
+                                  {a.my_submission.status === "graded" ? (
+                                    <>
+                                      <CheckCircle2 className="size-2.5 mr-1 inline" />
+                                      Graded: {a.my_submission.score != null ? `${a.my_submission.score}${a.max_score ? `/${a.max_score}` : ""} pts` : "Graded"}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Clock className="size-2.5 mr-1 inline" />
+                                      Submitted (Attempt #{a.my_submission.attempt_number || 1})
+                                    </>
+                                  )}
+                                </Badge>
+                                {a.my_submission.submitted_at && (
+                                  <span className="text-[10px] text-muted-foreground font-medium">
+                                    on {new Date(a.my_submission.submitted_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            <div className="pt-1 mt-auto space-y-1">
+                              <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="w-full justify-between rounded-xl hover:bg-primary/5 hover:text-primary font-bold text-xs uppercase tracking-widest transition-all"
+                                  onClick={() => submissionsDisclosure.onOpen(a)}
+                                >
+                                  <span>
+                                    {CONTENT.viewSubmissionsBtn}
+                                    {a.submissions_count != null && (
+                                      <span className="ml-1 text-[10px] text-muted-foreground">({a.submissions_count})</span>
+                                    )}
+                                  </span>
+                                  <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                                </Button>
+                              </PermissionGate>
+                              <PermissionGate can="view_my_lms_classes">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className={cn(
+                                    "w-full justify-between rounded-xl font-bold text-xs uppercase tracking-widest transition-all",
+                                    a.my_submission
+                                      ? "bg-blue-500/5 text-blue-700 hover:bg-blue-500/10 hover:text-blue-800"
+                                      : "hover:bg-primary/5 hover:text-primary"
+                                  )}
+                                  onClick={() => submitAssignmentDisclosure.onOpen(a)}
+                                >
+                                  <span className="flex items-center gap-1.5">
+                                    {a.my_submission ? (
+                                      <>
+                                        <CheckCircle2 className="size-3.5 text-blue-600" />
+                                        View / Resubmit
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Send className="size-3.5" />
+                                        Submit Assignment
+                                      </>
+                                    )}
+                                  </span>
+                                  <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                                </Button>
+                              </PermissionGate>
                             </div>
                           </div>
                         </Card>
@@ -598,16 +855,32 @@ const LmsSubjectShow = () => {
                             <div className="size-10 rounded-xl bg-indigo-500/5 flex items-center justify-center text-indigo-600 shrink-0">
                               <FileText className="size-5" />
                             </div>
-                            <Badge className="rounded-xl bg-indigo-500/10 text-indigo-700 border-none font-black uppercase tracking-widest text-[9px] shrink-0">
-                              {t.duration_minutes ?? 0} min
-                            </Badge>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <Badge className="rounded-xl bg-indigo-500/10 text-indigo-700 border-none font-black uppercase tracking-widest text-[9px]">
+                                {t.duration_minutes ?? 0} min
+                              </Badge>
+                              <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon-sm" className="size-6 rounded-lg opacity-60 hover:opacity-100">
+                                      <MoreVertical className="size-3.5" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="rounded-xl">
+                                    <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "test", id: t.id, title: t.title })}>
+                                      <Trash2 className="size-3.5" />Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </PermissionGate>
+                            </div>
                           </div>
-                          <h4 className="text-lg font-bold tracking-tight line-clamp-2">{t.title}</h4>
+                          <h4 className="text-base font-bold tracking-tight line-clamp-2">{t.title}</h4>
                           <div className="flex items-center gap-4 text-muted-foreground/70">
                             <span className="text-[10px] font-black uppercase tracking-widest">Questions: {t.questions_count ?? 0}</span>
                             <span className="text-[10px] font-black uppercase tracking-widest">Attempts: {t.max_attempts ?? 0}</span>
                           </div>
-                          <div className="pt-2 mt-auto">
+                          <div className="pt-2 mt-auto space-y-1">
                             <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
                               <Button
                                 variant="ghost"
@@ -616,6 +889,17 @@ const LmsSubjectShow = () => {
                                 onClick={() => questionManagerDisclosure.onOpen({ testId: t.id, testTitle: t.title })}
                               >
                                 {CONTENT.manageQuestionsBtn}
+                                <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                              </Button>
+                            </PermissionGate>
+                            <PermissionGate can="view_my_lms_classes">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="w-full justify-between rounded-xl hover:bg-indigo-500/5 hover:text-indigo-600 font-bold text-xs uppercase tracking-widest transition-all"
+                                onClick={() => testTakingDisclosure.onOpen({ testId: t.id })}
+                              >
+                                <Play className="size-3.5 mr-1.5" />Start Test
                                 <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                               </Button>
                             </PermissionGate>
@@ -656,15 +940,42 @@ const LmsSubjectShow = () => {
                               <div className="size-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 shrink-0">
                                 <Video className="size-5" />
                               </div>
-                              <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                              <div className="flex items-center gap-1">
+                                <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                                <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon-sm" className="size-6 rounded-lg opacity-60 hover:opacity-100">
+                                        <MoreVertical className="size-3.5" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="rounded-xl">
+                                      <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "session", id: s.id, title: s.title })}>
+                                        <Trash2 className="size-3.5" />Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </PermissionGate>
+                              </div>
                             </div>
                             <h4 className="font-bold tracking-tight line-clamp-2">{s.title}</h4>
                             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                               {s.scheduled_at ? new Date(s.scheduled_at).toLocaleString() : "TBD"}
                             </p>
                           </div>
-                          <Button variant="outline" className="mt-4 rounded-2xl border-sky-500/20 bg-sky-500/5 text-sky-700 hover:bg-sky-500 hover:text-white font-bold uppercase tracking-widest text-[10px] transition-all">
-                            {CONTENT.joinBtn}
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "mt-4 rounded-2xl border-sky-500/20 bg-sky-500/5 text-sky-700 hover:bg-sky-500 hover:text-white font-bold uppercase tracking-widest text-[10px] transition-all gap-2",
+                              !s.meeting_url && "opacity-50 cursor-not-allowed"
+                            )}
+                            onClick={() => {
+                              if (s.meeting_url) window.open(s.meeting_url, "_blank", "noopener,noreferrer");
+                              else toast.info("No meeting link has been added yet.");
+                            }}
+                          >
+                            <ExternalLink className="size-3.5" />
+                            {s.meeting_url ? CONTENT.joinBtn : "No Link Yet"}
                           </Button>
                         </Card>
                       )}
@@ -702,10 +1013,28 @@ const LmsSubjectShow = () => {
                           className="rounded-t-2xl rounded-b-none"
                         />
                         <div className="p-4 pt-3 flex-1">
-                          <h4 className="font-bold tracking-tight text-sm line-clamp-2">{r.title}</h4>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
-                            {r.published_at ? new Date(r.published_at).toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "Recording"}
-                          </p>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold tracking-tight text-sm line-clamp-2">{r.title}</h4>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                                {r.published_at ? new Date(r.published_at).toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "Recording"}
+                              </p>
+                            </div>
+                            <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon-sm" className="size-6 rounded-lg opacity-60 hover:opacity-100 shrink-0">
+                                    <MoreVertical className="size-3.5" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl">
+                                  <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "recording", id: r.id, title: r.title })}>
+                                    <Trash2 className="size-3.5" />Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </PermissionGate>
+                          </div>
                         </div>
                       </Card>
                     )}
@@ -732,19 +1061,77 @@ const LmsSubjectShow = () => {
                         <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{CONTENT.noResources}</p>
                       </div>
                     }
-                    render={(m) => (
-                      <Card className="group overflow-hidden rounded-2xl border-border/40 bg-white/50 backdrop-blur-sm p-5 hover:border-primary/20 transition-all min-h-[7.5rem] flex flex-col">
-                        <div className="flex items-center gap-4 flex-1 min-h-0">
-                          <div className="size-10 flex-shrink-0 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
-                            <Hash className="size-5" />
+                    render={(m) => {
+                      const fileUrl = (m as any).file_url || getFileUrl(m.file_path);
+                      const isImg = /\.(jpe?g|png|webp|gif|svg)$/i.test(m.file_path || "");
+                      const isPdf = /\.pdf$/i.test(m.file_path || "");
+                      return (
+                        <Card className="group overflow-hidden rounded-2xl border-border/40 bg-white/50 backdrop-blur-sm p-5 hover:border-primary/20 transition-all min-h-[7.5rem] flex flex-col">
+                          <div className="flex items-center gap-4 flex-1 min-h-0">
+                            <div className="size-11 flex-shrink-0 rounded-xl bg-primary/5 border border-border/40 flex items-center justify-center text-primary overflow-hidden">
+                              {isImg ? (
+                                <img
+                                  src={fileUrl}
+                                  alt={m.title}
+                                  className="size-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = "none";
+                                  }}
+                                />
+                              ) : isPdf ? (
+                                <FileText className="size-5 text-red-500" />
+                              ) : (
+                                <Paperclip className="size-5" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-sm tracking-tight truncate">{m.title}</h4>
+                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Study Material</p>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                onClick={(e) => downloadFile(e, fileUrl, m.title)}
+                                className="flex items-center justify-center size-8 rounded-lg bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all cursor-pointer"
+                                title="Download"
+                              >
+                                <Download className="size-4" />
+                              </Button>
+                              <a
+                                href={fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center size-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+                                title="View in New Tab"
+                              >
+                                <ExternalLink className="size-4" />
+                              </a>
+                              <PermissionGate can={LMS_CLASSES_PERMISSIONS.create}>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon-sm" className="size-8 rounded-lg opacity-60 hover:opacity-100">
+                                      <MoreVertical className="size-3.5" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="rounded-xl">
+                                    <DropdownMenuItem className="gap-2" onClick={(e) => downloadFile(e, fileUrl, m.title)}>
+                                      <Download className="size-3.5" />Download File
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="gap-2" onClick={() => window.open(fileUrl, "_blank", "noopener,noreferrer")}>
+                                      <ExternalLink className="size-3.5" />Open in New Tab
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive gap-2" onClick={() => setDeleteTarget({ type: "material", id: m.id, title: m.title })}>
+                                      <Trash2 className="size-3.5" />Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </PermissionGate>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-sm tracking-tight truncate">{m.title}</h4>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">File</p>
-                          </div>
-                        </div>
-                      </Card>
-                    )}
+                        </Card>
+                      );
+                    }}
                   />
                 </div>
               </TabsContent>
@@ -765,22 +1152,52 @@ const LmsSubjectShow = () => {
                             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{CONTENT.noStudents}</p>
                           </div>
                         }
-                        render={(enrollment: { id: number; user?: { name?: string; email?: string } }) => (
-                          <div className="group flex items-center gap-4 rounded-2xl border border-border/40 bg-white/50 backdrop-blur-sm p-5 hover:border-primary/20 transition-all hover:bg-white/80 min-h-[7.5rem]">
-                            <Avatar className="h-12 w-12 border-2 border-primary/10 shrink-0 transition-transform group-hover:scale-105">
-                              <AvatarFallback className="bg-primary/5 text-primary text-xs font-black uppercase">
-                                {enrollment.user?.name?.split(" ").map((n: string) => n[0]).join("") ?? "?"}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-bold tracking-tight truncate">{enrollment.user?.name}</p>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">{enrollment.user?.email}</p>
+                        render={(enrollment: { id: number; user_id?: number; user?: { id?: number; name?: string; email?: string } }) => {
+                          const studentUserId = enrollment.user?.id || enrollment.user_id;
+                          const studentName = enrollment.user?.name || "Student";
+                          const initials = studentName.split(" ").map((n: string) => n[0]).join("") || "?";
+
+                          return (
+                            <div
+                              onClick={() => studentUserId && setSelectedStudentForProfile({ id: studentUserId, name: studentName })}
+                              className="group flex items-center gap-4 rounded-2xl border border-border/40 bg-white/50 backdrop-blur-sm p-5 hover:border-primary/40 hover:bg-white/90 hover:shadow-md transition-all cursor-pointer min-h-[7.5rem]"
+                            >
+                              <Avatar className="h-12 w-12 border-2 border-primary/10 shrink-0 transition-transform group-hover:scale-105">
+                                <AvatarFallback className="bg-primary/5 text-primary text-xs font-black uppercase">
+                                  {initials}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold tracking-tight truncate group-hover:text-primary transition-colors">{studentName}</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">
+                                  {enrollment.user?.email || "No email"}
+                                </p>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  View 360° Profile & Records →
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1 shrink-0">
+                                {studentUserId && (
+                                  <Link
+                                    href={`/students/manage/${studentUserId}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    title="Open Full Student Profile"
+                                    className="flex items-center justify-center size-8 rounded-xl bg-muted/60 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+                                  >
+                                    <ExternalLink className="size-4" />
+                                  </Link>
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="icon-sm"
+                                  className="rounded-xl shrink-0 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all"
+                                >
+                                  <ArrowRight className="size-4" />
+                                </Button>
+                              </div>
                             </div>
-                            <Button variant="ghost" size="icon-sm" className="rounded-xl shrink-0 opacity-0 group-hover:opacity-100 transition-all">
-                              <ArrowRight className="size-4 text-muted-foreground" />
-                            </Button>
-                          </div>
-                        )}
+                          );
+                        }}
                       />
                     </div>
                   </div>
@@ -789,6 +1206,15 @@ const LmsSubjectShow = () => {
             </div>
           </div>
         </Tabs>
+
+        {/* ── Student 360° Profile & Vault Drawer ── */}
+        <StudentClassProfileDrawer
+          open={!!selectedStudentForProfile}
+          onClose={() => setSelectedStudentForProfile(null)}
+          userId={selectedStudentForProfile?.id}
+          classId={classId}
+          studentName={selectedStudentForProfile?.name}
+        />
 
       </PageContainer>
     </>

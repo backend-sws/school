@@ -133,19 +133,19 @@ const LmsClassRoomShow = () => {
   const allocationId = roomId !== "general" ? Number(roomId) : undefined;
   const allocationParams = allocationId != null ? { allocation_id: allocationId } : {};
 
-  const { data: assignmentsData, isLoading: assignmentsLoading } = useQuery({
+  const { data: assignmentsData, isLoading: assignmentsLoading, refetch: refetchAssignments } = useQuery({
     queryKey: ["lms-class-assignments", classId, assignmentTypeFilter, allocationId ?? "all"],
     queryFn: () => lmsApi.assignments.index(classId, { per_page: 50, ...allocationParams, ...(assignmentTypeFilter ? { type: assignmentTypeFilter } : {}) }),
     enabled: !!classId,
   });
 
-  const { data: testsData, isLoading: testsLoading } = useQuery({
+  const { data: testsData, isLoading: testsLoading, refetch: refetchTests } = useQuery({
     queryKey: ["lms-class-tests", classId, allocationId ?? "all"],
     queryFn: () => lmsApi.tests.index(classId, { per_page: 50, ...allocationParams }),
     enabled: !!classId,
   });
 
-  const { data: liveSessionsData } = useQuery({
+  const { data: liveSessionsData, refetch: refetchLiveSessions } = useQuery({
     queryKey: ["lms-class-live-sessions", classId, allocationId ?? "all"],
     queryFn: () => lmsApi.liveSessions.index(classId, { per_page: 20, ...allocationParams }),
     enabled: !!classId,
@@ -202,9 +202,9 @@ const LmsClassRoomShow = () => {
       <Head title={classDetail?.name ? `${classDetail.name} – ${roomLabel}` : "LMS Class"} />
       {classId && (
         <>
-          <LmsAssignmentDialog open={assignmentDialog.isOpen} onClose={() => assignmentDialog.onClose()} classId={classId} allocationId={allocationId} />
-          <LmsTestDialog open={testDialog.isOpen} onClose={() => testDialog.onClose()} classId={classId} allocationId={allocationId} />
-          <LmsLiveSessionDialog open={liveSessionDialog.isOpen} onClose={() => liveSessionDialog.onClose()} classId={classId} allocationId={allocationId} />
+          <LmsAssignmentDialog open={assignmentDialog.isOpen} onClose={() => assignmentDialog.onClose()} onSuccess={() => refetchAssignments()} classId={classId} allocationId={allocationId} />
+          <LmsTestDialog open={testDialog.isOpen} onClose={() => testDialog.onClose()} onSuccess={() => refetchTests()} classId={classId} allocationId={allocationId} />
+          <LmsLiveSessionDialog open={liveSessionDialog.isOpen} onClose={() => liveSessionDialog.onClose()} onSuccess={() => refetchLiveSessions()} classId={classId} allocationId={allocationId} />
           <LmsAttendanceDialog open={attendanceDialog.isOpen} onClose={() => attendanceDialog.onClose()} classId={classId} allocationId={allocationId} />
         </>
       )}
@@ -286,7 +286,7 @@ const LmsClassRoomShow = () => {
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Attendance Rate</p>
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-black tracking-tighter text-foreground">
-                          {attendanceRes?.data?.summary?.percentage_present ?? 0}%
+                          {attendanceRes?.summary?.percentage_present ?? 0}%
                         </span>
                         <span className="text-[10px] font-bold text-muted-foreground">THIS MONTH</span>
                       </div>
@@ -302,7 +302,7 @@ const LmsClassRoomShow = () => {
                       </Button>
                     </PermissionGate>
                   </div>
-                  <Progress value={attendanceRes?.data?.summary?.percentage_present ?? 0} className="h-2 rounded-full bg-primary/10" />
+                  <Progress value={attendanceRes?.summary?.percentage_present ?? 0} className="h-2 rounded-full bg-primary/10" />
                 </CardContent>
               </Card>
             </div>

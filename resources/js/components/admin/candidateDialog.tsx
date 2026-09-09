@@ -94,7 +94,7 @@ export function CandidateDialog({ open, onClose, candidate }: CandidateDialogPro
 
   // Form setup with Zod validation
   const { handleSubmit, control, setValue, getValues, watch, reset } = useForm<CandidateFormData>({
-    resolver: zodResolver(candidateFormSchema),
+    resolver: zodResolver(candidateFormSchema) as any,
     mode: "onChange", // Enable real-time validation
   });
 
@@ -179,7 +179,7 @@ export function CandidateDialog({ open, onClose, candidate }: CandidateDialogPro
       open={open}
       onClose={onClose}
       className="sm:max-w-5xl max-h-[85vh]"
-      handleSubmit={isViewMode ? undefined : handleSubmit(onSubmit)}
+      handleSubmit={isViewMode ? undefined : handleSubmit(onSubmit as any)}
     >
       <div className="max-h-[calc(85vh-150px)] overflow-y-auto pr-4 space-y-6">
         {/* Basic Fields */}

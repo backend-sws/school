@@ -155,7 +155,7 @@ export const LMS_SUBJECT_DETAIL_TABS: {
   permissionRequired?: string;
 }[] = [
     { id: "announcements", label: "Announcements", icon: Megaphone },
-    { id: "curriculum", label: "Curriculum", icon: ClipboardList },
+    { id: "curriculum", label: "Assignments", icon: ClipboardList },
     { id: "assessments", label: "Assessments", icon: BookOpen },
     { id: "sessions", label: "Live Sessions", icon: Video },
     { id: "recordings", label: "Recordings", icon: Film },

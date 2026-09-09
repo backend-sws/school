@@ -2,7 +2,7 @@ import React from "react";
 import { ModalDialog } from "../shared/Modal";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
 import Each from "@/components/Each";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import lmsApi from "@/lib/api/lmsApi";
@@ -14,14 +14,15 @@ import { toast } from "sonner";
 interface LmsAnnouncementDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId: number;
 }
 
-export function LmsAnnouncementDialog({ open, onClose, classId, allocationId }: LmsAnnouncementDialogProps) {
+export function LmsAnnouncementDialog({ open, onClose, onSuccess, classId, allocationId }: LmsAnnouncementDialogProps) {
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<LmsAnnouncementFormValues>({
-    resolver: zodResolver(LmsAnnouncementSchema),
+    resolver: zodResolver(LmsAnnouncementSchema) as Resolver<LmsAnnouncementFormValues>,
     defaultValues: { title: "", body: "" },
     mode: "onChange",
   });
@@ -34,6 +35,7 @@ export function LmsAnnouncementDialog({ open, onClose, classId, allocationId }: 
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.announcements(classId) });
+      onSuccess?.();
       toast.success("Announcement posted successfully!");
       onClose();
       reset();

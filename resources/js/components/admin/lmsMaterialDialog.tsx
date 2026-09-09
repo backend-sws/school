@@ -3,7 +3,7 @@ import { ModalDialog } from "../shared/Modal";
 import ControlledFormComponent from "../shared/ControlledFormComponent";
 import Each from "@/components/Each";
 import { FORM_TYPE } from "@/constants/shared/form";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import lmsApi from "@/lib/api/lmsApi";
@@ -23,17 +23,18 @@ import { toast } from "sonner";
 interface LmsMaterialDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId?: number;
 }
 
-export function LmsMaterialDialog({ open, onClose, classId, allocationId }: LmsMaterialDialogProps) {
+export function LmsMaterialDialog({ open, onClose, onSuccess, classId, allocationId }: LmsMaterialDialogProps) {
   const queryClient = useQueryClient();
   const [sourceType, setSourceType] = useState<typeof LMS_RESOURCE_SOURCE[keyof typeof LMS_RESOURCE_SOURCE]>(LMS_RESOURCE_SOURCE.UPLOAD);
   const [uploadPath, setUploadPath] = useState<string | null>(null);
 
   const { handleSubmit, control, reset, watch } = useForm<LmsMaterialFormValues>({
-    resolver: zodResolver(LmsMaterialSchema),
+    resolver: zodResolver(LmsMaterialSchema) as Resolver<LmsMaterialFormValues>,
     defaultValues: { title: "", file_path: "", file_type: "" },
     mode: "onChange",
   });
@@ -69,6 +70,7 @@ export function LmsMaterialDialog({ open, onClose, classId, allocationId }: LmsM
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.materials(classId) });
+      onSuccess?.();
       toast.success("Resource uploaded successfully!");
       reset();
       setUploadPath(null);

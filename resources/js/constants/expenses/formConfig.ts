@@ -43,6 +43,7 @@ export const CATEGORY_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "e.g. Electricity Bill, Staff Salary",
     required: true,
     tooltip: "Enter a unique name for the expense category",
+    permission: CATEGORY_PERMISSIONS.create,
   },
   {
     name: "code",
@@ -51,6 +52,7 @@ export const CATEGORY_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "e.g. UTIL, SALARY",
     required: false,
     tooltip: "Short identifier code for the category",
+    permission: CATEGORY_PERMISSIONS.create,
   },
   {
     name: "description",
@@ -58,6 +60,7 @@ export const CATEGORY_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.TEXTAREA,
     placeholder: "Write details about this category...",
     required: false,
+    permission: CATEGORY_PERMISSIONS.create,
   },
   {
     name: "is_active",
@@ -68,6 +71,7 @@ export const CATEGORY_FORM_FIELDS: readonly FormFieldConfig[] = [
       { key: "inactive", value: "false", text: "Inactive" },
     ],
     required: true,
+    permission: CATEGORY_PERMISSIONS.create,
   },
 ] as const;
 
@@ -80,6 +84,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "Select Category",
     required: true,
     options: [], // Injected dynamically in Dialog
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "title",
@@ -87,6 +92,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.TEXT,
     placeholder: "e.g. Purchased Science Lab Test Tubes",
     required: true,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "amount",
@@ -94,12 +100,14 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.CURRENCY,
     placeholder: "0.00",
     required: true,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "date",
     label: "Expense Date",
     type: FORM_TYPE.DATE,
     required: true,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "payment_mode",
@@ -108,6 +116,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "Select payment mode",
     options: PAYMENT_MODE_OPTIONS,
     required: true,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "reference_no",
@@ -115,6 +124,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.TEXT,
     placeholder: "e.g. Cheque no, Transaction ID",
     required: false,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "payee",
@@ -122,6 +132,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.TEXT,
     placeholder: "e.g. XYZ Stationery Supplies",
     required: false,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "description",
@@ -129,6 +140,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.TEXTAREA,
     placeholder: "Additional details about this transaction...",
     required: false,
+    permission: EXPENSE_PERMISSIONS.create,
   },
   {
     name: "attachment",
@@ -137,6 +149,7 @@ export const EXPENSE_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "Invoice path or upload link",
     required: false,
     tooltip: "Upload receipt or invoice copy to store",
+    permission: EXPENSE_PERMISSIONS.create,
   },
 ] as const;
 
@@ -149,6 +162,7 @@ export const BUDGET_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "Select Session",
     required: true,
     options: [], // Injected dynamically
+    permission: BUDGET_PERMISSIONS.create,
   },
   {
     name: "expense_category_id",
@@ -157,6 +171,7 @@ export const BUDGET_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "Select Category",
     required: true,
     options: [], // Injected dynamically
+    permission: BUDGET_PERMISSIONS.create,
   },
   {
     name: "amount",
@@ -164,6 +179,7 @@ export const BUDGET_FORM_FIELDS: readonly FormFieldConfig[] = [
     type: FORM_TYPE.CURRENCY,
     placeholder: "0.00",
     required: true,
+    permission: BUDGET_PERMISSIONS.create,
   },
   {
     name: "alert_threshold",
@@ -172,6 +188,7 @@ export const BUDGET_FORM_FIELDS: readonly FormFieldConfig[] = [
     placeholder: "90",
     required: true,
     tooltip: "Warn user when expense usage reaches this percentage (e.g. 90%)",
+    permission: BUDGET_PERMISSIONS.create,
   },
 ] as const;
 
@@ -184,11 +201,12 @@ export const CATEGORY_DEFAULT_VALUES = {
 };
 
 export const EXPENSE_DEFAULT_VALUES = {
-  expense_category_id: "",
+  expense_category_id: 0,
   title: "",
-  amount: "",
+  amount: 0,
   date: new Date().toISOString().split("T")[0],
   payment_mode: "Cash",
+  status: "pending",
   reference_no: "",
   payee: "",
   description: "",

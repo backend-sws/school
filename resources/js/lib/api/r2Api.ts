@@ -174,7 +174,7 @@ const R2Api = {
   getViewUrl: (path: string) =>
     api.get<{ url: string }>("/r2/view-url", { params: { path } }),
 
-  /** URL for img src when image_url is an R2 path (uploads/...). */
+  /** URL for img/file src when image_url is an R2 path (uploads/...). */
   imageSrc: (imageUrl: string | undefined): string => {
     if (!imageUrl) return "";
     if (
@@ -185,12 +185,28 @@ const R2Api = {
     ) {
       return imageUrl;
     }
+
+    const cleanPath = imageUrl.replace(/^\/+/, "");
+    const normalized = cleanPath.startsWith("storage/uploads/")
+      ? cleanPath.replace(/^storage\//, "")
+      : cleanPath;
+
+    // Any upload path stored in Cloudflare R2
+    if (normalized.startsWith("uploads/")) {
+      const publicR2Url = (import.meta as any).env?.VITE_R2_URL;
+      if (publicR2Url) {
+        return `${publicR2Url.replace(/\/+$/, "")}/${normalized}`;
+      }
+      return `/api/v1/r2/asset?path=${encodeURIComponent(normalized)}`;
+    }
+
     if (imageUrl.startsWith("/")) {
       return imageUrl;
     }
+
     const publicR2Url = (import.meta as any).env?.VITE_R2_URL;
     if (publicR2Url) {
-      return `${publicR2Url.replace(/\/+$/, "")}/${imageUrl.replace(/^\/+/, "")}`;
+      return `${publicR2Url.replace(/\/+$/, "")}/${cleanPath}`;
     }
     return `/api/v1/r2/asset?path=${encodeURIComponent(imageUrl)}`;
   },

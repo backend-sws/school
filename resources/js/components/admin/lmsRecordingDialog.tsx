@@ -30,17 +30,18 @@ const RECORDING_SOURCE_ICONS: Record<string, React.ComponentType<{ className?: s
 interface LmsRecordingDialogProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   classId: number;
   allocationId?: number;
 }
 
-export function LmsRecordingDialog({ open, onClose, classId, allocationId }: LmsRecordingDialogProps) {
+export function LmsRecordingDialog({ open, onClose, onSuccess, classId, allocationId }: LmsRecordingDialogProps) {
   const queryClient = useQueryClient();
   const [sourceType, setSourceType] = useState<typeof LMS_RECORDING_SOURCE[keyof typeof LMS_RECORDING_SOURCE]>(LMS_RECORDING_SOURCE.VIDEO_LINK);
   const [uploadPath, setUploadPath] = useState<string | null>(null);
 
   const { handleSubmit, control, reset, watch, setValue } = useForm<LmsRecordingFormValues>({
-    resolver: zodResolver(LmsRecordingSchema),
+    resolver: zodResolver(LmsRecordingSchema) as any,
     defaultValues: { title: "", video_url: "", file_path: "", description: "" },
     mode: "onChange",
   });
@@ -91,10 +92,14 @@ export function LmsRecordingDialog({ open, onClose, classId, allocationId }: Lms
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.recordings(classId) });
+      if (allocationId != null) {
+        queryClient.invalidateQueries({ queryKey: LmsClassesQueryKeys.recordings(classId, { allocation_id: allocationId }) });
+      }
       toast.success("Recording added successfully!");
       reset();
       setUploadPath(null);
       onClose();
+      onSuccess?.();
     },
   });
 
@@ -108,7 +113,7 @@ export function LmsRecordingDialog({ open, onClose, classId, allocationId }: Lms
       title="Add Recording"
       open={open}
       onClose={onClose}
-      handleSubmit={handleSubmit(onSubmit)}
+      handleSubmit={handleSubmit((data: any) => onSubmit(data))}
       isLoading={isPending}
       submitLabel="Add Recording"
       primaryDisabled={!canSubmit()}
@@ -131,7 +136,7 @@ export function LmsRecordingDialog({ open, onClose, classId, allocationId }: Lms
               nodatafound={<p className="text-sm text-muted-foreground">No form fields configured.</p>}
               render={(field) => (
                 <ControlledFormComponent
-                  control={control}
+                  control={control as any}
                   name={field.name}
                   label={field.label}
                   placeholder={field.placeholder}
@@ -203,7 +208,7 @@ export function LmsRecordingDialog({ open, onClose, classId, allocationId }: Lms
                     <p className="text-sm text-muted-foreground">Paste a direct video URL (MP4, WebM, etc.)</p>
                   </div>
                   <ControlledFormComponent
-                    control={control}
+                    control={control as any}
                     name="video_url"
                     label="Video URL"
                     type={FORM_TYPE.TEXT}
@@ -237,7 +242,7 @@ export function LmsRecordingDialog({ open, onClose, classId, allocationId }: Lms
                     )}
                   </div>
                   <ControlledFormComponent
-                    control={control}
+                    control={control as any}
                     name="video_url"
                     label="YouTube URL"
                     type={FORM_TYPE.TEXT}

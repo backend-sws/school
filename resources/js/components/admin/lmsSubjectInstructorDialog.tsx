@@ -23,12 +23,13 @@ const INSTRUCTOR_ASYNC_CONFIG: AsyncSelectConfig = {
 interface LmsSubjectInstructorDialogProps {
     open: boolean;
     onClose: () => void;
+    onSuccess?: () => void;
     allocationId: number;
     classId: number;
     currentInstructorId?: number | null;
 }
 
-export function LmsSubjectInstructorDialog({ open, onClose, allocationId, classId, currentInstructorId }: LmsSubjectInstructorDialogProps) {
+export function LmsSubjectInstructorDialog({ open, onClose, onSuccess, allocationId, classId, currentInstructorId }: LmsSubjectInstructorDialogProps) {
     const queryClient = useQueryClient();
     const { handleSubmit, control, reset } = useForm<FormValues>({
         resolver: zodResolver(subjectTeacherSchema),
@@ -40,9 +41,11 @@ export function LmsSubjectInstructorDialog({ open, onClose, allocationId, classI
         mutationFn: (instructorId: number) => lmsApi.allocations.update(allocationId, { instructor_id: instructorId }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["lms-class-allocations", classId] });
+            queryClient.invalidateQueries({ queryKey: ["lms-class", classId] });
             toast.success("Instructor assigned successfully!");
             reset();
             onClose();
+            onSuccess?.();
         },
     });
 

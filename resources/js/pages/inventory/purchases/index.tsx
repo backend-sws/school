@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filter-bar";
-import { ShoppingCart, Plus, Eye, IndianRupee, Receipt, User, Package } from "lucide-react";
+import { ShoppingCart, Plus, Eye, Pencil, IndianRupee, Receipt, User, Package } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -37,7 +37,7 @@ interface PurchaseLine {
   quantity: string | number;
   unit_cost: string | number;
   amount: string | number;
-  item?: { id: number; name: string; code?: string; unit?: string };
+  item?: { id: number; name: string; code?: string; unit?: string; inventory_category_id?: number };
 }
 
 interface PurchaseRow {
@@ -84,6 +84,7 @@ const InventoryPurchasesIndex = () => {
   const { filter, handleFilter } = useSearchFilter(INITIAL_FILTERS);
   const createDisclosure = useDisclosure();
   const [detailRow, setDetailRow] = useState<PurchaseRow | null>(null);
+  const [editPurchase, setEditPurchase] = useState<PurchaseRow | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["inventory-purchases", filter],
@@ -100,7 +101,7 @@ const InventoryPurchasesIndex = () => {
     queryClient.invalidateQueries({ queryKey: ["inventory-purchases"] });
     queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
     createDisclosure.onClose();
-    toast.success("Purchase recorded! Stock has been updated.");
+    setEditPurchase(null);
   };
 
   const pmLabel = (mode?: string) => {
@@ -112,8 +113,12 @@ const InventoryPurchasesIndex = () => {
     <>
       <Head title="Inventory Purchases" />
       <InventoryPurchaseDialog
-        open={createDisclosure.isOpen}
-        onClose={createDisclosure.onClose}
+        open={createDisclosure.isOpen || Boolean(editPurchase)}
+        purchase={editPurchase}
+        onClose={() => {
+          createDisclosure.onClose();
+          setEditPurchase(null);
+        }}
         onSuccess={onSuccess}
       />
 
@@ -206,7 +211,21 @@ const InventoryPurchasesIndex = () => {
               )}
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex justify-between sm:justify-between items-center w-full">
+            <PermissionGate can="update_inventory_items">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const r = detailRow;
+                  setDetailRow(null);
+                  setEditPurchase(r);
+                }}
+                className="gap-1.5"
+              >
+                <Pencil className="size-3.5" /> Edit Purchase
+              </Button>
+            </PermissionGate>
             <Button variant="outline" onClick={() => setDetailRow(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
@@ -368,13 +387,27 @@ const InventoryPurchasesIndex = () => {
                       <Badge variant="outline" className="capitalize text-xs">{pmLabel(row.payment_mode)}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => setDetailRow(row)}
-                      >
-                        <Eye className="size-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={() => setDetailRow(row)}
+                          title="View Details"
+                        >
+                          <Eye className="size-4" />
+                        </Button>
+                        <PermissionGate can="update_inventory_items">
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={() => setEditPurchase(row)}
+                            title="Edit Purchase"
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <Pencil className="size-4" />
+                          </Button>
+                        </PermissionGate>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}

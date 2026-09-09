@@ -71,7 +71,7 @@ export function InventoryMovementDialog({ open, onClose, onSuccess }: InventoryM
     },
   });
 
-  const onSubmit = (formData: InventoryMovementFormValues) => {
+  const onSubmit = (formData: any) => {
     handleMutation(formData);
   };
 
@@ -80,7 +80,7 @@ export function InventoryMovementDialog({ open, onClose, onSuccess }: InventoryM
       title="Record movement"
       open={open}
       onClose={(o) => onClose()}
-      handleSubmit={handleSubmit(onSubmit) as any}
+      handleSubmit={handleSubmit((data: any) => onSubmit(data))}
       isLoading={isSaving || isLoadingItems}
       className="sm:max-w-[480px]"
     >

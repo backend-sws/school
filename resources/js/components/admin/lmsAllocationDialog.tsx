@@ -45,7 +45,7 @@ interface LmsAllocationDialogProps {
 export function LmsAllocationDialog({ open, onClose, classId, streamId, defaultSubjectId, onSuccess }: LmsAllocationDialogProps) {
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { subject_id: undefined as unknown as number, instructor_id: null },
     mode: "onChange",
   });
@@ -82,12 +82,12 @@ export function LmsAllocationDialog({ open, onClose, classId, streamId, defaultS
       title="Add subject"
       open={open}
       onClose={onClose}
-      handleSubmit={handleSubmit((data) => mutate(data))}
+      handleSubmit={handleSubmit((data: any) => mutate(data))}
       isLoading={isPending}
     >
       <div className="grid gap-4">
         <ControlledFormComponent
-          control={control}
+          control={control as any}
           name="subject_id"
           label="Subject"
           type={FORM_TYPE.ASYNC_SELECT}
@@ -96,7 +96,7 @@ export function LmsAllocationDialog({ open, onClose, classId, streamId, defaultS
           required
         />
         <ControlledFormComponent
-          control={control}
+          control={control as any}
           name="instructor_id"
           label="Subject Teacher"
           type={FORM_TYPE.ASYNC_SELECT}

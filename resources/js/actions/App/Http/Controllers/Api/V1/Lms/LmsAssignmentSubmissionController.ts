@@ -96,7 +96,7 @@ index.head = (args: { lms_class_id: string | number, assignment_id: string | num
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:30
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:36
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions'
  */
 export const store = (args: { lms_class_id: string | number, assignment_id: string | number } | [lms_class_id: string | number, assignment_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -111,7 +111,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:30
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:36
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions'
  */
 store.url = (args: { lms_class_id: string | number, assignment_id: string | number } | [lms_class_id: string | number, assignment_id: string | number ], options?: RouteQueryOptions) => {
@@ -137,7 +137,7 @@ store.url = (args: { lms_class_id: string | number, assignment_id: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:30
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:36
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions'
  */
 store.post = (args: { lms_class_id: string | number, assignment_id: string | number } | [lms_class_id: string | number, assignment_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -147,7 +147,7 @@ store.post = (args: { lms_class_id: string | number, assignment_id: string | num
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:30
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:36
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions'
  */
     const storeForm = (args: { lms_class_id: string | number, assignment_id: string | number } | [lms_class_id: string | number, assignment_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -157,7 +157,7 @@ store.post = (args: { lms_class_id: string | number, assignment_id: string | num
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::store
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:30
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:36
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions'
  */
         storeForm.post = (args: { lms_class_id: string | number, assignment_id: string | number } | [lms_class_id: string | number, assignment_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -168,7 +168,7 @@ store.post = (args: { lms_class_id: string | number, assignment_id: string | num
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:64
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:96
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions/{submission_id}'
  */
 export const update = (args: { lms_class_id: string | number, assignment_id: string | number, submission_id: string | number } | [lms_class_id: string | number, assignment_id: string | number, submission_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -183,7 +183,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:64
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:96
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions/{submission_id}'
  */
 update.url = (args: { lms_class_id: string | number, assignment_id: string | number, submission_id: string | number } | [lms_class_id: string | number, assignment_id: string | number, submission_id: string | number ], options?: RouteQueryOptions) => {
@@ -212,7 +212,7 @@ update.url = (args: { lms_class_id: string | number, assignment_id: string | num
 
 /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:64
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:96
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions/{submission_id}'
  */
 update.patch = (args: { lms_class_id: string | number, assignment_id: string | number, submission_id: string | number } | [lms_class_id: string | number, assignment_id: string | number, submission_id: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -222,7 +222,7 @@ update.patch = (args: { lms_class_id: string | number, assignment_id: string | n
 
     /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:64
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:96
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions/{submission_id}'
  */
     const updateForm = (args: { lms_class_id: string | number, assignment_id: string | number, submission_id: string | number } | [lms_class_id: string | number, assignment_id: string | number, submission_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -237,7 +237,7 @@ update.patch = (args: { lms_class_id: string | number, assignment_id: string | n
 
             /**
 * @see \App\Http\Controllers\Api\V1\Lms\LmsAssignmentSubmissionController::update
- * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:64
+ * @see app/Http/Controllers/Api/V1/Lms/LmsAssignmentSubmissionController.php:96
  * @route '/api/v1/lms/classes/{lms_class_id}/assignments/{assignment_id}/submissions/{submission_id}'
  */
         updateForm.patch = (args: { lms_class_id: string | number, assignment_id: string | number, submission_id: string | number } | [lms_class_id: string | number, assignment_id: string | number, submission_id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

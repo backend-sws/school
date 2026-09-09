@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Link } from "@inertiajs/react";
 import {
   Sheet,
   SheetContent,
@@ -382,8 +383,19 @@ export function StudentClassProfileDrawer({
                 </div>
               </div>
 
-              {/* Quick Action: Upload Physical Copy */}
+              {/* Quick Actions */}
               <div className="flex items-center gap-2 shrink-0">
+                {userId && (
+                  <Link
+                    href={`/students/manage/${userId}`}
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/80 bg-background/80 hover:bg-muted text-xs font-bold text-foreground transition-all shadow-xs"
+                    title="Open full student profile in new tab"
+                  >
+                    <ArrowUpRight className="size-3.5 text-muted-foreground" />
+                    <span>Full Profile</span>
+                  </Link>
+                )}
                 {classId && userId && (
                   <Button
                     size="sm"
