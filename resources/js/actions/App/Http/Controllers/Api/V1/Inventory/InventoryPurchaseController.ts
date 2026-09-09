@@ -234,6 +234,95 @@ show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_
         })
     
     show.form = showForm
-const InventoryPurchaseController = { index, store, show }
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:228
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}'
+ */
+export const update = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+update.definition = {
+    methods: ["put"],
+    url: '/api/v1/inventory/purchases/{inventory_purchase}',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:228
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}'
+ */
+update.url = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { inventory_purchase: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { inventory_purchase: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    inventory_purchase: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        inventory_purchase: typeof args.inventory_purchase === 'object'
+                ? args.inventory_purchase.id
+                : args.inventory_purchase,
+                }
+
+    return update.definition.url
+            .replace('{inventory_purchase}', parsedArgs.inventory_purchase.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:228
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}'
+ */
+update.put = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:228
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}'
+ */
+    const updateForm = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: update.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'PUT',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:228
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}'
+ */
+        updateForm.put = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PUT',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    update.form = updateForm
+const InventoryPurchaseController = { index, store, show, update }
 
 export default InventoryPurchaseController

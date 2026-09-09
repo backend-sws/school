@@ -225,6 +225,299 @@ class InventoryPurchaseController extends BaseController
         );
     }
 
+    public function update(Request $request, InventoryPurchase $inventory_purchase): JsonResponse
+    {
+        if (! $request->user()->hasAbility('update_inventory_items') && ! $request->user()->hasAbility('create_inventory_items')) {
+            return $this->forbidden('You do not have permission to update purchases.');
+        }
+
+        $validated = $request->validate([
+            'bill_no'       => 'nullable|string|max:100',
+            'supplier_name' => 'nullable|string|max:200',
+            'purchased_at'  => 'required|date',
+            'payment_mode'  => 'nullable|string|max:50',
+            'remarks'       => 'nullable|string',
+            'lines'         => 'required|array|min:1',
+            'lines.*.id'    => 'nullable|integer',
+            'lines.*.inventory_item_id' => 'required|exists:inventory_items,id',
+            'lines.*.quantity'          => 'required|numeric|min:0.001',
+            'lines.*.unit_cost'         => 'nullable|numeric|min:0',
+        ]);
+
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+        if ($institutionId === null) {
+            return $this->error('Active institution context is required.', 400);
+        }
+
+        try {
+            $purchase = DB::transaction(function () use ($inventory_purchase, $validated, $institutionId) {
+                $inventory_purchase->load(['lines']);
+                $existingLines = $inventory_purchase->lines->keyBy('id');
+
+                $inputLines = $validated['lines'];
+                $retainedLineIds = collect($inputLines)->pluck('id')->filter()->map(fn($id) => (int) $id)->all();
+                $removedLines = $existingLines->filter(fn($l) => !in_array($l->id, $retainedLineIds));
+
+                $allItemIds = collect($inputLines)->pluck('inventory_item_id')
+                    ->merge($existingLines->pluck('inventory_item_id'))
+                    ->unique()->values()->all();
+
+                $items = InventoryItem::whereIn('id', $allItemIds)->lockForUpdate()->get()->keyBy('id');
+
+                // Check removed lines
+                foreach ($removedLines as $removedLine) {
+                    $batch = InventoryBatch::where('purchase_line_id', $removedLine->id)->first();
+                    if ($batch) {
+                        $consumed = (float) $batch->received_quantity - (float) $batch->remaining_quantity;
+                        if ($consumed > 0) {
+                            $item = $items->get($removedLine->inventory_item_id);
+                            $itemName = $item ? $item->name : "Item #{$removedLine->inventory_item_id}";
+                            throw new \InvalidArgumentException("Cannot remove '{$itemName}' because {$consumed} unit(s) have already been issued/consumed from this purchase batch.");
+                        }
+
+                        $item = $items->get($removedLine->inventory_item_id);
+                        if ($item) {
+                            $item->decrement('current_quantity', (float) $removedLine->quantity);
+                        }
+                        $batch->delete();
+                    }
+
+                    if ($removedLine->movement_id) {
+                        InventoryMovement::where('id', $removedLine->movement_id)->delete();
+                    }
+
+                    $removedLine->delete();
+                }
+
+                $totalCost = 0;
+                $supplier = $validated['supplier_name'] ?? null;
+                $billNo = $validated['bill_no'] ?? null;
+                $purchasedAt = $validated['purchased_at'];
+
+                foreach ($inputLines as $inputLine) {
+                    $lineId = isset($inputLine['id']) ? (int) $inputLine['id'] : null;
+                    $newItemId = (int) $inputLine['inventory_item_id'];
+                    $newQty = (float) $inputLine['quantity'];
+                    $newUnitCost = (float) ($inputLine['unit_cost'] ?? 0);
+                    $amount = round($newQty * $newUnitCost, 2);
+                    $totalCost += $amount;
+
+                    $item = $items->get($newItemId);
+
+                    if ($lineId && $existingLines->has($lineId)) {
+                        $existingLine = $existingLines->get($lineId);
+                        $oldItemId = (int) $existingLine->inventory_item_id;
+                        $oldQty = (float) $existingLine->quantity;
+                        $batch = InventoryBatch::where('purchase_line_id', $existingLine->id)->first();
+
+                        if ($oldItemId !== $newItemId) {
+                            // Item changed
+                            if ($batch) {
+                                $consumed = (float) $batch->received_quantity - (float) $batch->remaining_quantity;
+                                if ($consumed > 0) {
+                                    $oldItem = $items->get($oldItemId);
+                                    $oldItemName = $oldItem ? $oldItem->name : "Item #{$oldItemId}";
+                                    throw new \InvalidArgumentException("Cannot change item '{$oldItemName}' because {$consumed} unit(s) have already been issued/consumed.");
+                                }
+                                $batch->delete();
+                            }
+
+                            $oldItem = $items->get($oldItemId);
+                            if ($oldItem) {
+                                $oldItem->decrement('current_quantity', $oldQty);
+                            }
+
+                            $item->increment('current_quantity', $newQty);
+
+                            if ($existingLine->movement_id) {
+                                InventoryMovement::where('id', $existingLine->movement_id)->update([
+                                    'inventory_item_id' => $newItemId,
+                                    'quantity' => $newQty,
+                                    'quantity_after' => (float) $item->fresh()->current_quantity,
+                                    'remarks' => $validated['remarks'] ?? null,
+                                ]);
+                            }
+
+                            InventoryBatch::create([
+                                'institution_id'    => $institutionId,
+                                'inventory_item_id' => $newItemId,
+                                'batch_no'          => $billNo ? ($billNo . '-L' . $existingLine->id) : ('BATCH-' . date('Ymd', strtotime($purchasedAt)) . '-' . $existingLine->id),
+                                'purchase_line_id'  => $existingLine->id,
+                                'received_quantity' => $newQty,
+                                'remaining_quantity'=> $newQty,
+                                'unit_cost'         => $newUnitCost,
+                                'received_at'       => $purchasedAt,
+                                'supplier_name'     => $supplier,
+                                'status'            => 'active',
+                            ]);
+
+                            $existingLine->update([
+                                'inventory_item_id' => $newItemId,
+                                'quantity' => $newQty,
+                                'unit_cost' => $newUnitCost,
+                                'amount' => $amount,
+                            ]);
+                        } else {
+                            $diff = $newQty - $oldQty;
+
+                            if ($batch) {
+                                $consumed = (float) $batch->received_quantity - (float) $batch->remaining_quantity;
+                                if ($newQty < $consumed) {
+                                    $itemName = $item ? $item->name : "Item #{$newItemId}";
+                                    throw new \InvalidArgumentException("Quantity for '{$itemName}' cannot be reduced below {$consumed} as {$consumed} unit(s) have already been issued/consumed.");
+                                }
+
+                                $batch->received_quantity = $newQty;
+                                $batch->remaining_quantity = (float) $batch->remaining_quantity + $diff;
+                                $batch->unit_cost = $newUnitCost;
+                                $batch->received_at = $purchasedAt;
+                                $batch->supplier_name = $supplier;
+                                if ($billNo && empty($batch->batch_no)) {
+                                    $batch->batch_no = $billNo . '-L' . $existingLine->id;
+                                }
+                                $batch->save();
+                            } else {
+                                InventoryBatch::create([
+                                    'institution_id'    => $institutionId,
+                                    'inventory_item_id' => $newItemId,
+                                    'batch_no'          => $billNo ? ($billNo . '-L' . $existingLine->id) : ('BATCH-' . date('Ymd', strtotime($purchasedAt)) . '-' . $existingLine->id),
+                                    'purchase_line_id'  => $existingLine->id,
+                                    'received_quantity' => $newQty,
+                                    'remaining_quantity'=> $newQty,
+                                    'unit_cost'         => $newUnitCost,
+                                    'received_at'       => $purchasedAt,
+                                    'supplier_name'     => $supplier,
+                                    'status'            => 'active',
+                                ]);
+                            }
+
+                            if ($diff != 0) {
+                                if ($diff > 0) {
+                                    $item->increment('current_quantity', $diff);
+                                } else {
+                                    $item->decrement('current_quantity', abs($diff));
+                                }
+                            }
+
+                            if ($existingLine->movement_id) {
+                                InventoryMovement::where('id', $existingLine->movement_id)->update([
+                                    'quantity' => $newQty,
+                                    'quantity_after' => (float) $item->fresh()->current_quantity,
+                                    'remarks' => $validated['remarks'] ?? null,
+                                ]);
+                            }
+
+                            $existingLine->update([
+                                'quantity' => $newQty,
+                                'unit_cost' => $newUnitCost,
+                                'amount' => $amount,
+                            ]);
+                        }
+
+                        if ($newUnitCost > 0) {
+                            InventoryItem::where('id', $newItemId)->update(['purchase_price' => $newUnitCost]);
+                        }
+                    } else {
+                        // New line added in edit
+                        $item->increment('current_quantity', $newQty);
+                        $newStock = (float) $item->fresh()->current_quantity;
+
+                        $movement = InventoryMovement::create([
+                            'institution_id'    => $institutionId,
+                            'inventory_item_id' => $newItemId,
+                            'type'              => 'receive',
+                            'quantity'          => $newQty,
+                            'quantity_after'    => $newStock,
+                            'reference_type'    => 'purchase',
+                            'reference_id'      => $inventory_purchase->id,
+                            'performed_by'      => auth()->id(),
+                            'remarks'           => $validated['remarks'] ?? null,
+                        ]);
+
+                        $createdLine = InventoryPurchaseLine::create([
+                            'inventory_purchase_id' => $inventory_purchase->id,
+                            'inventory_item_id' => $newItemId,
+                            'quantity' => $newQty,
+                            'unit_cost' => $newUnitCost,
+                            'amount' => $amount,
+                            'movement_id' => $movement->id,
+                        ]);
+
+                        InventoryBatch::create([
+                            'institution_id'    => $institutionId,
+                            'inventory_item_id' => $newItemId,
+                            'batch_no'          => $billNo ? ($billNo . '-L' . $createdLine->id) : ('BATCH-' . date('Ymd', strtotime($purchasedAt)) . '-' . $createdLine->id),
+                            'purchase_line_id'  => $createdLine->id,
+                            'received_quantity' => $newQty,
+                            'remaining_quantity'=> $newQty,
+                            'unit_cost'         => $newUnitCost,
+                            'received_at'       => $purchasedAt,
+                            'supplier_name'     => $supplier,
+                            'status'            => 'active',
+                        ]);
+
+                        if ($newUnitCost > 0) {
+                            InventoryItem::where('id', $newItemId)->update(['purchase_price' => $newUnitCost]);
+                        }
+                    }
+                }
+
+                // Update purchase header
+                $inventory_purchase->update([
+                    'bill_no' => $billNo,
+                    'supplier_name' => $supplier,
+                    'purchased_at' => $purchasedAt,
+                    'total_cost' => $totalCost,
+                    'payment_mode' => $validated['payment_mode'] ?? 'cash',
+                    'remarks' => $validated['remarks'] ?? null,
+                ]);
+
+                // Sync or create Expense entry
+                if ($inventory_purchase->expense_id) {
+                    $expense = Expense::find($inventory_purchase->expense_id);
+                    if ($expense) {
+                        $expense->update([
+                            'title' => 'Inventory Purchase' . ($supplier ? " — {$supplier}" : ''),
+                            'amount' => $totalCost,
+                            'date' => $purchasedAt,
+                            'payment_mode' => $validated['payment_mode'] ?? 'cash',
+                            'reference_no' => $billNo,
+                            'payee' => $supplier ?? 'Market',
+                            'description' => $validated['remarks'] ?? null,
+                        ]);
+                    }
+                } elseif ($totalCost > 0) {
+                    $expenseCat = $this->getOrCreateInventoryExpenseCategory($institutionId);
+                    if ($expenseCat) {
+                        $expense = Expense::create([
+                            'institution_id'     => $institutionId,
+                            'expense_category_id'=> $expenseCat->id,
+                            'title'              => 'Inventory Purchase' . ($supplier ? " — {$supplier}" : ''),
+                            'amount'             => $totalCost,
+                            'date'               => $purchasedAt,
+                            'payment_mode'       => $validated['payment_mode'] ?? 'cash',
+                            'reference_no'       => $billNo,
+                            'payee'              => $supplier ?? 'Market',
+                            'description'        => $validated['remarks'] ?? null,
+                            'status'             => 'approved',
+                            'recorded_by'        => auth()->id(),
+                        ]);
+                        $inventory_purchase->update(['expense_id' => $expense->id]);
+                    }
+                }
+
+                return $inventory_purchase;
+            });
+
+            return $this->success(
+                $purchase->load(['purchasedBy', 'lines.item', 'expense']),
+                'Purchase updated successfully'
+            );
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        }
+    }
+
     /**
      * Get or create a dedicated expense category for inventory purchases
      */

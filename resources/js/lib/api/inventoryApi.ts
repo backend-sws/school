@@ -77,6 +77,8 @@ const inventoryApi = {
     show: (id: string | number) => api.get(`${BASE}/purchases/${id}`),
     store: (data: Record<string, unknown>) =>
       api.post(`${BASE}/purchases`, data),
+    update: (id: string | number, data: Record<string, unknown>) =>
+      api.put(`${BASE}/purchases/${id}`, data),
   },
   issues: {
     index: (params?: Record<string, unknown>) =>

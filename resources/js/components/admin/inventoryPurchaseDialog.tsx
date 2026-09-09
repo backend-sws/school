@@ -19,6 +19,7 @@ import { ShoppingCart, Plus, Trash2, IndianRupee, Package, Layers } from "lucide
 import { toast } from "sonner";
 
 interface PurchaseLine {
+  id?: number;
   category_id?: string;
   inventory_item_id: string;
   quantity: string;
@@ -29,6 +30,7 @@ interface InventoryPurchaseDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  purchase?: any | null;
 }
 
 const PAYMENT_MODES = [
@@ -45,8 +47,9 @@ const emptyLine = (): PurchaseLine => ({
   unit_cost: "",
 });
 
-export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryPurchaseDialogProps) {
+export function InventoryPurchaseDialog({ open, onClose, onSuccess, purchase }: InventoryPurchaseDialogProps) {
   const today = new Date().toISOString().split("T")[0];
+  const isEdit = Boolean(purchase?.id);
 
   const [supplierName, setSupplierName] = useState("");
   const [billNo, setBillNo] = useState("");
@@ -90,6 +93,51 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
     return Array.isArray(raw) ? raw : [];
   }, [itemsData]);
 
+  // Sync purchase data on open / edit change
+  React.useEffect(() => {
+    if (!open) return;
+
+    if (purchase) {
+      setSupplierName(purchase.supplier_name || "");
+      setBillNo(purchase.bill_no || "");
+      setPurchasedAt(purchase.purchased_at ? String(purchase.purchased_at).slice(0, 10) : today);
+      setPaymentMode(purchase.payment_mode || "cash");
+      setRemarks(purchase.remarks || "");
+
+      if (purchase.lines && purchase.lines.length > 0) {
+        setLines(
+          purchase.lines.map((l: any) => ({
+            id: l.id,
+            category_id: String(l.item?.inventory_category_id || l.category_id || ""),
+            inventory_item_id: String(l.inventory_item_id),
+            quantity: String(l.quantity),
+            unit_cost: String(l.unit_cost ?? ""),
+          }))
+        );
+      } else {
+        setLines([emptyLine()]);
+      }
+    } else {
+      handleReset();
+    }
+  }, [open, purchase]);
+
+  // Auto-fill category_id for lines once items are loaded
+  React.useEffect(() => {
+    if (!open || itemOptions.length === 0) return;
+    setLines((prev) =>
+      prev.map((l) => {
+        if (!l.category_id && l.inventory_item_id) {
+          const item = itemOptions.find((it: any) => String(it.id) === String(l.inventory_item_id));
+          if (item?.inventory_category_id) {
+            return { ...l, category_id: String(item.inventory_category_id) };
+          }
+        }
+        return l;
+      })
+    );
+  }, [open, itemOptions]);
+
   const getItemOptionsForLine = (catId?: string) => {
     const filtered = catId
       ? itemOptions.filter((it: any) => String(it.inventory_category_id) === String(catId))
@@ -110,15 +158,20 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
   }, [lines]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (payload: Record<string, unknown>) => inventoryApi.purchases.store(payload),
+    mutationFn: (payload: Record<string, unknown>) =>
+      isEdit && purchase?.id
+        ? inventoryApi.purchases.update(purchase.id, payload)
+        : inventoryApi.purchases.store(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inventory-purchases"] });
       queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+      toast.success(isEdit ? "Purchase updated successfully!" : "Purchase recorded! Stock has been updated.");
       handleReset();
       onSuccess?.();
+      onClose();
     },
     onError: (err: any) => {
-      const msg = err?.response?.data?.message ?? "Failed to record purchase.";
+      const msg = err?.response?.data?.message ?? (isEdit ? "Failed to update purchase." : "Failed to record purchase.");
       toast.error(msg);
     },
   });
@@ -196,6 +249,7 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
       payment_mode: paymentMode,
       remarks: remarks || undefined,
       lines: validLines.map((l) => ({
+        id: l.id,
         inventory_item_id: parseInt(l.inventory_item_id),
         quantity: parseFloat(l.quantity),
         unit_cost: parseFloat(l.unit_cost) || 0,
@@ -211,10 +265,12 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShoppingCart className="size-5 text-primary" />
-            Record Purchase
+            {isEdit ? "Edit Purchase" : "Record Purchase"}
           </DialogTitle>
           <DialogDescription>
-            Market se kharida hua saman record karein — stock automatically update hoga
+            {isEdit
+              ? "Kharide hue saman ka record update karein — stock aur expenses automatically sync honge"
+              : "Market se kharida hua saman record karein — stock automatically update hoga"}
           </DialogDescription>
         </DialogHeader>
 
@@ -414,7 +470,11 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
           {totalCost > 0 && (
             <div className="rounded-md bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 px-3 py-2 text-xs text-indigo-700 dark:text-indigo-300 flex items-center gap-2">
               <IndianRupee className="size-3.5 shrink-0" />
-              An expense entry of <strong>₹{totalCost.toFixed(2)}</strong> will be auto-created in Accounts under "Inventory Purchases"
+              {isEdit ? (
+                <span>Linked expense entry will be automatically updated to <strong>₹{totalCost.toFixed(2)}</strong></span>
+              ) : (
+                <span>An expense entry of <strong>₹{totalCost.toFixed(2)}</strong> will be auto-created in Accounts under "Inventory Purchases"</span>
+              )}
             </div>
           )}
 
@@ -423,7 +483,9 @@ export function InventoryPurchaseDialog({ open, onClose, onSuccess }: InventoryP
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Saving..." : "Record Purchase"}
+              {isPending
+                ? isEdit ? "Updating..." : "Saving..."
+                : isEdit ? "Update Purchase" : "Record Purchase"}
             </Button>
           </DialogFooter>
         </form>

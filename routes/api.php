@@ -468,6 +468,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'index']);
                 Route::post('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'store']);
                 Route::get('purchases/{inventory_purchase}', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'show'])->whereNumber('inventory_purchase');
+                Route::put('purchases/{inventory_purchase}', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'update'])->whereNumber('inventory_purchase');
                 // ─── Issues / Dispatch (Staff ko nikalna) ───────────────
                 Route::get('issues', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'index']);
                 Route::post('issues', [\App\Http\Controllers\Api\V1\Inventory\InventoryIssueController::class, 'store']);
