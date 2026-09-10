@@ -114,6 +114,11 @@ class UserRedirectResolver
 
     private static function crossDomain(User $user, Request $request): ?RedirectResult
     {
+        // In local development on 127.0.0.1 or localhost, do not redirect to external domains
+        if (app()->environment('local') && in_array($request->getHost(), ['127.0.0.1', 'localhost'], true)) {
+            return null;
+        }
+
         // Already on an institution subdomain — no cross-domain needed
         if (static::isOnSubdomain()) {
             return null;

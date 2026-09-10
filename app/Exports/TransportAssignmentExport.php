@@ -74,6 +74,7 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             'Route Code',
             'Stop Name',
             'Monthly Fare (₹)',
+            'Transport Due (₹)',
             'Effective From',
             'Effective Until',
             'Remarks'
@@ -100,6 +101,27 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             $monthlyAmount = $routeStop ? (float) $routeStop->fare : 0.00;
         }
 
+        $transportDue = 0.0;
+        if ($row->user) {
+            try {
+                $feeService = app(\App\Services\FeeCollectionService::class);
+                $matrixResult = $feeService->getStudentLedgerMatrix($row->user, $this->institutionId);
+                foreach ($matrixResult['matrix'] ?? [] as $mRow) {
+                    $tFee = (float) ($mRow['transport_fee'] ?? 0);
+                    if ($tFee <= 0) continue;
+                    $status = $mRow['status'] ?? 'unpaid';
+                    if ($status === 'paid') continue;
+                    if ($status === 'unpaid') {
+                        $transportDue += $tFee;
+                    } else {
+                        $transportDue += min($tFee, max(0.0, (float)($mRow['balance'] ?? 0)));
+                    }
+                }
+            } catch (\Throwable $e) {
+                $transportDue = 0.0;
+            }
+        }
+
         return [
             $this->rowNumber,
             $row->user?->name ?? '—',
@@ -109,6 +131,7 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             $row->transportRoute?->code ?? '—',
             $row->transportStop?->name ?? '—',
             number_format($monthlyAmount, 2),
+            number_format($transportDue, 2),
             $row->effective_from,
             $row->effective_until ?? 'Active',
             $row->remarks ?? '—'

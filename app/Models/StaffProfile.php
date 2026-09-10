@@ -23,6 +23,8 @@ class StaffProfile extends Model
         'gender',
         'dob',
         'joining_date',
+        'leaving_date',
+        'leaving_reason',
         'qualification',
         'professional_qualification',
         'appointment_type',
@@ -36,6 +38,7 @@ class StaffProfile extends Model
     {
         return [
             'joining_date' => 'date:Y-m-d',
+            'leaving_date' => 'date:Y-m-d',
             'dob' => 'date:Y-m-d',
             'status' => 'integer',
             'category' => 'integer',
@@ -60,6 +63,17 @@ class StaffProfile extends Model
     public function isActive(): bool { return (int) $this->status === 1; }
 
     public function isInactive(): bool { return (int) $this->status === 0; }
+
+    public function hasLeftOnOrBefore(?string $date): bool
+    {
+        if (empty($date)) {
+            return false;
+        }
+        if (!empty($this->leaving_date) && $date >= $this->leaving_date->format('Y-m-d')) {
+            return true;
+        }
+        return false;
+    }
 
     protected static function booted(): void
     {

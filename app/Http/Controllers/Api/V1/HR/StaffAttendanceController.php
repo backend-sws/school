@@ -43,8 +43,24 @@ class StaffAttendanceController extends BaseController
                 return $rawDate === $date;
             });
 
-        $staff = User::whereHas('staffProfile', function ($q) use ($institutionId) {
-            $q->where('institution_id', $institutionId);
+        $staff = User::whereHas('staffProfile', function ($q) use ($institutionId, $date) {
+            $q->where('institution_id', $institutionId)
+              ->where(function ($sq) use ($date) {
+                  $sq->whereNull('joining_date')
+                     ->orWhere('joining_date', '<=', $date);
+              })
+              ->where(function ($sq) use ($date) {
+                  $sq->whereNull('leaving_date')
+                     ->orWhere('leaving_date', '>', $date);
+              })
+              ->where(function ($sq) use ($date) {
+                  $sq->where('status', '!=', 0)
+                     ->orWhere(function ($s2) use ($date) {
+                         $s2->where('status', 0)
+                            ->whereNotNull('leaving_date')
+                            ->where('leaving_date', '>', $date);
+                     });
+              });
         })->with(['staffProfile', 'salaryStructure'])->get();
 
         $attendances = StaffAttendance::where('institution_id', $institutionId)
@@ -133,6 +149,15 @@ class StaffAttendanceController extends BaseController
         $date = $validated['date'];
         $status = $validated['status'] ?? null;
 
+        $staffProfile = \App\Models\StaffProfile::where('user_id', $userId)
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->first();
+
+        if ($staffProfile && $staffProfile->hasLeftOnOrBefore($date)) {
+            $formattedDate = $staffProfile->leaving_date ? $staffProfile->leaving_date->format('d M Y') : 'an earlier date';
+            return $this->error("Cannot mark attendance. Staff member left the school on {$formattedDate}.", 422);
+        }
+
         if (!$status || $status === 'clear') {
             StaffAttendance::where('institution_id', $institutionId)
                 ->where('user_id', $userId)
@@ -181,6 +206,95 @@ class StaffAttendanceController extends BaseController
             'leave_type_id' => $leaveTypeId,
             'summary'       => $summary,
         ], 'Attendance updated successfully');
+    }
+
+    /**
+     * Mark a staff member as having left the school (school exit).
+     * Automatically sets leaving_date, marks inactive, and removes attendance from that date onwards.
+     */
+    public function markLeft(Request $request, $userId): JsonResponse
+    {
+        $userId = (int) $userId;
+        if ($userId <= 0) {
+            return $this->error('Invalid staff user ID.', 422);
+        }
+
+        $validated = $request->validate([
+            'leaving_date'   => 'required|date',
+            'leaving_reason' => 'nullable|string|max:255',
+        ]);
+
+        $institutionId = $request->user()->activeInstitutionId();
+
+        $user = User::where('id', $userId)
+            ->whereHas('staffProfile', function ($q) use ($institutionId) {
+                if ($institutionId) {
+                    $q->where('institution_id', $institutionId);
+                }
+            })->firstOrFail();
+
+        $staffProfile = $user->staffProfile;
+        if (!$staffProfile) {
+            return $this->error('Staff profile not found.', 404);
+        }
+
+        $leavingDate = Carbon::parse($validated['leaving_date'])->toDateString();
+
+        $staffProfile->update([
+            'leaving_date'   => $leavingDate,
+            'leaving_reason' => $validated['leaving_reason'] ?? 'Resigned / Relieved',
+            'status'         => 0, // Inactive
+        ]);
+
+        $user->update(['status' => 0]);
+
+        // Clean up any attendance marks recorded on or after the leaving date
+        $deletedCount = StaffAttendance::where('user_id', $userId)
+            ->where('date', '>=', $leavingDate)
+            ->delete();
+
+        return $this->success([
+            'user_id'               => $userId,
+            'name'                  => $user->name,
+            'leaving_date'          => $leavingDate,
+            'deleted_records_count' => $deletedCount,
+        ], "Staff '{$user->name}' marked as left from {$leavingDate}. Records on or after this date removed.");
+    }
+
+    /**
+     * Re-activate a staff member who was previously marked as left or inactive.
+     */
+    public function reactivate(Request $request, $userId): JsonResponse
+    {
+        $userId = (int) $userId;
+        if ($userId <= 0) {
+            return $this->error('Invalid staff user ID.', 422);
+        }
+
+        $institutionId = $request->user()->activeInstitutionId();
+
+        $user = User::where('id', $userId)
+            ->whereHas('staffProfile', function ($q) use ($institutionId) {
+                if ($institutionId) {
+                    $q->where('institution_id', $institutionId);
+                }
+            })->firstOrFail();
+
+        $staffProfile = $user->staffProfile;
+        if ($staffProfile) {
+            $staffProfile->update([
+                'leaving_date'   => null,
+                'leaving_reason' => null,
+                'status'         => 1, // Active
+            ]);
+        }
+
+        $user->update(['status' => 1]);
+
+        return $this->success([
+            'user_id' => $userId,
+            'name'    => $user->name,
+        ], "Staff member '{$user->name}' re-activated successfully.");
     }
 
     public function ledger(Request $request): JsonResponse
@@ -290,8 +404,30 @@ class StaffAttendanceController extends BaseController
             ];
         }
 
-        $staff = User::whereHas('staffProfile', function ($q) use ($institutionId) {
-            $q->where('institution_id', $institutionId);
+        $startStr = $startOfMonth->toDateString();
+        $endStr = $endOfMonth->toDateString();
+
+        $staff = User::whereHas('staffProfile', function ($q) use ($institutionId, $startStr, $endStr) {
+            $q->where('institution_id', $institutionId)
+              // Did not join after this month ended
+              ->where(function ($sq) use ($endStr) {
+                  $sq->whereNull('joining_date')
+                     ->orWhere('joining_date', '<=', $endStr);
+              })
+              // Did not leave before this month started
+              ->where(function ($sq) use ($startStr) {
+                  $sq->whereNull('leaving_date')
+                     ->orWhere('leaving_date', '>=', $startStr);
+              })
+              // Exclude inactive staff who have no leaving date (or left before this month)
+              ->where(function ($sq) use ($startStr) {
+                  $sq->where('status', '!=', 0)
+                     ->orWhere(function ($s2) use ($startStr) {
+                         $s2->where('status', 0)
+                            ->whereNotNull('leaving_date')
+                            ->where('leaving_date', '>=', $startStr);
+                     });
+              });
         })->with(['staffProfile'])->get();
 
         $attendances = StaffAttendance::where('institution_id', $institutionId)
@@ -305,31 +441,53 @@ class StaffAttendanceController extends BaseController
 
         $result = [];
         foreach ($staff as $user) {
+            $sp = $user->staffProfile;
+            $leavingDateStr = $sp?->leaving_date ? $sp->leaving_date->format('Y-m-d') : null;
+            $joiningDateStr = $sp?->joining_date ? $sp->joining_date->format('Y-m-d') : null;
+
             $row = [
-                'user_id'     => $user->id,
-                'employee_id' => !empty($user->staffProfile->employee_id) ? $user->staffProfile->employee_id : sprintf('EMP-%03d', $user->id),
-                'name'        => $user->name,
-                'designation' => $user->staffProfile->designation ?? 'Staff',
-                'summary'     => [
+                'user_id'        => $user->id,
+                'employee_id'    => !empty($sp?->employee_id) ? $sp->employee_id : sprintf('EMP-%03d', $user->id),
+                'name'           => $user->name,
+                'designation'    => $sp?->designation ?? 'Staff',
+                'joining_date'   => $joiningDateStr,
+                'leaving_date'   => $leavingDateStr,
+                'leaving_reason' => $sp?->leaving_reason,
+                'is_active'      => (int) ($sp?->status ?? 1) === 1,
+                'has_left'       => !empty($leavingDateStr) || (int) ($sp?->status ?? 1) === 0,
+                'summary'        => [
                     'present'  => 0,
                     'absent'   => 0,
                     'half_day' => 0,
                     'on_leave' => 0,
                 ],
-                'days'        => []
+                'days'           => []
             ];
 
             for ($d = 1; $d <= $daysInMonth; $d++) {
                 $dateStr = sprintf('%s-%02d', $month, $d);
                 $att = $grouped[$user->id][$dateStr] ?? null;
 
-                if ($att) {
+                if ($leavingDateStr && $dateStr >= $leavingDateStr) {
+                    $row['days'][$dateStr] = [
+                        'status'  => 'left',
+                        'label'   => 'Left',
+                        'is_left' => true,
+                    ];
+                } elseif ($joiningDateStr && $dateStr < $joiningDateStr) {
+                    $row['days'][$dateStr] = [
+                        'status'  => 'not_joined',
+                        'label'   => '—',
+                    ];
+                } elseif ($att) {
                     $row['days'][$dateStr] = [
                         'status'        => $att->status,
                         'leave_type_id' => $att->leave_type_id,
                         'remarks'       => $att->remarks,
                     ];
-                    $row['summary'][$att->status]++;
+                    if (isset($row['summary'][$att->status])) {
+                        $row['summary'][$att->status]++;
+                    }
                 } else {
                     $row['days'][$dateStr] = null;
                 }

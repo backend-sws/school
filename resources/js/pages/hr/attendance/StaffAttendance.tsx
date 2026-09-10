@@ -485,174 +485,172 @@ export default function StaffAttendance() {
                             </div>
                         </div>
 
-                        {loading ? (
-                            <TableSkeletonLoader columns={4} rows={5} />
-                        ) : (
-                            <DataTable
-                                columns={[
-                                    { label: "STAFF MEMBER", key: "name" },
-                                    { label: "ATTENDANCE STATUS", key: "status" },
-                                    { label: "LEAVE TYPE", key: "leave_type" },
-                                    { label: "REMARKS", key: "remarks" },
-                                ]}
-                            >
-                                {filteredAttendance.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={4}
-                                        icon={CalendarDays}
-                                        message={searchQuery || filterStatus !== 'all' ? "No staff members match your filter criteria" : "No records found"}
-                                    />
-                                ) : (
-                                    <Each
-                                        of={filteredAttendance}
-                                        render={(att) => (
-                                            <TableRow 
-                                                key={att.user_id}
-                                                className={cn(
-                                                    "transition-colors",
-                                                    att.status === 'present' && "hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20",
-                                                    att.status === 'absent' && "hover:bg-rose-50/30 dark:hover:bg-rose-950/20",
-                                                    att.status === 'half_day' && "hover:bg-amber-50/30 dark:hover:bg-amber-950/20",
-                                                    att.status === 'on_leave' && "hover:bg-blue-50/30 dark:hover:bg-blue-950/20"
-                                                )}
-                                            >
-                                                <TableCell className="font-medium min-w-[220px]">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={cn(
-                                                            "w-9 h-9 rounded-full bg-gradient-to-br text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider shrink-0 shadow-xs ring-2 ring-white dark:ring-slate-800",
-                                                            getAvatarGradient(att.name)
-                                                        )}>
-                                                            {getInitials(att.name)}
+                        <DataTable
+                            columns={[
+                                { label: "STAFF MEMBER", key: "name" },
+                                { label: "ATTENDANCE STATUS", key: "status" },
+                                { label: "LEAVE TYPE", key: "leave_type" },
+                                { label: "REMARKS", key: "remarks" },
+                            ]}
+                        >
+                            {loading ? (
+                                <TableSkeletonLoader columns={4} rows={5} />
+                            ) : filteredAttendance.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={4}
+                                    icon={CalendarDays}
+                                    message={searchQuery || filterStatus !== 'all' ? "No staff members match your filter criteria" : "No records found"}
+                                />
+                            ) : (
+                                <Each
+                                    of={filteredAttendance}
+                                    render={(att) => (
+                                        <TableRow 
+                                            key={att.user_id}
+                                            className={cn(
+                                                "transition-colors",
+                                                att.status === 'present' && "hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20",
+                                                att.status === 'absent' && "hover:bg-rose-50/30 dark:hover:bg-rose-950/20",
+                                                att.status === 'half_day' && "hover:bg-amber-50/30 dark:hover:bg-amber-950/20",
+                                                att.status === 'on_leave' && "hover:bg-blue-50/30 dark:hover:bg-blue-950/20"
+                                            )}
+                                        >
+                                            <TableCell className="font-medium min-w-[220px]">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={cn(
+                                                        "w-9 h-9 rounded-full bg-gradient-to-br text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider shrink-0 shadow-xs ring-2 ring-white dark:ring-slate-800",
+                                                        getAvatarGradient(att.name)
+                                                    )}>
+                                                        {getInitials(att.name)}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate">
+                                                            {att.name}
                                                         </div>
-                                                        <div className="min-w-0">
-                                                            <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate">
-                                                                {att.name}
-                                                            </div>
-                                                            <div className="flex items-center gap-1.5 mt-0.5">
-                                                                {att.employee_id && (
-                                                                    <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
-                                                                        {att.employee_id}
-                                                                    </span>
+                                                        <div className="flex items-center gap-1.5 mt-0.5">
+                                                            {att.employee_id && (
+                                                                <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                                                                    {att.employee_id}
+                                                                </span>
+                                                            )}
+                                                            <Badge variant="outline" className="text-[11px] px-1.5 py-0 font-normal bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 truncate max-w-[120px]">
+                                                                {att.designation || 'Staff'}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="min-w-[340px]">
+                                                <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 gap-1">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => updateRowStatus(att.user_id, 'present')}
+                                                        className={cn(
+                                                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                                                            att.status === 'present'
+                                                                ? "bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-500"
+                                                                : "text-slate-600 dark:text-slate-300 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                                                        )}
+                                                    >
+                                                        <Check className="w-3.5 h-3.5 shrink-0" />
+                                                        <span>Present</span>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => updateRowStatus(att.user_id, 'absent')}
+                                                        className={cn(
+                                                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                                                            att.status === 'absent'
+                                                                ? "bg-rose-600 text-white shadow-xs ring-1 ring-rose-500"
+                                                                : "text-slate-600 dark:text-slate-300 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                                                        )}
+                                                    >
+                                                        <X className="w-3.5 h-3.5 shrink-0" />
+                                                        <span>Absent</span>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => updateRowStatus(att.user_id, 'half_day')}
+                                                        className={cn(
+                                                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                                                            att.status === 'half_day'
+                                                                ? "bg-amber-500 text-white shadow-xs ring-1 ring-amber-400"
+                                                                : "text-slate-600 dark:text-slate-300 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                                                        )}
+                                                    >
+                                                        <Clock className="w-3.5 h-3.5 shrink-0" />
+                                                        <span>Half Day</span>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => updateRowStatus(att.user_id, 'on_leave')}
+                                                        className={cn(
+                                                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                                                            att.status === 'on_leave'
+                                                                ? "bg-blue-600 text-white shadow-xs ring-1 ring-blue-500"
+                                                                : "text-slate-600 dark:text-slate-300 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+                                                        )}
+                                                    >
+                                                        <Plane className="w-3.5 h-3.5 shrink-0" />
+                                                        <span>Leave</span>
+                                                    </button>
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell className="min-w-[240px]">
+                                                {att.status === 'on_leave' ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <select
+                                                            className="w-[180px] h-9 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/40 px-3 py-1 text-xs font-medium text-slate-800 dark:text-slate-200 shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                                            value={att.leave_type_id || ''}
+                                                            onChange={(e) => updateRowLeaveType(att.user_id, e.target.value ? parseInt(e.target.value) : null)}
+                                                        >
+                                                            <option value="">Select Leave Type</option>
+                                                            {leaveTypes.map(type => (
+                                                                <option key={type.id} value={type.id}>
+                                                                    {type.name} ({type.is_paid_leave ? 'Paid' : 'Unpaid'})
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        {att.leave_type_id && (
+                                                            <Badge 
+                                                                variant="outline" 
+                                                                className={cn(
+                                                                    "text-[10px] px-1.5 py-0.5 shrink-0 font-semibold",
+                                                                    leaveTypes.find(t => t.id === att.leave_type_id)?.is_paid_leave
+                                                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+                                                                        : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
                                                                 )}
-                                                                <Badge variant="outline" className="text-[11px] px-1.5 py-0 font-normal bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 truncate max-w-[120px]">
-                                                                    {att.designation || 'Staff'}
-                                                                </Badge>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </TableCell>
-
-                                                <TableCell className="min-w-[340px]">
-                                                    <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 gap-1">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => updateRowStatus(att.user_id, 'present')}
-                                                            className={cn(
-                                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                                                                att.status === 'present'
-                                                                    ? "bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-500"
-                                                                    : "text-slate-600 dark:text-slate-300 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
-                                                            )}
-                                                        >
-                                                            <Check className="w-3.5 h-3.5 shrink-0" />
-                                                            <span>Present</span>
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => updateRowStatus(att.user_id, 'absent')}
-                                                            className={cn(
-                                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                                                                att.status === 'absent'
-                                                                    ? "bg-rose-600 text-white shadow-xs ring-1 ring-rose-500"
-                                                                    : "text-slate-600 dark:text-slate-300 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                                                            )}
-                                                        >
-                                                            <X className="w-3.5 h-3.5 shrink-0" />
-                                                            <span>Absent</span>
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => updateRowStatus(att.user_id, 'half_day')}
-                                                            className={cn(
-                                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                                                                att.status === 'half_day'
-                                                                    ? "bg-amber-500 text-white shadow-xs ring-1 ring-amber-400"
-                                                                    : "text-slate-600 dark:text-slate-300 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"
-                                                            )}
-                                                        >
-                                                            <Clock className="w-3.5 h-3.5 shrink-0" />
-                                                            <span>Half Day</span>
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => updateRowStatus(att.user_id, 'on_leave')}
-                                                            className={cn(
-                                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                                                                att.status === 'on_leave'
-                                                                    ? "bg-blue-600 text-white shadow-xs ring-1 ring-blue-500"
-                                                                    : "text-slate-600 dark:text-slate-300 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40"
-                                                            )}
-                                                        >
-                                                            <Plane className="w-3.5 h-3.5 shrink-0" />
-                                                            <span>Leave</span>
-                                                        </button>
-                                                    </div>
-                                                </TableCell>
-
-                                                <TableCell className="min-w-[240px]">
-                                                    {att.status === 'on_leave' ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <select
-                                                                className="w-[180px] h-9 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/40 px-3 py-1 text-xs font-medium text-slate-800 dark:text-slate-200 shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                                                                value={att.leave_type_id || ''}
-                                                                onChange={(e) => updateRowLeaveType(att.user_id, e.target.value ? parseInt(e.target.value) : null)}
                                                             >
-                                                                <option value="">Select Leave Type</option>
-                                                                {leaveTypes.map(type => (
-                                                                    <option key={type.id} value={type.id}>
-                                                                        {type.name} ({type.is_paid_leave ? 'Paid' : 'Unpaid'})
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                            {att.leave_type_id && (
-                                                                <Badge 
-                                                                    variant="outline" 
-                                                                    className={cn(
-                                                                        "text-[10px] px-1.5 py-0.5 shrink-0 font-semibold",
-                                                                        leaveTypes.find(t => t.id === att.leave_type_id)?.is_paid_leave
-                                                                            ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
-                                                                            : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
-                                                                    )}
-                                                                >
-                                                                    {leaveTypes.find(t => t.id === att.leave_type_id)?.is_paid_leave ? "Paid" : "Unpaid"}
-                                                                </Badge>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" />
-                                                            <span>Not applicable</span>
-                                                        </div>
-                                                    )}
-                                                </TableCell>
+                                                                {leaveTypes.find(t => t.id === att.leave_type_id)?.is_paid_leave ? "Paid" : "Unpaid"}
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" />
+                                                        <span>Not applicable</span>
+                                                    </div>
+                                                )}
+                                            </TableCell>
 
-                                                <TableCell className="min-w-[220px]">
-                                                    <Input
-                                                        placeholder="Add note or remarks..."
-                                                        value={att.remarks || ''}
-                                                        onChange={(e) => updateRowRemarks(att.user_id, e.target.value)}
-                                                        className="h-9 w-full max-w-[260px] text-xs bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-lg"
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    />
-                                )}
-                            </DataTable>
-                        )}
+                                            <TableCell className="min-w-[220px]">
+                                                <Input
+                                                    placeholder="Add note or remarks..."
+                                                    value={att.remarks || ''}
+                                                    onChange={(e) => updateRowRemarks(att.user_id, e.target.value)}
+                                                    className="h-9 w-full max-w-[260px] text-xs bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-lg"
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                />
+                            )}
+                        </DataTable>
                     </TabsContent>
 
                     <TabsContent value="ledger" className="space-y-4">
@@ -662,6 +660,16 @@ export default function StaffAttendance() {
             </div>
         </PageContainer>
     );
+}
+
+function safeFormatDate(dateStr: string, formatStr: string, fallback = '') {
+    try {
+        const parsed = parse(dateStr, 'yyyy-MM-dd', new Date());
+        if (isNaN(parsed.getTime())) return fallback || dateStr;
+        return format(parsed, formatStr);
+    } catch {
+        return fallback || dateStr;
+    }
 }
 
 function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes: any[]; onAttendanceChanged: () => void }) {
@@ -675,6 +683,20 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
     const [loading, setLoading] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [openCellKey, setOpenCellKey] = useState<string | null>(null);
+
+    // Leaving / Relieved staff states
+    const [leavingModalTarget, setLeavingModalTarget] = useState<{
+        userId?: number;
+        user_id?: number;
+        name: string;
+        employeeId?: string;
+        employee_id?: string;
+        joiningDate?: string;
+    } | null>(null);
+    const [leavingDate, setLeavingDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+    const [leavingReason, setLeavingReason] = useState<string>('Resigned');
+    const [submittingLeaving, setSubmittingLeaving] = useState<boolean>(false);
+    const [hideLeftStaff, setHideLeftStaff] = useState<boolean>(false);
 
     // Import Modal states
     const [importOpen, setImportOpen] = useState(false);
@@ -698,6 +720,44 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
     useEffect(() => {
         fetchLedger();
     }, [month]);
+
+    const handleConfirmMarkLeft = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const targetUserId = leavingModalTarget?.user_id ?? leavingModalTarget?.userId;
+        if (!leavingModalTarget || !targetUserId || !leavingDate) return;
+        setSubmittingLeaving(true);
+        try {
+            const res = await axios.post(`/api/v1/hr/staff-attendance/${targetUserId}/mark-left`, {
+                leaving_date: leavingDate,
+                leaving_reason: leavingReason,
+            });
+            toast.success(res.data.message || `Staff marked as left from ${leavingDate}`);
+            setLeavingModalTarget(null);
+            fetchLedger();
+            onAttendanceChanged();
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || "Failed to mark staff as left");
+        } finally {
+            setSubmittingLeaving(false);
+        }
+    };
+
+    const handleReactivateStaff = async (userId: number, name: string) => {
+        try {
+            const res = await axios.post(`/api/v1/hr/staff-attendance/${userId}/reactivate`);
+            toast.success(res.data.message || `Staff '${name}' re-activated successfully`);
+            fetchLedger();
+            onAttendanceChanged();
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || "Failed to re-activate staff");
+        }
+    };
+
+    const visibleMatrix = useMemo(() => {
+        if (!ledger?.matrix) return [];
+        if (!hideLeftStaff) return ledger.matrix;
+        return ledger.matrix.filter((row: any) => !row.has_left);
+    }, [ledger?.matrix, hideLeftStaff]);
 
     // Handle single-cell attendance click mark
     const handleCellMark = async (userId: number, dateStr: string, status: string, leaveTypeId: number | null) => {
@@ -868,6 +928,8 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
             case 'absent': return <div className="w-6 h-6 rounded bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 flex items-center justify-center text-xs font-bold shadow-2xs" title="Absent">A</div>;
             case 'half_day': return <div className="w-6 h-6 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-xs font-bold shadow-2xs" title="Half Day">H</div>;
             case 'on_leave': return <div className="w-6 h-6 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-xs font-bold shadow-2xs" title="On Leave">L</div>;
+            case 'left': return <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center text-[10px] font-bold" title="Left School">—</div>;
+            case 'not_joined': return <div className="w-6 h-6 rounded flex items-center justify-center text-[10px] text-slate-300" title="Not Joined Yet">—</div>;
             default: return null;
         }
     };
@@ -903,9 +965,19 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
         <div className="space-y-4">
             {/* Control Bar: MonthPicker, Export/Import, & Legends */}
             <div className="flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-xs border gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 flex-wrap">
                     <Label className="text-sm font-medium text-slate-500 whitespace-nowrap">Select Month:</Label>
                     <MonthPicker month={month} onChange={setMonth} />
+
+                    <label className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold cursor-pointer select-none bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-lg border border-slate-200 transition-colors">
+                        <input
+                            type="checkbox"
+                            checked={hideLeftStaff}
+                            onChange={(e) => setHideLeftStaff(e.target.checked)}
+                            className="rounded border-slate-300 text-primary focus:ring-primary size-3.5 cursor-pointer"
+                        />
+                        <span>Hide Left Staff</span>
+                    </label>
 
                     <Button
                         type="button"
@@ -913,7 +985,7 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                         size="sm"
                         onClick={handleExport}
                         disabled={exporting || loading || !ledger}
-                        className="h-9 gap-1.5 text-xs"
+                        className="h-9 gap-1.5 text-xs font-semibold"
                         title="Export Monthly Attendance Ledger to Excel"
                     >
                         <Download className={`w-3.5 h-3.5 ${exporting ? 'animate-bounce' : ''}`} />
@@ -929,7 +1001,7 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                             setImportResult(null);
                             setSelectedFile(null);
                         }}
-                        className="h-9 gap-1.5 text-xs"
+                        className="h-9 gap-1.5 text-xs font-semibold"
                         title="Bulk Import Attendance from Excel/CSV"
                     >
                         <Upload className="w-3.5 h-3.5" />
@@ -945,11 +1017,20 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                     <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-blue-100 border border-blue-200"></div> Leave</div>
                     <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-purple-100 border border-purple-300"></div> Holiday</div>
                     <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-rose-50 border border-rose-200"></div> Sunday (Off)</div>
+                    <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-slate-100 border border-slate-300 text-[8px] flex items-center justify-center font-bold text-slate-500">—</div> Left</div>
                 </div>
             </div>
 
             {loading ? (
-                <TableSkeletonLoader columns={35} rows={5} />
+                <div className="rounded-xl border shadow-xs bg-white overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left border-collapse">
+                            <tbody>
+                                <TableSkeletonLoader columns={35} rows={5} />
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             ) : ledger && ledger.matrix.length > 0 ? (
                 <div className="rounded-xl border shadow-xs bg-white overflow-hidden">
                     <div className="overflow-x-auto">
@@ -961,7 +1042,8 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                     </th>
                                     {Array.from({ length: ledger.days_in_month }).map((_, i) => {
                                         const d = i + 1;
-                                        const dateStr = `${month}-${String(d).padStart(2, '0')}`;
+                                        const activeMonth = ledger.month || month;
+                                        const dateStr = `${activeMonth}-${String(d).padStart(2, '0')}`;
                                         const meta = ledger.days_meta?.[dateStr];
                                         const isHoliday = Boolean(meta?.holiday);
                                         const isSunday = Boolean(meta?.is_sunday);
@@ -983,7 +1065,11 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                                     <span className="text-[8px] font-bold text-purple-700 uppercase block tracking-tighter">Hol</span>
                                                 ) : isSunday ? (
                                                     <span className="text-[8px] font-normal text-rose-600 block tracking-tighter">Sun</span>
-                                                ) : null}
+                                                ) : (
+                                                    <span className="text-[10px] text-slate-400 font-normal">
+                                                        {safeFormatDate(dateStr, 'EEE')}
+                                                    </span>
+                                                )}
                                             </th>
                                         );
                                     })}
@@ -994,33 +1080,85 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                 </tr>
                             </thead>
                             <tbody>
-                                {ledger.matrix.map((row) => (
-                                    <tr key={row.user_id} className="border-b last:border-0 hover:bg-slate-50/50">
+                                {visibleMatrix.map((row: any) => (
+                                    <tr key={row.user_id} className={`border-b last:border-0 hover:bg-slate-50/50 ${row.has_left ? 'bg-slate-50/40' : ''}`}>
                                         <td className="px-4 py-2.5 sticky left-0 z-10 bg-white shadow-[1px_0_0_0_#e2e8f0]">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="font-medium text-slate-900 whitespace-nowrap">{row.name}</span>
-                                                {row.employee_id && (
-                                                    <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
-                                                        {row.employee_id}
-                                                    </span>
-                                                )}
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span className={`font-medium whitespace-nowrap ${row.has_left ? 'text-slate-400 line-through' : 'text-slate-900'}`}>
+                                                            {row.name}
+                                                        </span>
+                                                        {row.employee_id && (
+                                                            <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                                                                {row.employee_id}
+                                                            </span>
+                                                        )}
+                                                        {row.has_left && (
+                                                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                                                                Left
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-[11px] text-slate-500 truncate max-w-[150px]">{row.designation}</div>
+                                                </div>
+
+                                                {/* Action Button: Mark Left / Reactivate */}
+                                                <div className="shrink-0">
+                                                    {row.has_left ? (
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => handleReactivateStaff(row.user_id, row.name)}
+                                                            className="h-6 px-2 text-[10px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
+                                                            title="Reactivate staff member"
+                                                        >
+                                                            Reactivate
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                setLeavingModalTarget({
+                                                                    user_id: row.user_id,
+                                                                    userId: row.user_id,
+                                                                    name: row.name,
+                                                                    employee_id: row.employee_id,
+                                                                    employeeId: row.employee_id,
+                                                                });
+                                                                setLeavingDate(format(new Date(), 'yyyy-MM-dd'));
+                                                                setLeavingReason('');
+                                                            }}
+                                                            className="h-6 px-1.5 text-[10px] font-medium text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                                                            title="Mark as Left School"
+                                                        >
+                                                            <UserX className="w-3 h-3 mr-0.5" />
+                                                            Left?
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="text-[11px] text-slate-500 truncate max-w-[150px]">{row.designation}</div>
                                         </td>
                                         {Array.from({ length: ledger.days_in_month }).map((_, i) => {
                                             const d = i + 1;
-                                            const dateStr = `${month}-${String(d).padStart(2, '0')}`;
+                                            const activeMonth = ledger.month || month;
+                                            const dateStr = `${activeMonth}-${String(d).padStart(2, '0')}`;
                                             const dayData = row.days[dateStr];
                                             const meta = ledger.days_meta?.[dateStr];
                                             const isHoliday = Boolean(meta?.holiday);
                                             const isSunday = Boolean(meta?.is_sunday);
                                             const cellKey = `${row.user_id}-${dateStr}`;
+                                            const isLeftOnDay = dayData?.status === 'left';
+                                            const isNotJoined = dayData?.status === 'not_joined';
 
                                             return (
                                                 <td 
                                                     key={i} 
                                                     className={`px-0.5 py-1 text-center ${
-                                                        isHoliday ? 'bg-purple-50/20' : isSunday ? 'bg-rose-50/20' : ''
+                                                        isHoliday ? 'bg-purple-50/20' : isSunday ? 'bg-rose-50/20' : isLeftOnDay ? 'bg-slate-50/60' : ''
                                                     }`}
                                                 >
                                                     <Popover
@@ -1032,8 +1170,10 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                                         <PopoverTrigger asChild>
                                                             <button
                                                                 type="button"
-                                                                className="w-7 h-7 mx-auto rounded-md flex items-center justify-center hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
-                                                                title={`Click to mark attendance for ${row.name} on ${dateStr}`}
+                                                                className={`w-7 h-7 mx-auto rounded-md flex items-center justify-center transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+                                                                    isLeftOnDay || isNotJoined ? 'hover:ring-1 hover:ring-slate-300 opacity-60' : 'hover:ring-2 hover:ring-primary/40'
+                                                                }`}
+                                                                title={isLeftOnDay ? `${row.name} has left school` : `Click to mark attendance for ${row.name} on ${dateStr}`}
                                                             >
                                                                 {renderCellContent(dayData?.status, isHoliday, isSunday, meta?.holiday?.name)}
                                                             </button>
@@ -1042,7 +1182,7 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                                             <div className="border-b pb-2 mb-2.5">
                                                                 <div className="font-semibold text-xs text-foreground truncate">{row.name}</div>
                                                                 <div className="text-[11px] text-muted-foreground flex items-center justify-between mt-0.5">
-                                                                    <span>{format(parse(dateStr, 'yyyy-MM-dd', new Date()), 'EEE, dd MMM yyyy')}</span>
+                                                                    <span>{safeFormatDate(dateStr, 'EEE, dd MMM yyyy')}</span>
                                                                     {isHoliday && (
                                                                         <span className="text-[9px] font-semibold text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded">
                                                                             Holiday
@@ -1061,77 +1201,97 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                                                                 )}
                                                             </div>
 
-                                                            <div className="grid grid-cols-2 gap-1.5 mb-2">
-                                                                <Button
-                                                                    type="button"
-                                                                    size="sm"
-                                                                    variant={dayData?.status === 'present' ? 'default' : 'outline'}
-                                                                    className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'present' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'hover:bg-emerald-50 text-emerald-700 border-emerald-200'}`}
-                                                                    onClick={() => handleCellMark(row.user_id, dateStr, 'present', null)}
-                                                                >
-                                                                    <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span>
-                                                                    Present (P)
-                                                                </Button>
-                                                                <Button
-                                                                    type="button"
-                                                                    size="sm"
-                                                                    variant={dayData?.status === 'absent' ? 'default' : 'outline'}
-                                                                    className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'absent' ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'hover:bg-rose-50 text-rose-700 border-rose-200'}`}
-                                                                    onClick={() => handleCellMark(row.user_id, dateStr, 'absent', null)}
-                                                                >
-                                                                    <span className="w-2 h-2 rounded-full bg-rose-500 mr-1.5 shrink-0"></span>
-                                                                    Absent (A)
-                                                                </Button>
-                                                                <Button
-                                                                    type="button"
-                                                                    size="sm"
-                                                                    variant={dayData?.status === 'half_day' ? 'default' : 'outline'}
-                                                                    className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'half_day' ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'hover:bg-amber-50 text-amber-700 border-amber-200'}`}
-                                                                    onClick={() => handleCellMark(row.user_id, dateStr, 'half_day', null)}
-                                                                >
-                                                                    <span className="w-2 h-2 rounded-full bg-amber-500 mr-1.5 shrink-0"></span>
-                                                                    Half Day (H)
-                                                                </Button>
-                                                                <Button
-                                                                    type="button"
-                                                                    size="sm"
-                                                                    variant={dayData?.status === 'on_leave' ? 'default' : 'outline'}
-                                                                    className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'on_leave' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'hover:bg-blue-50 text-blue-700 border-blue-200'}`}
-                                                                    onClick={() => handleCellMark(row.user_id, dateStr, 'on_leave', leaveTypes[0]?.id || null)}
-                                                                >
-                                                                    <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5 shrink-0"></span>
-                                                                    Leave (L)
-                                                                </Button>
-                                                            </div>
-
-                                                            {dayData?.status === 'on_leave' && leaveTypes.length > 0 && (
-                                                                <div className="mb-2">
-                                                                    <Label className="text-[10px] text-muted-foreground mb-1 block">Select Leave Type:</Label>
-                                                                    <select
-                                                                        className="w-full h-7 rounded border border-input bg-background px-2 text-xs"
-                                                                        value={dayData.leave_type_id || ''}
-                                                                        onChange={(e) => {
-                                                                            const ltId = e.target.value ? parseInt(e.target.value) : null;
-                                                                            handleCellMark(row.user_id, dateStr, 'on_leave', ltId);
-                                                                        }}
-                                                                    >
-                                                                        {leaveTypes.map(lt => (
-                                                                            <option key={lt.id} value={lt.id}>{lt.name}</option>
-                                                                        ))}
-                                                                    </select>
+                                                            {isLeftOnDay ? (
+                                                                <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                                                    <UserX className="w-5 h-5 mx-auto text-slate-400" />
+                                                                    <div className="font-semibold text-xs text-slate-700 dark:text-slate-300">Staff Left School</div>
+                                                                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                                                                        Left the institution on or before this date. Attendance cannot be marked.
+                                                                    </p>
                                                                 </div>
-                                                            )}
+                                                            ) : isNotJoined ? (
+                                                                <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                                                    <CalendarDays className="w-5 h-5 mx-auto text-slate-400" />
+                                                                    <div className="font-semibold text-xs text-slate-700 dark:text-slate-300">Not Joined Yet</div>
+                                                                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                                                                        Staff joining date is after this date.
+                                                                    </p>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <div className="grid grid-cols-2 gap-1.5 mb-2">
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="sm"
+                                                                            variant={dayData?.status === 'present' ? 'default' : 'outline'}
+                                                                            className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'present' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'hover:bg-emerald-50 text-emerald-700 border-emerald-200'}`}
+                                                                            onClick={() => handleCellMark(row.user_id, dateStr, 'present', null)}
+                                                                        >
+                                                                            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span>
+                                                                            Present (P)
+                                                                        </Button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="sm"
+                                                                            variant={dayData?.status === 'absent' ? 'default' : 'outline'}
+                                                                            className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'absent' ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'hover:bg-rose-50 text-rose-700 border-rose-200'}`}
+                                                                            onClick={() => handleCellMark(row.user_id, dateStr, 'absent', null)}
+                                                                        >
+                                                                            <span className="w-2 h-2 rounded-full bg-rose-500 mr-1.5 shrink-0"></span>
+                                                                            Absent (A)
+                                                                        </Button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="sm"
+                                                                            variant={dayData?.status === 'half_day' ? 'default' : 'outline'}
+                                                                            className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'half_day' ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'hover:bg-amber-50 text-amber-700 border-amber-200'}`}
+                                                                            onClick={() => handleCellMark(row.user_id, dateStr, 'half_day', null)}
+                                                                        >
+                                                                            <span className="w-2 h-2 rounded-full bg-amber-500 mr-1.5 shrink-0"></span>
+                                                                            Half Day (H)
+                                                                        </Button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="sm"
+                                                                            variant={dayData?.status === 'on_leave' ? 'default' : 'outline'}
+                                                                            className={`h-8 text-xs font-semibold justify-start ${dayData?.status === 'on_leave' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'hover:bg-blue-50 text-blue-700 border-blue-200'}`}
+                                                                            onClick={() => handleCellMark(row.user_id, dateStr, 'on_leave', leaveTypes[0]?.id || null)}
+                                                                        >
+                                                                            <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5 shrink-0"></span>
+                                                                            Leave (L)
+                                                                        </Button>
+                                                                    </div>
 
-                                                            {dayData?.status && (
-                                                                <Button
-                                                                    type="button"
-                                                                    size="sm"
-                                                                    variant="ghost"
-                                                                    className="w-full h-7 text-xs text-muted-foreground hover:text-rose-600 hover:bg-rose-50"
-                                                                    onClick={() => handleCellMark(row.user_id, dateStr, 'clear', null)}
-                                                                >
-                                                                    Clear Attendance (-)
-                                                                </Button>
+                                                                    {dayData?.status === 'on_leave' && leaveTypes.length > 0 && (
+                                                                        <div className="mb-2">
+                                                                            <Label className="text-[10px] text-muted-foreground mb-1 block">Select Leave Type:</Label>
+                                                                            <select
+                                                                                className="w-full h-7 rounded border border-input bg-background px-2 text-xs"
+                                                                                value={dayData.leave_type_id || ''}
+                                                                                onChange={(e) => {
+                                                                                    const ltId = e.target.value ? parseInt(e.target.value) : null;
+                                                                                    handleCellMark(row.user_id, dateStr, 'on_leave', ltId);
+                                                                                }}
+                                                                            >
+                                                                                {leaveTypes.map(lt => (
+                                                                                    <option key={lt.id} value={lt.id}>{lt.name}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {dayData?.status && (
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="sm"
+                                                                            variant="ghost"
+                                                                            className="w-full h-7 text-xs text-muted-foreground hover:text-rose-600 hover:bg-rose-50"
+                                                                            onClick={() => handleCellMark(row.user_id, dateStr, 'clear', null)}
+                                                                        >
+                                                                            Clear Attendance (-)
+                                                                        </Button>
+                                                                    )}
+                                                                </>
                                                             )}
                                                         </PopoverContent>
                                                     </Popover>
@@ -1165,7 +1325,7 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                             Import Staff Attendance
                         </DialogTitle>
                         <DialogDescription>
-                            Upload a monthly calendar Excel (.xlsx) file to bulk mark or update staff attendance records for {format(parse(month, 'yyyy-MM', new Date()), 'MMMM yyyy')}.
+                            Upload a monthly calendar Excel (.xlsx) file to bulk mark or update staff attendance records for {safeFormatDate(`${month}-01`, 'MMMM yyyy', month)}.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -1249,6 +1409,75 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Mark Staff Left School Modal */}
+            <Dialog open={Boolean(leavingModalTarget)} onOpenChange={(open) => { if (!open) setLeavingModalTarget(null); }}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-rose-600">
+                            <UserX className="w-5 h-5" />
+                            Mark Staff as Left School
+                        </DialogTitle>
+                        <DialogDescription>
+                            Mark <strong>{leavingModalTarget?.name}</strong> as having left the school. From this date onwards, they will be removed from daily attendance and will not accumulate absent marks.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 py-2">
+                        <div className="space-y-1.5">
+                            <Label className="text-xs font-medium">Leaving Date (School Exit Date) *</Label>
+                            <Input
+                                type="date"
+                                value={leavingDate}
+                                onChange={(e) => setLeavingDate(e.target.value)}
+                                className="text-xs"
+                                max={format(new Date(), 'yyyy-MM-dd')}
+                            />
+                            <p className="text-[11px] text-muted-foreground">
+                                Attendance records on or after this date will be automatically cleaned up.
+                            </p>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label className="text-xs font-medium">Reason for Leaving</Label>
+                            <Input
+                                type="text"
+                                placeholder="e.g. Resigned, Relocated, Contract ended"
+                                value={leavingReason}
+                                onChange={(e) => setLeavingReason(e.target.value)}
+                                className="text-xs"
+                            />
+                        </div>
+
+                        <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800">
+                            <strong>Note:</strong> Staff status will be set to inactive. You can reactivate them at any time from this ledger.
+                        </div>
+                    </div>
+
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLeavingModalTarget(null)}
+                            disabled={submittingLeaving}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleConfirmMarkLeft}
+                            disabled={!leavingDate || submittingLeaving}
+                            className="gap-1.5"
+                        >
+                            {submittingLeaving && <RefreshCcw className="w-3.5 h-3.5 animate-spin" />}
+                            {submittingLeaving ? 'Saving...' : 'Confirm School Exit'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
@@ -1257,8 +1486,15 @@ function StaffAttendanceLedger({ leaveTypes, onAttendanceChanged }: { leaveTypes
 // MonthPicker Component
 // ----------------------------------------------------------------------
 function MonthPicker({ month, onChange }: { month: string, onChange: (val: string) => void }) {
-    const date = parse(month, 'yyyy-MM', new Date());
+    const parsedDate = parse(month, 'yyyy-MM', new Date());
+    const date = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
     const [currentYear, setCurrentYear] = useState(date.getFullYear());
+
+    useEffect(() => {
+        if (!isNaN(parsedDate.getTime())) {
+            setCurrentYear(parsedDate.getFullYear());
+        }
+    }, [month]);
     
     const months = [
         "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

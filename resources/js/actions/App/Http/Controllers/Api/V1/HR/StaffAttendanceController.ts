@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
 export const ledger = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ ledger.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
 ledger.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ ledger.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
 ledger.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ ledger.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
 ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
     const ledgerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
         ledgerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:186
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:300
  * @route '/api/v1/hr/staff-attendance/ledger'
  */
         ledgerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     ledger.form = ledgerForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:196
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:310
  * @route '/api/v1/hr/staff-attendance/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     exportMethod.form = exportMethodForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
 export const downloadTemplate = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ downloadTemplate.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
 downloadTemplate.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ downloadTemplate.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
 downloadTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ downloadTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
 downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
     const downloadTemplateForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
         downloadTemplateForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
         })
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:207
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:321
  * @route '/api/v1/hr/staff-attendance/template'
  */
         downloadTemplateForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     downloadTemplate.form = downloadTemplateForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:218
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:332
  * @route '/api/v1/hr/staff-attendance/import'
  */
 export const importMethod = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -250,7 +250,7 @@ importMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:218
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:332
  * @route '/api/v1/hr/staff-attendance/import'
  */
 importMethod.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ importMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:218
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:332
  * @route '/api/v1/hr/staff-attendance/import'
  */
 importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -269,7 +269,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:218
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:332
  * @route '/api/v1/hr/staff-attendance/import'
  */
     const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -279,7 +279,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:218
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:332
  * @route '/api/v1/hr/staff-attendance/import'
  */
         importMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -290,7 +290,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     importMethod.form = importMethodForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:121
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:137
  * @route '/api/v1/hr/staff-attendance/mark-cell'
  */
 export const markCell = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -305,7 +305,7 @@ markCell.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:121
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:137
  * @route '/api/v1/hr/staff-attendance/mark-cell'
  */
 markCell.url = (options?: RouteQueryOptions) => {
@@ -314,7 +314,7 @@ markCell.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:121
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:137
  * @route '/api/v1/hr/staff-attendance/mark-cell'
  */
 markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -324,7 +324,7 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:121
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:137
  * @route '/api/v1/hr/staff-attendance/mark-cell'
  */
     const markCellForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -334,7 +334,7 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:121
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:137
  * @route '/api/v1/hr/staff-attendance/mark-cell'
  */
         markCellForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -343,6 +343,154 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     markCell.form = markCellForm
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markLeft
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:215
+ * @route '/api/v1/hr/staff-attendance/{userId}/mark-left'
+ */
+export const markLeft = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: markLeft.url(args, options),
+    method: 'post',
+})
+
+markLeft.definition = {
+    methods: ["post"],
+    url: '/api/v1/hr/staff-attendance/{userId}/mark-left',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markLeft
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:215
+ * @route '/api/v1/hr/staff-attendance/{userId}/mark-left'
+ */
+markLeft.url = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { userId: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    userId: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        userId: args.userId,
+                }
+
+    return markLeft.definition.url
+            .replace('{userId}', parsedArgs.userId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markLeft
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:215
+ * @route '/api/v1/hr/staff-attendance/{userId}/mark-left'
+ */
+markLeft.post = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: markLeft.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markLeft
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:215
+ * @route '/api/v1/hr/staff-attendance/{userId}/mark-left'
+ */
+    const markLeftForm = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: markLeft.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::markLeft
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:215
+ * @route '/api/v1/hr/staff-attendance/{userId}/mark-left'
+ */
+        markLeftForm.post = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: markLeft.url(args, options),
+            method: 'post',
+        })
+    
+    markLeft.form = markLeftForm
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::reactivate
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:267
+ * @route '/api/v1/hr/staff-attendance/{userId}/reactivate'
+ */
+export const reactivate = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: reactivate.url(args, options),
+    method: 'post',
+})
+
+reactivate.definition = {
+    methods: ["post"],
+    url: '/api/v1/hr/staff-attendance/{userId}/reactivate',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::reactivate
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:267
+ * @route '/api/v1/hr/staff-attendance/{userId}/reactivate'
+ */
+reactivate.url = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { userId: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    userId: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        userId: args.userId,
+                }
+
+    return reactivate.definition.url
+            .replace('{userId}', parsedArgs.userId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::reactivate
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:267
+ * @route '/api/v1/hr/staff-attendance/{userId}/reactivate'
+ */
+reactivate.post = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: reactivate.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::reactivate
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:267
+ * @route '/api/v1/hr/staff-attendance/{userId}/reactivate'
+ */
+    const reactivateForm = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: reactivate.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::reactivate
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:267
+ * @route '/api/v1/hr/staff-attendance/{userId}/reactivate'
+ */
+        reactivateForm.post = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: reactivate.url(args, options),
+            method: 'post',
+        })
+    
+    reactivate.form = reactivateForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::index
  * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:19
@@ -423,7 +571,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::mark
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:89
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:105
  * @route '/api/v1/hr/staff-attendance'
  */
 export const mark = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -438,7 +586,7 @@ mark.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::mark
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:89
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:105
  * @route '/api/v1/hr/staff-attendance'
  */
 mark.url = (options?: RouteQueryOptions) => {
@@ -447,7 +595,7 @@ mark.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::mark
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:89
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:105
  * @route '/api/v1/hr/staff-attendance'
  */
 mark.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -457,7 +605,7 @@ mark.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::mark
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:89
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:105
  * @route '/api/v1/hr/staff-attendance'
  */
     const markForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -467,7 +615,7 @@ mark.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\HR\StaffAttendanceController::mark
- * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:89
+ * @see app/Http/Controllers/Api/V1/HR/StaffAttendanceController.php:105
  * @route '/api/v1/hr/staff-attendance'
  */
         markForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -476,6 +624,6 @@ mark.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     mark.form = markForm
-const StaffAttendanceController = { ledger, exportMethod, downloadTemplate, importMethod, markCell, index, mark, export: exportMethod, import: importMethod }
+const StaffAttendanceController = { ledger, exportMethod, downloadTemplate, importMethod, markCell, markLeft, reactivate, index, mark, export: exportMethod, import: importMethod }
 
 export default StaffAttendanceController

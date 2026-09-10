@@ -17,6 +17,7 @@ use App\Models\StudentProfile;
 use App\Models\Stream;
 use App\Models\User;
 use App\Support\InstitutionContext;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,46 +56,60 @@ class DashboardAnalyticsController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        // Date filters (Default: Current Year)
-        $startDate = $request->input('start_date', now()->startOfYear()->toDateString());
+        $institutionId = InstitutionContext::getActiveInstitutionId();
+
+        // Date filters (Default: 2025-01-01 to Today, covering active academic session)
+        $startDate = $request->input('start_date', '2025-01-01');
         $endDate = $request->input('end_date', now()->toDateString());
+        $startDateTime = Carbon::parse($startDate)->startOfDay();
+        $endDateTime = Carbon::parse($endDate)->endOfDay();
 
-        $totalStudents = User::whereHas('roles', function ($q) {
-            $q->where('key', 'student');
-        })->count();
+        $totalStudents = User::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereHas('roles', function ($q) {
+                $q->where('key', 'student');
+            })->count();
 
-        // ─── Total Staff ─────────────────────────────────────────────────────
-        $totalStaff = StaffProfile::where('status', 1)->count();
+        // ─── Total Staff (all profiles for this institution) ──────────────────
+        $totalStaff = StaffProfile::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->count();
 
         // ─── Total Active Classes ────────────────────────────────────────────
-        $totalClasses = LmsClass::where('status', 1)->count();
+        $totalClasses = LmsClass::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('status', 1)->count();
 
         // ─── Admission Stats ─────────────────────────────────────────────────
-        $admissionTotal = AdmissionApplication::whereBetween('created_at', [$startDate, $endDate])->count();
-        $admissionNew = AdmissionApplication::where('application_type', 'new')->whereBetween('created_at', [$startDate, $endDate])->count();
-        $admissionRe = AdmissionApplication::where('application_type', 're-admission')->whereBetween('created_at', [$startDate, $endDate])->count();
+        $admissionTotal = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
+        $admissionNew = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('application_type', 'new')->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
+        $admissionRe = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('application_type', 're-admission')->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
 
         // ─── Fee Collection Stats ────────────────────────────────────────────
-        $totalFeeCollection = $this->calculateTotalRevenue($startDate, $endDate);
-        $pendingFee = FeePayment::where('payment_status', 'pending')
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('total_amount');
+        $totalFeeCollection = $this->calculateTotalRevenue($startDateTime, $endDateTime, $institutionId);
+
+        // Pending fees from student period balances
+        $pendingFee = (float) DB::table('student_fee_period_balances')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('closing_balance', '>', 0)
+            ->sum('closing_balance');
         
-        // Fee paid count & total for rate
-        $paidFeeCount = FeePayment::whereIn('payment_status', ['paid', 'success'])->count();
-        $totalFeeCount = FeePayment::whereIn('payment_status', ['paid', 'success', 'pending'])->count();
-        $feeCollectionRate = $totalFeeCount > 0 ? round(($paidFeeCount / $totalFeeCount) * 100, 1) : 0;
+        // Fee collection rate based on collections vs total receivable
+        $totalReceivable = $totalFeeCollection + $pendingFee;
+        $feeCollectionRate = $totalReceivable > 0 ? round(($totalFeeCollection / $totalReceivable) * 100, 1) : 0;
 
         // ─── Attendance Rate (Last 30 Days) ──────────────────────────────────
-        $attendanceFrom = now()->subDays(30)->toDateString();
-        $totalAttendance = AttendanceRecord::whereBetween('date', [$attendanceFrom, $endDate])->count();
-        $presentAttendance = AttendanceRecord::whereBetween('date', [$attendanceFrom, $endDate])
+        $attendanceFrom = now()->subDays(30)->startOfDay();
+        $totalAttendance = AttendanceRecord::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereBetween('date', [$attendanceFrom->toDateString(), $endDateTime->toDateString()])->count();
+        $presentAttendance = AttendanceRecord::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereBetween('date', [$attendanceFrom->toDateString(), $endDateTime->toDateString()])
             ->where('status', 'present')->count();
         $attendanceRate = $totalAttendance > 0 ? round(($presentAttendance / $totalAttendance) * 100, 1) : 0;
 
         // ─── Expenses ────────────────────────────────────────────────────────
-        $totalExpenses = Expense::where('status', 'approved')
-            ->whereBetween('date', [$startDate, $endDate])
+        $totalExpenses = (float) Expense::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('status', 'approved')
+            ->whereBetween('date', [$startDateTime->toDateString(), $endDateTime->toDateString()])
             ->sum('amount');
         $netRevenue = $totalFeeCollection - $totalExpenses;
 
@@ -142,8 +157,12 @@ class DashboardAnalyticsController extends BaseController
 
         // 3. FEE COLLECTION BY MODE
         $feeByMode = FeePayment::select('payment_mode', DB::raw('SUM(total_amount) as total'))
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
             ->whereIn('payment_status', ['paid', 'success'])
-            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->where(function ($q) use ($startDateTime, $endDateTime) {
+                $q->whereBetween('payment_date', [$startDateTime, $endDateTime])
+                  ->orWhereBetween('created_at', [$startDateTime, $endDateTime]);
+            })
             ->whereNotNull('payment_mode')
             ->groupBy('payment_mode')
             ->get()
@@ -166,9 +185,12 @@ class DashboardAnalyticsController extends BaseController
 
         // 4. FEE COLLECTION BY CATEGORY
         $feeByCategory = [
-            ['name' => 'Admission Fees', 'value' => round((float) AdmissionApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$startDate, $endDate])->sum('amount'), 2), 'fill' => 'hsl(221, 83%, 53%)'],
-            ['name' => 'Certificate Fees', 'value' => round((float) CertificateApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$startDate, $endDate])->sum('amount'), 2), 'fill' => 'hsl(142, 71%, 45%)'],
-            ['name' => 'General Fees', 'value' => round((float) FeePayment::whereIn('payment_status', ['success', 'paid'])->whereBetween('payment_date', [$startDate, $endDate])->sum('total_amount'), 2), 'fill' => 'hsl(45, 93%, 47%)'],
+            ['name' => 'Admission Fees', 'value' => round((float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$startDateTime, $endDateTime])->sum('amount'), 2), 'fill' => 'hsl(221, 83%, 53%)'],
+            ['name' => 'Certificate Fees', 'value' => round((float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$startDateTime, $endDateTime])->sum('amount'), 2), 'fill' => 'hsl(142, 71%, 45%)'],
+            ['name' => 'General Fees', 'value' => round((float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['success', 'paid'])->where(function ($q) use ($startDateTime, $endDateTime) {
+                $q->whereBetween('payment_date', [$startDateTime, $endDateTime])
+                  ->orWhereBetween('created_at', [$startDateTime, $endDateTime]);
+            })->sum('total_amount'), 2), 'fill' => 'hsl(45, 93%, 47%)'],
         ];
         // Filter out zero-value categories
         $feeByCategory = collect($feeByCategory)->filter(fn($c) => $c['value'] > 0)->values();
@@ -251,11 +273,23 @@ class DashboardAnalyticsController extends BaseController
         ]);
     }
 
-    private function calculateTotalRevenue($start, $end)
+    private function calculateTotalRevenue($start, $end, $institutionId = null)
     {
-        $admissionRev = AdmissionApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$start, $end])->sum('amount');
-        $certRev = CertificateApplication::whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$start, $end])->sum('amount');
-        $generalRev = FeePayment::whereIn('payment_status', ['success', 'paid'])->whereBetween('payment_date', [$start, $end])->sum('total_amount');
+        $admissionRev = (float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereIn('payment_status', ['paid', 'success'])
+            ->whereBetween('updated_at', [$start, $end])
+            ->sum('amount');
+        $certRev = (float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereIn('payment_status', ['paid', 'success'])
+            ->whereBetween('submitted_at', [$start, $end])
+            ->sum('amount');
+        $generalRev = (float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereIn('payment_status', ['success', 'paid'])
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('payment_date', [$start, $end])
+                  ->orWhereBetween('created_at', [$start, $end]);
+            })
+            ->sum('total_amount');
 
         return $admissionRev + $certRev + $generalRev;
     }
@@ -268,25 +302,33 @@ class DashboardAnalyticsController extends BaseController
 
     private function getRevenueVsExpenses()
     {
+        $institutionId = InstitutionContext::getActiveInstitutionId();
         $months = collect();
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $monthStart = $date->copy()->startOfMonth()->toDateString();
-            $monthEnd = $date->copy()->endOfMonth()->toDateString();
+            $monthStart = $date->copy()->startOfMonth()->startOfDay();
+            $monthEnd = $date->copy()->endOfMonth()->endOfDay();
             $monthLabel = $date->format('M');
 
             // Revenue from all sources
-            $admissionRev = (float) AdmissionApplication::whereIn('payment_status', ['paid', 'success'])
+            $admissionRev = (float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->whereIn('payment_status', ['paid', 'success'])
                 ->whereBetween('updated_at', [$monthStart, $monthEnd])->sum('amount');
-            $certRev = (float) CertificateApplication::whereIn('payment_status', ['paid', 'success'])
+            $certRev = (float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->whereIn('payment_status', ['paid', 'success'])
                 ->whereBetween('submitted_at', [$monthStart, $monthEnd])->sum('amount');
-            $generalRev = (float) FeePayment::whereIn('payment_status', ['success', 'paid'])
-                ->whereBetween('payment_date', [$monthStart, $monthEnd])->sum('total_amount');
+            $generalRev = (float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->whereIn('payment_status', ['success', 'paid'])
+                ->where(function ($q) use ($monthStart, $monthEnd) {
+                    $q->whereBetween('payment_date', [$monthStart, $monthEnd])
+                      ->orWhereBetween('created_at', [$monthStart, $monthEnd]);
+                })->sum('total_amount');
             $totalRev = $admissionRev + $certRev + $generalRev;
 
             // Expenses
-            $totalExp = (float) Expense::where('status', 'approved')
-                ->whereBetween('date', [$monthStart, $monthEnd])->sum('amount');
+            $totalExp = (float) Expense::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->where('status', 'approved')
+                ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])->sum('amount');
 
             $months->push([
                 'month' => $monthLabel,
@@ -325,19 +367,21 @@ class DashboardAnalyticsController extends BaseController
         $institutionId = InstitutionContext::getActiveInstitutionId();
         $instFilter = $institutionId ? " AND institution_id = {$institutionId}" : '';
 
-        $monthExpr = DB::connection()->getDriverName() === 'pgsql' ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
+        $isPgsql = DB::connection()->getDriverName() === 'pgsql';
+        $monthExpr = $isPgsql ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
+        $monthNumExpr = $isPgsql ? "extract(month from created_at)" : "MONTH(created_at)";
 
         return DB::table(DB::raw("(
             SELECT amount, created_at FROM admission_applications WHERE payment_status IN ('paid', 'success'){$instFilter}
             UNION ALL
             SELECT amount, submitted_at as created_at FROM certificate_applications WHERE payment_status IN ('paid', 'success'){$instFilter}
             UNION ALL
-            SELECT total_amount as amount, payment_date as created_at FROM fee_payments WHERE payment_status IN ('success', 'paid'){$instFilter}
+            SELECT total_amount as amount, COALESCE(payment_date, created_at) as created_at FROM fee_payments WHERE payment_status IN ('success', 'paid'){$instFilter}
         ) as combined_fees"))
             ->select(
                 DB::raw("{$monthExpr} as month"),
                 DB::raw('SUM(amount) as total'),
-                DB::raw("extract(month from created_at) as month_num")
+                DB::raw("{$monthNumExpr} as month_num")
             )
             ->whereBetween('created_at', [$start, $end])
             ->groupBy('month', 'month_num')

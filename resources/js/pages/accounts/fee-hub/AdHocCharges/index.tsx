@@ -19,7 +19,7 @@ import StudentApi from "@/lib/api/studentApi";
 import lmsApi from "@/lib/api/lmsApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles, RotateCcw, AlertTriangle, Loader2 } from "lucide-react";
+import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles, RotateCcw, AlertTriangle, Loader2, History, Layers, Calendar, Filter, ArrowUpRight, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PREMIUM_INPUT_CLASSES, PREMIUM_LABEL_CLASSES } from "@/components/shared/form/types";
@@ -44,6 +44,8 @@ const YEARS = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - 2
 export default function AdHocCharges({ auth }: any) {
   const institutionId = auth.current_institution_id || auth.user?.institution_id;
   const queryClient = useQueryClient();
+
+  const [activeTab, setActiveTab] = useState<string>("assign");
 
   // Target Mode: 'all' (All Classes / Entire School) or 'class' (Specific Class)
   const [targetScope, setTargetScope] = useState<"all" | "class">("all");
@@ -157,18 +159,43 @@ export default function AdHocCharges({ auth }: any) {
     setSelectedStudents(new Set());
   };
 
+  // Batches / Charge History Query
+  const { data: batchesData, isLoading: loadingBatches } = useQuery({
+    queryKey: ["ad-hoc-batches", institutionId],
+    queryFn: async () => {
+      const res = await axios.get("/api/v1/fees/ad-hoc-charges/batches", {
+        params: { institution_id: institutionId },
+      });
+      return res.data;
+    },
+    enabled: !!institutionId,
+  });
+
+  const batches: any[] = batchesData?.batches || [];
+  const chargeNames: string[] = batchesData?.charge_names || [];
+
+  const totalBatchesCount = batches.length;
+  const totalStudentsCharged = useMemo(() => {
+    return batches.reduce((sum, b) => sum + (Number(b.student_count) || 0), 0);
+  }, [batches]);
+  const totalChargesAmount = useMemo(() => {
+    return batches.reduce((sum, b) => sum + (Number(b.total_amount) || 0), 0);
+  }, [batches]);
+
   // Logs Tab States
   const [logsPage, setLogsPage] = useState(1);
   const [logsSearch, setLogsSearch] = useState("");
+  const [logsChargeName, setLogsChargeName] = useState<string>("");
   const [logsClassId, setLogsClassId] = useState<string>("");
   const [logsMonth, setLogsMonth] = useState<string>("");
   const [logsYear, setLogsYear] = useState<string>("");
 
   const { data: logsData, isLoading: loadingLogs } = useQuery({
-    queryKey: ["ad-hoc-logs", institutionId, logsPage, logsSearch, logsClassId, logsMonth, logsYear],
+    queryKey: ["ad-hoc-logs", institutionId, logsPage, logsSearch, logsChargeName, logsClassId, logsMonth, logsYear],
     queryFn: async () => {
       const params: any = { institution_id: institutionId, page: logsPage, per_page: 20 };
       if (logsSearch) params.search = logsSearch;
+      if (logsChargeName) params.name = logsChargeName;
       if (logsClassId) params.lms_class_id = logsClassId;
       if (logsMonth && logsYear) params.for_month = `${logsYear}-${logsMonth}`;
       
@@ -191,7 +218,24 @@ export default function AdHocCharges({ auth }: any) {
     for_month?: string;
     studentName?: string;
     count?: number;
+    totalAmount?: number;
   } | null>(null);
+
+  const viewBatchStudents = (batch: any) => {
+    setLogsChargeName(batch.name);
+    if (batch.for_month) {
+      const parts = batch.for_month.split("-");
+      if (parts.length === 2) {
+        setLogsYear(parts[0]);
+        setLogsMonth(parts[1]);
+      }
+    } else {
+      setLogsYear("");
+      setLogsMonth("");
+    }
+    setLogsPage(1);
+    setActiveTab("logs");
+  };
 
   const singleDeleteMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -200,8 +244,10 @@ export default function AdHocCharges({ auth }: any) {
     onSuccess: () => {
       toast.success("Ad-hoc charge reverted successfully.");
       setRevertingTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["ad-hoc-batches", institutionId] });
       queryClient.invalidateQueries({ queryKey: ["ad-hoc-logs", institutionId] });
       queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix"] });
+      queryClient.invalidateQueries({ queryKey: ["fee-dues"] });
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to revert charge.");
@@ -209,16 +255,21 @@ export default function AdHocCharges({ auth }: any) {
   });
 
   const bulkDeleteMutation = useMutation({
-    mutationFn: async (payload: { ids?: number[]; name?: string; for_month?: string }) => {
-      const res = await axios.post("/api/v1/fees/ad-hoc-charges/bulk-delete", payload);
+    mutationFn: async (payload: { ids?: number[]; name?: string; for_month?: string; amount?: number | string }) => {
+      const res = await axios.post("/api/v1/fees/ad-hoc-charges/bulk-delete", {
+        institution_id: institutionId,
+        ...payload,
+      });
       return res.data;
     },
     onSuccess: (data) => {
       toast.success(data.message || "Charges reverted successfully.");
       setSelectedLogIds(new Set());
       setRevertingTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["ad-hoc-batches", institutionId] });
       queryClient.invalidateQueries({ queryKey: ["ad-hoc-logs", institutionId] });
       queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix"] });
+      queryClient.invalidateQueries({ queryKey: ["fee-dues"] });
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to revert charges.");
@@ -269,7 +320,10 @@ export default function AdHocCharges({ auth }: any) {
       } else {
         setSelectedStudents(new Set());
       }
+      queryClient.invalidateQueries({ queryKey: ["ad-hoc-batches", institutionId] });
       queryClient.invalidateQueries({ queryKey: ["ad-hoc-logs", institutionId] });
+      queryClient.invalidateQueries({ queryKey: ["fee-dues"] });
+      queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix"] });
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to assign charges.");
@@ -294,10 +348,25 @@ export default function AdHocCharges({ auth }: any) {
           description="Assign events, functions, or penalty charges to students across all classes or a specific class. These will appear directly in their ledger."
         />
 
-        <Tabs defaultValue="assign" className="space-y-6">
-          <TabsList className="w-full sm:w-auto h-auto p-1 bg-muted/50 border border-border/50 rounded-xl inline-flex flex-wrap md:flex-nowrap">
-            <TabsTrigger value="assign" className="flex-1 md:flex-none">Assign Charges</TabsTrigger>
-            <TabsTrigger value="logs" className="flex-1 md:flex-none">Assignment Logs</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="w-full sm:w-auto h-auto p-1 bg-muted/50 border border-border/50 rounded-xl inline-flex flex-wrap md:flex-nowrap gap-1">
+            <TabsTrigger value="assign" className="flex-1 md:flex-none gap-1.5 font-semibold">
+              <Sparkles className="size-3.5 text-primary" />
+              Assign Charges
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex-1 md:flex-none gap-1.5 font-semibold">
+              <History className="size-3.5" />
+              Charge History
+              {batches.length > 0 && (
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] font-bold h-4">
+                  {batches.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="flex-1 md:flex-none gap-1.5 font-semibold">
+              <Layers className="size-3.5" />
+              Student Logs & Revert
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="assign" className="m-0 border-none p-0 outline-none">
@@ -623,28 +692,287 @@ export default function AdHocCharges({ auth }: any) {
                   )}
                 </CardContent>
               </Card>
+              {/* Recent Charge Batches Quick Preview */}
+              {batches.length > 0 && (
+                <div className="md:col-span-12">
+                  <Card className="border-border/60 bg-muted/10">
+                    <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <History className="size-4 text-primary" />
+                          Recent Charge Batches ({batches.length})
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Charges previously applied across student batches. Click to view matching students or revert.
+                        </CardDescription>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveTab("history")}
+                        className="text-xs font-bold gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                      >
+                        View Full History
+                        <ArrowUpRight className="size-3.5" />
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {batches.slice(0, 3).map((b, idx) => (
+                          <div key={idx} className="p-3.5 rounded-xl border bg-background flex flex-col justify-between gap-3 shadow-xs hover:border-primary/30 transition-colors">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span className="font-bold text-sm text-foreground">{b.name}</span>
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
+                                  {b.for_month ? format(new Date(`${b.for_month}-01`), "MMMM yyyy") : "—"}
+                                </div>
+                              </div>
+                              <Badge variant="outline" className="font-bold text-xs bg-primary/5 text-primary border-primary/20 shrink-0">
+                                ₹{Number(b.amount).toLocaleString('en-IN')}/st.
+                              </Badge>
+                            </div>
+                            <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border/50 text-muted-foreground">
+                              <span>{b.student_count} Students</span>
+                              <strong className="text-foreground font-black">₹{Number(b.total_amount).toLocaleString('en-IN')}</strong>
+                            </div>
+                            <div className="flex items-center gap-2 pt-1">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="h-7 text-[11px] flex-1 font-semibold gap-1"
+                                onClick={() => viewBatchStudents(b)}
+                              >
+                                <Filter className="size-3" />
+                                Filter Students
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-[11px] px-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 font-semibold gap-1"
+                                onClick={() => {
+                                  setRevertingTarget({
+                                    type: "batch",
+                                    name: b.name,
+                                    for_month: b.for_month,
+                                    amount: b.amount,
+                                    count: b.student_count,
+                                    totalAmount: b.total_amount,
+                                  });
+                                }}
+                              >
+                                <RotateCcw className="size-3" />
+                                Revert
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="m-0 border-none p-0 outline-none space-y-6">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card className="bg-gradient-to-br from-primary/5 via-background to-background border-primary/20">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Total Batches Applied</p>
+                    <p className="text-2xl font-black tracking-tight mt-1 text-foreground">{totalBatchesCount}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{chargeNames.length} distinct charge categories</p>
+                  </div>
+                  <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <History className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-blue-500/5 via-background to-background border-blue-500/20">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Total Students Charged</p>
+                    <p className="text-2xl font-black tracking-tight mt-1 text-foreground">{totalStudentsCharged.toLocaleString('en-IN')}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Cumulative student assignments</p>
+                  </div>
+                  <div className="size-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                    <Users className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-emerald-500/5 via-background to-background border-emerald-500/20">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Total Ad-Hoc Revenue</p>
+                    <p className="text-2xl font-black tracking-tight mt-1 text-emerald-600">₹{totalChargesAmount.toLocaleString('en-IN')}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Total added across student ledgers</p>
+                  </div>
+                  <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                    <IndianRupee className="size-5" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Batches Table Card */}
+            <Card>
+              <CardHeader>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <CardTitle>Ad-Hoc Charge History (Batches)</CardTitle>
+                    <CardDescription>
+                      Consolidated log of every bulk ad-hoc charge created. You can filter to view affected students or revert an entire batch.
+                    </CardDescription>
+                  </div>
+                  {batches.length > 0 && (
+                    <Badge variant="outline" className="w-fit font-bold text-xs bg-muted/40">
+                      {batches.length} Batches Found
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loadingBatches ? (
+                  <div className="py-12 text-center text-muted-foreground border rounded-xl bg-muted/10">
+                    Loading charge history...
+                  </div>
+                ) : batches.length > 0 ? (
+                  <div className="border rounded-xl overflow-hidden bg-background">
+                    <Table>
+                      <TableHeader className="bg-muted/50">
+                        <TableRow>
+                          <TableHead>Charge Name</TableHead>
+                          <TableHead>Applicable Month</TableHead>
+                          <TableHead className="text-right">Rate / Student</TableHead>
+                          <TableHead className="text-center">Total Students</TableHead>
+                          <TableHead className="text-right">Total Batch Amount</TableHead>
+                          <TableHead>Assignment Date</TableHead>
+                          <TableHead>Assigned By</TableHead>
+                          <TableHead className="text-center w-52">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {batches.map((b, idx) => (
+                          <TableRow key={idx} className="hover:bg-muted/30">
+                            <TableCell>
+                              <div className="font-bold text-sm text-foreground flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-primary shrink-0" />
+                                <span>{b.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="text-xs bg-muted/40 font-medium">
+                                {b.for_month ? format(new Date(`${b.for_month}-01`), "MMM yyyy") : "—"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-semibold tabular-nums">
+                              ₹{Number(b.amount).toLocaleString('en-IN')}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="secondary" className="font-bold text-xs">
+                                {b.student_count} Students
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-black tabular-nums text-foreground">
+                              ₹{Number(b.total_amount).toLocaleString('en-IN')}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground whitespace-nowrap text-xs">
+                              {b.assignment_date ? format(new Date(b.assignment_date), "dd MMM yyyy") : "—"}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground">
+                              {b.creator_name || "Admin"}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => viewBatchStudents(b)}
+                                  className="h-8 text-xs font-semibold gap-1 hover:border-primary hover:text-primary"
+                                >
+                                  <Filter className="size-3.5" />
+                                  Filter Students
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => {
+                                    setRevertingTarget({
+                                      type: "batch",
+                                      name: b.name,
+                                      for_month: b.for_month,
+                                      amount: b.amount,
+                                      count: b.student_count,
+                                      totalAmount: b.total_amount,
+                                    });
+                                  }}
+                                  className="h-8 text-xs font-bold gap-1 shadow-xs"
+                                >
+                                  <RotateCcw className="size-3.5" />
+                                  Revert Batch
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="py-12 text-center text-muted-foreground border rounded-xl bg-muted/10 border-dashed">
+                    No ad-hoc charge batches created yet.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="logs" className="m-0 border-none p-0 outline-none">
             <Card>
               <CardHeader>
-                <CardTitle>Assignment Logs</CardTitle>
-                <CardDescription>History of ad-hoc charges assigned to students.</CardDescription>
+                <CardTitle>Student Logs & Revert</CardTitle>
+                <CardDescription>Individual student charge records. Filter by charge name, class, or month to review and revert charges.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Filter Bar */}
-                <div className="flex flex-col md:flex-row gap-4 items-end">
-                  <div className="space-y-2 flex-1">
-                    <Label className={PREMIUM_LABEL_CLASSES}>Search</Label>
+                <div className="flex flex-col md:flex-row gap-3 items-end">
+                  <div className="space-y-2 flex-1 min-w-[200px]">
+                    <Label className={PREMIUM_LABEL_CLASSES}>Search Student</Label>
                     <Input 
-                      placeholder="Search by student, reg no or charge name..." 
+                      placeholder="Search by name, reg no or roll no..." 
                       value={logsSearch}
                       onChange={(e) => { setLogsSearch(e.target.value); setLogsPage(1); }}
                       className={PREMIUM_INPUT_CLASSES}
                     />
                   </div>
-                  <div className="space-y-2 flex-1">
+
+                  <div className="space-y-2 flex-1 min-w-[170px]">
+                    <Label className={PREMIUM_LABEL_CLASSES}>Filter by Charge Name</Label>
+                    <Select 
+                      value={logsChargeName || "all"} 
+                      onValueChange={(val) => { setLogsChargeName(val === "all" ? "" : val); setLogsPage(1); }}
+                    >
+                      <SelectTrigger className={PREMIUM_INPUT_CLASSES}>
+                        <SelectValue placeholder="All Charges" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Charges</SelectItem>
+                        {chargeNames.map((name) => (
+                          <SelectItem key={name} value={name}>{name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2 flex-1 min-w-[170px]">
                     <Label className={PREMIUM_LABEL_CLASSES}>Filter by Class</Label>
                     <AsyncSelectField
                       asyncConfig={classAsyncConfig}
@@ -654,10 +982,11 @@ export default function AdHocCharges({ auth }: any) {
                       menuPortalTarget={document.body}
                     />
                   </div>
-                  <div className="space-y-2">
+
+                  <div className="space-y-2 shrink-0">
                     <Label className={PREMIUM_LABEL_CLASSES}>For Month</Label>
                     <div className="flex gap-2">
-                      <Select value={logsMonth} onValueChange={(val) => { setLogsMonth(val === "all" ? "" : val); setLogsPage(1); }}>
+                      <Select value={logsMonth || "all"} onValueChange={(val) => { setLogsMonth(val === "all" ? "" : val); setLogsPage(1); }}>
                         <SelectTrigger className={cn(PREMIUM_INPUT_CLASSES, "w-[120px]")}>
                           <SelectValue placeholder="All Months" />
                         </SelectTrigger>
@@ -668,7 +997,7 @@ export default function AdHocCharges({ auth }: any) {
                           ))}
                         </SelectContent>
                       </Select>
-                      <Select value={logsYear} onValueChange={(val) => { setLogsYear(val === "all" ? "" : val); setLogsPage(1); }}>
+                      <Select value={logsYear || "all"} onValueChange={(val) => { setLogsYear(val === "all" ? "" : val); setLogsPage(1); }}>
                         <SelectTrigger className={cn(PREMIUM_INPUT_CLASSES, "w-[100px]")}>
                           <SelectValue placeholder="All Years" />
                         </SelectTrigger>
@@ -682,6 +1011,72 @@ export default function AdHocCharges({ auth }: any) {
                     </div>
                   </div>
                 </div>
+
+                {/* Active Filter Indicator & Bulk Batch Revert Shortcut */}
+                {(logsChargeName || logsClassId || logsMonth || logsSearch) && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20 text-xs animate-in fade-in duration-150">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Filter className="size-3.5 text-primary" />
+                      <span className="font-bold text-foreground">Active Filter:</span>
+                      {logsChargeName && (
+                        <Badge variant="secondary" className="font-bold text-xs bg-primary/10 text-primary border-primary/25">
+                          Charge: {logsChargeName}
+                        </Badge>
+                      )}
+                      {logsMonth && (
+                        <Badge variant="outline" className="text-xs font-semibold bg-background">
+                          Month: {MONTHS.find(m => m.value === logsMonth)?.label || logsMonth} {logsYear}
+                        </Badge>
+                      )}
+                      {logsSearch && (
+                        <Badge variant="outline" className="text-xs font-semibold bg-background">
+                          "{logsSearch}"
+                        </Badge>
+                      )}
+                      <span className="text-muted-foreground font-medium">
+                        ({logsPagination.total || 0} student records found)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {logsChargeName && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setRevertingTarget({
+                              type: "batch",
+                              name: logsChargeName,
+                              for_month: logsMonth && logsYear ? `${logsYear}-${logsMonth}` : undefined,
+                              count: logsPagination.total || 0,
+                            });
+                          }}
+                          className="h-7 text-xs font-bold gap-1 shadow-xs"
+                        >
+                          <RotateCcw className="size-3" />
+                          Revert All "{logsChargeName}"
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setLogsChargeName("");
+                          setLogsClassId("");
+                          setLogsMonth("");
+                          setLogsYear("");
+                          setLogsSearch("");
+                          setLogsPage(1);
+                        }}
+                        className="h-7 text-xs font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        Clear Filters
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Bulk Revert Toolbar when rows are selected */}
                 {selectedLogIds.size > 0 && (
@@ -901,6 +1296,45 @@ export default function AdHocCharges({ auth }: any) {
                             </p>
                           </div>
                         )}
+                        {revertingTarget?.type === "batch" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Charge Name:</span>
+                              <strong className="text-foreground">{revertingTarget.name}</strong>
+                            </div>
+                            {revertingTarget.for_month && (
+                              <div className="flex items-center justify-between text-muted-foreground">
+                                <span>Applicable Month:</span>
+                                <span className="font-medium text-foreground">
+                                  {format(new Date(`${revertingTarget.for_month}-01`), "MMMM yyyy")}
+                                </span>
+                              </div>
+                            )}
+                            {revertingTarget.amount && (
+                              <div className="flex items-center justify-between text-muted-foreground">
+                                <span>Rate / Student:</span>
+                                <strong className="text-foreground">₹{Number(revertingTarget.amount).toLocaleString('en-IN')}</strong>
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Total Students:</span>
+                              <Badge variant="secondary" className="font-bold text-foreground">
+                                {revertingTarget.count} Students
+                              </Badge>
+                            </div>
+                            {revertingTarget.totalAmount && (
+                              <div className="flex items-center justify-between text-muted-foreground border-t border-border/60 pt-2 mt-1">
+                                <span className="font-semibold text-foreground">Total Batch Value:</span>
+                                <strong className="text-destructive font-black text-sm">
+                                  ₹{Number(revertingTarget.totalAmount).toLocaleString('en-IN')}
+                                </strong>
+                              </div>
+                            )}
+                            <p className="text-[11px] text-destructive bg-destructive/10 p-2.5 rounded-lg mt-2 font-medium">
+                              ⚠️ This will permanently remove this charge from all {revertingTarget.count} student ledgers and reduce their pending dues.
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       <DialogFooter className="gap-2 sm:gap-0">
@@ -921,6 +1355,12 @@ export default function AdHocCharges({ auth }: any) {
                               singleDeleteMutation.mutate(revertingTarget.id);
                             } else if (revertingTarget?.type === "bulk" && revertingTarget.ids) {
                               bulkDeleteMutation.mutate({ ids: revertingTarget.ids });
+                            } else if (revertingTarget?.type === "batch" && revertingTarget.name) {
+                              bulkDeleteMutation.mutate({
+                                name: revertingTarget.name,
+                                for_month: revertingTarget.for_month,
+                                amount: revertingTarget.amount,
+                              });
                             }
                           }}
                           disabled={singleDeleteMutation.isPending || bulkDeleteMutation.isPending}

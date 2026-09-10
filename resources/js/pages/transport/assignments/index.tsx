@@ -10,8 +10,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
-import { Head } from "@inertiajs/react";
-import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2 } from "lucide-react";
+import { Head, Link } from "@inertiajs/react";
+import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2, Coins, ReceiptText, ArrowUpRight } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -36,6 +36,7 @@ const COLUMNS = [
   { key: "route", label: "Route" },
   { key: "stop", label: "Stop" },
   { key: "fare", label: "Fare (₹)" },
+  { key: "transport_due", label: "Transport Due (₹)" },
   { key: "effective_from", label: "From" },
   { key: "effective_until", label: "Until" },
   { key: "action", label: "Actions" },
@@ -60,7 +61,15 @@ type AssignmentRow = {
   transport_stop_id: number;
   effective_from: string;
   effective_until?: string | null;
-  user?: { id: number; name: string; email?: string };
+  monthly_amount?: number | string;
+  transport_due?: number;
+  user?: { 
+    id: number; 
+    name: string; 
+    email?: string;
+    student_profile?: { reg_no?: string; current_enrollments?: any[] };
+    studentProfile?: { reg_no?: string; currentEnrollments?: any[] };
+  };
   transport_route?: { id: number; name: string; code?: string };
   transport_stop?: { id: number; name: string; code?: string };
 };
@@ -114,7 +123,7 @@ const TransportAssignmentsIndex = () => {
   });
 
   const list = (assignmentsRes?.data ?? []) as any[];
-  const stats = (assignmentsRes as any)?.meta?.stats ?? { total_assignments: 0, monthly_revenue: 0, total_routes: 0, total_vehicles: 0 };
+  const stats = (assignmentsRes as any)?.meta?.stats ?? { total_assignments: 0, monthly_revenue: 0, total_transport_dues: 0, total_routes: 0, total_vehicles: 0 };
 
   const filterConfig = useMemo(() => ({
     filters: [
@@ -261,9 +270,9 @@ const TransportAssignmentsIndex = () => {
             guidance={TRANSPORT_ASSIGNMENTS_GUIDE}
           />
           {/* Analytics stats cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
+              <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Assignments</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_assignments}</p>
@@ -275,10 +284,12 @@ const TransportAssignmentsIndex = () => {
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
+              <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Est. Monthly Revenue</p>
-                  <p className="text-2xl font-black text-foreground">₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.monthly_revenue)}</p>
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                    ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.monthly_revenue)}
+                  </p>
                 </div>
                 <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <IndianRupee className="size-5" />
@@ -287,7 +298,21 @@ const TransportAssignmentsIndex = () => {
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
+              <CardContent className="p-5 flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-wider text-rose-600/90 dark:text-rose-400/90">Transport Dues</p>
+                  <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                    ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.total_transport_dues ?? 0)}
+                  </p>
+                </div>
+                <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                  <Coins className="size-5" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Routes</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_routes}</p>
@@ -299,7 +324,7 @@ const TransportAssignmentsIndex = () => {
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-6 flex items-center justify-between">
+              <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Fleet</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_vehicles}</p>
@@ -312,7 +337,7 @@ const TransportAssignmentsIndex = () => {
           </div>
 
           <div className="flex justify-between items-center">
-            <div>
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 onClick={handleExportExcel}
@@ -324,6 +349,12 @@ const TransportAssignmentsIndex = () => {
                   <Download className="size-4 mr-2" />
                 )}
                 <span>Export Excel</span>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/accounts/fee-hub/students">
+                  <ReceiptText className="size-4 mr-2 text-primary" />
+                  <span>Fee Ledger</span>
+                </Link>
               </Button>
             </div>
             <PermissionGate can="create_transport_assignments">
@@ -390,10 +421,54 @@ const TransportAssignmentsIndex = () => {
                       <TableCell className="font-semibold text-foreground">
                         ₹{(row as any).monthly_amount ? Number((row as any).monthly_amount).toFixed(2) : "0.00"}
                       </TableCell>
+                      <TableCell>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link
+                              href={`/accounts/fee-hub/students?student=${row.user_id}`}
+                              className="inline-flex items-center group cursor-pointer"
+                            >
+                              {(() => {
+                                const due = Number((row as any).transport_due ?? 0);
+                                if (due > 0) {
+                                  return (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-900 group-hover:bg-rose-100 group-hover:border-rose-300 transition-colors">
+                                      ₹{due.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                                    </span>
+                                  );
+                                }
+                                return (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900 group-hover:bg-emerald-100 transition-colors">
+                                    ₹0.00
+                                    <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                                  </span>
+                                );
+                              })()}
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>Open Student Fee Ledger</TooltipContent>
+                        </Tooltip>
+                      </TableCell>
                       <TableCell className="text-muted-foreground">{row.effective_from?.slice(0, 10) ?? "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{row.effective_until ? row.effective_until.slice(0, 10) : "—"}</TableCell>
                       <TableCell className="w-1/6">
                         <div className="flex items-center gap-0.5">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon-sm"
+                                variant="ghost"
+                                asChild
+                                className="text-primary hover:text-primary hover:bg-primary/10"
+                              >
+                                <Link href={`/accounts/fee-hub/students?student=${row.user_id}`}>
+                                  <ReceiptText className="size-4" />
+                                </Link>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Fee Ledger</TooltipContent>
+                          </Tooltip>
                           <PermissionGate can="update_transport_assignments">
                             <Tooltip>
                               <TooltipTrigger asChild>

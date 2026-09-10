@@ -311,6 +311,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::post('fees/ledger/mark-as-paid', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'markAsPaid']);
                 Route::post('fees/ledger/revert-payment', [\App\Http\Controllers\Api\V1\Fees\StudentLedgerController::class, 'revertPayment']);
                 Route::get('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'index']);
+                Route::get('fees/ad-hoc-charges/batches', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'batches']);
                 Route::post('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'store']);
                 Route::post('fees/ad-hoc-charges/bulk-delete', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'bulkDestroy']);
                 Route::delete('fees/ad-hoc-charges/{id}', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'destroy']);
@@ -361,6 +362,8 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                     Route::get('staff-attendance/template', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'downloadTemplate']);
                     Route::post('staff-attendance/import', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'import']);
                     Route::post('staff-attendance/mark-cell', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'markCell']);
+                    Route::post('staff-attendance/{userId}/mark-left', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'markLeft'])->whereNumber('userId');
+                    Route::post('staff-attendance/{userId}/reactivate', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'reactivate'])->whereNumber('userId');
                     Route::get('staff-attendance', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'index']);
                     Route::post('staff-attendance', [\App\Http\Controllers\Api\V1\HR\StaffAttendanceController::class, 'mark']);
                     Route::get('salary-structures', [\App\Http\Controllers\Api\V1\HR\SalaryStructureController::class, 'index'])->name('salary-structures.index');

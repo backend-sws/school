@@ -20,6 +20,7 @@ import {
   ArrowUpRight,
   CalendarDays,
   Building2,
+  RotateCcw,
 } from "lucide-react";
 import Each from "@/components/Each";
 import { useRegisterGuide } from '@/components/GuideProvider';
@@ -64,11 +65,48 @@ export default function Dashboard() {
 
   const firstName = auth.user?.name?.split(" ")[0] || "Administrator";
 
+  // ─── Date Range State & Presets ───────────────────────────────────────────
+  const [startDate, setStartDate] = React.useState<string>("2025-01-01");
+  const [endDate, setEndDate] = React.useState<string>(() => new Date().toISOString().split("T")[0]);
+  const [activePreset, setActivePreset] = React.useState<string>("session");
+
+  const applyPreset = (preset: string) => {
+    setActivePreset(preset);
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+
+    if (preset === "session") {
+      setStartDate("2025-01-01");
+      setEndDate(todayStr);
+    } else if (preset === "this_year") {
+      const yearStart = `${today.getFullYear()}-01-01`;
+      setStartDate(yearStart);
+      setEndDate(todayStr);
+    } else if (preset === "this_month") {
+      const monthStart = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`;
+      setStartDate(monthStart);
+      setEndDate(todayStr);
+    } else if (preset === "last_30_days") {
+      const past30 = new Date(today);
+      past30.setDate(today.getDate() - 30);
+      setStartDate(past30.toISOString().split("T")[0]);
+      setEndDate(todayStr);
+    } else if (preset === "all_time") {
+      setStartDate("2024-01-01");
+      setEndDate(todayStr);
+    }
+  };
+
   // ─── Data Fetching ────────────────────────────────────────────────────────
-  const { data: analytics } = useQuery({
-    queryKey: ["dashboard-stats"],
+  const { data: analytics, isFetching } = useQuery({
+    queryKey: ["dashboard-stats", startDate, endDate],
     queryFn: async () => {
-      const res = await api.get<{ data: any }>("/dashboard-stats");
+      const res = await api.get<{ data: any }>("/dashboard-stats", {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
+        },
+      });
       return res?.data ?? null;
     },
   });
@@ -207,6 +245,132 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 -mr-20 -mt-20 size-80 rounded-full bg-primary/20 blur-[100px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 size-60 rounded-full bg-violet-500/10 blur-[80px] pointer-events-none" />
         </section>
+
+        {/* ─── Date Range Filter Bar ─── */}
+        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-sidebar-border/50 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+              <CalendarDays className="size-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Analytics Period</span>
+                {isFetching && (
+                  <span className="inline-flex items-center text-[10px] font-semibold text-primary animate-pulse">
+                    Updating...
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Filter revenue, collections & metrics between two dates
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center rounded-xl bg-muted/40 p-1 border border-border/40 text-xs">
+              <button
+                type="button"
+                onClick={() => applyPreset("session")}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all",
+                  activePreset === "session"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                2025-26 Session
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPreset("this_year")}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all",
+                  activePreset === "this_year"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                This Year
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPreset("this_month")}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all",
+                  activePreset === "this_month"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                This Month
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPreset("last_30_days")}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all",
+                  activePreset === "last_30_days"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Last 30 Days
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPreset("all_time")}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all",
+                  activePreset === "all_time"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                All Time
+              </button>
+            </div>
+
+            {/* Two Date Range Inputs */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-muted/20 border border-border/50 rounded-xl px-2.5 py-1">
+                <span className="text-[11px] font-semibold text-muted-foreground">From</span>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setActivePreset("custom");
+                  }}
+                  className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer"
+                />
+              </div>
+              <div className="flex items-center gap-1.5 bg-muted/20 border border-border/50 rounded-xl px-2.5 py-1">
+                <span className="text-[11px] font-semibold text-muted-foreground">To</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setActivePreset("custom");
+                  }}
+                  className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer"
+                />
+              </div>
+              {activePreset !== "session" && (
+                <button
+                  type="button"
+                  onClick={() => applyPreset("session")}
+                  className="p-1.5 rounded-xl border border-border/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  title="Reset to default session"
+                >
+                  <RotateCcw className="size-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* ─── Stats Cards Row (6 Clickable Cards) ─── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">

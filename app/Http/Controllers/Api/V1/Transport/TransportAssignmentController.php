@@ -11,8 +11,42 @@ use Illuminate\Http\Request;
 class TransportAssignmentController extends BaseController
 {
     public function __construct(
-        protected TransportAssignmentService $assignmentService
+        protected TransportAssignmentService $assignmentService,
+        protected \App\Services\FeeCollectionService $feeCollectionService
     ) {}
+
+    /**
+     * Calculate outstanding transport fees due for a student.
+     */
+    protected function calculateStudentTransportDue(\App\Models\User $student, int $institutionId): float
+    {
+        $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
+        if (empty($matrixResult['matrix'])) {
+            return 0.0;
+        }
+
+        $transportDue = 0.0;
+        foreach ($matrixResult['matrix'] as $row) {
+            $tFee = (float) ($row['transport_fee'] ?? 0);
+            if ($tFee <= 0) {
+                continue;
+            }
+
+            $status = $row['status'] ?? 'unpaid';
+            if ($status === 'paid') {
+                continue;
+            }
+
+            if ($status === 'unpaid') {
+                $transportDue += $tFee;
+            } else {
+                $balance = (float) ($row['balance'] ?? 0);
+                $transportDue += min($tFee, max(0.0, $balance));
+            }
+        }
+
+        return round($transportDue, 2);
+    }
 
     public function index(Request $request): JsonResponse
     {
@@ -80,7 +114,7 @@ class TransportAssignmentController extends BaseController
         
         $data = app(\App\Services\ApiResponseMapService::class)->filterCollection($paginator->items(), 'passthrough');
 
-        // Apply fallback route stop fare if monthly_amount is 0 or null
+        // Apply fallback route stop fare and calculate transport dues for each student in page
         foreach ($paginator->items() as $index => $item) {
             $monthlyAmount = (float) ($item->monthly_amount ?? 0);
             if ($monthlyAmount === 0.0) {
@@ -91,17 +125,22 @@ class TransportAssignmentController extends BaseController
             }
             if (isset($data[$index])) {
                 $data[$index]['monthly_amount'] = $monthlyAmount;
+                $data[$index]['transport_due'] = $item->user ? $this->calculateStudentTransportDue($item->user, $institutionId) : 0.00;
             }
         }
 
-        // Analytics calculation
-        $activeAssignments = TransportAssignment::where('institution_id', $institutionId)
-            ->where(function ($q) {
-                $q->whereNull('effective_until')->orWhere('effective_until', '>=', now()->toDateString());
-            })->get();
+        // Analytics calculation: calculate total assignments and monthly revenue
+        $allAssignments = TransportAssignment::where('institution_id', $institutionId)->get();
+        $totalAssignments = $allAssignments->count();
+
+        // Active assignments (if effective_until has passed for all records e.g. session boundary, fallback to all assignments so stats reflect current registered passengers)
+        $activeAssignments = $allAssignments->filter(function ($assign) {
+            return is_null($assign->effective_until) || $assign->effective_until >= now()->toDateString();
+        });
+        $effectiveList = $activeAssignments->count() > 0 ? $activeAssignments : $allAssignments;
 
         $monthlyRevenue = 0.0;
-        foreach ($activeAssignments as $assign) {
+        foreach ($effectiveList as $assign) {
             $amount = (float) ($assign->monthly_amount ?? 0);
             if ($amount === 0.0) {
                 $routeStop = \App\Models\TransportRouteStop::where('transport_route_id', $assign->transport_route_id)
@@ -112,9 +151,22 @@ class TransportAssignmentController extends BaseController
             $monthlyRevenue += $amount;
         }
 
+        // Calculate total pending transport dues across all students with assignments (cached for 60s)
+        $totalTransportDues = \Illuminate\Support\Facades\Cache::remember("transport_total_dues_{$institutionId}", 60, function () use ($allAssignments, $institutionId) {
+            $userIds = $allAssignments->pluck('user_id')->unique();
+            $students = \App\Models\User::whereIn('id', $userIds)->get();
+            $total = 0.0;
+            foreach ($students as $student) {
+                $total += $this->calculateStudentTransportDue($student, $institutionId);
+            }
+            return round($total, 2);
+        });
+
         $stats = [
-            'total_assignments' => $activeAssignments->count(),
+            'total_assignments' => $totalAssignments,
+            'active_assignments' => $activeAssignments->count(),
             'monthly_revenue' => $monthlyRevenue,
+            'total_transport_dues' => $totalTransportDues,
             'total_routes' => (int) \App\Models\TransportRoute::where('institution_id', $institutionId)->where('is_active', true)->count(),
             'total_vehicles' => (int) \App\Models\TransportVehicle::where('institution_id', $institutionId)->where('status', 'active')->count(),
         ];

@@ -42,8 +42,10 @@ export const DUES_STATUS_OPTIONS = [
 
 export function getMonthOptions() {
     const out: { value: string; label: string }[] = [];
+    out.push({ value: "all", label: "All Periods (Cumulative)" });
     const now = new Date();
-    for (let i = -2; i <= 2; i++) {
+    // Cover the full current and previous academic cycles (past 18 months to future 6 months)
+    for (let i = 6; i >= -18; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
         const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
         const label = d.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
@@ -55,3 +57,4 @@ export function getMonthOptions() {
 export const MONTH_OPTIONS = getMonthOptions();
 
 export const CURRENT_PERIOD = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+

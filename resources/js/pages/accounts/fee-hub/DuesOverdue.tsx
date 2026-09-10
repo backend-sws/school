@@ -78,7 +78,7 @@ export default function DuesOverduePage() {
             feeCollectionApi.getDues({
                 search: filter.search || undefined,
                 search_by: filter.search_by || "name",
-                period: filter.period === "all" ? undefined : filter.period,
+                period: filter.period || undefined,
                 start_date: filter.startDate || undefined,
                 end_date: filter.endDate || undefined,
                 academic_session_id: filter.academicSessionId === "all" ? undefined : parseInt(filter.academicSessionId, 10),

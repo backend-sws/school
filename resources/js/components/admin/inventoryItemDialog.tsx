@@ -68,20 +68,20 @@ export function InventoryItemDialog({ open, onClose, data }: InventoryItemDialog
   useEffect(() => {
     const purchase =
       purchase_price !== "" &&
-      purchase_price !== undefined &&
-      !Number.isNaN(Number(purchase_price))
+        purchase_price !== undefined &&
+        !Number.isNaN(Number(purchase_price))
         ? Number(purchase_price)
         : null;
     const selling =
       selling_price !== "" &&
-      selling_price !== undefined &&
-      !Number.isNaN(Number(selling_price))
+        selling_price !== undefined &&
+        !Number.isNaN(Number(selling_price))
         ? Number(selling_price)
         : null;
     const margin =
       margin_percentage !== "" &&
-      margin_percentage !== undefined &&
-      !Number.isNaN(Number(margin_percentage))
+        margin_percentage !== undefined &&
+        !Number.isNaN(Number(margin_percentage))
         ? Number(margin_percentage)
         : null;
     const source = lastPriceMarginSourceRef.current;
@@ -128,7 +128,7 @@ export function InventoryItemDialog({ open, onClose, data }: InventoryItemDialog
 
   const { data: locationsData } = useQuery({
     queryKey: ["inventory-locations"],
-    queryFn: () => inventoryApi.locations.index({ per_page: 100 }),
+    queryFn: () => inventoryApi.locations.index({ per_page: 300 }),
     enabled: open,
   });
 
@@ -199,14 +199,14 @@ export function InventoryItemDialog({ open, onClose, data }: InventoryItemDialog
   const finalPriceInclGst = useMemo(() => {
     const s =
       watchedSelling !== "" &&
-      watchedSelling !== undefined &&
-      !Number.isNaN(Number(watchedSelling))
+        watchedSelling !== undefined &&
+        !Number.isNaN(Number(watchedSelling))
         ? Number(watchedSelling)
         : null;
     const g =
       watchedGst !== "" &&
-      watchedGst !== undefined &&
-      !Number.isNaN(Number(watchedGst))
+        watchedGst !== undefined &&
+        !Number.isNaN(Number(watchedGst))
         ? Number(watchedGst)
         : null;
     if (s == null || s < 0) return null;

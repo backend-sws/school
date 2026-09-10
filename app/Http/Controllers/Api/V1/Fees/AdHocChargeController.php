@@ -76,16 +76,71 @@ class AdHocChargeController extends Controller
         ], 201);
     }
 
+    public function batches(Request $request)
+    {
+        $institutionId = $request->input('institution_id')
+            ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+
+        if (!$institutionId) {
+            return response()->json(['message' => 'Institution context required.'], 422);
+        }
+
+        $batches = StudentAdHocCharge::query()
+            ->where('institution_id', $institutionId)
+            ->selectRaw('
+                name,
+                amount,
+                for_month,
+                DATE(created_at) as assignment_date,
+                created_by,
+                COUNT(*) as student_count,
+                SUM(amount) as total_amount,
+                MIN(created_at) as created_at
+            ')
+            ->groupBy('name', 'amount', 'for_month', 'assignment_date', 'created_by')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($b) {
+                $creator = $b->created_by ? User::find($b->created_by) : null;
+                return [
+                    'name' => $b->name,
+                    'amount' => (float) $b->amount,
+                    'for_month' => $b->for_month,
+                    'assignment_date' => $b->assignment_date,
+                    'student_count' => (int) $b->student_count,
+                    'total_amount' => (float) $b->total_amount,
+                    'created_at' => $b->created_at,
+                    'creator_name' => $creator?->name ?? 'Admin',
+                ];
+            });
+
+        $chargeNames = StudentAdHocCharge::where('institution_id', $institutionId)
+            ->distinct()
+            ->pluck('name')
+            ->filter()
+            ->values();
+
+        return response()->json([
+            'batches' => $batches,
+            'charge_names' => $chargeNames,
+        ]);
+    }
+
     public function index(Request $request)
     {
-        $request->validate(['institution_id' => 'required|exists:institutions,id']);
+        $institutionId = $request->input('institution_id')
+            ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+
+        if (!$institutionId) {
+            return response()->json(['message' => 'Institution context required.'], 422);
+        }
         
         $query = StudentAdHocCharge::with([
             'user:id,name,email',
             'user.studentProfile:id,user_id,reg_no,roll_no,stream_id',
             'user.studentProfile.stream:id,name',
             'creator:id,name'
-        ])->where('institution_id', $request->institution_id);
+        ])->where('institution_id', $institutionId);
 
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
@@ -98,6 +153,14 @@ class AdHocChargeController extends Controller
                       $sq->whereRaw('LOWER(reg_no) LIKE ?', [$search]);
                   });
             });
+        }
+
+        if ($request->filled('name')) {
+            $query->where('name', $request->name);
+        }
+
+        if ($request->filled('amount')) {
+            $query->where('amount', $request->amount);
         }
 
         if ($request->filled('lms_class_id')) {
@@ -124,7 +187,6 @@ class AdHocChargeController extends Controller
     {
         $charge = StudentAdHocCharge::findOrFail($id);
         
-        // Optional: Ensure it belongs to the current institution
         $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
         if ($institutionId && $charge->institution_id != $institutionId) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -144,10 +206,12 @@ class AdHocChargeController extends Controller
             'ids' => 'nullable|array',
             'ids.*' => 'integer',
             'name' => 'nullable|string|max:150',
+            'amount' => 'nullable|numeric',
             'for_month' => 'nullable|string|date_format:Y-m',
         ]);
 
-        $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+        $institutionId = $request->input('institution_id')
+            ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
         $query = StudentAdHocCharge::query();
         if ($institutionId) {
             $query->where('institution_id', $institutionId);
@@ -158,6 +222,11 @@ class AdHocChargeController extends Controller
         } elseif (!empty($validated['name']) && !empty($validated['for_month'])) {
             $query->where('name', $validated['name'])
                   ->where('for_month', $validated['for_month']);
+            if (!empty($validated['amount'])) {
+                $query->where('amount', $validated['amount']);
+            }
+        } elseif (!empty($validated['name'])) {
+            $query->where('name', $validated['name']);
         } else {
             return response()->json(['message' => 'No charges selected for reversion.'], 422);
         }

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\V1\Fees;
 
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\LmsClassEnrollment;
+use App\Models\Session;
 use App\Models\User;
 use App\Notifications\FeeDueReminderNotification;
 use App\Notifications\FeeOverdueReminderNotification;
+use App\Services\AcademicCalendarService;
 use App\Services\ApiResponseMapService;
 use App\Services\FeeCollectionService;
 use App\Services\FeeRecipientResolver;
@@ -21,13 +23,43 @@ class FeeDuesController extends BaseController
 
     public function __construct(
         private FeeCollectionService $feeCollectionService,
-        private FeeRecipientResolver $recipientResolver
+        private FeeRecipientResolver $recipientResolver,
+        private AcademicCalendarService $academicCalendarService
     ) {
     }
 
     /**
+     * Resolve the appropriate academic session for a period (e.g. "2026-09" => 2026-2027).
+     */
+    private function resolveSessionIdForPeriod(int $institutionId, ?string $periodKey, ?int $explicitSessionId = null): ?int
+    {
+        if ($explicitSessionId) {
+            return $explicitSessionId;
+        }
+
+        if (!$periodKey || $periodKey === 'all') {
+            return null;
+        }
+
+        try {
+            $carbon = Carbon::createFromFormat('Y-m', $periodKey)->startOfMonth();
+            $startMonth = $this->academicCalendarService->getStartMonth($institutionId);
+            $sessionStartYear = $carbon->month < $startMonth ? $carbon->year - 1 : $carbon->year;
+
+            $session = Session::withoutGlobalScope('institution_scope')
+                ->where('institution_id', $institutionId)
+                ->where('start_year', $sessionStartYear)
+                ->first();
+
+            return $session?->id;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
      * GET list of dues for a period (optional class filter).
-     * Query: period (Y-m), lms_class_id (optional), status (optional).
+     * Query: period (Y-m or 'all'), lms_class_id (optional), status (optional).
      */
     public function index(Request $request): JsonResponse
     {
@@ -37,7 +69,7 @@ class FeeDuesController extends BaseController
         }
 
         $request->validate([
-            'period' => 'nullable|string|regex:/^\d{4}-\d{2}$/',
+            'period' => ['nullable', 'string', 'regex:/^(\d{4}-\d{2}|all)$/'],
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'academic_session_id' => 'nullable|integer|exists:academic_sessions,id',
@@ -56,19 +88,24 @@ class FeeDuesController extends BaseController
         $statusFilter = $request->input('status');
         $search = $request->input('search');
 
+        $periodInput = $request->input('period');
+        $isAllPeriods = ($periodInput === 'all');
+
         $periods = [];
-        if ($startDateStr && $endDateStr) {
-            $start = Carbon::parse($startDateStr)->startOfDay();
-            $end = Carbon::parse($endDateStr)->endOfDay();
-            
-            $current = $start->copy()->startOfMonth();
-            $endMonth = $end->copy()->startOfMonth();
-            while ($current->lte($endMonth)) {
-                $periods[] = $current->format('Y-m');
-                $current->addMonth();
+        if (!$isAllPeriods) {
+            if ($startDateStr && $endDateStr) {
+                $start = Carbon::parse($startDateStr)->startOfDay();
+                $end = Carbon::parse($endDateStr)->endOfDay();
+                
+                $current = $start->copy()->startOfMonth();
+                $endMonth = $end->copy()->startOfMonth();
+                while ($current->lte($endMonth)) {
+                    $periods[] = $current->format('Y-m');
+                    $current->addMonth();
+                }
+            } else {
+                $periods[] = $periodInput ?: now()->format('Y-m');
             }
-        } else {
-            $periods[] = $request->input('period', now()->format('Y-m'));
         }
 
         $today = now()->startOfDay();
@@ -76,6 +113,7 @@ class FeeDuesController extends BaseController
         $query = LmsClassEnrollment::query()
             ->where('role', 'student')
             ->where('status', 'active')
+            ->whereHas('user')
             ->whereHas('lmsClass', fn($q) => $q->where('institution_id', $institutionId));
 
         if ($classId) {
@@ -83,9 +121,17 @@ class FeeDuesController extends BaseController
         }
 
         if ($sessionId) {
-            $query->whereHas('user.studentProfile', function ($q) use ($sessionId) {
-                $q->where('session_id', $sessionId);
-            });
+            $hasDirect = (clone $query)->where(function ($sq) use ($sessionId) {
+                $sq->whereHas('user.studentProfile', fn($q) => $q->where('session_id', $sessionId))
+                   ->orWhereHas('lmsClass', fn($q) => $q->where('session_id', $sessionId));
+            })->exists();
+
+            if ($hasDirect) {
+                $query->where(function ($sq) use ($sessionId) {
+                    $sq->whereHas('user.studentProfile', fn($q) => $q->where('session_id', $sessionId))
+                       ->orWhereHas('lmsClass', fn($q) => $q->where('session_id', $sessionId));
+                });
+            }
         }
 
         $searchBy = $request->input('search_by', 'name');
@@ -98,6 +144,15 @@ class FeeDuesController extends BaseController
 
         $enrollments = $query->with(['user', 'lmsClass'])->get();
 
+        $matrixCache = [];
+        $getMatrix = function (User $student, ?int $targetSessionId) use (&$matrixCache, $institutionId) {
+            $key = $student->id . '_' . ($targetSessionId ?? 'default');
+            if (!isset($matrixCache[$key])) {
+                $matrixCache[$key] = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $targetSessionId);
+            }
+            return $matrixCache[$key];
+        };
+
         $list = [];
         $allDuesList = [];
         foreach ($enrollments as $enrollment) {
@@ -105,34 +160,25 @@ class FeeDuesController extends BaseController
             if (!$student) {
                 continue;
             }
-            $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
-            if (isset($matrixResult['error'])) {
-                continue;
-            }
-            $expected = (float) ($matrixResult['periodExpected'] ?? 0);
-            $frequency = $matrixResult['frequency'] ?? null;
 
-            foreach ($periods as $periodKey) {
-                $dueDate = $this->feeCollectionService->getDueDateForPeriod($institutionId, $periodKey, $frequency);
-
-                if ($startDateStr && $endDateStr) {
-                    if ($dueDate->lt(Carbon::parse($startDateStr)->startOfDay()) || $dueDate->gt(Carbon::parse($endDateStr)->endOfDay())) {
-                        continue;
-                    }
+            if ($isAllPeriods) {
+                $targetSessionId = $sessionId ?: ($student->studentProfile?->session_id);
+                $matrixResult = $getMatrix($student, $targetSessionId);
+                if (isset($matrixResult['error'])) {
+                    continue;
                 }
 
-                $periodDues = $this->feeCollectionService->getPeriodDuesForStudent($student, $periodKey, $expected, $matrixResult);
-                $balance = $periodDues['balance'];
-                $paid = $periodDues['paid'];
+                $totalExpected = (float) ($matrixResult['periodExpected'] ?? 0);
+                $balance = (float) ($matrixResult['total_pending'] ?? 0);
+                $paid = 0.0;
+                if (!empty($matrixResult['matrix'])) {
+                    $paid = (float) collect($matrixResult['matrix'])->sum('paid_amount');
+                }
 
                 if ($balance <= 0 && $paid > 0) {
                     $status = 'paid';
-                } elseif ($paid > 0) {
+                } elseif ($paid > 0 && $balance > 0) {
                     $status = 'partial';
-                } elseif ($dueDate->gt($today)) {
-                    $daysUntil = $today->diffInDays($dueDate, false);
-                    $reminderDays = $this->feeCollectionService->getSettings($institutionId)['reminder_days_before_due'];
-                    $status = $daysUntil <= $reminderDays ? 'due_soon' : 'upcoming';
                 } else {
                     $status = 'overdue';
                 }
@@ -143,10 +189,10 @@ class FeeDuesController extends BaseController
                     'reg_no' => $student->reg_no,
                     'lms_class_id' => $enrollment->lms_class_id,
                     'class_name' => $enrollment->lmsClass?->name,
-                    'period' => $periodKey,
-                    'due_date' => $dueDate->toDateString(),
-                    'expected_amount' => $periodDues['expected'],
-                    'paid_amount' => $periodDues['paid'],
+                    'period' => 'all',
+                    'due_date' => $today->toDateString(),
+                    'expected_amount' => $totalExpected,
+                    'paid_amount' => $paid,
                     'balance' => $balance,
                     'status' => $status,
                 ];
@@ -158,6 +204,61 @@ class FeeDuesController extends BaseController
                 }
 
                 $list[] = $dueItem;
+            } else {
+                foreach ($periods as $periodKey) {
+                    $targetSessionId = $this->resolveSessionIdForPeriod($institutionId, $periodKey, $sessionId);
+                    $matrixResult = $getMatrix($student, $targetSessionId);
+                    if (isset($matrixResult['error'])) {
+                        continue;
+                    }
+                    $expected = (float) ($matrixResult['periodExpected'] ?? 0);
+                    $frequency = $matrixResult['frequency'] ?? null;
+                    $dueDate = $this->feeCollectionService->getDueDateForPeriod($institutionId, $periodKey, $frequency);
+
+                    if ($startDateStr && $endDateStr) {
+                        if ($dueDate->lt(Carbon::parse($startDateStr)->startOfDay()) || $dueDate->gt(Carbon::parse($endDateStr)->endOfDay())) {
+                            continue;
+                        }
+                    }
+
+                    $periodDues = $this->feeCollectionService->getPeriodDuesForStudent($student, $periodKey, $expected, $matrixResult);
+                    $balance = $periodDues['balance'];
+                    $paid = $periodDues['paid'];
+
+                    if ($balance <= 0 && $paid > 0) {
+                        $status = 'paid';
+                    } elseif ($paid > 0) {
+                        $status = 'partial';
+                    } elseif ($dueDate->gt($today)) {
+                        $daysUntil = $today->diffInDays($dueDate, false);
+                        $reminderDays = $this->feeCollectionService->getSettings($institutionId)['reminder_days_before_due'];
+                        $status = $daysUntil <= $reminderDays ? 'due_soon' : 'upcoming';
+                    } else {
+                        $status = 'overdue';
+                    }
+
+                    $dueItem = [
+                        'user_id' => $student->id,
+                        'student_name' => $student->name,
+                        'reg_no' => $student->reg_no,
+                        'lms_class_id' => $enrollment->lms_class_id,
+                        'class_name' => $enrollment->lmsClass?->name,
+                        'period' => $periodKey,
+                        'due_date' => $dueDate->toDateString(),
+                        'expected_amount' => $periodDues['expected'],
+                        'paid_amount' => $periodDues['paid'],
+                        'balance' => $balance,
+                        'status' => $status,
+                    ];
+
+                    $allDuesList[] = $dueItem;
+
+                    if ($statusFilter && $status !== $statusFilter) {
+                        continue;
+                    }
+
+                    $list[] = $dueItem;
+                }
             }
         }
 
@@ -176,11 +277,14 @@ class FeeDuesController extends BaseController
             $totalBalance += (float) $item['balance'];
         }
 
-        $defaultPeriod = count($periods) > 0 ? $periods[0] : now()->format('Y-m');
+        $defaultPeriod = $isAllPeriods ? 'all' : (count($periods) > 0 ? $periods[0] : now()->format('Y-m'));
+        $dueDateStr = ($defaultPeriod === 'all')
+            ? $today->toDateString()
+            : $this->feeCollectionService->getDueDateForPeriod($institutionId, $defaultPeriod)->toDateString();
 
         return $this->success([
             'period' => $startDateStr && $endDateStr ? "{$startDateStr} to {$endDateStr}" : $defaultPeriod,
-            'due_date' => $this->feeCollectionService->getDueDateForPeriod($institutionId, $defaultPeriod)->toDateString(),
+            'due_date' => $dueDateStr,
             'list' => $pagedList,
             'stats' => [
                 'total_expected' => $totalExpected,
@@ -224,6 +328,7 @@ class FeeDuesController extends BaseController
         $query = LmsClassEnrollment::query()
             ->where('role', 'student')
             ->where('status', 'active')
+            ->whereHas('user')
             ->whereHas('lmsClass', fn($q) => $q->where('institution_id', $institutionId));
 
         if ($classId) {
@@ -232,17 +337,29 @@ class FeeDuesController extends BaseController
 
         $enrollments = $query->with(['user', 'lmsClass'])->get();
 
+        $matrixCache = [];
+        $getMatrix = function (User $student, ?int $targetSessionId) use (&$matrixCache, $institutionId) {
+            $key = $student->id . '_' . ($targetSessionId ?? 'default');
+            if (!isset($matrixCache[$key])) {
+                $matrixCache[$key] = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $targetSessionId);
+            }
+            return $matrixCache[$key];
+        };
+
         $overdueList = [];
         foreach ($enrollments as $enrollment) {
             $student = $enrollment->user;
-            $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
-            if (isset($matrixResult['error'])) {
-                continue;
-            }
-            $expected = (float) ($matrixResult['periodExpected'] ?? 0);
-            $frequency = $matrixResult['frequency'] ?? null;
+            if (!$student) continue;
+
             $periodKeys = $this->feeCollectionService->getPeriodKeysInRangeForStudent($student, $institutionId, $from, $to);
             foreach ($periodKeys as $periodKey) {
+                $targetSessionId = $this->resolveSessionIdForPeriod($institutionId, $periodKey);
+                $matrixResult = $getMatrix($student, $targetSessionId);
+                if (isset($matrixResult['error'])) {
+                    continue;
+                }
+                $expected = (float) ($matrixResult['periodExpected'] ?? 0);
+                $frequency = $matrixResult['frequency'] ?? null;
                 $dueDate = $this->feeCollectionService->getDueDateForPeriod($institutionId, $periodKey, $frequency);
                 if ($dueDate->gte($today)) {
                     continue;
@@ -294,8 +411,8 @@ class FeeDuesController extends BaseController
             return $this->error('Institution context required.', 422);
         }
 
-         $validated = $request->validate([
-            'period' => 'required|string|regex:/^\d{4}-\d{2}$/',
+        $validated = $request->validate([
+            'period' => ['required', 'string', 'regex:/^(\d{4}-\d{2}|all)$/'],
             'type' => 'required|string|in:due_soon,overdue',
             'student_ids' => 'nullable|array',
             'student_ids.*' => 'integer|exists:users,id',
@@ -305,11 +422,13 @@ class FeeDuesController extends BaseController
         $type = $validated['type'];
         $studentIds = $validated['student_ids'] ?? null;
 
+        $targetSessionId = $this->resolveSessionIdForPeriod($institutionId, $periodKey);
         $settings = $this->feeCollectionService->getSettings($institutionId);
 
         $query = LmsClassEnrollment::query()
             ->where('role', 'student')
             ->where('status', 'active')
+            ->whereHas('user')
             ->whereHas('lmsClass', fn($q) => $q->where('institution_id', $institutionId));
 
         if ($studentIds !== null && count($studentIds) > 0) {
@@ -321,7 +440,9 @@ class FeeDuesController extends BaseController
 
         foreach ($enrollments as $enrollment) {
             $student = $enrollment->user;
-            $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
+            if (!$student) continue;
+
+            $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $targetSessionId);
             if (isset($matrixResult['error'])) {
                 continue;
             }
