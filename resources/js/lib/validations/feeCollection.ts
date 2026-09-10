@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const feeCollectionSchema = z.object({
     amount: z.number().min(0, "Amount must be 0 or greater"),
+    paid_amount: z.number().min(0, "Amount must be 0 or greater").optional(),
     payment_mode: z.string().min(1, "Select payment mode"),
     cash_amount: z.number().min(0),
     online_amount: z.number().min(0),
@@ -14,10 +15,11 @@ export const feeCollectionSchema = z.object({
     discount_reason: z.string().nullable().optional(),
     payment_date: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
-    const { payment_mode, amount, cash_amount, online_amount, online_transaction_id, discount_amount, discount_reason } = data;
+    const { payment_mode, amount, paid_amount, cash_amount, online_amount, online_transaction_id, discount_amount, discount_reason } = data;
 
     const discount = discount_amount || 0;
-    const netAmount = Math.max(0, amount - discount);
+    const netDue = Math.max(0, amount - discount);
+    const effectivePaid = paid_amount !== undefined ? Number(paid_amount) : netDue;
 
     // If discount is given, reason is required
     if (discount > 0 && !discount_reason?.trim()) {
@@ -28,19 +30,37 @@ export const feeCollectionSchema = z.object({
         });
     }
 
+    // If not full waiver, paid amount cannot be 0
+    if (netDue > 0 && payment_mode !== "concession" && effectivePaid <= 0) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please enter an amount to collect, or apply a full waiver",
+            path: ["paid_amount"],
+        });
+    }
+
+    // Amount collected cannot exceed net payable
+    if (effectivePaid > netDue) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Amount cannot exceed net due of ₹${netDue.toLocaleString()}`,
+            path: ["paid_amount"],
+        });
+    }
+
     // Split payment validation
-    if (payment_mode === "split" && netAmount > 0) {
-        if (Math.abs((cash_amount + online_amount) - netAmount) > 0.01) {
+    if (payment_mode === "split" && effectivePaid > 0) {
+        if (Math.abs((cash_amount + online_amount) - effectivePaid) > 0.01) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: `Split amounts (₹${cash_amount + online_amount}) must equal net payable (₹${netAmount})`,
+                message: `Split amounts (₹${cash_amount + online_amount}) must equal amount being collected (₹${effectivePaid})`,
                 path: ["online_amount"],
             });
         }
     }
 
     // Online transaction ID validation
-    const isOnlineInvolved = (payment_mode === "online" && netAmount > 0) || (payment_mode === "split" && online_amount > 0);
+    const isOnlineInvolved = (payment_mode === "online" && effectivePaid > 0) || (payment_mode === "split" && online_amount > 0);
     if (isOnlineInvolved && !online_transaction_id?.trim()) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -52,6 +72,7 @@ export const feeCollectionSchema = z.object({
 
 export type FeeCollectionFormValues = {
     amount: number;
+    paid_amount?: number;
     payment_mode: string;
     cash_amount: number;
     online_amount: number;

@@ -190,6 +190,9 @@ class User extends Authenticatable
 
     public function hasRole($role): bool
     {
+        if (is_array($role)) {
+            return $this->roles()->whereIn('key', $role)->exists();
+        }
         return $this->roles()->where('key', $role)->exists();
     }
 
@@ -391,6 +394,31 @@ class User extends Authenticatable
         $keys = $this->resolveEffectivePermissionKeys($contextId);
 
         return in_array($permissionKey, $keys, true);
+    }
+
+    /**
+     * Check if user has any of the given abilities / permissions in the active institution context.
+     *
+     * @param array<string> $permissionKeys
+     * @param int|null $institutionId
+     */
+    public function hasAnyAbility(array $permissionKeys, ?int $institutionId = null): bool
+    {
+        $contextId = $institutionId ?? InstitutionContext::getActiveInstitutionId($this);
+        $keys = $this->resolveEffectivePermissionKeys($contextId);
+
+        return !empty(array_intersect($permissionKeys, $keys));
+    }
+
+    /**
+     * Alias for hasAnyAbility to support permission check conventions.
+     *
+     * @param array<string> $permissions
+     * @param int|null $institutionId
+     */
+    public function hasAnyPermission(array $permissions, ?int $institutionId = null): bool
+    {
+        return $this->hasAnyAbility($permissions, $institutionId);
     }
 
     public function academicInfo(): HasMany

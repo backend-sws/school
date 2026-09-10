@@ -136,6 +136,7 @@ class StudentLedgerController extends BaseController
             'user_id' => 'required|exists:users,id',
             'for_month' => 'required|string|regex:/^\d{4}-\d{2}$/',
             'amount' => 'required|numeric|min:0',
+            'paid_amount' => 'nullable|numeric|min:0',
             'payment_mode' => 'required|string|in:cash,online,cheque,dd,split,concession',
             'cash_amount' => 'nullable|numeric|min:0',
             'online_amount' => 'nullable|numeric|min:0',
@@ -154,7 +155,12 @@ class StudentLedgerController extends BaseController
         $baseAmount = (float) $validated['amount'];
         $discountAmount = (float) ($validated['discount_amount'] ?? 0);
         $discountReason = trim($validated['discount_reason'] ?? '');
-        $netAmount = max(0.0, $baseAmount - $discountAmount);
+
+        if (isset($validated['paid_amount'])) {
+            $netAmount = max(0.0, (float) $validated['paid_amount']);
+        } else {
+            $netAmount = max(0.0, $baseAmount - $discountAmount);
+        }
         $lateFee = (float) ($validated['late_fee_applied'] ?? 0);
 
         if ($institutionId && $lateFee <= 0 && $netAmount > 0) {
@@ -497,11 +503,16 @@ class StudentLedgerController extends BaseController
     public function downloadReceipt(Request $request, FeePayment $payment)
     {
         $user = $request->user();
+        if (!$user) {
+            abort(401, 'Unauthenticated.');
+        }
+
         $effectiveStudentId = \App\Support\EffectiveStudentContext::getEffectiveStudentId($user);
 
-        $hasStaffAccess = $user->hasAbility('accounts_room')
-            || $user->hasRole(['admin', 'super_admin'])
-            || $user->hasAnyPermission(['admin_desk', 'office_registry', 'accounts_room']);
+        $hasStaffAccess = $user->isSuperAdmin()
+            || $user->hasRole(['institution_admin', 'super_admin', 'admin', 'principal', 'staff'])
+            || $user->hasAbility('accounts_room')
+            || $user->hasAnyAbility(['admin_desk', 'office_registry', 'accounts_room']);
 
         if (!$hasStaffAccess && (int) $payment->user_id !== (int) $effectiveStudentId) {
             abort(403, 'You are not authorized to download this receipt.');

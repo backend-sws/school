@@ -17,7 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { feeCollectionSchema, type FeeCollectionFormValues } from "@/lib/validations/feeCollection";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import { FORM_TYPE } from "@/constants";
-import { IndianRupee, Lock, Sparkles, Tag, CheckCircle2 } from "lucide-react";
+import { IndianRupee, Lock, Sparkles, Tag, CheckCircle2, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaymentCollectModalProps {
     isOpen: boolean;
@@ -67,6 +68,7 @@ export default function PaymentCollectModal({
         resolver: zodResolver(feeCollectionSchema),
         defaultValues: {
             amount: rawBalance,
+            paid_amount: rawBalance,
             payment_mode: "cash",
             payment_date: getTodayDateString(),
             cash_amount: 0,
@@ -84,14 +86,21 @@ export default function PaymentCollectModal({
     const mode = watch("payment_mode");
     const onlineAmount = watch("online_amount");
     const discountAmount = Number(watch("discount_amount") || 0);
+    const rawPaidInput = watch("paid_amount");
 
     const netPayable = Math.max(0, rawBalance - discountAmount);
+    const isFullWaiver = netPayable === 0 && discountAmount > 0;
+    const paidAmount = isFullWaiver ? 0 : Number(rawPaidInput !== undefined ? rawPaidInput : netPayable);
+    const remainingBalance = Math.max(0, netPayable - paidAmount);
+    const isPartial = paidAmount > 0 && paidAmount < netPayable;
+    const isFull = paidAmount >= netPayable && netPayable > 0;
 
-    // Sync default amount when monthData changes
+    // Sync default amount when monthData changes or modal opens
     useEffect(() => {
         if (isOpen) {
             reset({
                 amount: rawBalance,
+                paid_amount: rawBalance,
                 payment_mode: "cash",
                 payment_date: getTodayDateString(),
                 cash_amount: 0,
@@ -105,16 +114,20 @@ export default function PaymentCollectModal({
         }
     }, [isOpen, rawBalance, reset]);
 
-    // Automatically set payment_mode to concession if 100% waived
+    // Automatically adjust payment_mode and paid_amount when discount changes
     useEffect(() => {
         if (discountAmount >= rawBalance && rawBalance > 0) {
             setValue("payment_mode", "concession");
+            setValue("paid_amount", 0);
             setValue("cash_amount", 0);
             setValue("online_amount", 0);
         } else if (mode === "concession" && netPayable > 0) {
             setValue("payment_mode", "cash");
+            setValue("paid_amount", netPayable);
+        } else if (paidAmount > netPayable) {
+            setValue("paid_amount", netPayable);
         }
-    }, [discountAmount, rawBalance, netPayable, mode, setValue]);
+    }, [discountAmount, rawBalance, netPayable, mode, paidAmount, setValue]);
 
     const collectMutation = useMutation({
         mutationFn: (data: any) => api.post("/fees/ledger/collect", data),
@@ -130,19 +143,23 @@ export default function PaymentCollectModal({
     const applyFullWaiver = () => {
         setValue("discount_amount", rawBalance, { shouldValidate: true });
         setValue("discount_reason", "Mid-session admission waiver", { shouldValidate: true });
+        setValue("paid_amount", 0, { shouldValidate: true });
         setValue("payment_mode", "concession");
     };
 
     const applyMonthFeeWaiver = () => {
         if (monthFee > 0) {
-            setValue("discount_amount", Math.min(rawBalance, monthFee), { shouldValidate: true });
+            const waived = Math.min(rawBalance, monthFee);
+            setValue("discount_amount", waived, { shouldValidate: true });
             setValue("discount_reason", "Mid-session admission waiver (month fee)", { shouldValidate: true });
+            setValue("paid_amount", Math.max(0, rawBalance - waived), { shouldValidate: true });
         }
     };
 
     const clearDiscount = () => {
         setValue("discount_amount", 0, { shouldValidate: true });
         setValue("discount_reason", "");
+        setValue("paid_amount", rawBalance, { shouldValidate: true });
         setValue("payment_mode", "cash");
     };
 
@@ -150,25 +167,26 @@ export default function PaymentCollectModal({
         const fixedAmount = rawBalance;
         const discount = Number(data.discount_amount || 0);
         const currentNet = Math.max(0, fixedAmount - discount);
+        const finalPaid = isFullWaiver ? 0 : Number(data.paid_amount ?? currentNet);
 
         let finalCash = data.cash_amount;
         let finalOnline = data.online_amount;
         let finalMode = data.payment_mode;
 
-        if (currentNet === 0) {
+        if (currentNet === 0 || isFullWaiver) {
             finalMode = "concession";
             finalCash = 0;
             finalOnline = 0;
         } else if (finalMode === "cash") {
-            finalCash = currentNet;
+            finalCash = finalPaid;
             finalOnline = 0;
         } else if (finalMode === "online") {
             finalCash = 0;
-            finalOnline = currentNet;
+            finalOnline = finalPaid;
         } else if (finalMode === "split") {
             const sum = (Number(finalCash) || 0) + (Number(finalOnline) || 0);
-            if (Math.abs(sum - currentNet) > 0.01) {
-                toast.error(`Cash and online split (₹${sum}) must equal the required net total of ₹${currentNet}`);
+            if (Math.abs(sum - finalPaid) > 0.01) {
+                toast.error(`Cash and online split (₹${sum}) must equal the required collection amount of ₹${finalPaid}`);
                 return;
             }
         }
@@ -177,6 +195,7 @@ export default function PaymentCollectModal({
             user_id: student.id,
             for_month: monthData.month_key,
             amount: fixedAmount,
+            paid_amount: finalPaid,
             payment_mode: finalMode,
             payment_date: normalizeDate(data.payment_date) || getTodayDateString(),
             cash_amount: finalCash,
@@ -188,8 +207,6 @@ export default function PaymentCollectModal({
             discount_reason: data.discount_reason,
         });
     };
-
-    const isFullWaiver = netPayable === 0 && discountAmount > 0;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -312,9 +329,95 @@ export default function PaymentCollectModal({
                         </div>
                     )}
 
-                    {/* ── Payment Details (shown only if netPayable > 0) ── */}
+                    {/* ── Payment Details (shown only if !isFullWaiver) ── */}
                     {!isFullWaiver && (
                         <div className="space-y-3">
+                            {/* ── Amount to Collect / Paying Section ── */}
+                            <div className="rounded-lg border border-primary/20 bg-primary/[0.02] p-3 space-y-2">
+                                <div className="flex items-center justify-between gap-2">
+                                    <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                                        <IndianRupee className="size-3 text-primary" />
+                                        <span>Amount Collected / Paying (₹)</span>
+                                        <span className="text-rose-500">*</span>
+                                    </label>
+                                    <div className="flex items-center gap-1 flex-wrap justify-end">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setValue("paid_amount", netPayable, { shouldValidate: true })}
+                                            className={cn(
+                                                "h-6 text-[10px] px-2 font-semibold transition-colors",
+                                                paidAmount === netPayable
+                                                    ? "bg-primary/15 border-primary/40 text-primary hover:bg-primary/25"
+                                                    : "bg-muted/80 hover:bg-muted text-muted-foreground"
+                                            )}
+                                        >
+                                            Pay Full (₹{netPayable.toLocaleString()})
+                                        </Button>
+                                        {prevDues > 0 && monthFee > 0 && (
+                                            <>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setValue("paid_amount", Math.min(monthFee, netPayable), { shouldValidate: true })}
+                                                    className={cn(
+                                                        "h-6 text-[10px] px-2 font-semibold transition-colors",
+                                                        paidAmount === Math.min(monthFee, netPayable)
+                                                            ? "bg-amber-100 border-amber-300 text-amber-900"
+                                                            : "bg-muted/80 hover:bg-muted text-muted-foreground"
+                                                    )}
+                                                >
+                                                    Month Only (₹{Math.min(monthFee, netPayable).toLocaleString()})
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setValue("paid_amount", Math.min(prevDues, netPayable), { shouldValidate: true })}
+                                                    className={cn(
+                                                        "h-6 text-[10px] px-2 font-semibold transition-colors",
+                                                        paidAmount === Math.min(prevDues, netPayable)
+                                                            ? "bg-amber-100 border-amber-300 text-amber-900"
+                                                            : "bg-muted/80 hover:bg-muted text-muted-foreground"
+                                                    )}
+                                                >
+                                                    Prev Dues (₹{Math.min(prevDues, netPayable).toLocaleString()})
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <ControlledFormComponent
+                                    control={control as any}
+                                    name="paid_amount"
+                                    type={FORM_TYPE.NUMBER}
+                                    placeholder={`Enter amount (max ₹${netPayable.toLocaleString()})`}
+                                />
+
+                                {/* Dynamic settlement message */}
+                                {isPartial && (
+                                    <div className="flex items-start gap-2 p-2.5 rounded-md bg-amber-50 border border-amber-200 text-amber-950 text-xs leading-relaxed">
+                                        <Info className="size-3.5 text-amber-600 shrink-0 mt-0.5" />
+                                        <div>
+                                            <span className="font-bold text-amber-900 block">Partial Payment Note:</span>
+                                            <span>
+                                                ₹<strong>{paidAmount.toLocaleString()}</strong> collected now. The remaining balance of <strong>₹{remainingBalance.toLocaleString()}</strong> will carry forward and settle in the next month's ledger dues.
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {isFull && (
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px]">
+                                        <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
+                                        <span><strong>Full Clearance:</strong> Clears all ₹{netPayable.toLocaleString()} dues for this month.</span>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="grid grid-cols-2 gap-3">
                                 <ControlledFormComponent
                                     control={control as any}
@@ -414,7 +517,9 @@ export default function PaymentCollectModal({
                             ? "Recording..."
                             : isFullWaiver
                             ? `Confirm & Waive Month (₹${discountAmount.toLocaleString()})`
-                            : `Collect ₹${netPayable.toLocaleString()} & Update Ledger`}
+                            : isPartial
+                            ? `Collect ₹${paidAmount.toLocaleString()} & Update Ledger (₹${remainingBalance.toLocaleString()} Due in Next Month)`
+                            : `Collect ₹${paidAmount.toLocaleString()} & Update Ledger`}
                     </Button>
                 </DialogFooter>
             </DialogContent>
