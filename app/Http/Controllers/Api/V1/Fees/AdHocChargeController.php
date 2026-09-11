@@ -21,7 +21,7 @@ class AdHocChargeController extends Controller
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
             'name' => 'required|string|max:150',
-            'amount' => 'required|numeric|min:0',
+            'amount'  => 'required|numeric',
             'for_month' => 'required|date_format:Y-m',
             'remarks' => 'nullable|string',
         ]);
@@ -187,6 +187,29 @@ class AdHocChargeController extends Controller
                          ->paginate($request->per_page ?? 20);
 
         return response()->json($charges);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $charge = StudentAdHocCharge::findOrFail($id);
+
+        $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
+        if ($institutionId && $charge->institution_id != $institutionId) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'name'    => 'required|string|max:150',
+            'amount'  => 'required|numeric',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $charge->update($validated);
+
+        return response()->json([
+            'message' => 'Ad-hoc charge updated successfully.',
+            'charge'  => $charge->fresh(),
+        ]);
     }
 
     public function destroy(Request $request, $id)

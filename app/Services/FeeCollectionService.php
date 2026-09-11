@@ -203,6 +203,7 @@ class FeeCollectionService
         $allParticulars = $feeBreakdown['items'];
         $oneTimeCharges = $feeBreakdown['one_time_charges'] ?? [];
 
+
         // Also pull admission-head-scoped one-time fees for the given session
         $admissionApp = collect(self::$bulkAdmissionApps[$student->id] ?? [])
             ->filter(function($app) use ($session) {
@@ -305,6 +306,43 @@ class FeeCollectionService
             })->values()->all();
 
             $oneTimeCharges = array_merge($oneTimeCharges, $appCharges);
+        }
+
+        // Apply per-student one-time fee overrides (by fee_type_id or charge_name)
+        if (!empty($oneTimeCharges)) {
+            $overrides = \App\Models\StudentFeeOneTimeOverride::where('institution_id', $institutionId)
+                ->where('user_id', $student->id)
+                ->get();
+
+            if ($overrides->isNotEmpty()) {
+                $oneTimeCharges = array_map(function ($charge) use ($overrides) {
+                    $feeTypeId = $charge['fee_type_id'] ?? null;
+                    $chargeName = strtolower(trim((string) ($charge['name'] ?? '')));
+
+                    $matched = $overrides->first(function ($o) use ($feeTypeId, $chargeName) {
+                        if ($feeTypeId && $o->fee_type_id == $feeTypeId) {
+                            return true;
+                        }
+                        if ($o->charge_name) {
+                            $oName = strtolower(trim($o->charge_name));
+                            if ($oName === $chargeName) return true;
+                            $base1 = preg_replace('/\s*\(x\d+\)$/i', '', $chargeName);
+                            $base2 = preg_replace('/\s*\(x\d+\)$/i', '', $oName);
+                            if ($base1 === $base2) return true;
+                        }
+                        return false;
+                    });
+
+                    if ($matched) {
+                        $charge['amount']            = (float) $matched->overridden_amount;
+                        $charge['is_overridden']     = true;
+                        $charge['original_amount']   = (float) $matched->original_amount;
+                        $charge['override_id']       = $matched->id;
+                        $charge['override_remarks']  = $matched->remarks;
+                    }
+                    return $charge;
+                }, $oneTimeCharges);
+            }
         }
 
         // Admission summary

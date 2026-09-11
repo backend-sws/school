@@ -314,7 +314,12 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('fees/ad-hoc-charges/batches', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'batches']);
                 Route::post('fees/ad-hoc-charges', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'store']);
                 Route::post('fees/ad-hoc-charges/bulk-delete', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'bulkDestroy']);
+                Route::put('fees/ad-hoc-charges/{id}', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'update']);
                 Route::delete('fees/ad-hoc-charges/{id}', [\App\Http\Controllers\Api\V1\Fees\AdHocChargeController::class, 'destroy']);
+
+                // Per-student one-time charge overrides
+                Route::post('fees/one-time-overrides', [\App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::class, 'upsert']);
+                Route::delete('fees/one-time-overrides/{id}', [\App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::class, 'destroy']);
 
                 // Fee collection workflow: settings, dues, overdue, send reminder
                 Route::get('fees/collection-settings', [\App\Http\Controllers\Api\V1\Fees\FeeCollectionSettingsController::class, 'show']);

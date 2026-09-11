@@ -11,8 +11,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar
+    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar, Pencil, Zap
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
 } from "@/components/ui/dialog";
@@ -234,12 +237,87 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const [revertingRow, setRevertingRow] = useState<any>(null);
     const [revertingAdHoc, setRevertingAdHoc] = useState<any>(null);
     const [photoError, setPhotoError] = useState(false);
+    // Ad-Hoc modal state
+    const [adHocModal, setAdHocModal] = useState<{ open: boolean; row: any | null; editing: any | null }>({
+        open: false, row: null, editing: null,
+    });
+    const [adHocForm, setAdHocForm] = useState({ name: "", amount: "", remarks: "" });
+    const institutionId = (usePage().props as any).auth?.current_institution_id
+        ?? (usePage().props as any).auth?.user?.institution_id
+        ?? null;
+    // One-time charge override state
+    const [overrideOneTime, setOverrideOneTime] = useState<{ open: boolean; charge: any | null; newAmount: string; remarks: string }>({
+        open: false, charge: null, newAmount: "", remarks: "",
+    });
 
     // ─── Data Fetching ───────────────────────────────────────────────────────
     const { data: ledgerRes, isLoading, isError } = useQuery({
         queryKey: ["student-ledger-matrix", studentId, selectedSession, isStudentPortal],
         queryFn: () => api.get(isStudentPortal ? `/student/financial-ledger` : `/fees/ledger/student/${studentId}`, { params: { session_id: selectedSession === "current" ? null : selectedSession } }),
     });
+
+    // ─── Ad-Hoc Charge Mutations ──────────────────────────────────────────────
+    const createAdHocMutation = useMutation({
+        mutationFn: (vars: { name: string; amount: number; for_month: string; remarks?: string }) =>
+            api.post("/fees/ad-hoc-charges", {
+                institution_id: institutionId,
+                user_ids: [studentId],
+                name: vars.name,
+                amount: vars.amount,
+                for_month: vars.for_month,
+                remarks: vars.remarks || null,
+            }),
+        onSuccess: () => {
+            toast.success("Ad-hoc charge added successfully.");
+            setAdHocModal({ open: false, row: null, editing: null });
+            setAdHocForm({ name: "", amount: "", remarks: "" });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+        },
+        onError: (err: any) => toast.error(err.response?.data?.message || "Failed to add ad-hoc charge."),
+    });
+
+    const updateAdHocMutation = useMutation({
+        mutationFn: (vars: { id: number; name: string; amount: number; remarks?: string }) =>
+            api.put(`/fees/ad-hoc-charges/${vars.id}`, {
+                name: vars.name,
+                amount: vars.amount,
+                remarks: vars.remarks || null,
+            }),
+        onSuccess: () => {
+            toast.success("Ad-hoc charge updated.");
+            setAdHocModal({ open: false, row: null, editing: null });
+            setAdHocForm({ name: "", amount: "", remarks: "" });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+        },
+        onError: (err: any) => toast.error(err.response?.data?.message || "Failed to update ad-hoc charge."),
+    });
+
+    const openAdHocModal = (row: any | null, editing: any | null = null) => {
+        setAdHocModal({ open: true, row, editing });
+        if (editing) {
+            setAdHocForm({
+                name: editing.name || "",
+                amount: String(editing.amount || ""),
+                remarks: editing.remarks || "",
+            });
+        } else {
+            setAdHocForm({ name: "", amount: "", remarks: "" });
+        }
+    };
+
+    const handleAdHocSubmit = () => {
+        const amount = parseFloat(adHocForm.amount);
+        if (!adHocForm.name.trim()) return toast.error("Charge name is required.");
+        if (!amount || amount <= 0) return toast.error("Amount must be greater than 0.");
+        if (adHocModal.editing) {
+            updateAdHocMutation.mutate({ id: adHocModal.editing.id, name: adHocForm.name, amount, remarks: adHocForm.remarks });
+        } else {
+            const forMonth = adHocModal.row?.month_key || new Date().toISOString().slice(0, 7);
+            createAdHocMutation.mutate({ name: adHocForm.name, amount, for_month: forMonth, remarks: adHocForm.remarks });
+        }
+    };
 
     // ─── Mutations ───────────────────────────────────────────────────────────
     const revertAdHocMutation = useMutation({
@@ -320,6 +398,33 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     useEffect(() => {
         if (student.name && onLoaded) onLoaded(student.name);
     }, [student.name, onLoaded]);
+
+    // ─── One-Time Override Mutations ─────────────────────────────────────────
+    const overrideOneTimeMutation = useMutation({
+        mutationFn: (vars: { user_id: number; fee_type_id?: number | null; charge_name?: string; original_amount: number; overridden_amount: number; remarks?: string }) =>
+            api.post("/fees/one-time-overrides", vars),
+        onSuccess: () => {
+            toast.success("Fee override saved. Ledger updated.");
+            setOverrideOneTime({ open: false, charge: null, newAmount: "", remarks: "" });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+            queryClient.invalidateQueries({ queryKey: ["dues-overdue"] });
+        },
+        onError: (err: any) => toast.error(err.response?.data?.message || "Failed to save override."),
+    });
+
+    const revertOverrideMutation = useMutation({
+        mutationFn: (overrideId: number) => api.delete(`/fees/one-time-overrides/${overrideId}`),
+        onSuccess: () => {
+            toast.success("Override reverted. System rate restored.");
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
+            queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+            queryClient.invalidateQueries({ queryKey: ["dues-overdue"] });
+        },
+        onError: (err: any) => toast.error(err.response?.data?.message || "Failed to revert override."),
+    });
 
     // ─── Action Handlers (via map) ───────────────────────────────────────────
     const heroActionHandlers: Record<string, () => void> = {
@@ -533,9 +638,16 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                 {/* ─── One-Time Charges ────────────────────────────────────── */}
                 {oneTimeCharges.length > 0 && (
                     <div className="max-w-[1400px] mx-auto w-full space-y-3">
-                        <div className="flex items-center gap-2 px-1">
-                            <CreditCard className="size-4 text-muted-foreground" />
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">One-Time Charges</h3>
+                        <div className="flex items-center justify-between px-1">
+                            <div className="flex items-center gap-2">
+                                <CreditCard className="size-4 text-muted-foreground" />
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">One-Time Charges</h3>
+                            </div>
+                            {!isStudentPortal && (
+                                <span className="text-[9px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+                                    Hover a row to override for this student
+                                </span>
+                            )}
                         </div>
                         <Card className="rounded-xl border shadow-sm overflow-hidden">
                             <div className="overflow-x-auto">
@@ -546,26 +658,90 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                 of={ONE_TIME_COLUMNS}
                                                 keyExtractor={(c) => c.key}
                                                 render={(col) => (
-                                                    <TableHead className={cn("py-3 font-bold uppercase tracking-wider text-[10px]", col.align === "left" ? "px-6" : "text-right", col.align === "right" && col.key === "amount" && "pr-6")}>
+                                                    <TableHead className={cn("py-3 font-bold uppercase tracking-wider text-[10px]", col.align === "left" ? "px-6" : "text-right", col.align === "right" && col.key === "amount" && "pr-3")}>
                                                         {col.label}
                                                     </TableHead>
                                                 )}
                                             />
+                                            {!isStudentPortal && <TableHead className="py-3 w-16" />}
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         <Each
                                             of={oneTimeCharges}
-                                            keyExtractor={(charge: any) => String(charge.name || charge.id)}
+                                            keyExtractor={(charge: any) => String(charge.fee_type_id || charge.name)}
                                             render={(charge: any) => (
-                                                <TableRow className="border-b last:border-0 hover:bg-muted/30">
-                                                    <TableCell className="px-6 py-3 font-semibold text-sm">{charge.name}</TableCell>
+                                                <TableRow className="group border-b last:border-0 hover:bg-muted/30 transition-colors">
+                                                    <TableCell className="px-6 py-3 font-semibold text-sm">
+                                                        <div className="flex items-center gap-2">
+                                                            <span>{charge.name}</span>
+                                                            {charge.is_overridden && (
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-violet-100 border border-violet-200 text-violet-700 text-[9px] font-black uppercase tracking-wider cursor-help">
+                                                                            <Pencil className="size-2.5" />
+                                                                            Edited
+                                                                        </span>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent side="right" className="max-w-xs p-3 space-y-1.5">
+                                                                        <p className="text-[11px] font-bold text-foreground">Overridden for this student</p>
+                                                                        <div className="flex justify-between gap-6 text-xs text-muted-foreground">
+                                                                            <span>System rate:</span>
+                                                                            <span className="font-semibold line-through">{formatCurrency(charge.original_amount)}</span>
+                                                                        </div>
+                                                                        <div className="flex justify-between gap-6 text-xs text-muted-foreground">
+                                                                            <span>Override:</span>
+                                                                            <span className="font-bold text-violet-700">{formatCurrency(charge.amount)}</span>
+                                                                        </div>
+                                                                        {charge.override_remarks && (
+                                                                            <p className="text-[11px] text-muted-foreground border-t pt-1.5 italic">"{charge.override_remarks}"</p>
+                                                                        )}
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell className="py-3 text-right">
                                                         <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-wider">
                                                             {charge.category?.replace("_", " ")}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="py-3 text-right tabular-nums font-bold pr-6">{formatCurrency(charge.amount)}</TableCell>
+                                                    <TableCell className="py-3 text-right tabular-nums font-bold pr-3">
+                                                        <span className={charge.is_overridden ? "text-violet-700" : ""}>{formatCurrency(charge.amount)}</span>
+                                                    </TableCell>
+                                                    {!isStudentPortal && (
+                                                        <TableCell className="py-3 pr-3 text-right w-16">
+                                                            <div className="flex items-center justify-end gap-1">
+                                                                {charge.is_overridden && charge.override_id && (
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 cursor-pointer"
+                                                                                onClick={() => revertOverrideMutation.mutate(charge.override_id)}
+                                                                                disabled={revertOverrideMutation.isPending}
+                                                                            >
+                                                                                <RotateCcw className="size-3" />
+                                                                            </button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent side="left">Revert to system rate ({formatCurrency(charge.original_amount)})</TooltipContent>
+                                                                    </Tooltip>
+                                                                )}
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg text-violet-500 hover:bg-violet-50 hover:text-violet-700 cursor-pointer"
+                                                                            onClick={() => setOverrideOneTime({ open: true, charge, newAmount: String(charge.amount), remarks: charge.override_remarks || "" })}
+                                                                        >
+                                                                            <Pencil className="size-3.5" />
+                                                                        </button>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent side="left">{charge.is_overridden ? "Edit override" : "Override amount for this student only"}</TooltipContent>
+                                                                </Tooltip>
+                                                            </div>
+                                                        </TableCell>
+                                                    )}
                                                 </TableRow>
                                             )}
                                         />
@@ -574,6 +750,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                             <TableCell className="py-3 text-right tabular-nums font-black pr-6">
                                                 {formatCurrency(oneTimeCharges.reduce((sum: number, c: any) => sum + Number(c.amount), 0))}
                                             </TableCell>
+                                            {!isStudentPortal && <TableCell />}
                                         </TableRow>
                                     </TableBody>
                                 </Table>
@@ -590,15 +767,17 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Financial Matrix</h3>
                         </div>
                         {!isStudentPortal && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider gap-1.5 border-primary/20 text-primary hover:bg-primary/5"
-                                onClick={() => setShowAdvance(true)}
-                            >
-                                <CalendarRange className="size-3.5" />
-                                Collect Advance
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider gap-1.5 border-primary/20 text-primary hover:bg-primary/5"
+                                    onClick={() => setShowAdvance(true)}
+                                >
+                                    <CalendarRange className="size-3.5" />
+                                    Collect Advance
+                                </Button>
+                            </div>
                         )}
                     </div>
 
@@ -773,6 +952,18 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                                 <TooltipTrigger asChild>
                                                                                     <button
                                                                                         type="button"
+                                                                                        onClick={() => openAdHocModal(null, ep)}
+                                                                                        className="opacity-0 group-hover/adhoc:opacity-100 transition-opacity p-0.5 rounded text-blue-600 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                                                                                    >
+                                                                                        <Pencil className="size-2.5" />
+                                                                                    </button>
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent side="top">Edit: {ep.name}</TooltipContent>
+                                                                            </Tooltip>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <button
+                                                                                        type="button"
                                                                                         onClick={() => setRevertingAdHoc(ep)}
                                                                                         className="opacity-0 group-hover/adhoc:opacity-100 transition-opacity p-0.5 rounded text-amber-600 hover:bg-amber-50 hover:text-amber-700 cursor-pointer"
                                                                                     >
@@ -872,6 +1063,18 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                                         </Button>
                                                                                     </TooltipTrigger>
                                                                                     <TooltipContent>Quick Mark as Paid (Cash)</TooltipContent>
+                                                                                </Tooltip>
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            size="icon" variant="ghost"
+                                                                                            className="size-7 rounded-lg hover:bg-violet-50 text-violet-500 border border-transparent hover:border-violet-100"
+                                                                                            onClick={() => openAdHocModal(row)}
+                                                                                        >
+                                                                                            <Zap className="size-3.5" />
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>Add Ad-Hoc Charge for {row.month_name}</TooltipContent>
                                                                                 </Tooltip>
                                                                             </div>
                                                                             )
@@ -1207,6 +1410,237 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                         }}
                     />
                 )}
+
+                {/* ─── Add / Edit Ad-Hoc Charge Modal ───────────────────── */}
+                <Dialog open={adHocModal.open} onOpenChange={(open) => {
+                    if (!open) {
+                        setAdHocModal({ open: false, row: null, editing: null });
+                        setAdHocForm({ name: "", amount: "", remarks: "" });
+                    }
+                }}>
+                    <DialogContent className="sm:max-w-[460px] border shadow-2xl p-0 overflow-hidden rounded-2xl">
+                        <DialogHeader className="p-6 pb-4 border-b bg-gradient-to-r from-violet-50/60 to-background">
+                            <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-xl bg-violet-500/10 text-violet-600 flex items-center justify-center shrink-0">
+                                    {adHocModal.editing ? <Pencil className="size-5" /> : <Zap className="size-5" />}
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-base font-black text-foreground">
+                                        {adHocModal.editing ? "Edit Ad-Hoc Charge" : "Add Ad-Hoc Charge"}
+                                    </DialogTitle>
+                                    <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                                        {adHocModal.editing
+                                            ? `Editing charge for ${student.name}`
+                                            : adHocModal.row
+                                                ? `Adding charge for ${adHocModal.row.month_name} · ${student.name}`
+                                                : `Adding ad-hoc charge for ${student.name}`
+                                        }
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
+
+                        <div className="p-6 space-y-4">
+                            {/* Month indicator when adding for a specific row */}
+                            {!adHocModal.editing && adHocModal.row && (
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-50 border border-violet-100">
+                                    <Calendar className="size-3.5 text-violet-500" />
+                                    <span className="text-xs font-bold text-violet-700">Month: {adHocModal.row.month_name}</span>
+                                    <span className="text-[10px] font-mono text-violet-500 ml-auto">{adHocModal.row.month_key}</span>
+                                </div>
+                            )}
+                            {!adHocModal.editing && !adHocModal.row && (
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-100">
+                                    <Calendar className="size-3.5 text-amber-500" />
+                                    <span className="text-xs font-medium text-amber-700">Month: Current ({new Date().toISOString().slice(0, 7)})</span>
+                                </div>
+                            )}
+
+                            {/* Charge Name */}
+                            <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Charge Name *</Label>
+                                <Input
+                                    placeholder="e.g. Library Fee, Trip Charge, Late Fine..."
+                                    value={adHocForm.name}
+                                    onChange={e => setAdHocForm(f => ({ ...f, name: e.target.value }))}
+                                    className="h-10 rounded-lg font-medium text-sm"
+                                />
+                            </div>
+
+                            {/* Amount */}
+                            <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Amount (₹) *</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">₹</span>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        step={0.01}
+                                        placeholder="0.00"
+                                        value={adHocForm.amount}
+                                        onChange={e => setAdHocForm(f => ({ ...f, amount: e.target.value }))}
+                                        className="h-10 pl-7 rounded-lg font-mono font-bold text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Remarks */}
+                            <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Remarks (optional)</Label>
+                                <Textarea
+                                    placeholder="Add a note or reason for this charge..."
+                                    value={adHocForm.remarks}
+                                    onChange={e => setAdHocForm(f => ({ ...f, remarks: e.target.value }))}
+                                    className="rounded-lg text-sm resize-none"
+                                    rows={2}
+                                />
+                            </div>
+                        </div>
+
+                        <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2 sm:gap-0">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setAdHocModal({ open: false, row: null, editing: null });
+                                    setAdHocForm({ name: "", amount: "", remarks: "" });
+                                }}
+                                disabled={createAdHocMutation.isPending || updateAdHocMutation.isPending}
+                                className="rounded-xl font-bold"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleAdHocSubmit}
+                                disabled={createAdHocMutation.isPending || updateAdHocMutation.isPending || !adHocForm.name.trim() || !adHocForm.amount}
+                                className="rounded-xl font-bold gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+                            >
+                                {(createAdHocMutation.isPending || updateAdHocMutation.isPending) && <Loader2 className="size-4 animate-spin" />}
+                                {adHocModal.editing ? "Save Changes" : "Add Charge"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* ─── One-Time Charge Override Modal ──────────────────────── */}
+                <Dialog open={overrideOneTime.open} onOpenChange={(open) => {
+                    if (!open) setOverrideOneTime({ open: false, charge: null, newAmount: "", remarks: "" });
+                }}>
+                    <DialogContent className="sm:max-w-[440px] border shadow-2xl p-0 overflow-hidden rounded-2xl">
+                        <DialogHeader className="p-6 pb-4 border-b bg-gradient-to-r from-violet-50/60 to-background">
+                            <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-xl bg-violet-500/10 text-violet-600 flex items-center justify-center shrink-0">
+                                    <Pencil className="size-5" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-base font-black text-foreground">Override One-Time Charge</DialogTitle>
+                                    <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                                        Set a custom amount for <span className="font-bold text-foreground">{overrideOneTime.charge?.name}</span> for this student only
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
+
+                        <div className="p-6 space-y-4">
+                            {/* System rate info */}
+                            <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-muted/60 border">
+                                <span className="text-xs font-semibold text-muted-foreground">System Rate (all students)</span>
+                                <span className="text-sm font-black tabular-nums text-foreground">
+                                    {formatCurrency(overrideOneTime.charge?.is_overridden ? overrideOneTime.charge?.original_amount : overrideOneTime.charge?.amount ?? 0)}
+                                </span>
+                            </div>
+
+                            {/* New amount input */}
+                            <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">New Amount for {student.name} *</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">₹</span>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        step={1}
+                                        placeholder="0"
+                                        value={overrideOneTime.newAmount}
+                                        onChange={e => setOverrideOneTime(s => ({ ...s, newAmount: e.target.value }))}
+                                        className="h-11 pl-7 rounded-lg font-mono font-bold text-base"
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Remarks */}
+                            <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Remarks (optional)</Label>
+                                <Textarea
+                                    placeholder="e.g. Sibling discount, scholarship, waiver..."
+                                    value={overrideOneTime.remarks}
+                                    onChange={e => setOverrideOneTime(s => ({ ...s, remarks: e.target.value }))}
+                                    className="rounded-lg text-sm resize-none"
+                                    rows={2}
+                                />
+                            </div>
+
+                            {/* Difference preview */}
+                            {overrideOneTime.newAmount !== "" && (() => {
+                                const systemRate = overrideOneTime.charge?.is_overridden
+                                    ? Number(overrideOneTime.charge?.original_amount ?? 0)
+                                    : Number(overrideOneTime.charge?.amount ?? 0);
+                                const next = parseFloat(overrideOneTime.newAmount) || 0;
+                                const diff = next - systemRate;
+                                if (diff === 0) return null;
+                                return (
+                                    <div className={cn(
+                                        "flex items-center justify-between px-4 py-2.5 rounded-xl border text-xs font-semibold",
+                                        diff < 0
+                                            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                                            : "bg-amber-50 border-amber-200 text-amber-700"
+                                    )}>
+                                        <span>{diff < 0 ? "🟢 Reduction / Discount" : "🟡 Additional Charge"}</span>
+                                        <span className="font-black tabular-nums">
+                                            {diff < 0 ? "-" : "+"}{formatCurrency(Math.abs(diff))}
+                                        </span>
+                                    </div>
+                                );
+                            })()}
+
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                The new amount will show directly in this student's ledger. Other students are <span className="font-bold">not affected</span>.
+                            </p>
+                        </div>
+
+                        <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2 sm:gap-0">
+                            <Button
+                                variant="outline"
+                                onClick={() => setOverrideOneTime({ open: false, charge: null, newAmount: "", remarks: "" })}
+                                disabled={overrideOneTimeMutation.isPending}
+                                className="rounded-xl font-bold"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    const next = parseFloat(overrideOneTime.newAmount);
+                                    if (isNaN(next) || next < 0) return toast.error("Please enter a valid amount (0 or more).");
+                                    const systemRate = overrideOneTime.charge?.is_overridden
+                                        ? Number(overrideOneTime.charge?.original_amount ?? 0)
+                                        : Number(overrideOneTime.charge?.amount ?? 0);
+                                    overrideOneTimeMutation.mutate({
+                                        user_id: studentId!,
+                                        fee_type_id: overrideOneTime.charge?.fee_type_id || null,
+                                        charge_name: overrideOneTime.charge?.name,
+                                        original_amount: systemRate,
+                                        overridden_amount: next,
+                                        remarks: overrideOneTime.remarks || undefined,
+                                    });
+                                }}
+                                disabled={overrideOneTimeMutation.isPending || overrideOneTime.newAmount === ""}
+                                className="rounded-xl font-bold gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+                            >
+                                {overrideOneTimeMutation.isPending && <Loader2 className="size-4 animate-spin" />}
+                                {overrideOneTime.charge?.is_overridden ? "Update Override" : "Apply Override"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
 
                 {/* ─── Revert Ad-Hoc Charge Modal ────────────────────────── */}
                 <Dialog open={!!revertingAdHoc} onOpenChange={(open) => !open && setRevertingAdHoc(null)}>
