@@ -66,8 +66,11 @@ export default function DuesOverduePage() {
 
 
     const { data: classesRes } = useQuery({
-        queryKey: ["lms-classes"],
-        queryFn: () => lmsApi.classes.index({ per_page: 500 }),
+        queryKey: ["lms-classes", filter.academicSessionId],
+        queryFn: () => lmsApi.classes.index({
+            session_id: filter.academicSessionId === "all" ? "all" : filter.academicSessionId,
+            per_page: 500,
+        }),
     });
     const classes =
         Array.isArray((classesRes as any)?.data) ? (classesRes as any).data : Array.isArray(classesRes) ? classesRes : [];
@@ -115,7 +118,7 @@ export default function DuesOverduePage() {
         { value: "all", label: "All classes" },
         ...(classes as any[]).map((c: any) => ({
             value: String(c.id),
-            label: c.name ?? c.code ?? `Class ${c.id}`
+            label: c.session?.name ? `${c.name ?? c.code ?? `Class ${c.id}`} (${c.session.name})` : (c.name ?? c.code ?? `Class ${c.id}`)
         }))
     ], [classes]);
 

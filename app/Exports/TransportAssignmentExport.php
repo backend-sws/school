@@ -39,6 +39,15 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             $query->where('transport_stop_id', $this->filters['stop_id']);
         }
 
+        if (!empty($this->filters['session_id']) && $this->filters['session_id'] !== 'all') {
+            $sessionId = $this->filters['session_id'];
+            $query->whereHas('user', function ($q) use ($sessionId) {
+                $q->whereHas('studentProfile.currentEnrollments', function ($q2) use ($sessionId) {
+                    $q2->where('academic_session_id', $sessionId);
+                });
+            });
+        }
+
         if (!empty($this->filters['class_id']) && $this->filters['class_id'] !== 'all') {
             $classId = $this->filters['class_id'];
             $query->whereHas('user', function ($q) use ($classId) {

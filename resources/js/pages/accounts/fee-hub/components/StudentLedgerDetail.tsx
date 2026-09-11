@@ -831,83 +831,83 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                     </div>
                                                                 </TableCell>
                                                             ),
-                                                            action: () => (
-                                                                <TableCell className="text-center py-4">
-                                                                    {row.balance > 0 ? (
-                                                                        isStudentPortal ? (
-                                                                            <Button
-                                                                                size="sm" variant="secondary"
-                                                                                onClick={() => alert("Payment Gateway Integration Pending")}
-                                                                                className="h-7 px-3 rounded-lg bg-primary text-white hover:bg-primary/90 flex items-center justify-center gap-1.5 transition-all text-[10px] font-bold uppercase tracking-wider disabled:opacity-30 disabled:grayscale"
-                                                                            >
-                                                                                <CreditCard className="size-3" /> Pay Now
-                                                                            </Button>
-                                                                        ) : (
-                                                                        <div className="flex items-center justify-center gap-1.5">
-                                                                            <Tooltip>
-                                                                                <TooltipTrigger asChild>
-                                                                                    <Button
-                                                                                        size="sm" variant="secondary"
-                                                                                        onClick={() => setSelectedMonth(row)}
-                                                                                        className="h-7 px-3 rounded-lg bg-primary text-white hover:bg-primary/90 flex items-center justify-center gap-1.5 transition-all text-[10px] font-bold uppercase tracking-wider disabled:opacity-30 disabled:grayscale"
-                                                                                    >
-                                                                                        <CreditCard className="size-3" /> Pay
-                                                                                    </Button>
-                                                                                </TooltipTrigger>
-                                                                                <TooltipContent>Record Detailed Payment</TooltipContent>
-                                                                            </Tooltip>
-                                                                            <Tooltip>
-                                                                                <TooltipTrigger asChild>
-                                                                                    <Button
-                                                                                        size="icon" variant="ghost"
-                                                                                        className="size-7 rounded-lg hover:bg-emerald-50 text-emerald-600 border border-transparent hover:border-emerald-100"
-                                                                                        onClick={() => markAsPaidMutation.mutate(row.month_key)}
-                                                                                        disabled={markAsPaidMutation.isPending}
-                                                                                    >
-                                                                                        <CheckCircle2 className="size-3.5" />
-                                                                                    </Button>
-                                                                                </TooltipTrigger>
-                                                                                <TooltipContent>Quick Mark as Paid (Cash)</TooltipContent>
-                                                                            </Tooltip>
-                                                                            {row.payment_id && (
+                                                            action: () => {
+                                                                const hasPayment = Boolean(row.payment_id) || Number(row.paid_amount || 0) > 0 || row.status === "paid" || row.status === "partial";
+                                                                const canPay = !hasPayment && Number(row.balance || 0) > 0;
+
+                                                                return (
+                                                                    <TableCell className="text-center py-4">
+                                                                        {canPay ? (
+                                                                            isStudentPortal ? (
+                                                                                <Button
+                                                                                    size="sm" variant="secondary"
+                                                                                    onClick={() => alert("Payment Gateway Integration Pending")}
+                                                                                    className="h-7 px-3 rounded-lg bg-primary text-white hover:bg-primary/90 flex items-center justify-center gap-1.5 transition-all text-[10px] font-bold uppercase tracking-wider disabled:opacity-30 disabled:grayscale"
+                                                                                >
+                                                                                    <CreditCard className="size-3" /> Pay Now
+                                                                                </Button>
+                                                                            ) : (
+                                                                            <div className="flex items-center justify-center gap-1.5">
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            size="sm" variant="secondary"
+                                                                                            onClick={() => setSelectedMonth(row)}
+                                                                                            className="h-7 px-3 rounded-lg bg-primary text-white hover:bg-primary/90 flex items-center justify-center gap-1.5 transition-all text-[10px] font-bold uppercase tracking-wider disabled:opacity-30 disabled:grayscale"
+                                                                                        >
+                                                                                            <CreditCard className="size-3" /> Pay
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>Record Detailed Payment</TooltipContent>
+                                                                                </Tooltip>
                                                                                 <Tooltip>
                                                                                     <TooltipTrigger asChild>
                                                                                         <Button
                                                                                             size="icon" variant="ghost"
-                                                                                            className="size-7 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 border border-transparent hover:border-rose-100"
-                                                                                            onClick={() => setRevertingRow(row)}
+                                                                                            className="size-7 rounded-lg hover:bg-emerald-50 text-emerald-600 border border-transparent hover:border-emerald-100"
+                                                                                            onClick={() => markAsPaidMutation.mutate(row.month_key)}
+                                                                                            disabled={markAsPaidMutation.isPending}
                                                                                         >
-                                                                                            <RotateCcw className="size-3.5" />
+                                                                                            <CheckCircle2 className="size-3.5" />
                                                                                         </Button>
                                                                                     </TooltipTrigger>
-                                                                                    <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                    <TooltipContent>Quick Mark as Paid (Cash)</TooltipContent>
                                                                                 </Tooltip>
-                                                                            )}
-                                                                        </div>
-                                                                        )
-                                                                    ) : (
-                                                                        <div className="flex items-center justify-center gap-1.5">
-                                                                            <div className="size-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center border border-emerald-100 shadow-sm">
-                                                                                <Check className="size-3.5 stroke-[3.5px]" />
                                                                             </div>
-                                                                            {!isStudentPortal && row.payment_id && (
+                                                                            )
+                                                                        ) : (
+                                                                            <div className="flex items-center justify-center gap-1.5">
                                                                                 <Tooltip>
                                                                                     <TooltipTrigger asChild>
-                                                                                        <Button
-                                                                                            size="icon" variant="ghost"
-                                                                                            className="size-7 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 border border-transparent hover:border-rose-100"
-                                                                                            onClick={() => setRevertingRow(row)}
-                                                                                        >
-                                                                                            <RotateCcw className="size-3.5" />
-                                                                                        </Button>
+                                                                                        <div className="size-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center border border-emerald-100 shadow-sm cursor-default">
+                                                                                            <Check className="size-3.5 stroke-[3.5px]" />
+                                                                                        </div>
                                                                                     </TooltipTrigger>
-                                                                                    <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                    <TooltipContent>
+                                                                                        {Number(row.balance || 0) > 0
+                                                                                            ? "Payment recorded (Remaining balance carried forward to next month)"
+                                                                                            : "Paid in full"}
+                                                                                    </TooltipContent>
                                                                                 </Tooltip>
-                                                                            )}
-                                                                        </div>
-                                                                    )}
-                                                                </TableCell>
-                                                            ),
+                                                                                {!isStudentPortal && row.payment_id && (
+                                                                                    <Tooltip>
+                                                                                        <TooltipTrigger asChild>
+                                                                                            <Button
+                                                                                                size="icon" variant="ghost"
+                                                                                                className="size-7 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 border border-transparent hover:border-rose-100"
+                                                                                                onClick={() => setRevertingRow(row)}
+                                                                                            >
+                                                                                                <RotateCcw className="size-3.5" />
+                                                                                            </Button>
+                                                                                        </TooltipTrigger>
+                                                                                        <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                    </Tooltip>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </TableCell>
+                                                                );
+                                                            },
                                                         };
 
                                                         if (COLUMN_RENDERERS[col.key]) return COLUMN_RENDERERS[col.key]();

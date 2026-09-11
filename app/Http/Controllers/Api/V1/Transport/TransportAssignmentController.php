@@ -81,6 +81,15 @@ class TransportAssignmentController extends BaseController
             $query->where('transport_stop_id', $request->stop_id);
         }
 
+        if ($request->filled('session_id') && $request->session_id !== 'all') {
+            $sessionId = $request->session_id;
+            $query->whereHas('user', function ($q) use ($sessionId) {
+                $q->whereHas('studentProfile.currentEnrollments', function ($q2) use ($sessionId) {
+                    $q2->where('academic_session_id', $sessionId);
+                });
+            });
+        }
+
         if ($request->filled('class_id') && $request->class_id !== 'all') {
             $classId = $request->class_id;
             $query->whereHas('user', function ($q) use ($classId) {

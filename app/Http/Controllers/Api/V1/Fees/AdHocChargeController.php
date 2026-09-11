@@ -173,6 +173,12 @@ class AdHocChargeController extends Controller
             });
         }
 
+        if ($request->filled('session_id') && $request->session_id !== 'all') {
+            $query->whereHas('user.studentProfile', function ($sq) use ($request) {
+                $sq->where('session_id', $request->session_id);
+            });
+        }
+
         if ($request->filled('for_month')) {
             $query->where('for_month', $request->for_month);
         }

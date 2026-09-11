@@ -91,9 +91,12 @@ export default function AdvancePaymentModal({
     matrix,
     onSuccess,
 }: AdvancePaymentModalProps) {
-    // Only show unpaid months (balance > 0)
+    // Only show unpaid months (balance > 0 and no payment recorded)
     const unpaidMonths = useMemo(
-        () => matrix.filter((row: any) => Number(row.balance) > 0),
+        () => matrix.filter((row: any) => {
+            const hasPayment = Boolean(row.payment_id) || Number(row.paid_amount || 0) > 0 || row.status === "paid" || row.status === "partial";
+            return Number(row.balance) > 0 && !hasPayment;
+        }),
         [matrix],
     );
 
@@ -130,12 +133,12 @@ export default function AdvancePaymentModal({
 
     /**
      * Calculate each row's actual payable amount.
-     * For Month 0 (the first month of the session): includes opening arrears (row.balance).
+     * For the first unpaid month: includes carried forward arrears (row.balance).
      * For subsequent months: charges only that month's own fees (total_payable - previous_dues).
      */
     const getRowPayable = (r: any): number => {
-        const isFirstSessionMonth = matrix.length > 0 && r.month_key === matrix[0]?.month_key;
-        if (isFirstSessionMonth) {
+        const isFirstUnpaid = unpaidMonths.length > 0 && r.month_key === unpaidMonths[0]?.month_key;
+        if (isFirstUnpaid) {
             return Math.max(0, Number(r.balance ?? r.total_payable ?? 0));
         }
         const monthOwn = Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0);
@@ -282,7 +285,7 @@ export default function AdvancePaymentModal({
                                 ) : (
                                     unpaidMonths.map((row: any) => {
                                         const isSelected = selectedMonthKeys.has(row.month_key);
-                                        const isFirstRowWithArrears = matrix.length > 0 && row.month_key === matrix[0]?.month_key && Number(row.previous_dues) > 0;
+                                        const isFirstRowWithArrears = unpaidMonths.length > 0 && row.month_key === unpaidMonths[0]?.month_key && Number(row.previous_dues) > 0;
                                         const rowPayable = getRowPayable(row);
 
                                         return (

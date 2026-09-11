@@ -18,6 +18,7 @@ import { AsyncSelectField } from "@/components/shared/AsyncSelectField";
 import StudentApi from "@/lib/api/studentApi";
 import lmsApi from "@/lib/api/lmsApi";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { format } from "date-fns";
 import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles, RotateCcw, AlertTriangle, Loader2, History, Layers, Calendar, Filter, ArrowUpRight, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +50,8 @@ export default function AdHocCharges({ auth }: any) {
 
   // Target Mode: 'all' (All Classes / Entire School) or 'class' (Specific Class)
   const [targetScope, setTargetScope] = useState<"all" | "class">("all");
+  const { filterOptions: sessionOptions, rawSessions } = useCollegeSessions();
+  const [selectedSessionId, setSelectedSessionId] = useState<string>("all");
   const [classId, setClassId] = useState<string>("");
   const [studentSearch, setStudentSearch] = useState("");
   const shouldAutoSelectAll = useRef(true);
@@ -63,18 +66,28 @@ export default function AdHocCharges({ auth }: any) {
 
   const classAsyncConfig = useMemo(() => ({
     queryFn: async (params: any) => {
-      const res = await lmsApi.classes.index({ ...params, institution_id: institutionId, per_page: 500 });
-      return { data: res.data?.data || res.data || [] }; 
+      const res = await lmsApi.classes.index({
+        ...params,
+        institution_id: institutionId,
+        session_id: selectedSessionId && selectedSessionId !== "all" ? selectedSessionId : "all",
+        per_page: 500,
+      });
+      const raw = res.data?.data || res.data || [];
+      const data = (Array.isArray(raw) ? raw : []).map((c: any) => ({
+        ...c,
+        displayName: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
+      }));
+      return { data }; 
     },
-    queryKey: ["lms-classes", institutionId],
-    labelKey: "name",
+    queryKey: ["lms-classes", institutionId, selectedSessionId],
+    labelKey: "displayName",
     valueKey: "id",
     searchKey: "search",
-  }), [institutionId]);
+  }), [institutionId, selectedSessionId]);
 
   // Fetch students based on targetScope
   const { data: rawStudents, isLoading } = useQuery({
-    queryKey: ["students-list", institutionId, targetScope, targetScope === "class" ? classId : "all"],
+    queryKey: ["students-list", institutionId, targetScope, targetScope === "class" ? classId : "all", selectedSessionId],
     queryFn: async () => {
       if (targetScope === "class" && !classId) return [];
       const params: Record<string, any> = { 
@@ -84,6 +97,9 @@ export default function AdHocCharges({ auth }: any) {
       };
       if (targetScope === "class" && classId) {
         params.lms_class_id = classId;
+      }
+      if (selectedSessionId && selectedSessionId !== "all") {
+        params.academic_session_id = selectedSessionId;
       }
       const res = await StudentApi.getStudentList(params);
       return res.data || [];
@@ -186,16 +202,39 @@ export default function AdHocCharges({ auth }: any) {
   const [logsPage, setLogsPage] = useState(1);
   const [logsSearch, setLogsSearch] = useState("");
   const [logsChargeName, setLogsChargeName] = useState<string>("");
+  const [logsSessionId, setLogsSessionId] = useState<string>("all");
   const [logsClassId, setLogsClassId] = useState<string>("");
   const [logsMonth, setLogsMonth] = useState<string>("");
   const [logsYear, setLogsYear] = useState<string>("");
 
+  const logsClassAsyncConfig = useMemo(() => ({
+    queryFn: async (params: any) => {
+      const res = await lmsApi.classes.index({
+        ...params,
+        institution_id: institutionId,
+        session_id: logsSessionId && logsSessionId !== "all" ? logsSessionId : "all",
+        per_page: 500,
+      });
+      const raw = res.data?.data || res.data || [];
+      const data = (Array.isArray(raw) ? raw : []).map((c: any) => ({
+        ...c,
+        displayName: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
+      }));
+      return { data }; 
+    },
+    queryKey: ["lms-classes-logs", institutionId, logsSessionId],
+    labelKey: "displayName",
+    valueKey: "id",
+    searchKey: "search",
+  }), [institutionId, logsSessionId]);
+
   const { data: logsData, isLoading: loadingLogs } = useQuery({
-    queryKey: ["ad-hoc-logs", institutionId, logsPage, logsSearch, logsChargeName, logsClassId, logsMonth, logsYear],
+    queryKey: ["ad-hoc-logs", institutionId, logsPage, logsSearch, logsChargeName, logsSessionId, logsClassId, logsMonth, logsYear],
     queryFn: async () => {
       const params: any = { institution_id: institutionId, page: logsPage, per_page: 20 };
       if (logsSearch) params.search = logsSearch;
       if (logsChargeName) params.name = logsChargeName;
+      if (logsSessionId && logsSessionId !== "all") params.session_id = logsSessionId;
       if (logsClassId) params.lms_class_id = logsClassId;
       if (logsMonth && logsYear) params.for_month = `${logsYear}-${logsMonth}`;
       
@@ -528,58 +567,115 @@ export default function AdHocCharges({ auth }: any) {
                 <CardContent className="space-y-4">
                   {/* Scope Specific Header / Filters */}
                   {targetScope === "class" ? (
-                    <div className="max-w-sm space-y-2">
-                      <Label className={PREMIUM_LABEL_CLASSES}>Class</Label>
-                      <AsyncSelectField
-                        asyncConfig={classAsyncConfig}
-                        value={classId}
-                        onChange={(val: any) => {
-                          setClassId(val || "");
-                          shouldAutoSelectAll.current = true;
-                          setSelectedStudents(new Set());
-                        }}
-                        placeholder="Select Class..."
-                        menuPortalTarget={document.body}
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+                      <div className="space-y-2">
+                        <Label className={PREMIUM_LABEL_CLASSES}>Academic Session</Label>
+                        <Select
+                          value={selectedSessionId || "all"}
+                          onValueChange={(val) => {
+                            setSelectedSessionId(val);
+                            setClassId("");
+                            shouldAutoSelectAll.current = true;
+                            setSelectedStudents(new Set());
+                          }}
+                        >
+                          <SelectTrigger className={cn(PREMIUM_INPUT_CLASSES, "h-9 text-xs")}>
+                            <SelectValue placeholder="All Sessions" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Sessions</SelectItem>
+                            {sessionOptions.map((s: any) => (
+                              <SelectItem key={s.value} value={s.value}>
+                                {s.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className={PREMIUM_LABEL_CLASSES}>Class</Label>
+                        <AsyncSelectField
+                          asyncConfig={classAsyncConfig}
+                          value={classId}
+                          onChange={(val: any) => {
+                            setClassId(val || "");
+                            shouldAutoSelectAll.current = true;
+                            setSelectedStudents(new Set());
+                          }}
+                          placeholder="Select Class..."
+                          menuPortalTarget={document.body}
+                        />
+                      </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-xl bg-primary/5 border border-primary/15">
-                      <div className="flex items-center gap-2">
-                        <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                          <Sparkles className="size-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-foreground">All Classes Selected</div>
-                          <div className="text-xs text-muted-foreground">
-                            {isLoading ? "Loading students..." : `Total ${students.length} active students found across all classes.`}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 max-w-xs">
+                        <Label className={cn(PREMIUM_LABEL_CLASSES, "whitespace-nowrap")}>Session Filter:</Label>
+                        <Select
+                          value={selectedSessionId || "all"}
+                          onValueChange={(val) => {
+                            setSelectedSessionId(val);
+                            shouldAutoSelectAll.current = true;
+                            setSelectedStudents(new Set());
+                          }}
+                        >
+                          <SelectTrigger className={cn(PREMIUM_INPUT_CLASSES, "h-8 text-xs")}>
+                            <SelectValue placeholder="All Sessions" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Sessions</SelectItem>
+                            {sessionOptions.map((s: any) => (
+                              <SelectItem key={s.value} value={s.value}>
+                                {s.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-xl bg-primary/5 border border-primary/15">
+                        <div className="flex items-center gap-2">
+                          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <Sparkles className="size-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-foreground">
+                              {selectedSessionId && selectedSessionId !== "all"
+                                ? `All Classes in ${rawSessions.find((s: any) => String(s.id) === selectedSessionId)?.name || "Selected Session"}`
+                                : "All Classes (Entire School)"}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {isLoading ? "Loading students..." : `Total ${students.length} active students found.`}
+                            </div>
                           </div>
                         </div>
+
+                        {students.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={selectAllStudents}
+                              className="h-8 text-xs font-bold bg-background shadow-xs hover:bg-muted"
+                            >
+                              <CheckCheck className="size-3.5 mr-1 text-primary" />
+                              Select All ({students.length})
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={deselectAllStudents}
+                              className="h-8 text-xs font-medium text-muted-foreground hover:text-destructive"
+                            >
+                              <XCircle className="size-3.5 mr-1" />
+                              Deselect All
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                      
-                      {students.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={selectAllStudents}
-                            className="h-8 text-xs font-bold bg-background shadow-xs hover:bg-muted"
-                          >
-                            <CheckCheck className="size-3.5 mr-1 text-primary" />
-                            Select All ({students.length})
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={deselectAllStudents}
-                            className="h-8 text-xs font-medium text-muted-foreground hover:text-destructive"
-                          >
-                            <XCircle className="size-3.5 mr-1" />
-                            Deselect All
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   )}
 
@@ -972,10 +1068,28 @@ export default function AdHocCharges({ auth }: any) {
                     </Select>
                   </div>
 
+                  <div className="space-y-2 w-[160px] shrink-0">
+                    <Label className={PREMIUM_LABEL_CLASSES}>Academic Session</Label>
+                    <Select 
+                      value={logsSessionId || "all"} 
+                      onValueChange={(val) => { setLogsSessionId(val === "all" ? "" : val); setLogsClassId(""); setLogsPage(1); }}
+                    >
+                      <SelectTrigger className={PREMIUM_INPUT_CLASSES}>
+                        <SelectValue placeholder="All Sessions" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Sessions</SelectItem>
+                        {sessionOptions.map((s: any) => (
+                          <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="space-y-2 flex-1 min-w-[170px]">
                     <Label className={PREMIUM_LABEL_CLASSES}>Filter by Class</Label>
                     <AsyncSelectField
-                      asyncConfig={classAsyncConfig}
+                      asyncConfig={logsClassAsyncConfig}
                       value={logsClassId}
                       onChange={(val: any) => { setLogsClassId(val || ""); setLogsPage(1); }}
                       placeholder="All Classes..."

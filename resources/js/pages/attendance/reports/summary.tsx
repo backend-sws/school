@@ -78,9 +78,9 @@ export default function AttendanceReportsSummary() {
 
   const classOptions = useMemo(
     () =>
-      classes.map((c) => ({
+      classes.map((c: any) => ({
         value: String(c.id),
-        label: `${c.name}${c.stream?.name ? ` · ${c.stream.name}` : ""}`,
+        label: `${c.name}${c.session?.name ? ` (${c.session.name})` : ""}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
       })),
     [classes]
   );

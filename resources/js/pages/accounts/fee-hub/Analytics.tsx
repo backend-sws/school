@@ -83,7 +83,7 @@ useRegisterGuide(FEE_ANALYTICS_GUIDE);
 
     const { data: classesRes } = useQuery({
         queryKey: ["lms-classes-list"],
-        queryFn: () => lmsApi.classes.index({ per_page: 500 }),
+        queryFn: () => lmsApi.classes.index({ session_id: "all", per_page: 500 }),
     });
     const classes = classesRes?.data?.data || classesRes?.data || [];
 
@@ -178,7 +178,9 @@ useRegisterGuide(FEE_ANALYTICS_GUIDE);
                                         of={classes}
                                         keyExtractor={(cls: any) => String(cls.id)}
                                         render={(cls: any) => (
-                                            <SelectItem key={cls.id} value={String(cls.id)} className="rounded-lg m-1">{cls.name}</SelectItem>
+                                            <SelectItem key={cls.id} value={String(cls.id)} className="rounded-lg m-1">
+                                                {cls.session?.name ? `${cls.name} (${cls.session.name})` : cls.name}
+                                            </SelectItem>
                                         )}
                                     />
                                 </SelectContent>

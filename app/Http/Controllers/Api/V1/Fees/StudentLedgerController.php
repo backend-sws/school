@@ -188,6 +188,9 @@ class StudentLedgerController extends BaseController
             if (! isset($matrixResult['error'])) {
                 $row = collect($matrixResult['matrix'] ?? [])->firstWhere('month_key', $validated['for_month']);
                 if ($row) {
+                    if (!empty($row['payment_id']) || (float) ($row['paid_amount'] ?? 0) > 0) {
+                        return $this->error('Payment has already been recorded for this period. Remaining balance is carried forward to subsequent periods.', 422);
+                    }
                     $ledgerSnapshot = $this->ledgerSnapshotFactory->fromMatrixRow($row, $totalPaidAmount > 0 ? $totalPaidAmount : $discountAmount);
                 }
             }
@@ -437,6 +440,10 @@ class StudentLedgerController extends BaseController
         $balance = (float) $targetRow['balance'];
         if ($balance <= 0) {
             return $this->error('No balance due for this period.', 422);
+        }
+
+        if (!empty($targetRow['payment_id']) || (float) ($targetRow['paid_amount'] ?? 0) > 0) {
+            return $this->error('Payment has already been recorded for this period. Remaining balance is carried forward.', 422);
         }
 
         // Late-fee calculation

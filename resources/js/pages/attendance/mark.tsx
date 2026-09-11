@@ -59,7 +59,7 @@ export default function AttendanceMark() {
 
   const classes = useMemo(() => {
     const raw = (classesRes as any)?.data?.data || (classesRes as any)?.data || classesRes;
-    if (Array.isArray(raw)) return raw as { id: number; name: string }[];
+    if (Array.isArray(raw)) return raw as { id: number; name: string; session?: { name: string } }[];
     return [];
   }, [classesRes]);
 
@@ -183,7 +183,10 @@ export default function AttendanceMark() {
     });
   };
 
-  const selectedClassName = classes.find(c => c.id === selectedClassId)?.name || "Class";
+  const selectedClassObj = classes.find(c => c.id === selectedClassId);
+  const selectedClassName = selectedClassObj
+    ? (selectedClassObj.session?.name ? `${selectedClassObj.name} (${selectedClassObj.session.name})` : selectedClassObj.name)
+    : "Class";
 
   return (
     <>
@@ -273,9 +276,9 @@ export default function AttendanceMark() {
                     <span className="text-xs text-muted-foreground">Loading...</span>
                   </div>
                 ) : (
-                  classes.map((c: { id: number; name: string }) => (
+                  classes.map((c: { id: number; name: string; session?: { name: string } }) => (
                     <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-2.5">
-                      {c.name}
+                      {c.session?.name ? `${c.name} (${c.session.name})` : c.name}
                     </SelectItem>
                   ))
                 )}

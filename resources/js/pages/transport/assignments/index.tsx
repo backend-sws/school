@@ -26,6 +26,7 @@ import {
 } from "@/constants/page/admin/transport";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { TRANSPORT_ASSIGNMENTS_GUIDE } from "@/constants/guides/transport";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import React, { useMemo, useState } from 'react';
 import { FORM_TYPE } from "@/constants";
 
@@ -47,6 +48,7 @@ const INITIAL_FILTERS = {
   per_page: 15,
   search: "",
   search_by: "student",
+  session_id: "all",
   route_id: "all",
   stop_id: "all",
   class_id: "all",
@@ -83,9 +85,11 @@ const TransportAssignmentsIndex = () => {
   const [isExporting, setIsExporting] = useState(false);
 
   // Queries for filters
+  const { filterOptions: sessionFilterOptions } = useCollegeSessions();
+
   const { data: classesRes } = useQuery({
-    queryKey: ["lms-classes"],
-    queryFn: () => lmsApi.classes.index({ per_page: 500 }),
+    queryKey: ["lms-classes", filter.session_id],
+    queryFn: () => lmsApi.classes.index({ session_id: filter.session_id === "all" ? "all" : filter.session_id, per_page: 500 }),
   });
   const classes = Array.isArray((classesRes as any)?.data) ? (classesRes as any).data : Array.isArray(classesRes) ? classesRes : [];
 
@@ -114,6 +118,7 @@ const TransportAssignmentsIndex = () => {
         page: filter.page,
         per_page: filter.per_page,
         search: filter.search || undefined,
+        session_id: filter.session_id === "all" ? undefined : filter.session_id,
         route_id: filter.route_id === "all" ? undefined : filter.route_id,
         stop_id: filter.stop_id === "all" ? undefined : filter.stop_id,
         class_id: filter.class_id === "all" ? undefined : filter.class_id,
@@ -128,6 +133,16 @@ const TransportAssignmentsIndex = () => {
   const filterConfig = useMemo(() => ({
     filters: [
       {
+        name: "session_id",
+        type: FORM_TYPE.SELECT,
+        label: "Session",
+        placeholder: "All Sessions",
+        options: [
+          { key: "all", text: "All Sessions", value: "all" },
+          ...sessionFilterOptions,
+        ],
+      },
+      {
         name: "class_id",
         type: FORM_TYPE.SELECT,
         label: "Class",
@@ -136,7 +151,7 @@ const TransportAssignmentsIndex = () => {
           { key: "all", text: "All Classes", value: "all" },
           ...classes.map((c: any) => ({
             key: String(c.id),
-            text: c.name,
+            text: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
             value: String(c.id),
           })),
         ],
@@ -192,13 +207,14 @@ const TransportAssignmentsIndex = () => {
       ],
       placeholder: "Search student...",
     },
-  }), [classes, routes, stops, vehicles]);
+  }), [classes, routes, stops, vehicles, sessionFilterOptions]);
 
   const handleExportExcel = async () => {
     setIsExporting(true);
     try {
       const params = new URLSearchParams();
       if (filter.search) params.append("search", filter.search);
+      if (filter.session_id && filter.session_id !== "all") params.append("session_id", String(filter.session_id));
       if (filter.route_id && filter.route_id !== "all") params.append("route_id", String(filter.route_id));
       if (filter.stop_id && filter.stop_id !== "all") params.append("stop_id", String(filter.stop_id));
       if (filter.class_id && filter.class_id !== "all") params.append("class_id", String(filter.class_id));
