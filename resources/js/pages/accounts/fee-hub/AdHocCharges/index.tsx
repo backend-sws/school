@@ -24,6 +24,7 @@ import { Trash2, Users, School, Search, CheckCheck, XCircle, Sparkles, RotateCcw
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PREMIUM_INPUT_CLASSES, PREMIUM_LABEL_CLASSES } from "@/components/shared/form/types";
+import { useAuth } from "@/hooks/use-can";
 
 const MONTHS = [
   { value: "01", label: "January" },
@@ -43,10 +44,14 @@ const MONTHS = [
 const YEARS = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - 2 + i).toString());
 
 export default function AdHocCharges({ auth }: any) {
+  const { can } = useAuth();
+  const canCreateAdHoc = can('create_adhoc_charges');
+  const canRevertAdHoc = can('revert_adhoc_charges');
+
   const institutionId = auth.current_institution_id || auth.user?.institution_id;
   const queryClient = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<string>("assign");
+  const [activeTab, setActiveTab] = useState<string>(canCreateAdHoc ? "assign" : "history");
 
   // Target Mode: 'all' (All Classes / Entire School) or 'class' (Specific Class)
   const [targetScope, setTargetScope] = useState<"all" | "class">("all");
@@ -395,10 +400,12 @@ export default function AdHocCharges({ auth }: any) {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="w-full sm:w-auto h-auto p-1 bg-muted/50 border border-border/50 rounded-xl inline-flex flex-wrap md:flex-nowrap gap-1">
-            <TabsTrigger value="assign" className="flex-1 md:flex-none gap-1.5 font-semibold">
-              <Sparkles className="size-3.5 text-primary" />
-              Assign Charges
-            </TabsTrigger>
+            {canCreateAdHoc && (
+              <TabsTrigger value="assign" className="flex-1 md:flex-none gap-1.5 font-semibold">
+                <Sparkles className="size-3.5 text-primary" />
+                Assign Charges
+              </TabsTrigger>
+            )}
             <TabsTrigger value="history" className="flex-1 md:flex-none gap-1.5 font-semibold">
               <History className="size-3.5" />
               Charge History
@@ -850,25 +857,27 @@ export default function AdHocCharges({ auth }: any) {
                                 <Filter className="size-3" />
                                 Filter Students
                               </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 text-[11px] px-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 font-semibold gap-1"
-                                onClick={() => {
-                                  setRevertingTarget({
-                                    type: "batch",
-                                    name: b.name,
-                                    for_month: b.for_month,
-                                    amount: b.amount,
-                                    count: b.student_count,
-                                    totalAmount: b.total_amount,
-                                  });
-                                }}
-                              >
-                                <RotateCcw className="size-3" />
-                                Revert
-                              </Button>
+                              {canRevertAdHoc && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 text-[11px] px-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 font-semibold gap-1"
+                                  onClick={() => {
+                                    setRevertingTarget({
+                                      type: "batch",
+                                      name: b.name,
+                                      for_month: b.for_month,
+                                      amount: b.amount,
+                                      count: b.student_count,
+                                      totalAmount: b.total_amount,
+                                    });
+                                  }}
+                                >
+                                  <RotateCcw className="size-3" />
+                                  Revert
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -1003,25 +1012,27 @@ export default function AdHocCharges({ auth }: any) {
                                   <Filter className="size-3.5" />
                                   Filter Students
                                 </Button>
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => {
-                                    setRevertingTarget({
-                                      type: "batch",
-                                      name: b.name,
-                                      for_month: b.for_month,
-                                      amount: b.amount,
-                                      count: b.student_count,
-                                      totalAmount: b.total_amount,
-                                    });
-                                  }}
-                                  className="h-8 text-xs font-bold gap-1 shadow-xs"
-                                >
-                                  <RotateCcw className="size-3.5" />
-                                  Revert Batch
-                                </Button>
+                                {canRevertAdHoc && (
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => {
+                                      setRevertingTarget({
+                                        type: "batch",
+                                        name: b.name,
+                                        for_month: b.for_month,
+                                        amount: b.amount,
+                                        count: b.student_count,
+                                        totalAmount: b.total_amount,
+                                      });
+                                    }}
+                                    className="h-8 text-xs font-bold gap-1 shadow-xs"
+                                  >
+                                    <RotateCcw className="size-3.5" />
+                                    Revert Batch
+                                  </Button>
+                                )}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -1161,7 +1172,7 @@ export default function AdHocCharges({ auth }: any) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {logsChargeName && (
+                      {canRevertAdHoc && logsChargeName && (
                         <Button
                           type="button"
                           variant="destructive"
@@ -1201,7 +1212,7 @@ export default function AdHocCharges({ auth }: any) {
                 )}
 
                 {/* Bulk Revert Toolbar when rows are selected */}
-                {selectedLogIds.size > 0 && (
+                {canRevertAdHoc && selectedLogIds.size > 0 && (
                   <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="flex items-center gap-2.5">
                       <div className="size-8 rounded-lg bg-destructive/20 text-destructive flex items-center justify-center font-bold text-xs">
@@ -1302,30 +1313,34 @@ export default function AdHocCharges({ auth }: any) {
                                 {Number(log.amount).toLocaleString('en-IN')}
                               </TableCell>
                               <TableCell className="text-center">
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        className="size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                                        onClick={() => {
-                                          setRevertingTarget({
-                                            type: "single",
-                                            id: log.id,
-                                            name: log.name,
-                                            amount: log.amount,
-                                            studentName: log.user?.name,
-                                            for_month: log.for_month,
-                                          });
-                                        }}
-                                      >
-                                        <RotateCcw className="size-3.5" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="left">Revert Charge</TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
+                                {canRevertAdHoc ? (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button 
+                                          variant="ghost" 
+                                          size="icon" 
+                                          className="size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                          onClick={() => {
+                                            setRevertingTarget({
+                                              type: "single",
+                                              id: log.id,
+                                              name: log.name,
+                                              amount: log.amount,
+                                              studentName: log.user?.name,
+                                              for_month: log.for_month,
+                                            });
+                                          }}
+                                        >
+                                          <RotateCcw className="size-3.5" />
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="left">Revert Charge</TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                ) : (
+                                  <span className="text-muted-foreground/60 text-xs">—</span>
+                                )}
                               </TableCell>
                             </TableRow>
                           ))}

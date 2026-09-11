@@ -15,14 +15,21 @@ class AdHocChargeController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('create_adhoc_charges')) {
+            return response()->json(['message' => 'You do not have permission to create ad-hoc charges.'], 403);
+        }
+
         $validated = $request->validate([
             'institution_id' => 'required|exists:institutions,id',
             'target_type' => 'nullable|string|in:class,all',
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
             'name' => 'required|string|max:150',
+            'target_column' => 'nullable|string|max:100',
             'amount'  => 'required|numeric',
-            'for_month' => 'required|date_format:Y-m',
+            'for_month' => 'nullable|date_format:Y-m',
+            'months' => 'nullable|array',
+            'months.*' => 'date_format:Y-m',
             'remarks' => 'nullable|string',
         ]);
 
@@ -42,27 +49,38 @@ class AdHocChargeController extends Controller
             ], 422);
         }
 
+        $targetMonths = !empty($validated['months']) 
+            ? $validated['months'] 
+            : (!empty($validated['for_month']) ? [$validated['for_month']] : []);
+
+        if (empty($targetMonths)) {
+            return response()->json(['message' => 'At least one month must be selected.'], 422);
+        }
+
         $now = now();
         $authUserId = $request->user()->id;
         $institutionId = $validated['institution_id'];
         $name = $validated['name'];
-        $amount = $validated['amount'];
-        $forMonth = $validated['for_month'];
+        $targetColumn = $validated['target_column'] ?? null;
+        $amount = (float) $validated['amount'];
         $remarks = $validated['remarks'] ?? null;
 
         $charges = [];
         foreach ($userIds as $userId) {
-            $charges[] = [
-                'institution_id' => $institutionId,
-                'user_id' => $userId,
-                'name' => $name,
-                'amount' => $amount,
-                'for_month' => $forMonth,
-                'remarks' => $remarks,
-                'created_by' => $authUserId,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            foreach ($targetMonths as $monthKey) {
+                $charges[] = [
+                    'institution_id' => $institutionId,
+                    'user_id' => $userId,
+                    'name' => $name,
+                    'target_column' => $targetColumn,
+                    'amount' => $amount,
+                    'for_month' => $monthKey,
+                    'remarks' => $remarks,
+                    'created_by' => $authUserId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
 
         DB::transaction(function () use ($charges) {
@@ -71,13 +89,20 @@ class AdHocChargeController extends Controller
             }
         });
 
+        \App\Services\FeeCollectionService::clearCache();
+
+        $monthCount = count($targetMonths);
         return response()->json([
-            'message' => count($charges) . ' ad-hoc charges assigned successfully.',
+            'message' => count($charges) . " ad-hoc charges assigned successfully across {$monthCount} month(s).",
         ], 201);
     }
 
     public function batches(Request $request)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['view_adhoc_charges', 'view_student_ledger', 'collect_fees'])) {
+            return response()->json(['message' => 'You do not have permission to view ad-hoc charges.'], 403);
+        }
+
         $institutionId = $request->input('institution_id')
             ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
 
@@ -128,6 +153,10 @@ class AdHocChargeController extends Controller
 
     public function index(Request $request)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['view_adhoc_charges', 'view_student_ledger', 'collect_fees'])) {
+            return response()->json(['message' => 'You do not have permission to view ad-hoc charges.'], 403);
+        }
+
         $institutionId = $request->input('institution_id')
             ?? \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
 
@@ -191,6 +220,10 @@ class AdHocChargeController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['create_adhoc_charges', 'edit_fee_ledger'])) {
+            return response()->json(['message' => 'You do not have permission to edit ad-hoc charges.'], 403);
+        }
+
         $charge = StudentAdHocCharge::findOrFail($id);
 
         $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
@@ -199,12 +232,14 @@ class AdHocChargeController extends Controller
         }
 
         $validated = $request->validate([
-            'name'    => 'required|string|max:150',
-            'amount'  => 'required|numeric',
-            'remarks' => 'nullable|string',
+            'name'          => 'required|string|max:150',
+            'target_column' => 'nullable|string|max:100',
+            'amount'        => 'required|numeric',
+            'remarks'       => 'nullable|string',
         ]);
 
         $charge->update($validated);
+        \App\Services\FeeCollectionService::clearCache();
 
         return response()->json([
             'message' => 'Ad-hoc charge updated successfully.',
@@ -214,6 +249,10 @@ class AdHocChargeController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_adhoc_charges')) {
+            return response()->json(['message' => 'You do not have permission to revert ad-hoc charges.'], 403);
+        }
+
         $charge = StudentAdHocCharge::findOrFail($id);
         
         $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
@@ -222,6 +261,7 @@ class AdHocChargeController extends Controller
         }
 
         $charge->delete();
+        \App\Services\FeeCollectionService::clearCache();
 
         return response()->json(['message' => 'Ad-hoc charge reverted successfully.']);
     }
@@ -231,6 +271,10 @@ class AdHocChargeController extends Controller
      */
     public function bulkDestroy(Request $request)
     {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_adhoc_charges')) {
+            return response()->json(['message' => 'You do not have permission to revert ad-hoc charges.'], 403);
+        }
+
         $validated = $request->validate([
             'ids' => 'nullable|array',
             'ids.*' => 'integer',

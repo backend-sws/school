@@ -7,13 +7,11 @@ use App\Models\AdmissionHead;
 use App\Models\FeeType;
 use App\Models\Stream;
 use App\Services\FinancialDocuments\AssembleAdmissionInvoice;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AssembleAdmissionInvoiceTest extends TestCase
 {
-    use RefreshDatabase;
 
     #[Test]
     public function it_emits_admission_invoice_sections(): void

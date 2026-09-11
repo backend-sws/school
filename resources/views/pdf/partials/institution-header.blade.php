@@ -1,58 +1,62 @@
-<header class="institution-header" style="margin-bottom: 15px;">
+<header class="institution-header" style="margin-bottom: 5px;">
     @yield('document_title_top')
     
     @if(!empty($branding['receipt_header']))
-        <div style="width: 100%; margin-bottom: 10px; line-height: 0;">
+        <div style="width: 100%; margin: 0; padding: 0; line-height: 0;">
             <img src="{{ $branding['receipt_header'] }}" style="width: 100%; height: auto; border: 0; display: block;">
         </div>
     @else
-        <table class="no-border-table" style="width: 100%; margin-bottom: 10px;">
-            <tr>
-                {{-- Logo Section --}}
-                <td style="width: 15%; text-align: left; vertical-align: middle;">
-                    @if(!empty($branding['logo']))
-                        <img src="{{ $branding['logo'] }}" style="max-height: 60px; max-width: 80px; border: 0;">
-                    @else
-                        <img src="{{ public_path('logo.png') }}" style="max-height: 60px; max-width: 80px; border: 0;">
-                    @endif
-                </td>
-                
-                {{-- Center Text --}}
-                <td style="width: 70%; text-align: center; vertical-align: middle;">
-                    <h1 style="font-size: 24px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; font-family: 'Arial Black', Impact, sans-serif; letter-spacing: 1px;">
-                        {{ $branding['name'] }}
-                    </h1>
-                    
-                    <div style="font-size: 11px; margin-bottom: 3px;">
-                        @if(!empty($branding['address']))
-                            <strong>Address:</strong> {{ $branding['address'] }}
+        <div style="padding: 15mm 18mm 0 18mm;">
+            <table class="no-border-table" style="width: 100%; margin-bottom: 10px;">
+                <tr>
+                    {{-- Logo Section --}}
+                    <td style="width: 15%; text-align: left; vertical-align: middle;">
+                        @if(!empty($branding['logo']))
+                            <img src="{{ $branding['logo'] }}" style="max-height: 60px; max-width: 80px; border: 0;">
+                        @else
+                            <img src="{{ public_path('logo.png') }}" style="max-height: 60px; max-width: 80px; border: 0;">
                         @endif
-                    </div>
+                    </td>
                     
-                    <div style="font-size: 11px;">
-                        @if(!empty($branding['phone'])) <strong>Contact No:</strong> {{ $branding['phone'] }} @endif
-                        @if(!empty($branding['phone']) && !empty($branding['email'])) &nbsp;|&nbsp; @endif
-                        @if(!empty($branding['email'])) <strong>Email ID:</strong> {{ $branding['email'] }} @endif
-                    </div>
-                </td>
-                
-                {{-- Empty Right Spacer for perfect centering --}}
-                <td style="width: 15%;"></td>
-            </tr>
-        </table>
+                    {{-- Center Text --}}
+                    <td style="width: 70%; text-align: center; vertical-align: middle;">
+                        <h1 style="font-size: 24px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; font-family: 'Arial Black', Impact, sans-serif; letter-spacing: 1px;">
+                            {{ $branding['name'] }}
+                        </h1>
+                        
+                        <div style="font-size: 11px; margin-bottom: 3px;">
+                            @if(!empty($branding['address']))
+                                <strong>Address:</strong> {{ $branding['address'] }}
+                            @endif
+                        </div>
+                        
+                        <div style="font-size: 11px;">
+                            @if(!empty($branding['phone'])) <strong>Contact No:</strong> {{ $branding['phone'] }} @endif
+                            @if(!empty($branding['phone']) && !empty($branding['email'])) &nbsp;|&nbsp; @endif
+                            @if(!empty($branding['email'])) <strong>Email ID:</strong> {{ $branding['email'] }} @endif
+                        </div>
+                    </td>
+                    
+                    {{-- Empty Right Spacer for perfect centering --}}
+                    <td style="width: 15%;"></td>
+                </tr>
+            </table>
+        </div>
     @endif
 
-    <table class="no-border-table" style="margin-top: 10px;">
-        <tr>
-            <td style="text-align: left; width: 33%;">
-                <strong>No.</strong> <span class="dotted-value" style="min-width: 100px;">{{ $metadata['id'] ?? '' }}</span>
-            </td>
-            <td style="text-align: center; width: 34%; font-weight: bold; text-transform: uppercase; text-decoration: underline;">
-                @yield('document_title', 'RECEIPT')
-            </td>
-            <td style="text-align: right; width: 33%;">
-                <strong>Date:</strong> <span class="dotted-value" style="min-width: 100px;">{{ now()->format('d M Y') }}</span>
-            </td>
-        </tr>
-    </table>
+    <div style="padding: 0 18mm; margin-top: 8px;">
+        <table class="no-border-table">
+            <tr>
+                <td style="text-align: left; width: 33%;">
+                    <strong>No.</strong> <span class="dotted-value" style="min-width: 100px;">{{ $metadata['id'] ?? '' }}</span>
+                </td>
+                <td style="text-align: center; width: 34%; font-weight: bold; text-transform: uppercase; text-decoration: underline;">
+                    @yield('document_title', 'RECEIPT')
+                </td>
+                <td style="text-align: right; width: 33%;">
+                    <strong>Date:</strong> <span class="dotted-value" style="min-width: 100px;">{{ now()->format('d M Y') }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
 </header>

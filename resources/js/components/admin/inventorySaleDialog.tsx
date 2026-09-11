@@ -33,6 +33,7 @@ import {
   type InventorySaleFormInputValues,
 } from "@/lib/validations/inventory";
 import { Plus, Trash2, User, Mail, Phone, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 // ═══════════════════════════════════════════════════════════════════
 //  Types (component-local — not shared outside)
@@ -64,6 +65,7 @@ interface InventorySaleDialogProps {
   open: boolean;
   onClose: (open: boolean) => void;
   onSuccess?: () => void;
+  sale?: any | null;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -157,19 +159,46 @@ export function InventorySaleDialog({
   open,
   onClose,
   onSuccess,
+  sale,
 }: InventorySaleDialogProps) {
+  const isEdit = Boolean(sale?.id);
+
   const {
     control,
     watch,
     setValue,
     getValues,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<InventorySaleFormInputValues>({
     resolver: zodResolver(InventorySaleFormSchema) as any,
     defaultValues: INVENTORY_SALE_FORM_INITIAL as InventorySaleFormInputValues,
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (!open) return;
+    if (sale) {
+      reset({
+        buyer_type: sale.buyer_type || "student",
+        user_id: sale.user_id != null ? Number(sale.user_id) : undefined,
+        buyer_name: sale.buyer_name || "",
+        remarks: sale.remarks || "",
+        lines: (sale.lines ?? []).map((l: any) => ({
+          inventory_item_id: Number(l.inventory_item_id),
+          quantity: Number(l.quantity),
+          unit_price: Number(l.unit_price),
+        })),
+        gst_inclusive: false,
+        new_item_id: "",
+        new_qty: 1,
+        new_unit_price: "",
+      });
+    } else {
+      reset(INVENTORY_SALE_FORM_INITIAL as InventorySaleFormInputValues);
+    }
+  }, [open, sale, reset]);
 
   // ── Watched values ────────────────────────────────────────────
   const buyerType = watch("buyer_type");
@@ -188,12 +217,14 @@ export function InventorySaleDialog({
   const buyerInfo = useMemo(() => {
     const raw = (userData as Record<string, any>)?.data;
     if (!raw) return null;
+    const sp = raw.student_profile || raw.studentProfile;
     return {
       name: (raw.name as string) ?? "",
       email: (raw.email as string) ?? "",
       mobile: (raw.mobile ?? raw.phone ?? "") as string,
-      enrollment: (raw.student_profile?.enrollment_no ?? raw.enrollment_no ?? "") as string,
-      stream: (raw.student_profile?.stream?.name ?? "") as string,
+      enrollment: (sp?.enrollment_no ?? raw.enrollment_no ?? sp?.reg_no ?? "") as string,
+      stream: (sp?.stream?.name ?? "") as string,
+      fatherName: (sp?.father_name ?? raw.father_name ?? "") as string,
     };
   }, [userData]);
 
@@ -308,21 +339,35 @@ export function InventorySaleDialog({
     [lines],
   );
 
-  // ── Mutation (create sale) ───────────────────────────────────
-  const storeMutation = useMutation({
+  // ── Mutation (create or update sale) ─────────────────────────
+  const saveMutation = useMutation({
     mutationFn: (payload: {
       buyer_type: string;
       user_id?: number;
       buyer_name?: string;
       remarks?: string;
       lines: SaleLine[];
-    }) => inventoryApi.sales.store(payload),
+    }) => {
+      if (isEdit && sale?.id) {
+        return inventoryApi.sales.update(sale.id, payload);
+      }
+      return inventoryApi.sales.store(payload);
+    },
     onSuccess: (res: unknown) => {
+      queryClient.invalidateQueries({ queryKey: InventoryQueryKeys.sales() });
+      queryClient.invalidateQueries({ queryKey: ["inventory-sales"] });
+      if (isEdit && sale?.id) {
+        queryClient.invalidateQueries({ queryKey: ["inventory-sale", sale.id] });
+        toast.success("Sale updated successfully.");
+        onClose(false);
+        onSuccess?.();
+        return;
+      }
       const body = (res as Record<string, any>)?.data;
       const payloadData = body?.data;
       const feePaymentId = payloadData?.fee_payment_id;
       const saleId = payloadData?.sale?.id;
-      queryClient.invalidateQueries({ queryKey: InventoryQueryKeys.sales() });
+      toast.success("Sale created successfully.");
       onClose(false);
       onSuccess?.();
       if (feePaymentId) {
@@ -331,11 +376,15 @@ export function InventorySaleDialog({
         window.location.href = `/inventory/sales/${saleId}`;
       }
     },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || (isEdit ? "Failed to update sale." : "Failed to create sale.");
+      toast.error(msg);
+    },
   });
 
   const onSubmit = useCallback(
     (data: InventorySaleFormValues) => {
-      storeMutation.mutate({
+      saveMutation.mutate({
         buyer_type: data.buyer_type,
         user_id:
           data.buyer_type !== "other" && data.user_id != null && data.user_id >= 1
@@ -349,7 +398,7 @@ export function InventorySaleDialog({
         lines: data.lines,
       });
     },
-    [storeMutation],
+    [saveMutation],
   );
 
   // ── Layout filtering (buyer_type drives user_id visibility) ──
@@ -364,12 +413,12 @@ export function InventorySaleDialog({
   // ── Render ───────────────────────────────────────────────────
   return (
     <ModalDialog
-      title="NEW SALE"
+      title={isEdit ? `EDIT SALE #${sale.id}` : "NEW SALE"}
       open={open}
       onClose={onClose}
       handleSubmit={handleSubmit((data) => onSubmit(data as InventorySaleFormValues))}
-      isLoading={storeMutation.isPending}
-      submitLabel="Create sale & collect payment"
+      isLoading={saveMutation.isPending}
+      submitLabel={isEdit ? "Update Sale" : "Create sale & collect payment"}
       primaryDisabled={lines.length === 0}
       className="sm:max-w-[700px] w-full"
     >
@@ -416,6 +465,11 @@ export function InventorySaleDialog({
                   <span className="text-xs text-muted-foreground">({buyerInfo.enrollment})</span>
                 )}
               </div>
+              {buyerInfo.fatherName && (
+                <div className="text-xs text-muted-foreground">
+                  Father: <span className="font-medium text-foreground">{buyerInfo.fatherName}</span>
+                </div>
+              )}
               {buyerInfo.email && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Mail className="size-3" />

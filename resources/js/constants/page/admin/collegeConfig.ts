@@ -79,6 +79,13 @@ export const COLLEGE_PROFILE_IDENTITY_GROUP = [
         tooltip: "Official crest or logo of the college (Transparent PNG recommended)",
     },
     {
+        name: "authorized_signature",
+        label: "Authorized Signature Image",
+        type: FORM_TYPE.FILE,
+        accept: "image/*",
+        tooltip: "Authorized signature for fee receipts and official documents (Transparent PNG recommended)",
+    },
+    {
         name: "receipt_header",
         label: "Receipt Header Image",
         type: FORM_TYPE.FILE,

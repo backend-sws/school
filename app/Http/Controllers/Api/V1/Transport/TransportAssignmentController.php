@@ -178,14 +178,9 @@ class TransportAssignmentController extends BaseController
         $allAssignments = $statsAssignmentsQuery->get();
         $totalAssignments = $allAssignments->count();
 
-        // Active assignments (if effective_until has passed for all records e.g. session boundary, fallback to all assignments so stats reflect current registered passengers)
-        $activeAssignments = $allAssignments->filter(function ($assign) {
-            return is_null($assign->effective_until) || $assign->effective_until >= now()->toDateString();
-        });
-        $effectiveList = $activeAssignments->count() > 0 ? $activeAssignments : $allAssignments;
-
+        // Calculate monthly transport revenue demand across assignments
         $monthlyRevenue = 0.0;
-        foreach ($effectiveList as $assign) {
+        foreach ($allAssignments as $assign) {
             $amount = (float) ($assign->monthly_amount ?? 0);
             if ($amount === 0.0) {
                 $routeStop = \App\Models\TransportRouteStop::where('transport_route_id', $assign->transport_route_id)
@@ -258,16 +253,24 @@ class TransportAssignmentController extends BaseController
         if ($hasFilters) {
             $financials = $computeFinancials();
         } else {
-            $financials = \Illuminate\Support\Facades\Cache::remember("transport_financials_{$institutionId}", 60, $computeFinancials);
+            $financials = \Illuminate\Support\Facades\Cache::remember("transport_financials_{$institutionId}", 10, $computeFinancials);
         }
+
+        $totalExpected = (float) ($financials['total_expected'] ?? 0.0);
+        $totalDues = (float) ($financials['total_dues'] ?? 0.0);
+        $totalCollected = (float) ($financials['total_collected'] ?? 0.0);
+        $recoveryRate = ($totalExpected > 0)
+            ? round(($totalCollected / $totalExpected) * 100, 1)
+            : 0.0;
 
         $stats = [
             'total_assignments' => $totalAssignments,
-            'active_assignments' => $activeAssignments->count(),
-            'monthly_revenue' => $monthlyRevenue,
-            'total_estimated_revenue' => $financials['total_expected'] ?? 0.0,
-            'total_transport_dues' => $financials['total_dues'] ?? 0.0,
-            'total_transport_collected' => $financials['total_collected'] ?? 0.0,
+            'active_assignments' => $totalAssignments,
+            'monthly_revenue' => round($monthlyRevenue, 2),
+            'total_estimated_revenue' => $totalExpected,
+            'total_transport_dues' => $totalDues,
+            'total_transport_collected' => $totalCollected,
+            'recovery_rate' => $recoveryRate,
             'total_routes' => (int) \App\Models\TransportRoute::where('institution_id', $institutionId)->where('is_active', true)->count(),
             'total_vehicles' => (int) \App\Models\TransportVehicle::where('institution_id', $institutionId)->where('status', 'active')->count(),
         ];
@@ -318,6 +321,14 @@ class TransportAssignmentController extends BaseController
             'remarks' => 'nullable|string',
         ]);
 
+        $appTz = config('app.timezone', 'Asia/Kolkata');
+        if (!empty($validated['effective_from'])) {
+            $validated['effective_from'] = \Carbon\Carbon::parse($validated['effective_from'])->timezone($appTz)->format('Y-m-d');
+        }
+        if (!empty($validated['effective_until'])) {
+            $validated['effective_until'] = \Carbon\Carbon::parse($validated['effective_until'])->timezone($appTz)->format('Y-m-d');
+        }
+
         try {
             $assignment = $this->assignmentService->createAssignment($validated);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -358,6 +369,14 @@ class TransportAssignmentController extends BaseController
             'effective_until' => 'nullable|date',
             'remarks' => 'nullable|string',
         ]);
+
+        $appTz = config('app.timezone', 'Asia/Kolkata');
+        if (!empty($validated['effective_from'])) {
+            $validated['effective_from'] = \Carbon\Carbon::parse($validated['effective_from'])->timezone($appTz)->format('Y-m-d');
+        }
+        if (array_key_exists('effective_until', $validated) && !empty($validated['effective_until'])) {
+            $validated['effective_until'] = \Carbon\Carbon::parse($validated['effective_until'])->timezone($appTz)->format('Y-m-d');
+        }
 
         if (isset($validated['transport_route_id'], $validated['transport_stop_id'])) {
             if (! $this->assignmentService->stopBelongsToRoute($validated['transport_route_id'], $validated['transport_stop_id'])) {

@@ -388,9 +388,13 @@ export const STUDENT_BUYER_ASYNC_CONFIG = {
     });
     const raw = (res as any)?.data?.data || (res as any)?.data || [];
     const data = (Array.isArray(raw) ? raw : []).map((s: any) => {
-      const reg = s.reg_no || s.student_profile?.reg_no;
-      const streamName = s.student_profile?.stream?.name;
-      const details = [streamName, reg].filter(Boolean).join(" | ");
+      const sp = s.student_profile || s.studentProfile;
+      const reg = s.reg_no || sp?.reg_no;
+      const streamName = sp?.stream?.name;
+      const fatherName = sp?.father_name;
+      const regText = reg ? `Reg: ${reg}` : "";
+      const fatherText = fatherName ? `Father: ${fatherName}` : "";
+      const details = [streamName, regText, fatherText].filter(Boolean).join(" | ");
       return {
         ...s,
         displayName: details ? `${s.name} (${details})` : s.name,

@@ -191,7 +191,11 @@ class StudentLedgerController extends BaseController
                     if (!empty($row['payment_id']) || (float) ($row['paid_amount'] ?? 0) > 0) {
                         return $this->error('Payment has already been recorded for this period. Remaining balance is carried forward to subsequent periods.', 422);
                     }
-                    $ledgerSnapshot = $this->ledgerSnapshotFactory->fromMatrixRow($row, $totalPaidAmount > 0 ? $totalPaidAmount : $discountAmount);
+                    $ledgerSnapshot = $this->ledgerSnapshotFactory->fromMatrixRow(
+                        $row,
+                        $totalPaidAmount,
+                        $discountAmount
+                    );
                 }
             }
         }
@@ -341,6 +345,11 @@ class StudentLedgerController extends BaseController
         ]);
 
         $institutionId = self::getActiveInstitutionId($request->user());
+
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_fee_payments')) {
+            return $this->error('You do not have permission to revert fee payments.', 403);
+        }
+
         $payment = FeePayment::findOrFail($validated['payment_id']);
 
         if ($institutionId && (int) $payment->institution_id !== (int) $institutionId) {
@@ -517,9 +526,21 @@ class StudentLedgerController extends BaseController
         $effectiveStudentId = \App\Support\EffectiveStudentContext::getEffectiveStudentId($user);
 
         $hasStaffAccess = $user->isSuperAdmin()
+            || $user->hasAnyAbility([
+                'download_fee_receipt',
+                'view_student_ledger',
+                'view_fee_payments',
+                'collect_fees',
+                'view_fee_reports',
+            ])
             || $user->hasRole(['institution_admin', 'super_admin', 'admin', 'principal', 'staff'])
-            || $user->hasAbility('accounts_room')
-            || $user->hasAnyAbility(['admin_desk', 'office_registry', 'accounts_room']);
+            || $user->roles()->where(function ($q) {
+                $q->where('key', 'like', 'principal%')
+                  ->orWhere('key', 'like', 'accountant%')
+                  ->orWhere('key', 'like', 'manager%')
+                  ->orWhere('key', 'like', 'admin%')
+                  ->orWhere('key', 'like', 'staff%');
+            })->exists();
 
         if (!$hasStaffAccess && (int) $payment->user_id !== (int) $effectiveStudentId) {
             abort(403, 'You are not authorized to download this receipt.');

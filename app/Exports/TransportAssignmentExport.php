@@ -139,8 +139,8 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             $row->transportStop?->name ?? '—',
             number_format($monthlyAmount, 2),
             number_format($transportDue, 2),
-            $row->effective_from,
-            $row->effective_until ?? 'Active',
+            $row->effective_from ? ($row->effective_from instanceof \DateTimeInterface ? $row->effective_from->format('Y-m-d') : substr((string)$row->effective_from, 0, 10)) : '—',
+            $row->effective_until ? ($row->effective_until instanceof \DateTimeInterface ? $row->effective_until->format('Y-m-d') : substr((string)$row->effective_until, 0, 10)) : 'Active',
             $row->remarks ?? '—'
         ];
     }

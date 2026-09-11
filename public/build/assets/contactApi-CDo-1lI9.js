@@ -1,0 +1,1 @@
+import{a as e}from"./api-9dfa5-2Q.js";const o="/contacts",c={getContacts:t=>e.get(o,{params:t}),getContactsById:t=>e.get(`${o}/${t}`),toggleContacts:t=>e.patch(`${o}/${t}/toggle-read`),deleteContacts:t=>e.delete(`${o}/${t}`)};export{c as C};

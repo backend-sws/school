@@ -63,7 +63,8 @@ class UserController extends BaseController
                     ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
                     ->orWhereHas('studentProfile', function ($sq) use ($search) {
                         $sq->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
-                            ->orWhereRaw('LOWER(COALESCE(roll_no, "")) LIKE ?', [$search]);
+                            ->orWhereRaw('LOWER(COALESCE(roll_no, "")) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(COALESCE(father_name, "")) LIKE ?', [$search]);
                     });
             });
         }

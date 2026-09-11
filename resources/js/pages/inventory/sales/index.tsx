@@ -10,12 +10,13 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
 import { Head, Link } from "@inertiajs/react";
-import { ShoppingCart, Plus, DollarSign, CreditCard, Clock, Receipt } from "lucide-react";
+import { ShoppingCart, Plus, DollarSign, CreditCard, Clock, Receipt, Pencil, RotateCcw } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import inventoryApi from "@/lib/api/inventoryApi";
 import { InventorySaleDialog } from "@/components/admin/inventorySaleDialog";
+import { InventorySaleReturnDialog } from "@/components/admin/inventorySaleReturnDialog";
 import { PermissionGate } from "@/components/PermissionGate";
 import {
   INVENTORY_SALES_BREADCRUMBS,
@@ -49,6 +50,8 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
   const { filter, handleFilter, buildParams } = useSearchFilter(INITIAL_FILTERS);
   const filterConfig = useFilterRegistry("inventory_sales");
   const newSaleDisclosure = useDisclosure();
+  const [editSale, setEditSale] = React.useState<any | null>(null);
+  const [returnSale, setReturnSale] = React.useState<any | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["inventory-sales", filter],
@@ -262,11 +265,24 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
           </CardHeader>
           <CardContent className="pt-0" id="inventory-sales-table">
             <InventorySaleDialog
-              open={newSaleDisclosure.isOpen}
-              onClose={(o) => !o && newSaleDisclosure.onClose()}
+              open={newSaleDisclosure.isOpen || Boolean(editSale)}
+              sale={editSale}
+              onClose={(o) => {
+                if (!o) {
+                  newSaleDisclosure.onClose();
+                  setEditSale(null);
+                }
+              }}
               onSuccess={() => {
                 newSaleDisclosure.onClose();
+                setEditSale(null);
               }}
+            />
+            <InventorySaleReturnDialog
+              open={Boolean(returnSale)}
+              sale={returnSale}
+              onClose={() => setReturnSale(null)}
+              onSuccess={() => setReturnSale(null)}
             />
             <DataTable
               columns={COLUMNS}
@@ -297,6 +313,7 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
                     buyer_name?: string;
                     buyer_type: string;
                     total_amount: number;
+                    refunded_amount?: number;
                     payment_status: string;
                     user?: { name: string };
                     fee_payment_id?: number;
@@ -318,31 +335,75 @@ useRegisterGuide(INVENTORY_SALES_GUIDE);
                       {row.buyer_name ?? row.user?.name ?? `— (${row.buyer_type})`}
                     </TableCell>
                     <TableCell className="font-mono">
-                      ₹{Number(row.total_amount).toFixed(2)}
+                      <div>₹{Number(row.total_amount).toFixed(2)}</div>
+                      {Number(row.refunded_amount ?? 0) > 0 && (
+                        <div className="text-[11px] text-rose-600 dark:text-rose-400">
+                          -₹{Number(row.refunded_amount).toFixed(2)} ref.
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <span
-                        className={
-                          row.payment_status === "paid"
-                            ? "text-green-600 font-medium"
-                            : "text-amber-600"
-                        }
-                      >
-                        {row.payment_status}
-                      </span>
+                      {row.payment_status === "paid" && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                          Paid
+                        </span>
+                      )}
+                      {row.payment_status === "pending" && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                          Pending
+                        </span>
+                      )}
+                      {row.payment_status === "partially_returned" && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
+                          Partially Returned
+                        </span>
+                      )}
+                      {row.payment_status === "returned" && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                          Returned
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/inventory/sales/${row.id}`}>View</Link>
                         </Button>
                         {row.payment_status === "pending" && (
+                          <>
+                            <PermissionGate can="create_inventory_sales">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditSale(row)}
+                                title="Edit Sale"
+                                className="text-muted-foreground hover:text-foreground"
+                              >
+                                <Pencil className="size-3.5 mr-1" />
+                                Edit
+                              </Button>
+                            </PermissionGate>
                             <Button variant="default" size="sm" asChild>
                               <Link href={`/inventory/sales/${row.id}/collect-payment`}>
                                 Collect
                               </Link>
                             </Button>
-                          )}
+                          </>
+                        )}
+                        {(row.payment_status === "paid" || row.payment_status === "partially_returned") && (
+                          <PermissionGate can="create_inventory_movements">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setReturnSale(row)}
+                              title="Return Items"
+                              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40 border-rose-200 dark:border-rose-900"
+                            >
+                              <RotateCcw className="size-3.5 mr-1" />
+                              Return
+                            </Button>
+                          </PermissionGate>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

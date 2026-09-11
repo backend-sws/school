@@ -321,6 +321,10 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::post('fees/one-time-overrides', [\App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::class, 'upsert']);
                 Route::delete('fees/one-time-overrides/{id}', [\App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::class, 'destroy']);
 
+                // Per-student recurring monthly fee overrides
+                Route::post('fees/monthly-overrides', [\App\Http\Controllers\Api\V1\Fees\StudentFeeMonthlyOverrideController::class, 'upsert']);
+                Route::delete('fees/monthly-overrides/{id}', [\App\Http\Controllers\Api\V1\Fees\StudentFeeMonthlyOverrideController::class, 'destroy']);
+
                 // Fee collection workflow: settings, dues, overdue, send reminder
                 Route::get('fees/collection-settings', [\App\Http\Controllers\Api\V1\Fees\FeeCollectionSettingsController::class, 'show']);
                 Route::patch('fees/collection-settings', [\App\Http\Controllers\Api\V1\Fees\FeeCollectionSettingsController::class, 'update']);
@@ -470,6 +474,8 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('sales', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'index']);
                 Route::post('sales', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'store']);
                 Route::get('sales/{inventory_sale}', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'show'])->whereNumber('inventory_sale');
+                Route::put('sales/{inventory_sale}', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'update'])->whereNumber('inventory_sale');
+                Route::post('sales/{inventory_sale}/return', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'recordReturn'])->whereNumber('inventory_sale');
                 Route::get('sales/{inventory_sale}/receipt', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'receipt'])->whereNumber('inventory_sale')->name('inventory.sales.receipt');
                 Route::post('sales/{inventory_sale}/confirm', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'confirm'])->whereNumber('inventory_sale');
                 // ─── Purchases (Internal — market se kharidna) ──────────

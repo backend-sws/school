@@ -56,7 +56,7 @@ upsert.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     upsert.form = upsertForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:137
+ * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:141
  * @route '/api/v1/fees/one-time-overrides/{id}'
  */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -71,7 +71,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:137
+ * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:141
  * @route '/api/v1/fees/one-time-overrides/{id}'
  */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -99,7 +99,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:137
+ * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:141
  * @route '/api/v1/fees/one-time-overrides/{id}'
  */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -109,7 +109,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:137
+ * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:141
  * @route '/api/v1/fees/one-time-overrides/{id}'
  */
     const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -124,7 +124,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\StudentFeeOneTimeOverrideController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:137
+ * @see app/Http/Controllers/Api/V1/Fees/StudentFeeOneTimeOverrideController.php:141
  * @route '/api/v1/fees/one-time-overrides/{id}'
  */
         destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

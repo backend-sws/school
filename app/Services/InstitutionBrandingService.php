@@ -17,6 +17,7 @@ class InstitutionBrandingService
         $rawLogoPath = $institution?->logo_url;
         $rawHeaderPath = Setting::where('setting_group', 'general')->where('setting_key', 'receipt_header')->value('setting_value');
         $rawFooterPath = Setting::where('setting_group', 'general')->where('setting_key', 'receipt_footer')->value('setting_value');
+        $rawSignaturePath = Setting::where('setting_group', 'general')->where('setting_key', 'authorized_signature')->value('setting_value');
 
         return [
             'name' => $institution?->name ?? config('app.name', 'PDS Education'),
@@ -26,6 +27,7 @@ class InstitutionBrandingService
             'logo' => $this->processImageToUrlOrBase64($rawLogoPath, 300),
             'receipt_header' => $this->processImageToUrlOrBase64($rawHeaderPath, 1200),
             'receipt_footer' => $this->processImageToUrlOrBase64($rawFooterPath, 1200),
+            'authorized_signature' => $this->processImageToUrlOrBase64($rawSignaturePath, 300),
             'brand_color' => Setting::getBranding('brand_color') ?? '#4F46E5',
             'brand_theme' => Setting::getBranding('brand_theme') ?? 'royal',
         ];

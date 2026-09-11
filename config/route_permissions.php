@@ -139,7 +139,15 @@ return [
         'view_fee_collection_settings',
         'update_fee_collection_settings',
         'view_fee_dues',
+        'view_student_ledger',
         'send_fee_reminders',
+        'edit_fee_ledger',
+        'revert_fee_overrides',
+        'view_adhoc_charges',
+        'create_adhoc_charges',
+        'revert_adhoc_charges',
+        'revert_fee_payments',
+        'download_fee_receipt',
     ],
 
     'expense_tracker' => [

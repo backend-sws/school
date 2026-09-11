@@ -43,6 +43,7 @@ export const collegeProfileSchema = z.object({
   trust_name: safeOptionalString(255, "Trust / Managing Committee"),
   established_year: numericStringOptional(),
   college_logo: z.any().optional(),
+  authorized_signature: z.any().optional(),
   receipt_header: z.any().optional(),
   receipt_footer: z.any().optional(),
 });

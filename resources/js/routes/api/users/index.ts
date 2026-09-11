@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::store
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:97
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:98
  * @route '/api/v1/users'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::store
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:97
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:98
  * @route '/api/v1/users'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::store
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:97
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:98
  * @route '/api/v1/users'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::store
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:97
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:98
  * @route '/api/v1/users'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::store
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:97
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:98
  * @route '/api/v1/users'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
 export const show = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
 show.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { user: number | { id: number } } | [user: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
 show.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { user: number | { id: number } } | [user: number | { id: numb
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
 show.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
     const showForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
         showForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::show
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:125
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:126
  * @route '/api/v1/users/{user}'
  */
         showForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { user: number | { id: number } } | [user: number | { id: num
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
 export const update = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
 update.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { user: number | { id: number } } | [user: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
 update.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { user: number | { id: number } } | [user: number | { id: nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
 update.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
     const updateForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
         updateForm.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::update
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:150
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:151
  * @route '/api/v1/users/{user}'
  */
         updateForm.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { user: number | { id: number } } | [user: number | { id: 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::destroy
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:179
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:180
  * @route '/api/v1/users/{user}'
  */
 export const destroy = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::destroy
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:179
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:180
  * @route '/api/v1/users/{user}'
  */
 destroy.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { user: number | { id: number } } | [user: number | { id: n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::destroy
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:179
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:180
  * @route '/api/v1/users/{user}'
  */
 destroy.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
 
     /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::destroy
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:179
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:180
  * @route '/api/v1/users/{user}'
  */
     const destroyForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
 
             /**
 * @see \App\Http\Controllers\Api\V1\Auth\UserController::destroy
- * @see app/Http/Controllers/Api/V1/Auth/UserController.php:179
+ * @see app/Http/Controllers/Api/V1/Auth/UserController.php:180
  * @route '/api/v1/users/{user}'
  */
         destroyForm.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

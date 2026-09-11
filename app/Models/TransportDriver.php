@@ -23,7 +23,7 @@ class TransportDriver extends Model
     ];
 
     protected $casts = [
-        'license_valid_until' => 'date',
+        'license_valid_until' => 'date:Y-m-d',
         'is_active' => 'boolean',
     ];
 

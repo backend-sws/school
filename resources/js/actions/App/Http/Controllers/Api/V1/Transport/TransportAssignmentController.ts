@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::exportMethod
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:289
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:292
  * @route '/api/v1/transport/assignments/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:306
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:309
  * @route '/api/v1/transport/assignments'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:306
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:309
  * @route '/api/v1/transport/assignments'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:306
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:309
  * @route '/api/v1/transport/assignments'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:306
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:309
  * @route '/api/v1/transport/assignments'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:306
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:309
  * @route '/api/v1/transport/assignments'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 export const show = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 show.url = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ show.url = (args: { transport_assignment: number | { id: number } } | [transport
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 show.get = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ show.get = (args: { transport_assignment: number | { id: number } } | [transport
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 show.head = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ show.head = (args: { transport_assignment: number | { id: number } } | [transpor
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
     const showForm = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ show.head = (args: { transport_assignment: number | { id: number } } | [transpor
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
         showForm.get = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ show.head = (args: { transport_assignment: number | { id: number } } | [transpor
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:337
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
         showForm.head = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ show.head = (args: { transport_assignment: number | { id: number } } | [transpor
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 export const update = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -329,7 +329,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 update.url = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ update.url = (args: { transport_assignment: number | { id: number } } | [transpo
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 update.put = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -371,7 +371,7 @@ update.put = (args: { transport_assignment: number | { id: number } } | [transpo
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 update.patch = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -381,7 +381,7 @@ update.patch = (args: { transport_assignment: number | { id: number } } | [trans
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
     const updateForm = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -396,7 +396,7 @@ update.patch = (args: { transport_assignment: number | { id: number } } | [trans
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
         updateForm.put = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -410,7 +410,7 @@ update.patch = (args: { transport_assignment: number | { id: number } } | [trans
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:348
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:359
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
         updateForm.patch = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -426,7 +426,7 @@ update.patch = (args: { transport_assignment: number | { id: number } } | [trans
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:395
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:414
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 export const destroy = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -441,7 +441,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:395
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:414
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 destroy.url = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -474,7 +474,7 @@ destroy.url = (args: { transport_assignment: number | { id: number } } | [transp
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:395
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:414
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
 destroy.delete = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -484,7 +484,7 @@ destroy.delete = (args: { transport_assignment: number | { id: number } } | [tra
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:395
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:414
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
     const destroyForm = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -499,7 +499,7 @@ destroy.delete = (args: { transport_assignment: number | { id: number } } | [tra
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:395
+ * @see app/Http/Controllers/Api/V1/Transport/TransportAssignmentController.php:414
  * @route '/api/v1/transport/assignments/{transport_assignment}'
  */
         destroyForm.delete = (args: { transport_assignment: number | { id: number } } | [transport_assignment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

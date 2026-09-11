@@ -36,6 +36,30 @@ interface TransportAssignmentDialogProps {
   data?: TransportAssignmentDialogData;
 }
 
+export function formatToYmd(dateVal?: string | Date | null): string {
+  if (!dateVal) return "";
+  if (dateVal instanceof Date) {
+    if (isNaN(dateVal.getTime())) return "";
+    const year = dateVal.getFullYear();
+    const month = String(dateVal.getMonth() + 1).padStart(2, "0");
+    const day = String(dateVal.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  const str = String(dateVal).trim();
+  if (!str) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    return str;
+  }
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  return str.slice(0, 10);
+}
+
 export function TransportAssignmentDialog({ open, onClose, data }: TransportAssignmentDialogProps) {
   const isEditMode = !!data?.id;
   const dataId = data?.id;
@@ -80,7 +104,8 @@ export function TransportAssignmentDialog({ open, onClose, data }: TransportAssi
       const sp = s.student_profile || s.studentProfile;
       const classInfo = sp?.stream?.name ? sp.stream.name : "";
       const regNo = sp?.reg_no ? `Reg: ${sp.reg_no}` : "";
-      const extra = [classInfo, regNo].filter(Boolean).join(" | ");
+      const fatherName = sp?.father_name ? `Father: ${sp.father_name}` : "";
+      const extra = [classInfo, regNo, fatherName].filter(Boolean).join(" | ");
       const textLabel = extra ? `${s.name} (${extra})` : s.name;
       return {
         key: String(s.id),
@@ -155,21 +180,22 @@ export function TransportAssignmentDialog({ open, onClose, data }: TransportAssi
     }
   }, [routeId, setValue]);
 
+  const currentRecord = (isEditMode ? (assignmentDetail?.id ? assignmentDetail : data) : null) as TransportAssignmentDialogData;
+
   useEffect(() => {
-    if (isEditMode && assignmentDetail?.id) {
-      const d = assignmentDetail as NonNullable<TransportAssignmentDialogData>;
+    if (isEditMode && currentRecord?.id) {
       reset({
-        user_id: d.user_id ?? "",
-        transport_route_id: d.transport_route_id ?? "",
-        transport_stop_id: d.transport_stop_id ?? "",
-        effective_from: d.effective_from?.slice(0, 10) ?? "",
-        effective_until: d.effective_until?.slice(0, 10) ?? "",
-        remarks: d.remarks ?? "",
+        user_id: currentRecord.user_id ?? "",
+        transport_route_id: currentRecord.transport_route_id ?? "",
+        transport_stop_id: currentRecord.transport_stop_id ?? "",
+        effective_from: formatToYmd(currentRecord.effective_from),
+        effective_until: formatToYmd(currentRecord.effective_until),
+        remarks: currentRecord.remarks ?? "",
       });
-    } else {
+    } else if (!isEditMode) {
       reset(TRANSPORT_ASSIGNMENT_FORM_INITIAL);
     }
-  }, [isEditMode, assignmentDetail, reset, open]);
+  }, [isEditMode, currentRecord, reset, open]);
 
   const { mutate: handleMutation, isPending: isSaving } = useMutation({
     mutationFn: (payload: TransportAssignmentFormValues) => {
@@ -177,8 +203,8 @@ export function TransportAssignmentDialog({ open, onClose, data }: TransportAssi
         user_id: Number(payload.user_id),
         transport_route_id: Number(payload.transport_route_id),
         transport_stop_id: Number(payload.transport_stop_id),
-        effective_from: payload.effective_from,
-        effective_until: payload.effective_until || undefined,
+        effective_from: formatToYmd(payload.effective_from),
+        effective_until: payload.effective_until ? formatToYmd(payload.effective_until) : undefined,
         remarks: payload.remarks || undefined,
       };
       return isEditMode

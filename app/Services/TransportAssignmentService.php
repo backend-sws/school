@@ -40,7 +40,8 @@ class TransportAssignmentService
     public function autoEndPreviousAssignment(int $userId, string $effectiveFrom, ?int $institutionId = null): void
     {
         $institutionId = $institutionId ?? InstitutionContext::getActiveInstitutionId();
-        $dayBefore = Carbon::parse($effectiveFrom)->subDay()->format('Y-m-d');
+        $appTz = config('app.timezone', 'Asia/Kolkata');
+        $dayBefore = Carbon::parse($effectiveFrom)->timezone($appTz)->subDay()->format('Y-m-d');
 
         TransportAssignment::where('institution_id', $institutionId)
             ->where('user_id', $userId)

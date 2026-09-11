@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ControlledFormComponent from "@/components/shared/ControlledFormComponent";
 import { FORM_TYPE } from "@/constants";
-import { CalendarRange, CheckCircle2, Loader2 } from "lucide-react";
+import { CalendarRange, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -91,23 +91,31 @@ export default function AdvancePaymentModal({
     matrix,
     onSuccess,
 }: AdvancePaymentModalProps) {
-    // Only show unpaid months (balance > 0 and no payment recorded)
+    // Overall net arrears of the student across the entire session
+    const totalStudentArrears = useMemo(() => {
+        if (!matrix || matrix.length === 0) return 0;
+        const validRows = matrix.filter((r: any) => r.month_key !== "arrears");
+        const lastRow = validRows[validRows.length - 1];
+        return Math.max(0, Number(lastRow?.balance ?? 0));
+    }, [matrix]);
+
+    // All session months with outstanding balance (excluding fully paid and phantom arrears)
     const unpaidMonths = useMemo(
-        () => matrix.filter((row: any) => {
-            const hasPayment = Boolean(row.payment_id) || Number(row.paid_amount || 0) > 0 || row.status === "paid" || row.status === "partial";
-            return Number(row.balance) > 0 && !hasPayment;
+        () => (matrix || []).filter((row: any) => {
+            if (row.month_key === "arrears") return false;
+            return row.status !== "paid" && Number(row.balance) > 0;
         }),
         [matrix],
     );
 
     const [selectedMonthKeys, setSelectedMonthKeys] = useState<Set<string>>(new Set());
 
-    // Reset selection when modal opens
+    // Reset selection to all unpaid months when modal opens
     useEffect(() => {
         if (isOpen) {
-            setSelectedMonthKeys(new Set());
+            setSelectedMonthKeys(new Set(unpaidMonths.map((r: any) => r.month_key)));
         }
-    }, [isOpen]);
+    }, [isOpen, unpaidMonths]);
 
     const toggleMonth = (key: string) => {
         setSelectedMonthKeys((prev) => {
@@ -132,23 +140,27 @@ export default function AdvancePaymentModal({
     );
 
     /**
-     * Calculate each row's actual payable amount.
-     * For the first unpaid month: includes carried forward arrears (row.balance).
-     * For subsequent months: charges only that month's own fees (total_payable - previous_dues).
+     * FIFO allocation of actual outstanding fees across selected months.
+     * Prevents overcharging when sporadic/partial payments exist.
      */
-    const getRowPayable = (r: any): number => {
-        const isFirstUnpaid = unpaidMonths.length > 0 && r.month_key === unpaidMonths[0]?.month_key;
-        if (isFirstUnpaid) {
-            return Math.max(0, Number(r.balance ?? r.total_payable ?? 0));
-        }
-        const monthOwn = Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0);
-        return Math.max(0, monthOwn);
-    };
+    const { allocatedMap, totalAmount } = useMemo(() => {
+        const map: Record<string, number> = {};
+        let remainingBalance = totalStudentArrears;
+        let total = 0;
 
-    const totalAmount = useMemo(
-        () => selectedRows.reduce((sum: number, r: any) => sum + getRowPayable(r), 0),
-        [selectedRows, matrix],
-    );
+        selectedRows.forEach((r: any) => {
+            const ownFee = Math.max(0, Number(r.total_payable ?? 0) - Number(r.previous_dues ?? 0));
+            const paidAlready = Number(r.paid_amount ?? 0);
+            const netUncollected = Math.max(0, ownFee - paidAlready);
+
+            const alloc = Math.min(netUncollected, remainingBalance);
+            map[r.month_key] = alloc;
+            total += alloc;
+            remainingBalance = Math.max(0, remainingBalance - alloc);
+        });
+
+        return { allocatedMap: map, totalAmount: total };
+    }, [selectedRows, totalStudentArrears]);
 
     const form = useForm<AdvanceFormValues>({
         resolver: zodResolver(advancePaymentSchema),
@@ -205,30 +217,40 @@ export default function AdvancePaymentModal({
             return;
         }
 
+        if (totalAmount <= 0) {
+            toast.info("Selected months have already been covered by previous payments.");
+            return;
+        }
+
         let finalCash = data.cash_amount;
         let finalOnline = data.online_amount;
         let finalMode = data.payment_mode;
         const discountAmount = data.discount_amount || 0;
-        const netAmount = Math.max(0, totalAmount - discountAmount);
+        const finalNetAmount = Math.max(0, totalAmount - discountAmount);
 
-        if (netAmount === 0 && discountAmount > 0) {
+        if (finalNetAmount === 0 && discountAmount > 0) {
             finalMode = "concession";
             finalCash = 0;
             finalOnline = 0;
         } else if (finalMode === "cash") {
-            finalCash = netAmount;
+            finalCash = finalNetAmount;
             finalOnline = 0;
         } else if (finalMode === "online") {
             finalCash = 0;
-            finalOnline = netAmount;
+            finalOnline = finalNetAmount;
         }
+
+        // Send only months with positive allocation
+        const payablePayload = selectedRows
+            .map((r: any) => ({
+                for_month: r.month_key,
+                amount: allocatedMap[r.month_key] ?? 0,
+            }))
+            .filter((m: any) => m.amount > 0);
 
         collectMutation.mutate({
             user_id: student.id,
-            months: selectedRows.map((r: any) => ({
-                for_month: r.month_key,
-                amount: getRowPayable(r),
-            })),
+            months: payablePayload,
             total_amount: totalAmount,
             payment_mode: finalMode,
             payment_date: normalizeDate(data.payment_date) || getTodayDateString(),
@@ -244,104 +266,140 @@ export default function AdvancePaymentModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[580px] border shadow-2xl p-0 overflow-hidden rounded-xl">
-                <DialogHeader className="p-6 pb-0">
-                    <DialogTitle className="text-xl font-bold flex items-center gap-2">
-                        <CalendarRange className="size-5 text-primary" />
-                        Advance Payment Collection
-                    </DialogTitle>
-                    <DialogDescription className="text-xs font-medium">
-                        Select months to collect advance payment for{" "}
-                        <span className="text-primary font-bold">{student.name}</span>
-                    </DialogDescription>
+            <DialogContent className="sm:max-w-3xl md:max-w-4xl w-full max-h-[92vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl rounded-2xl border border-border/70 bg-background">
+                <DialogHeader className="p-5 pb-4 bg-muted/20 border-b shrink-0 pr-12">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div>
+                            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                                <CalendarRange className="size-5 text-primary" />
+                                Advance / Bulk Fee Payment
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-medium text-muted-foreground mt-0.5">
+                                Select months to collect advance or outstanding fees for{" "}
+                                <span className="text-primary font-bold">{student.name}</span>
+                            </DialogDescription>
+                        </div>
+                        <Badge variant="outline" className="text-xs px-3 py-1 font-mono font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-400 self-start sm:self-auto">
+                            Total Net Due: {formatCurrency(totalStudentArrears)}
+                        </Badge>
+                    </div>
                 </DialogHeader>
 
-                <div className="px-6 py-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 min-h-0">
                     {/* ── Month Selection Table ────────────────────── */}
-                    <div className="border rounded-lg overflow-hidden">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="bg-muted hover:bg-muted">
-                                    <TableHead className="w-[40px] text-center py-2">
-                                        <Checkbox
-                                            checked={selectedMonthKeys.size === unpaidMonths.length && unpaidMonths.length > 0}
-                                            onCheckedChange={selectAll}
-                                        />
-                                    </TableHead>
-                                    <TableHead className="py-2 text-[10px] font-bold uppercase tracking-wider">Month</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Transport</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Hostel & Mess</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider">Other</TableHead>
-                                    <TableHead className="py-2 text-right text-[10px] font-bold uppercase tracking-wider pr-4">Amount Due</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {unpaidMonths.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
-                                            No unpaid months available
-                                        </TableCell>
+                    <div className="border border-border/70 rounded-xl overflow-hidden shadow-xs bg-card">
+                        <div className="overflow-x-auto">
+                            <Table className="min-w-[620px]">
+                                <TableHeader>
+                                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                                        <TableHead className="w-[45px] text-center py-2.5">
+                                            <Checkbox
+                                                checked={selectedMonthKeys.size === unpaidMonths.length && unpaidMonths.length > 0}
+                                                onCheckedChange={selectAll}
+                                            />
+                                        </TableHead>
+                                        <TableHead className="py-2.5 text-[11px] font-bold uppercase tracking-wider">Month</TableHead>
+                                        <TableHead className="py-2.5 text-right text-[11px] font-bold uppercase tracking-wider">Monthly Fee</TableHead>
+                                        <TableHead className="py-2.5 text-right text-[11px] font-bold uppercase tracking-wider">Other / Exam</TableHead>
+                                        <TableHead className="py-2.5 text-right text-[11px] font-bold uppercase tracking-wider">Month Gross</TableHead>
+                                        <TableHead className="py-2.5 text-right text-[11px] font-bold uppercase tracking-wider">Paid So Far</TableHead>
+                                        <TableHead className="py-2.5 text-center text-[11px] font-bold uppercase tracking-wider">Status</TableHead>
+                                        <TableHead className="py-2.5 text-right text-[11px] font-bold uppercase tracking-wider pr-4">Payable Now</TableHead>
                                     </TableRow>
-                                ) : (
-                                    unpaidMonths.map((row: any) => {
-                                        const isSelected = selectedMonthKeys.has(row.month_key);
-                                        const isFirstRowWithArrears = unpaidMonths.length > 0 && row.month_key === unpaidMonths[0]?.month_key && Number(row.previous_dues) > 0;
-                                        const rowPayable = getRowPayable(row);
+                                </TableHeader>
+                                <TableBody>
+                                    {unpaidMonths.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">
+                                                <CheckCircle2 className="size-6 text-emerald-500 mx-auto mb-1.5" />
+                                                All fees for this session have been fully cleared!
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        unpaidMonths.map((row: any) => {
+                                            const isSelected = selectedMonthKeys.has(row.month_key);
+                                            const ownFee = Math.max(0, Number(row.total_payable ?? 0) - Number(row.previous_dues ?? 0));
+                                            const monthlyFee = Number(row.monthly_total ?? 0);
+                                            const otherFee = Math.max(0, ownFee - monthlyFee);
+                                            const paidAmount = Number(row.paid_amount ?? 0);
+                                            const allocated = allocatedMap[row.month_key] ?? 0;
+                                            const isCoveredByOther = isSelected && allocated === 0;
 
-                                        return (
-                                            <TableRow
-                                                key={row.month_key}
-                                                className={cn(
-                                                    "cursor-pointer transition-colors",
-                                                    isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/30"
-                                                )}
-                                                onClick={() => toggleMonth(row.month_key)}
-                                            >
-                                                <TableCell className="text-center py-2.5">
-                                                    <Checkbox
-                                                        checked={isSelected}
-                                                        onCheckedChange={() => toggleMonth(row.month_key)}
-                                                    />
-                                                </TableCell>
-                                                <TableCell className="py-2.5 font-semibold text-sm">
-                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                            return (
+                                                <TableRow
+                                                    key={row.month_key}
+                                                    className={cn(
+                                                        "cursor-pointer transition-colors",
+                                                        isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/30",
+                                                        isCoveredByOther && "opacity-75"
+                                                    )}
+                                                    onClick={() => toggleMonth(row.month_key)}
+                                                >
+                                                    <TableCell className="text-center py-2.5" onClick={(e) => e.stopPropagation()}>
+                                                        <Checkbox
+                                                            checked={isSelected}
+                                                            onCheckedChange={() => toggleMonth(row.month_key)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 font-semibold text-sm">
                                                         <span>{row.month_name}</span>
-                                                        {isFirstRowWithArrears && (
-                                                            <Badge variant="outline" className="text-[9px] font-semibold text-amber-700 bg-amber-50 border-amber-200">
-                                                                Incl. ₹{Number(row.previous_dues).toLocaleString()} Arrears
-                                                            </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-right tabular-nums text-sm">
+                                                        {monthlyFee > 0 ? formatCurrency(monthlyFee) : "—"}
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-right tabular-nums text-sm">
+                                                        {otherFee > 0 ? formatCurrency(otherFee) : "—"}
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-right tabular-nums text-sm font-medium">
+                                                        {formatCurrency(ownFee)}
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-right tabular-nums text-sm text-muted-foreground">
+                                                        {paidAmount > 0 ? formatCurrency(paidAmount) : "—"}
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-center">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "text-[10px] uppercase font-bold py-0.5 px-2",
+                                                                row.status === "partial"
+                                                                    ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400"
+                                                                    : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400"
+                                                            )}
+                                                        >
+                                                            {row.status}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="py-2.5 text-right tabular-nums text-sm font-bold text-foreground pr-4">
+                                                        {isSelected ? (
+                                                            allocated > 0 ? (
+                                                                <span className="text-primary">{formatCurrency(allocated)}</span>
+                                                            ) : (
+                                                                <Badge variant="outline" className="text-[10px] text-emerald-600 bg-emerald-50 border-emerald-200 font-normal">
+                                                                    Covered
+                                                                </Badge>
+                                                            )
+                                                        ) : (
+                                                            <span className="text-muted-foreground/60">—</span>
                                                         )}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm">
-                                                    {Number(row.transport_fee) > 0 ? formatCurrency(row.transport_fee) : "—"}
-                                                </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm">
-                                                    {Number(row.hostel_fee) > 0 ? formatCurrency(row.hostel_fee) : "—"}
-                                                </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm">
-                                                    {Number(row.other_fees) > 0 ? formatCurrency(row.other_fees) : "—"}
-                                                </TableCell>
-                                                <TableCell className="py-2.5 text-right tabular-nums text-sm font-bold text-foreground pr-4">
-                                                    {formatCurrency(rowPayable)}
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })
-                                )}
-                            </TableBody>
-                        </Table>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
 
-                    {/* ── Summary ───────────────────────────────────── */}
+                    {/* ── Summary Card ───────────────────────────────── */}
                     {selectedRows.length > 0 && (
-                        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                                     {selectedRows.length} month{selectedRows.length > 1 ? "s" : ""} selected
                                 </span>
-                                <span className="text-lg font-black text-primary tabular-nums">
-                                    ₹{totalAmount.toLocaleString()}
+                                <span className="text-xl font-bold font-mono text-primary">
+                                    {formatCurrency(totalAmount)}
                                 </span>
                             </div>
                             {currentDiscount > 0 && (
@@ -350,7 +408,7 @@ export default function AdvancePaymentModal({
                                         Discount Applied
                                     </span>
                                     <span className="text-sm font-bold text-green-600 tabular-nums">
-                                        -₹{currentDiscount.toLocaleString()}
+                                        -{formatCurrency(currentDiscount)}
                                     </span>
                                 </div>
                             )}
@@ -359,18 +417,18 @@ export default function AdvancePaymentModal({
                                     <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                                         Net Payable
                                     </span>
-                                    <span className="text-lg font-black text-primary tabular-nums">
-                                        ₹{netAmount.toLocaleString()}
+                                    <span className="text-xl font-bold font-mono text-primary">
+                                        {formatCurrency(netAmount)}
                                     </span>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* ── Payment Details ───────────────────────────── */}
-                    {selectedRows.length > 0 && (
+                    {/* ── Payment Details Form ───────────────────────── */}
+                    {selectedRows.length > 0 && totalAmount > 0 && (
                         <div className="space-y-3 pt-2">
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <ControlledFormComponent
                                     control={control as any}
                                     name="payment_mode"
@@ -435,7 +493,7 @@ export default function AdvancePaymentModal({
                                 />
                             )}
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <ControlledFormComponent
                                     control={control as any}
                                     name="discount_amount"
@@ -457,24 +515,33 @@ export default function AdvancePaymentModal({
                                 name="remarks"
                                 type={FORM_TYPE.TEXT}
                                 label="Internal Note"
-                                placeholder="e.g. Advance for 3 months transport + hostel"
+                                placeholder="e.g. Full settlement for academic session"
                             />
                         </div>
                     )}
                 </div>
 
-                <DialogFooter className="p-6 pt-0">
+                <DialogFooter className="p-4 px-6 bg-muted/20 border-t shrink-0 flex items-center justify-between sm:justify-end gap-3">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onClose}
+                        disabled={collectMutation.isPending}
+                        className="px-4"
+                    >
+                        Cancel
+                    </Button>
                     <Button
                         onClick={handleSubmit(onSubmit as any)}
-                        disabled={collectMutation.isPending || selectedRows.length === 0}
-                        className="w-full h-11 font-bold text-sm"
+                        disabled={collectMutation.isPending || selectedRows.length === 0 || totalAmount <= 0}
+                        className="h-10 px-6 font-bold text-sm shadow-md"
                     >
                         {collectMutation.isPending ? (
                             <><Loader2 className="size-4 animate-spin mr-2" /> Recording...</>
                         ) : (
                             <>
                                 <CheckCircle2 className="size-4 mr-2" />
-                                Collect ₹{netAmount.toLocaleString()} for {selectedRows.length} month{selectedRows.length > 1 ? "s" : ""}
+                                Collect {formatCurrency(netAmount)} for {selectedRows.length} month{selectedRows.length > 1 ? "s" : ""}
                             </>
                         )}
                     </Button>

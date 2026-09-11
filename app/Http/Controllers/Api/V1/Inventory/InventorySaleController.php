@@ -252,4 +252,80 @@ class InventorySaleController extends BaseController
             return $this->error('Unable to generate receipt PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(), 500);
         }
     }
+
+    public function update(Request $request, InventorySale $inventory_sale): JsonResponse
+    {
+        if (! $request->user()->hasAbility('update_inventory_sales') && ! $request->user()->hasAbility('create_inventory_sales')) {
+            return $this->forbidden('You do not have permission to update inventory sales.');
+        }
+
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+        if ($institutionId === null) {
+            return $this->error('Active institution context is required.', 400);
+        }
+
+        $validated = $request->validate([
+            'buyer_type' => 'required|string|in:student,parent,other',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'buyer_name' => 'nullable|string|max:200',
+            'lines' => 'required|array|min:1',
+            'lines.*.inventory_item_id' => 'required|integer',
+            'lines.*.quantity' => 'required|numeric|min:0.001',
+            'lines.*.unit_price' => 'required|numeric|min:0',
+            'remarks' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $updated = $this->saleService->updateSale(
+                $inventory_sale,
+                $validated['lines'],
+                $validated['buyer_type'],
+                $validated['user_id'] ?? null,
+                $validated['buyer_name'] ?? null,
+                $validated['remarks'] ?? null,
+                $institutionId,
+                $request->user()->id
+            );
+        } catch (ValidationException $e) {
+            return $this->validationError($e->errors());
+        }
+
+        return $this->successWithMap($updated, 'passthrough', 'Sale updated successfully.');
+    }
+
+    public function recordReturn(Request $request, InventorySale $inventory_sale): JsonResponse
+    {
+        if (! $request->user()->hasAbility('create_inventory_movements') && ! $request->user()->hasAbility('create_inventory_sales')) {
+            return $this->forbidden('You do not have permission to process sales returns.');
+        }
+
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+        if ($institutionId === null) {
+            return $this->error('Active institution context is required.', 400);
+        }
+
+        $validated = $request->validate([
+            'lines' => 'required|array|min:1',
+            'lines.*.inventory_sale_line_id' => 'required|integer',
+            'lines.*.quantity' => 'required|numeric|min:0.001',
+            'reason' => 'nullable|string|max:500',
+            'refund_mode' => 'nullable|string|max:50|in:cash,upi,bank,credit,none',
+        ]);
+
+        try {
+            $updated = $this->saleService->recordReturn(
+                $inventory_sale,
+                $validated['lines'],
+                $validated['reason'] ?? null,
+                $validated['refund_mode'] ?? 'cash',
+                $institutionId,
+                $request->user()->id
+            );
+        } catch (ValidationException $e) {
+            return $this->validationError($e->errors());
+        }
+
+        return $this->successWithMap($updated, 'passthrough', 'Items returned successfully. Stock restored to inventory.');
+    }
 }
+

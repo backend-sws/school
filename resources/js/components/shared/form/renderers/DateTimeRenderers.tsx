@@ -10,13 +10,21 @@ function parseLocalDate(val?: string | Date | null): Date | undefined {
   if (val instanceof Date) return isNaN(val.getTime()) ? undefined : val;
   const str = String(val).trim();
   if (!str) return undefined;
-  const datePart = str.split("T")[0];
-  const parts = datePart.split("-").map(Number);
-  if (parts.length === 3 && !parts.some(isNaN)) {
-    return new Date(parts[0], parts[1] - 1, parts[2]);
+
+  // If exact YYYY-MM-DD format (no time), create local midnight Date
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const parts = str.split("-").map(Number);
+    if (parts.length === 3 && !parts.some(isNaN)) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
   }
+
+  // If ISO string with timezone or datetime string, convert to local Date at midnight
   const d = new Date(str);
-  return isNaN(d.getTime()) ? undefined : d;
+  if (!isNaN(d.getTime())) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  return undefined;
 }
 
 function parseLocalTime(val?: string | null): Date | undefined {

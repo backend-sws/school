@@ -14,6 +14,7 @@ class StudentAdHocCharge extends Model
         'institution_id',
         'user_id',
         'name',
+        'target_column',
         'amount',
         'for_month',
         'remarks',

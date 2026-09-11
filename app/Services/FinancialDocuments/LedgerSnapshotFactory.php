@@ -11,7 +11,7 @@ final class LedgerSnapshotFactory
      * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
-    public function fromMatrixRow(array $row, float $totalPaidThisReceipt): array
+    public function fromMatrixRow(array $row, float $totalPaidThisReceipt, float $discountThisReceipt = 0.0): array
     {
         $particulars = $row['expected_particulars'] ?? [];
         $fees = [];
@@ -26,17 +26,18 @@ final class LedgerSnapshotFactory
         }
 
         $balanceBefore = (float) ($row['balance'] ?? 0);
+        $totalDiscount = (float) ($row['discount'] ?? 0) + $discountThisReceipt;
 
         return [
             'fees' => $fees,
             'previous_dues' => (float) ($row['previous_dues'] ?? 0),
             'monthly_total' => (float) ($row['monthly_total'] ?? 0),
             'late_fee_snapshot' => (float) ($row['late_fee'] ?? 0),
-            'discount' => (float) ($row['discount'] ?? 0),
+            'discount' => $totalDiscount,
             'total_payable_before' => (float) ($row['total_payable'] ?? 0),
             'total_fees' => (float) ($row['gross_amount'] ?? 0),
             'paid_amount_in_ledger' => (float) ($row['paid_amount'] ?? 0),
-            'balance_after' => max(0, round($balanceBefore - $totalPaidThisReceipt, 2)),
+            'balance_after' => max(0, round($balanceBefore - $totalPaidThisReceipt - $discountThisReceipt, 2)),
         ];
     }
 }

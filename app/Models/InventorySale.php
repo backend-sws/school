@@ -22,6 +22,7 @@ class InventorySale extends Model
         'buyer_type',
         'buyer_name',
         'total_amount',
+        'refunded_amount',
         'payment_status',
         'collected_by',
         'remarks',
@@ -29,6 +30,7 @@ class InventorySale extends Model
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'refunded_amount' => 'decimal:2',
     ];
 
     public function institution(): BelongsTo

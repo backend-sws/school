@@ -48,7 +48,7 @@ class StudentLedgerExport implements FromArray, WithStyles, ShouldAutoSize, With
             $finalBalance = $lastRow['balance'] ?? 0;
             foreach ($matrix as $row) {
                 $totalPaidSum += (float)($row['paid_amount'] ?? 0);
-                $totalConcessionSum += (float)($row['concession_amount'] ?? 0);
+                $totalConcessionSum += (float)($row['discount'] ?? $row['concession_amount'] ?? 0);
             }
         }
 
@@ -97,7 +97,7 @@ class StudentLedgerExport implements FromArray, WithStyles, ShouldAutoSize, With
             $monthTotal = (float)($row['monthly_total'] ?? 0);
             $totalPayable = (float)($row['total_payable'] ?? 0);
             $paidAmount = (float)($row['paid_amount'] ?? 0);
-            $concession = (float)($row['concession_amount'] ?? 0);
+            $concession = (float)($row['discount'] ?? $row['concession_amount'] ?? 0);
             $balance = (float)($row['balance'] ?? 0);
             $status = strtoupper($row['status'] ?? 'UNPAID');
             $payDate = $row['payment_date'] ?? '-';

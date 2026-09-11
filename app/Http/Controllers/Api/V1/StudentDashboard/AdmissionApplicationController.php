@@ -76,15 +76,36 @@ class AdmissionApplicationController extends BaseController
         try {
             $r2Service = app(R2Service::class);
 
-            // 1. Fetch Data with Eager Loading
-            $application = AdmissionApplication::with([
+            $user = auth()->user();
+            if (!$user) {
+                abort(401, 'Unauthenticated.');
+            }
+
+            $isStaff = $user->isSuperAdmin()
+                || $user->hasRole(['institution_admin', 'super_admin', 'admin', 'principal', 'staff'])
+                || $user->hasAnyAbility(['download_fee_receipt', 'view_student_ledger', 'view_applications', 'collect_fees'])
+                || $user->roles()->where(function ($q) {
+                    $q->where('key', 'like', 'principal%')
+                      ->orWhere('key', 'like', 'accountant%')
+                      ->orWhere('key', 'like', 'manager%')
+                      ->orWhere('key', 'like', 'admin%')
+                      ->orWhere('key', 'like', 'staff%');
+                })->exists();
+
+            $query = AdmissionApplication::with([
                 'admissionHead.majorSubject',
                 'user.studentProfile',
                 'user.studentProfile.addresses',
                 'user.academicInfo',
                 'subjects',
                 'user.documents',
-            ])->where('user_id', auth()->id())->findOrFail($id);
+            ]);
+
+            if (!$isStaff) {
+                $query->where('user_id', $user->id);
+            }
+
+            $application = $query->findOrFail($id);
 
             // 2. QR Code Generation
             $qrcode = null;

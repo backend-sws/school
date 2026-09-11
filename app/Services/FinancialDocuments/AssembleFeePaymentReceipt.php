@@ -20,38 +20,20 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         $receiptNo = $payment->receipt_no ?? $payment->payment_id;
         $dateStr = $payment->payment_date ? $payment->payment_date->format('d M Y') : now()->format('d M Y');
 
+        $studentClass = $student?->studentProfile?->academicClass?->name ?? $student?->studentProfile?->class ?? null;
+        $studentSection = $student?->studentProfile?->section?->name ?? $student?->studentProfile?->section ?? null;
+        $classSec = trim(($studentClass ?? '') . ($studentSection ? ' - ' . $studentSection : ''));
+
         $metaRows = [
-            ['Receipt No:', (string) $receiptNo, 'Date:', $dateStr],
             ['Student Name:', $student?->name ?? '—', 'Registration No:', $student?->studentProfile?->reg_no ?? $student?->reg_no ?? '—'],
+            ['Class / Section:', $classSec ?: '—', 'Payment Period:', $payment->for_month ?: '—'],
         ];
-        if ($payment->for_month) {
-            $metaRows[] = ['Payment Period:', $payment->for_month, '', ''];
-        }
-        if (isset($snap['total_fees']) && (float) $snap['total_fees'] > 0.009) {
-            $metaRows[] = ['Billable total (reference):', Money::inr((float) $snap['total_fees']), '', ''];
-        }
 
         $sections = [
             ['type' => 'meta_table', 'rows' => $metaRows],
         ];
 
-        $showLedger = (isset($snap['previous_dues']) && (float) $snap['previous_dues'] > 0.009)
-            || isset($snap['monthly_total'])
-            || isset($snap['total_payable_before']);
-        if ($showLedger) {
-            $ledgerRows = [];
-            if (isset($snap['previous_dues']) && (float) $snap['previous_dues'] > 0) {
-                $ledgerRows[] = ['Previous dues / arrears', Money::inr((float) $snap['previous_dues'])];
-            }
-            if (isset($snap['monthly_total'])) {
-                $ledgerRows[] = ['Period fee (this cycle)', Money::inr((float) $snap['monthly_total'])];
-            }
-            if (isset($snap['total_payable_before'])) {
-                $ledgerRows[] = ['Total payable (before this payment)', Money::inr((float) $snap['total_payable_before'])];
-            }
-            $sections[] = ['type' => 'callout', 'title' => 'Ledger context', 'rows' => $ledgerRows];
-        }
-
+        $previousDues = isset($snap['previous_dues']) ? (float) $snap['previous_dues'] : 0.0;
         $feesList = isset($snap['fees']) && is_array($snap['fees']) ? $snap['fees'] : [];
         $feesLineSum = 0.0;
         foreach ($feesList as $row) {
@@ -59,11 +41,18 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         }
         $baseAmount = (float) $payment->amount;
         $lateAmount = (float) $payment->late_fee_applied;
-        $useLineSum = count($feesList) > 0 && abs($feesLineSum - $baseAmount) < 0.02;
-        $subtotalBase = $useLineSum ? $feesLineSum : $baseAmount;
-        $subtotalWithLate = $subtotalBase + $lateAmount;
 
         $lineRows = [];
+
+        // 1. Previous dues / arrears if any
+        if ($previousDues > 0.009) {
+            $lineRows[] = [
+                'description' => 'Previous Dues / Arrears',
+                'amount' => Money::inr($previousDues),
+            ];
+        }
+
+        // 2. Current period fee components
         if (count($feesList) > 0) {
             foreach ($feesList as $fee) {
                 $lineRows[] = [
@@ -72,14 +61,19 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
                 ];
             }
         } else {
-            $periodNote = $payment->for_month ? " for {$payment->for_month}" : '';
+            $periodNote = $payment->for_month ? " ({$payment->for_month})" : '';
             $lineRows[] = [
-                'description' => 'Tuition / Monthly Fees'.$periodNote,
+                'description' => 'Tuition / Period Fees' . $periodNote,
                 'amount' => Money::inr($baseAmount),
             ];
         }
-        if ($lateAmount > 0) {
-            $lineRows[] = ['description' => 'Late Fee Applied', 'amount' => Money::inr($lateAmount)];
+
+        // 3. Late fee if any
+        if ($lateAmount > 0.009) {
+            $lineRows[] = [
+                'description' => 'Late Fee Applied',
+                'amount' => Money::inr($lateAmount),
+            ];
         }
 
         $sections[] = ['type' => 'line_items', 'rows' => $lineRows];
@@ -88,8 +82,8 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         if (($snap['discount'] ?? 0) > 0) {
             $discountAmount = (float) $snap['discount'];
         } else {
-            // Fallback for advance payments (where ledger_snapshot is empty)
-            $receiptNoRaw = $payment->receipt_no;
+            // Fallback for advance/concession payments
+            $receiptNoRaw = (string) $payment->receipt_no;
             $discountReceiptNo = '';
             if (preg_match('/^(.*?)-(\d+)$/', $receiptNoRaw, $matches)) {
                 $base = $matches[1];
@@ -98,38 +92,54 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
             } else {
                 $discountReceiptNo = $receiptNoRaw . '-D';
             }
-            
+
             $discountPayment = FeePayment::where('receipt_no', $discountReceiptNo)
                 ->where('payment_mode', 'concession')
                 ->where('user_id', $payment->user_id)
                 ->first();
-                
+
             if ($discountPayment) {
                 $discountAmount = (float) $discountPayment->amount;
             }
         }
 
+        $currentCycleFees = count($feesList) > 0 ? $feesLineSum : $baseAmount;
+        $totalBilled = $previousDues + $currentCycleFees + $lateAmount;
+        if (isset($snap['total_payable_before']) && (float) $snap['total_payable_before'] > $totalBilled) {
+            $totalBilled = (float) $snap['total_payable_before'];
+        }
+
         $summaryRows = [
-            ['label' => 'Subtotal (fees + late fee):', 'amount' => Money::inr($subtotalWithLate + $discountAmount), 'style' => 'normal'],
+            ['label' => 'Total Amount Due:', 'amount' => Money::inr($totalBilled), 'style' => 'normal'],
         ];
-        if ($discountAmount > 0) {
+
+        if ($discountAmount > 0.009) {
             $summaryRows[] = [
-                'label' => 'Discount / concession:',
-                'amount' => '− '.Money::inr($discountAmount),
+                'label' => 'Discount / Concession:',
+                'amount' => '− ' . Money::inr($discountAmount),
                 'style' => 'discount',
             ];
+
+            $netPayable = max(0, round($totalBilled - $discountAmount, 2));
+            $summaryRows[] = [
+                'label' => 'Net Amount Payable:',
+                'amount' => Money::inr($netPayable),
+                'style' => 'normal',
+            ];
         }
+
         $summaryRows[] = [
-            'label' => 'Total paid (this receipt):',
+            'label' => 'Total Paid (This Receipt):',
             'amount' => Money::inr((float) $payment->total_amount),
             'style' => 'total',
         ];
 
-        $dueAfter = isset($snap['balance_after']) ? (float) $snap['balance_after'] : (isset($snap['due']) ? (float) $snap['due'] : null);
-        if ($dueAfter !== null && $dueAfter > 0.009) {
-            $summaryRows[] = ['label' => 'Balance due after payment:', 'amount' => Money::inr($dueAfter), 'style' => 'balance'];
-        } elseif ($dueAfter !== null && $dueAfter <= 0.009) {
-            $summaryRows[] = ['label' => '', 'amount' => 'No balance remaining for this context.', 'style' => 'note'];
+        $balanceRemaining = max(0, round($totalBilled - $discountAmount - (float) $payment->total_amount, 2));
+
+        if ($balanceRemaining > 0.009) {
+            $summaryRows[] = ['label' => 'Remaining Balance Due:', 'amount' => Money::inr($balanceRemaining), 'style' => 'balance'];
+        } else {
+            $summaryRows[] = ['label' => 'Balance Due:', 'amount' => '₹0.00 (Fully Paid)', 'style' => 'balance'];
         }
 
         $sections[] = ['type' => 'summary_float', 'rows' => $summaryRows];

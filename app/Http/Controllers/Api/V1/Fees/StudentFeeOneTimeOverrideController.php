@@ -27,6 +27,10 @@ class StudentFeeOneTimeOverrideController extends Controller
             return response()->json(['message' => 'Either fee_type_id or charge_name is required.'], 422);
         }
 
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('edit_fee_ledger')) {
+            return response()->json(['message' => 'You do not have permission to edit fee ledger charges.'], 403);
+        }
+
         $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
 
         if (!$institutionId) {
@@ -141,6 +145,10 @@ class StudentFeeOneTimeOverrideController extends Controller
         $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
         if ($institutionId && $override->institution_id != $institutionId) {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_fee_overrides')) {
+            return response()->json(['message' => 'You do not have permission to revert fee overrides.'], 403);
         }
 
         $userId = $override->user_id;

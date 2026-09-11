@@ -5,6 +5,7 @@ import FeePaymentController from './FeePaymentController'
 import MonthlyLedgerController from './MonthlyLedgerController'
 import AdHocChargeController from './AdHocChargeController'
 import StudentFeeOneTimeOverrideController from './StudentFeeOneTimeOverrideController'
+import StudentFeeMonthlyOverrideController from './StudentFeeMonthlyOverrideController'
 import FeeCollectionSettingsController from './FeeCollectionSettingsController'
 import FeeDuesController from './FeeDuesController'
 const Fees = {
@@ -15,6 +16,7 @@ FeePaymentController: Object.assign(FeePaymentController, FeePaymentController),
 MonthlyLedgerController: Object.assign(MonthlyLedgerController, MonthlyLedgerController),
 AdHocChargeController: Object.assign(AdHocChargeController, AdHocChargeController),
 StudentFeeOneTimeOverrideController: Object.assign(StudentFeeOneTimeOverrideController, StudentFeeOneTimeOverrideController),
+StudentFeeMonthlyOverrideController: Object.assign(StudentFeeMonthlyOverrideController, StudentFeeMonthlyOverrideController),
 FeeCollectionSettingsController: Object.assign(FeeCollectionSettingsController, FeeCollectionSettingsController),
 FeeDuesController: Object.assign(FeeDuesController, FeeDuesController),
 }

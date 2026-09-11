@@ -10,8 +10,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
-import { Head, Link } from "@inertiajs/react";
-import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2, Coins, ReceiptText, ArrowUpRight, Wallet } from "lucide-react";
+import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2, Coins, ReceiptText, ArrowUpRight, Wallet, CheckCircle2 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -29,6 +28,7 @@ import { TRANSPORT_ASSIGNMENTS_GUIDE } from "@/constants/guides/transport";
 import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import React, { useMemo, useState } from 'react';
 import { FORM_TYPE } from "@/constants";
+import { Head, Link } from "@inertiajs/react";
 
 const COLUMNS = [
   { key: "serial", label: "#" },
@@ -128,7 +128,16 @@ const TransportAssignmentsIndex = () => {
   });
 
   const list = (assignmentsRes?.data ?? []) as any[];
-  const stats = (assignmentsRes as any)?.meta?.stats ?? { total_assignments: 0, monthly_revenue: 0, total_estimated_revenue: 0, total_transport_dues: 0, total_routes: 0, total_vehicles: 0 };
+  const stats = (assignmentsRes as any)?.meta?.stats ?? {
+    total_assignments: 0,
+    monthly_revenue: 0,
+    total_estimated_revenue: 0,
+    total_transport_dues: 0,
+    total_transport_collected: 0,
+    recovery_rate: 0,
+    total_routes: 0,
+    total_vehicles: 0,
+  };
 
   const filterConfig = useMemo(() => ({
     filters: [
@@ -255,6 +264,23 @@ const TransportAssignmentsIndex = () => {
     handleFilter({ ...updates, page: 1 });
   };
 
+  const formatDateOnly = (dateVal?: string | null): string => {
+    if (!dateVal) return "—";
+    const str = String(dateVal).trim();
+    if (!str) return "—";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      return str;
+    }
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+    return str.slice(0, 10);
+  };
+
   const rows = list as AssignmentRow[];
 
   const toDialogData = (row: AssignmentRow): TransportAssignmentDialogData =>
@@ -264,8 +290,8 @@ const TransportAssignmentsIndex = () => {
         user_id: row.user_id,
         transport_route_id: row.transport_route_id,
         transport_stop_id: row.transport_stop_id,
-        effective_from: row.effective_from,
-        effective_until: row.effective_until ?? undefined,
+        effective_from: formatDateOnly(row.effective_from),
+        effective_until: row.effective_until ? formatDateOnly(row.effective_until) : undefined,
         user: row.user,
         transport_route: row.transport_route,
         transport_stop: row.transport_stop,
@@ -300,80 +326,103 @@ const TransportAssignmentsIndex = () => {
             guidance={TRANSPORT_ASSIGNMENTS_GUIDE}
           />
           {/* Analytics stats cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3.5">
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Total Assignments</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">Total Assignments</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_assignments}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium">Assigned students</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
                   <ClipboardList className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Est. Monthly Revenue</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600/90 dark:text-emerald-400/90">Est. Monthly Revenue</p>
                   <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                     ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.monthly_revenue)}
                   </p>
+                  <p className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 font-medium">Monthly billing demand</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                   <IndianRupee className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-indigo-600/90 dark:text-indigo-400/90">Est. Total Revenue</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-indigo-600/90 dark:text-indigo-400/90">Est. Total Revenue</p>
                   <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
                     ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.total_estimated_revenue ?? 0)}
                   </p>
+                  <p className="text-[11px] text-indigo-600/80 dark:text-indigo-400/80 font-medium">Paid + Due (Total Demand)</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
                   <Wallet className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-rose-600/90 dark:text-rose-400/90">Transport Dues</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-teal-600/90 dark:text-teal-400/90">Payment Recovered</p>
+                  <p className="text-2xl font-black text-teal-600 dark:text-teal-400">
+                    ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.total_transport_collected ?? 0)}
+                  </p>
+                  <p className="text-[11px] text-teal-600/80 dark:text-teal-400/80 font-medium">
+                    {stats.recovery_rate ?? 0}% collected
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 shrink-0">
+                  <CheckCircle2 className="size-5" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-rose-600/90 dark:text-rose-400/90">Transport Dues</p>
                   <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
                     ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.total_transport_dues ?? 0)}
                   </p>
+                  <p className="text-[11px] text-rose-600/80 dark:text-rose-400/80 font-medium">Pending collection</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 shrink-0">
                   <Coins className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Routes</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">Active Routes</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_routes}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium">Operating routes</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
                   <BusFront className="size-5" />
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
-              <CardContent className="p-5 flex items-center justify-between">
+              <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Active Fleet</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">Active Fleet</p>
                   <p className="text-2xl font-black text-foreground">{stats.total_vehicles}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium">Assigned vehicles</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
+                <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 shrink-0">
                   <AlertCircle className="size-5" />
                 </div>
               </CardContent>
@@ -494,8 +543,8 @@ const TransportAssignmentsIndex = () => {
                           <TooltipContent>Open Student Fee Ledger</TooltipContent>
                         </Tooltip>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{row.effective_from?.slice(0, 10) ?? "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">{row.effective_until ? row.effective_until.slice(0, 10) : "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{formatDateOnly(row.effective_from)}</TableCell>
+                      <TableCell className="text-muted-foreground">{formatDateOnly(row.effective_until)}</TableCell>
                       <TableCell className="w-1/6">
                         <div className="flex items-center gap-0.5">
                           <Tooltip>

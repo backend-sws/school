@@ -843,7 +843,8 @@ class StudentController extends BaseController
                       $sq->where('student_profiles.institution_id', $collegeId)
                          ->where(function ($ssq) use ($search) {
                              $ssq->whereRaw('LOWER(reg_no) LIKE ?', [$search])
-                                 ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search]);
+                                 ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search])
+                                 ->orWhereRaw('LOWER(father_name) LIKE ?', [$search]);
                          });
                   });
             });

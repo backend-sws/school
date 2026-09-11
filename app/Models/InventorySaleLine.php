@@ -13,12 +13,14 @@ class InventorySaleLine extends Model
         'inventory_sale_id',
         'inventory_item_id',
         'quantity',
+        'returned_quantity',
         'unit_price',
         'amount',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
+        'returned_quantity' => 'decimal:3',
         'unit_price' => 'decimal:2',
         'amount' => 'decimal:2',
     ];

@@ -3,9 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        /* PDF Page Setup */
+        /* PDF Page Setup - full bleed for header/footer */
         @page {
-            margin: 15mm 15mm;
+            margin: 0;
             size: A4 portrait;
         }
 
@@ -26,8 +26,8 @@
             font-size: 11px;
             color: var(--text-main);
             line-height: 1.5;
-            margin:5px;
-           
+            margin: 0;
+            padding: 0;
         }
 
         /* Common Layout Shortcuts */
@@ -40,8 +40,13 @@
 
         .document-wrapper {
             position: relative;
-            padding: 15px;
-            border: 2px solid #000000;
+            padding: 0;
+            border: none;
+            min-height: 100%;
+        }
+
+        .content-area {
+            padding: 5px 18mm 130px 18mm;
         }
 
         .clearfix {

@@ -204,6 +204,13 @@ return [
             'view_fee_dues',
             'view_student_ledger',
             'send_fee_reminders',
+            'edit_fee_ledger',
+            'revert_fee_overrides',
+            'view_adhoc_charges',
+            'create_adhoc_charges',
+            'revert_adhoc_charges',
+            'revert_fee_payments',
+            'download_fee_receipt',
             // Field-level: fee types (only $ALL scope keys for school)
             'field_fee_type_name', 'field_fee_type_category',
             // Field-level: fee profiles

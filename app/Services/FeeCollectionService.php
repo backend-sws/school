@@ -494,6 +494,9 @@ class FeeCollectionService
         $studentTransports = collect(self::$bulkTransportAssignments[$student->id] ?? []);
         $studentHostels = collect(self::$bulkHostelAllocations[$student->id] ?? []);
         $studentAdHoc = collect(self::$bulkAdHocCharges[$student->id] ?? []);
+        $studentMonthlyOverrides = \App\Models\StudentFeeMonthlyOverride::where('institution_id', $institutionId)
+            ->where('user_id', $student->id)
+            ->get();
 
         for ($i = 0; $i < $periodCount; $i++) {
             $monthKey = $current->format('Y-m');
@@ -539,6 +542,48 @@ class FeeCollectionService
             $monthParticulars = $skipRecurring ? [] : $allParticulars;
             $monthDiscount = $skipRecurring ? 0.0 : $totalDiscount;
 
+            // Apply per-student monthly fee overrides if present
+            if (!$skipRecurring && $studentMonthlyOverrides->isNotEmpty() && !empty($monthParticulars)) {
+                $matchedOverride = $studentMonthlyOverrides->first(fn($o) => $o->for_month === $monthKey)
+                    ?: $studentMonthlyOverrides->first(fn($o) => empty($o->for_month) || $o->for_month === 'all');
+
+                if ($matchedOverride) {
+                    $newAmount = (float) $matchedOverride->overridden_amount;
+                    $origAmount = (float) $matchedOverride->original_amount;
+                    $diff = $newAmount - $origAmount;
+
+                    $applied = false;
+                    foreach ($monthParticulars as &$part) {
+                        $pName = strtolower(trim((string) ($part['name'] ?? '')));
+                        $matchName = strtolower(trim((string) ($matchedOverride->fee_name ?? 'monthly fee')));
+                        if ($pName === $matchName || (in_array($pName, ['monthly fee', 'fees', 'tuition', 'tuition fee']) && !$applied)) {
+                            $part['amount'] = $newAmount;
+                            $part['is_overridden'] = true;
+                            $part['override_id'] = $matchedOverride->id;
+                            $part['original_amount'] = $origAmount;
+                            $part['override_remarks'] = $matchedOverride->remarks;
+                            $applied = true;
+                            break;
+                        }
+                    }
+                    unset($part);
+
+                    if (!$applied && !empty($monthParticulars)) {
+                        $monthParticulars[0]['amount'] = $newAmount;
+                        $monthParticulars[0]['is_overridden'] = true;
+                        $monthParticulars[0]['override_id'] = $matchedOverride->id;
+                        $monthParticulars[0]['original_amount'] = $origAmount;
+                        $monthParticulars[0]['override_remarks'] = $matchedOverride->remarks;
+                        $applied = true;
+                    }
+
+                    if ($applied) {
+                        $monthExpected += $diff;
+                        $monthGross += $diff;
+                    }
+                }
+            }
+
             // Late fee: use recorded value if paid, else calculate for overdue
             $lateFee = $recordedLateFee;
             if ($paidInMonth <= 0 && now()->startOfDay()->gt($dueDate->copy()->addDays($institutionSettings['late_fee_after_days']))) {
@@ -556,7 +601,7 @@ class FeeCollectionService
             // Check Transport Assignment
             $tAmount = 0.0;
             $transport = $studentTransports->filter(function ($t) use ($monthStart, $monthEnd) {
-                return $t->effective_from <= $monthEnd && (is_null($t->effective_until) || $t->effective_until >= $monthEnd);
+                return $t->effective_from <= $monthEnd && (is_null($t->effective_until) || $t->effective_until->copy()->endOfDay() >= $monthStart);
             })->first();
 
             if ($transport) {
@@ -584,7 +629,7 @@ class FeeCollectionService
             // Check Hostel Allocation
             $hAmount = 0.0;
             $hostel = $studentHostels->filter(function ($h) use ($monthStart, $monthEnd) {
-                return $h->check_in_date <= $monthEnd && (is_null($h->check_out_date) || $h->check_out_date >= $monthEnd);
+                return $h->check_in_date <= $monthEnd && (is_null($h->check_out_date) || $h->check_out_date->copy()->endOfDay() >= $monthStart);
             })->first();
 
             if ($hostel) {
@@ -618,16 +663,36 @@ class FeeCollectionService
                 return in_array($charge->for_month, $monthKeysInPeriod);
             });
 
+            $otherFeesAdHoc = 0.0;
+            $otherFeesDetails = [];
+
             foreach ($adHocCharges as $charge) {
                 $monthExpected += (float) $charge->amount;
                 $monthGross += (float) $charge->amount;
-                $monthParticulars[] = [
-                    'id' => $charge->id,
-                    'name' => $charge->name,
-                    'amount' => (float) $charge->amount,
-                    'type' => 'ad_hoc',
-                    'category' => 'other',
-                ];
+
+                $targetCol = strtolower(trim((string) ($charge->target_column ?? '')));
+                if ($targetCol === 'other') {
+                    // Routes to the existing standard OTHER column
+                    $otherFeesAdHoc += (float) $charge->amount;
+                    $otherFeesDetails[] = [
+                        'id'            => $charge->id,
+                        'name'          => $charge->name,
+                        'amount'        => (float) $charge->amount,
+                        'for_month'     => $charge->for_month,
+                        'remarks'       => $charge->remarks,
+                        'type'          => 'ad_hoc',
+                        'target_column' => 'other',
+                    ];
+                } else {
+                    $monthParticulars[] = [
+                        'id'            => $charge->id,
+                        'name'          => $charge->name,
+                        'amount'        => (float) $charge->amount,
+                        'type'          => 'ad_hoc',
+                        'category'      => 'other',
+                        'target_column' => $charge->target_column,
+                    ];
+                }
             }
             // ------------------------------------------------------------
 
@@ -637,7 +702,7 @@ class FeeCollectionService
             $rowAdmissionFee  = $i === $admissionPeriodIndex ? $admissionFeeDisplay['admission_fee'] : 0.0;
             $rowTransportFee  = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['transport_fee'] : 0.0) + $tAmount;
             $rowHostelFee     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['hostel_fee']    : 0.0) + $hAmount;
-            $rowOtherFees     = $i === $admissionPeriodIndex ? $admissionFeeDisplay['other_fees']    : 0.0;
+            $rowOtherFees     = ($i === $admissionPeriodIndex ? $admissionFeeDisplay['other_fees']    : 0.0) + $otherFeesAdHoc;
 
             $totalPayable = $accumulatedArrears + $monthExpected + $lateFee;
             if ($monthlyConcession > 0) {
@@ -705,6 +770,7 @@ class FeeCollectionService
                     'mess_plan_name' => $hostel->messPlan?->name ?? null,
                 ] : null,
                 'other_fees'           => $rowOtherFees,
+                'other_fees_details'   => $otherFeesDetails,
                 'expected_particulars' => $monthParticulars,
                 'monthly_total'        => $monthExpected,
                 'gross_amount'         => $monthGross,
@@ -721,11 +787,12 @@ class FeeCollectionService
                 'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 || $monthlyConcession > 0 ? 'partial' : 'unpaid'),
                 'reverted_payments'    => $formattedCancelled->filter(fn($cp) => $cp['for_month'] === $monthKey)->values()->all(),
                 'ad_hoc_charges'       => $adHocCharges->map(fn($c) => [
-                    'id' => $c->id,
-                    'name' => $c->name,
-                    'amount' => (float) $c->amount,
-                    'for_month' => $c->for_month,
-                    'remarks' => $c->remarks,
+                    'id'            => $c->id,
+                    'name'          => $c->name,
+                    'target_column' => $c->target_column,
+                    'amount'        => (float) $c->amount,
+                    'for_month'     => $c->for_month,
+                    'remarks'       => $c->remarks,
                 ])->values()->all(),
             ];
 
@@ -1080,7 +1147,8 @@ class FeeCollectionService
     {
         $query = StudentFeePeriodBalance::query()
             ->where('institution_id', $institutionId)
-            ->where('user_id', $student->id);
+            ->where('user_id', $student->id)
+            ->where('period_key', '!=', 'arrears');
 
         if ($sessionId) {
             $query->where('session_id', $sessionId);

@@ -47,12 +47,13 @@ function toOptions(
   return items.map((item) => {
     let label = String(item[labelKey] ?? "");
     
-    // If it's a student user and has a student profile, append Class & Reg No
+    // If it's a student user and has a student profile, append Class, Reg No, & Father Name (if not already formatted)
     const sp = item.student_profile || item.studentProfile;
-    if (sp) {
+    if (sp && !label.includes(" | ")) {
       const classInfo = sp.stream?.name || "";
       const regNo = (sp.reg_no || item.reg_no) ? `Reg: ${sp.reg_no || item.reg_no}` : "";
-      const extra = [classInfo, regNo].filter(Boolean).join(" | ");
+      const fatherName = sp.father_name ? `Father: ${sp.father_name}` : "";
+      const extra = [classInfo, regNo, fatherName].filter(Boolean).join(" | ");
       if (extra) {
         label = `${label} (${extra})`;
       }

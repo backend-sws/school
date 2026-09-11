@@ -22,8 +22,8 @@ class TransportAssignment extends Model
     ];
 
     protected $casts = [
-        'effective_from'  => 'date',
-        'effective_until' => 'date',
+        'effective_from'  => 'date:Y-m-d',
+        'effective_until' => 'date:Y-m-d',
         'monthly_amount'  => 'decimal:2',
     ];
 

@@ -371,6 +371,7 @@ return [
     ['key' => 'view_inventory_reports', 'name' => 'View Inventory Reports', 'module' => 'inventory', 'scope_types' => $ALL],
     ['key' => 'view_inventory_sales', 'name' => 'View Inventory Sales', 'module' => 'inventory', 'scope_types' => $ALL],
     ['key' => 'create_inventory_sales', 'name' => 'Create Sale (Sell Items)', 'module' => 'inventory', 'scope_types' => $ALL],
+    ['key' => 'update_inventory_sales', 'name' => 'Update Inventory Sales', 'module' => 'inventory', 'scope_types' => $ALL],
     ['key' => 'view_inventory_sale_reports', 'name' => 'View Sales Reports', 'module' => 'inventory', 'scope_types' => $ALL],
 
     // ── Transport ─────────────────────────────────────────────
