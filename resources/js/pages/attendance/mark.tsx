@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { AttendanceRegisterMatrix } from "@/components/admin/attendanceRegisterMatrix";
 import { AttendanceImportDialog } from "@/components/admin/attendanceImportDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 
 const defaultDate = () => new Date().toISOString().slice(0, 10);
 
@@ -45,11 +46,15 @@ function getInitialClassIdFromUrl(): number | undefined {
 export default function AttendanceMark() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"daily" | "monthly">("daily");
+  const [sessionId, setSessionId] = useState<string>("all");
   const [selectedClassId, setSelectedClassId] = useState<number | undefined>(getInitialClassIdFromUrl());
   const [selectedAllocationId, setSelectedAllocationId] = useState<number | undefined>(undefined);
   const [date, setDate] = useState(defaultDate());
   const [searchQuery, setSearchQuery] = useState("");
   const [importOpen, setImportOpen] = useState(false);
+
+  const { data: sessionsRes } = useCollegeSessions({});
+  const sessions = sessionsRes?.data ?? [];
 
   // Fetch Classes
   const { data: classesRes, isLoading: classesLoading } = useQuery({
@@ -59,16 +64,26 @@ export default function AttendanceMark() {
 
   const classes = useMemo(() => {
     const raw = (classesRes as any)?.data?.data || (classesRes as any)?.data || classesRes;
-    if (Array.isArray(raw)) return raw as { id: number; name: string; session?: { name: string } }[];
+    if (Array.isArray(raw)) return raw as { id: number; name: string; session_id?: number; session?: { id?: number; name: string } }[];
     return [];
   }, [classesRes]);
 
-  // Auto-select first class if none selected
-  useEffect(() => {
-    if (!selectedClassId && classes.length > 0) {
-      setSelectedClassId(classes[0].id);
+  const filteredClasses = useMemo(() => {
+    if (sessionId && sessionId !== "all") {
+      return classes.filter((c: any) => String(c.session_id || c.session?.id) === String(sessionId));
     }
-  }, [classes, selectedClassId]);
+    return classes;
+  }, [classes, sessionId]);
+
+  // Auto-select first class if none selected or not in filtered
+  useEffect(() => {
+    if (filteredClasses.length > 0) {
+      if (!selectedClassId || !filteredClasses.some(c => c.id === selectedClassId)) {
+        setSelectedClassId(filteredClasses[0].id);
+        setSelectedAllocationId(undefined);
+      }
+    }
+  }, [filteredClasses, selectedClassId]);
 
   // Fetch Allocations for selected class
   const { data: allocationsRes, isLoading: allocationsLoading } = useQuery({
@@ -255,12 +270,35 @@ export default function AttendanceMark() {
           </div>
         </div>
 
-        {/* Global Selectors: Class & Subject */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-3xl bg-card border border-border shadow-md">
+        {/* Global Selectors: Session, Class & Subject */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-3xl bg-card border border-border shadow-md">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Session</Label>
+            <Select
+              value={sessionId}
+              onValueChange={(v) => {
+                setSessionId(v);
+                setSelectedAllocationId(undefined);
+              }}
+            >
+              <SelectTrigger className="h-11 rounded-xl border-border bg-background font-bold text-foreground">
+                <SelectValue placeholder="All Sessions" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border">
+                <SelectItem value="all" className="font-bold py-2.5">All Sessions</SelectItem>
+                {sessions.map((s: any) => (
+                  <SelectItem key={s.id} value={String(s.id)} className="font-bold py-2.5">
+                    {s.name}{s.is_current ? " (Current)" : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-1.5">
             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Classroom</Label>
             <Select
-              value={selectedClassId?.toString()}
+              value={selectedClassId?.toString() || ""}
               onValueChange={(v) => {
                 setSelectedClassId(parseInt(v));
                 setSelectedAllocationId(undefined);
@@ -276,9 +314,9 @@ export default function AttendanceMark() {
                     <span className="text-xs text-muted-foreground">Loading...</span>
                   </div>
                 ) : (
-                  classes.map((c: { id: number; name: string; session?: { name: string } }) => (
+                  filteredClasses.map((c: { id: number; name: string; session?: { name: string } }) => (
                     <SelectItem key={c.id} value={c.id.toString()} className="font-bold py-2.5">
-                      {c.session?.name ? `${c.name} (${c.session.name})` : c.name}
+                      {sessionId === "all" && c.session?.name ? `${c.name} (${c.session.name})` : c.name}
                     </SelectItem>
                   ))
                 )}

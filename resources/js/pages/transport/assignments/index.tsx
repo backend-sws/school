@@ -88,8 +88,8 @@ const TransportAssignmentsIndex = () => {
   const { filterOptions: sessionFilterOptions } = useCollegeSessions();
 
   const { data: classesRes } = useQuery({
-    queryKey: ["lms-classes", filter.session_id],
-    queryFn: () => lmsApi.classes.index({ session_id: filter.session_id === "all" ? "all" : filter.session_id, per_page: 500 }),
+    queryKey: ["lms-classes-all"],
+    queryFn: () => lmsApi.classes.index({ session_id: "all", per_page: 500 }),
   });
   const classes = Array.isArray((classesRes as any)?.data) ? (classesRes as any).data : Array.isArray(classesRes) ? classesRes : [];
 
@@ -147,14 +147,28 @@ const TransportAssignmentsIndex = () => {
         type: FORM_TYPE.SELECT,
         label: "Class",
         placeholder: "Select class",
-        options: [
-          { key: "all", text: "All Classes", value: "all" },
-          ...classes.map((c: any) => ({
-            key: String(c.id),
-            text: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
-            value: String(c.id),
-          })),
-        ],
+        options: (currentValues: any) => {
+          const activeSession = currentValues?.session_id || filter.session_id;
+          if (activeSession && activeSession !== "all") {
+            const filtered = classes.filter((c: any) => String(c.session_id) === String(activeSession));
+            return [
+              { key: "all", text: "All Classes", value: "all" },
+              ...filtered.map((c: any) => ({
+                key: String(c.id),
+                text: c.name,
+                value: String(c.id),
+              })),
+            ];
+          }
+          return [
+            { key: "all", text: "All Classes", value: "all" },
+            ...classes.map((c: any) => ({
+              key: String(c.id),
+              text: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
+              value: String(c.id),
+            })),
+          ];
+        },
       },
       {
         name: "route_id",

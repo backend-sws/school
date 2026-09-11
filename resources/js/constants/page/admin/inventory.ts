@@ -379,10 +379,30 @@ export const INVENTORY_SALE_LINE_ADD_LAYOUT = [
 
 /** Async config for searching students/parents in buyer fields */
 export const STUDENT_BUYER_ASYNC_CONFIG = {
-  queryFn: (params: Record<string, any>) => StudentApi.getStudentList(params),
+  queryFn: async (params: Record<string, any>) => {
+    const searchTerm = params.search || params.name || "";
+    const res = await StudentApi.getStudentList({
+      ...params,
+      per_page: params.per_page || 1000,
+      search: searchTerm || undefined,
+    });
+    const raw = (res as any)?.data?.data || (res as any)?.data || [];
+    const data = (Array.isArray(raw) ? raw : []).map((s: any) => {
+      const reg = s.reg_no || s.student_profile?.reg_no;
+      const streamName = s.student_profile?.stream?.name;
+      const details = [streamName, reg].filter(Boolean).join(" | ");
+      return {
+        ...s,
+        displayName: details ? `${s.name} (${details})` : s.name,
+      };
+    });
+    return { data };
+  },
   queryKey: StudentQueryKeys.all,
-  labelKey: "name",
+  labelKey: "displayName",
   valueKey: "id",
+  searchKey: "search",
+  perPage: 1000,
 } as AsyncSelectConfig;
 
 export const INVENTORY_SALE_DIALOG_FORM_LAYOUT = [

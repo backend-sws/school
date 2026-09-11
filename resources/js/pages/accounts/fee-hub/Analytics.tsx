@@ -3,6 +3,7 @@ import { Head, usePage } from "@inertiajs/react";
 import { getInstitutionLabels } from "@/constants/scopeTypeDisplay";
 import { useQuery } from "@tanstack/react-query";
 import { feeCollectionApi } from "@/lib/api/feeCollectionApi";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import lmsApi from "@/lib/api/lmsApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -75,17 +76,28 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export default function Analytics() {
-useRegisterGuide(FEE_ANALYTICS_GUIDE);
+export default function FeeHubAnalytics() {
+    useRegisterGuide(FEE_ANALYTICS_GUIDE);
 
     const scopeType = (usePage().props as { institution?: { type?: string } }).institution?.type ?? null;
     const labels = getInstitutionLabels(scopeType);
+
+    const [sessionId, setSessionId] = useState<string>("all");
+    const { data: sessionsRes } = useCollegeSessions({});
+    const sessions = sessionsRes?.data ?? [];
 
     const { data: classesRes } = useQuery({
         queryKey: ["lms-classes-list"],
         queryFn: () => lmsApi.classes.index({ session_id: "all", per_page: 500 }),
     });
     const classes = classesRes?.data?.data || classesRes?.data || [];
+
+    const filteredClasses = useMemo(() => {
+        if (sessionId && sessionId !== "all") {
+            return classes.filter((cls: any) => String(cls.session_id || cls.session?.id) === String(sessionId));
+        }
+        return classes;
+    }, [classes, sessionId]);
 
     const currentDate = new Date();
     const startOfYear = `${currentDate.getFullYear()}-01`;
@@ -167,6 +179,25 @@ useRegisterGuide(FEE_ANALYTICS_GUIDE);
                         <AnalyticsFilterItem label="End Period">
                             <Input type="month" value={to} onChange={(e) => setTo(e.target.value)} className="h-10 rounded-xl border-border/50 bg-card focus-visible:ring-primary/20" />
                         </AnalyticsFilterItem>
+                        <AnalyticsFilterItem label="Session Filter">
+                            <Select value={sessionId} onValueChange={(v) => { setSessionId(v); setLedgerClassId(""); }}>
+                                <SelectTrigger className="h-10 rounded-xl border-border/50 bg-card">
+                                    <SelectValue placeholder="All Sessions" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value="all" className="rounded-lg m-1">All Sessions</SelectItem>
+                                    <Each
+                                        of={sessions}
+                                        keyExtractor={(s: any) => String(s.id)}
+                                        render={(s: any) => (
+                                            <SelectItem key={s.id} value={String(s.id)} className="rounded-lg m-1">
+                                                {s.name}{s.is_current ? " (Current)" : ""}
+                                            </SelectItem>
+                                        )}
+                                    />
+                                </SelectContent>
+                            </Select>
+                        </AnalyticsFilterItem>
                         <AnalyticsFilterItem label="Class Filter">
                             <Select value={ledgerClassId || "all"} onValueChange={(v) => setLedgerClassId(v === "all" ? "" : v)}>
                                 <SelectTrigger className="h-10 rounded-xl border-border/50 bg-card">
@@ -175,11 +206,11 @@ useRegisterGuide(FEE_ANALYTICS_GUIDE);
                                 <SelectContent className="rounded-xl">
                                     <SelectItem value="all" className="rounded-lg m-1">Institution-wide</SelectItem>
                                     <Each
-                                        of={classes}
+                                        of={filteredClasses}
                                         keyExtractor={(cls: any) => String(cls.id)}
                                         render={(cls: any) => (
                                             <SelectItem key={cls.id} value={String(cls.id)} className="rounded-lg m-1">
-                                                {cls.session?.name ? `${cls.name} (${cls.session.name})` : cls.name}
+                                                {sessionId === "all" && cls.session?.name ? `${cls.name} (${cls.session.name})` : cls.name}
                                             </SelectItem>
                                         )}
                                     />

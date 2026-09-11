@@ -75,9 +75,12 @@ export default function AdHocCharges({ auth }: any) {
       const raw = res.data?.data || res.data || [];
       const data = (Array.isArray(raw) ? raw : []).map((c: any) => ({
         ...c,
-        displayName: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
+        displayName: selectedSessionId === "all" && c.session?.name ? `${c.name} (${c.session.name})` : c.name,
       }));
       return { data }; 
+    },
+    extraParams: {
+      session_id: selectedSessionId,
     },
     queryKey: ["lms-classes", institutionId, selectedSessionId],
     labelKey: "displayName",
@@ -218,9 +221,12 @@ export default function AdHocCharges({ auth }: any) {
       const raw = res.data?.data || res.data || [];
       const data = (Array.isArray(raw) ? raw : []).map((c: any) => ({
         ...c,
-        displayName: c.session?.name ? `${c.name} (${c.session.name})` : c.name,
+        displayName: logsSessionId === "all" && c.session?.name ? `${c.name} (${c.session.name})` : c.name,
       }));
       return { data }; 
+    },
+    extraParams: {
+      session_id: logsSessionId,
     },
     queryKey: ["lms-classes-logs", institutionId, logsSessionId],
     labelKey: "displayName",
@@ -596,6 +602,7 @@ export default function AdHocCharges({ auth }: any) {
                       <div className="space-y-2">
                         <Label className={PREMIUM_LABEL_CLASSES}>Class</Label>
                         <AsyncSelectField
+                          key={`class-select-${selectedSessionId}`}
                           asyncConfig={classAsyncConfig}
                           value={classId}
                           onChange={(val: any) => {
@@ -1089,6 +1096,7 @@ export default function AdHocCharges({ auth }: any) {
                   <div className="space-y-2 flex-1 min-w-[170px]">
                     <Label className={PREMIUM_LABEL_CLASSES}>Filter by Class</Label>
                     <AsyncSelectField
+                      key={`logs-class-select-${logsSessionId}`}
                       asyncConfig={logsClassAsyncConfig}
                       value={logsClassId}
                       onChange={(val: any) => { setLogsClassId(val || ""); setLogsPage(1); }}

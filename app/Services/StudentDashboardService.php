@@ -161,7 +161,22 @@ class StudentDashboardService
                     'guardians' => fn($q) => $q->whereNotNull('email')->where('email', '!=', ''),
                 ]);
 
-        // 1. Basic Filters: Name, Email, Mobile
+        // 1. Basic Filters: Search, Name, Email, Mobile
+        if (!empty($filters['search']) && is_string($filters['search'])) {
+            $search = '%' . strtolower($filters['search']) . '%';
+            $query->where(function ($q) use ($search, $collegeId) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhere('mobile', 'like', $search)
+                  ->orWhereHas('studentProfile', function ($sq) use ($search, $collegeId) {
+                      $sq->where('student_profiles.institution_id', $collegeId)
+                         ->where(function ($ssq) use ($search) {
+                             $ssq->whereRaw('LOWER(reg_no) LIKE ?', [$search])
+                                 ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search]);
+                         });
+                  });
+            });
+        }
+
         if (!empty($filters['name']) && is_string($filters['name'])) {
             $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($filters['name']) . '%']);
         }

@@ -49,10 +49,10 @@ export default function DuesOverduePage() {
     const queryClient = useQueryClient();
     useRegisterGuide(FEE_DUES_GUIDE);
 
-    const { filter, handleFilter, buildParams } = useSearchFilter({
+    const DEFAULT_FILTER = useMemo(() => ({
         search: "",
         search_by: "name",
-        period: CURRENT_PERIOD,
+        period: "all",
         classId: "all",
         statusFilter: "all",
         dateFilter: "",
@@ -62,13 +62,14 @@ export default function DuesOverduePage() {
         endDate: "",
         page: 1,
         perPage: 10,
-    });
+    }), []);
 
+    const { filter, handleFilter, buildParams } = useSearchFilter(DEFAULT_FILTER);
 
     const { data: classesRes } = useQuery({
-        queryKey: ["lms-classes", filter.academicSessionId],
+        queryKey: ["lms-classes-all"],
         queryFn: () => lmsApi.classes.index({
-            session_id: filter.academicSessionId === "all" ? "all" : filter.academicSessionId,
+            session_id: "all",
             per_page: 500,
         }),
     });
@@ -77,20 +78,22 @@ export default function DuesOverduePage() {
 
     const { data: duesRes, isLoading } = useQuery({
         queryKey: ["fee-dues", filter],
-        queryFn: () =>
-            feeCollectionApi.getDues({
+        queryFn: () => {
+            const cleanId = (val: any) => (!val || val === "all" || isNaN(Number(val))) ? undefined : Number(val);
+            return feeCollectionApi.getDues({
                 search: filter.search || undefined,
                 search_by: filter.search_by || "name",
-                period: filter.period || undefined,
+                period: (!filter.period || filter.period === "all") ? "all" : filter.period,
                 start_date: filter.startDate || undefined,
                 end_date: filter.endDate || undefined,
-                academic_session_id: filter.academicSessionId === "all" ? undefined : parseInt(filter.academicSessionId, 10),
-                lms_class_id: filter.classId === "all" ? undefined : parseInt(filter.classId, 10),
-                status: filter.statusFilter === "all" ? undefined : filter.statusFilter,
+                academic_session_id: cleanId(filter.academicSessionId),
+                lms_class_id: cleanId(filter.classId),
+                status: (!filter.statusFilter || filter.statusFilter === "all") ? undefined : filter.statusFilter,
                 date: filter.dateFilter || undefined,
-                page: filter.page,
-                per_page: filter.perPage,
-            }),
+                page: filter.page ? Number(filter.page) : 1,
+                per_page: filter.perPage ? Number(filter.perPage) : 10,
+            });
+        },
     });
 
     const rawData = (duesRes as any)?.data;
@@ -112,23 +115,37 @@ export default function DuesOverduePage() {
         sendReminderMutation.mutate({ period: filter.period, type: filter.reminderType as "due_soon" | "overdue" });
     };
 
-
-
-    const classOptions = useMemo(() => [
-        { value: "all", label: "All classes" },
-        ...(classes as any[]).map((c: any) => ({
-            value: String(c.id),
-            label: c.session?.name ? `${c.name ?? c.code ?? `Class ${c.id}`} (${c.session.name})` : (c.name ?? c.code ?? `Class ${c.id}`)
-        }))
-    ], [classes]);
-
     const baseFilterConfig = useFilterRegistry("dues_overdue");
     const filterConfig: FilterBarConfig = useMemo(() => ({
         ...baseFilterConfig,
         filters: [
             ...(baseFilterConfig.filters ?? []).map((f) => {
                 if (f.name === "period") return { ...f, options: MONTH_OPTIONS.map((o) => ({ key: o.value, text: o.label, value: o.value })) };
-                if (f.name === "classId") return { ...f, options: classOptions.map((o) => ({ key: o.value, text: o.label, value: o.value })) };
+                if (f.name === "classId") return {
+                    ...f,
+                    options: (currentValues: any) => {
+                        const activeSession = currentValues?.academicSessionId || filter.academicSessionId;
+                        if (activeSession && activeSession !== "all") {
+                            const filtered = (classes as any[]).filter((c: any) => String(c.session_id) === String(activeSession));
+                            return [
+                                { key: "all", text: "All classes", value: "all" },
+                                ...filtered.map((c: any) => ({
+                                    key: String(c.id),
+                                    text: c.name ?? c.code ?? `Class ${c.id}`,
+                                    value: String(c.id),
+                                }))
+                            ];
+                        }
+                        return [
+                            { key: "all", text: "All classes", value: "all" },
+                            ...(classes as any[]).map((c: any) => ({
+                                key: String(c.id),
+                                text: c.session?.name ? `${c.name ?? c.code ?? `Class ${c.id}`} (${c.session.name})` : (c.name ?? c.code ?? `Class ${c.id}`),
+                                value: String(c.id),
+                            }))
+                        ];
+                    }
+                };
                 if (f.name === "statusFilter") return { ...f, options: DUES_STATUS_OPTIONS.map((o) => ({ key: o.value, text: o.label, value: o.value })) };
                 return f;
             }),
@@ -143,7 +160,7 @@ export default function DuesOverduePage() {
                 ],
             },
         ],
-    }), [baseFilterConfig, classOptions]);
+    }), [baseFilterConfig, classes, filter.academicSessionId]);
 
     return (
         <>
@@ -320,6 +337,7 @@ export default function DuesOverduePage() {
                                 <FilterBar
                                     values={filter}
                                     onChange={(vals) => handleFilter({ ...vals, page: 1 })}
+                                    onReset={() => handleFilter(DEFAULT_FILTER)}
                                 >
                                     <FilterBar.Renderer config={filterConfig} />
                                     <TooltipWrapper content={`Send ${(filter.reminderType || "due_soon").replace("_", " ")} reminders to all listed students`}>

@@ -89,7 +89,7 @@ class FeeDuesController extends BaseController
         $search = $request->input('search');
 
         $periodInput = $request->input('period');
-        $isAllPeriods = ($periodInput === 'all');
+        $isAllPeriods = ($periodInput === 'all' || empty($periodInput));
 
         $periods = [];
         if (!$isAllPeriods) {
@@ -175,7 +175,11 @@ class FeeDuesController extends BaseController
                     $paid = (float) collect($matrixResult['matrix'])->sum('paid_amount');
                 }
 
-                if ($balance <= 0 && $paid > 0) {
+                if ($totalExpected <= 0 && $balance <= 0 && $paid <= 0) {
+                    continue;
+                }
+
+                if ($balance <= 0) {
                     $status = 'paid';
                 } elseif ($paid > 0 && $balance > 0) {
                     $status = 'partial';
@@ -225,7 +229,11 @@ class FeeDuesController extends BaseController
                     $balance = $periodDues['balance'];
                     $paid = $periodDues['paid'];
 
-                    if ($balance <= 0 && $paid > 0) {
+                    if (($periodDues['expected'] ?? 0) <= 0 && $balance <= 0 && $paid <= 0) {
+                        continue;
+                    }
+
+                    if ($balance <= 0) {
                         $status = 'paid';
                     } elseif ($paid > 0) {
                         $status = 'partial';

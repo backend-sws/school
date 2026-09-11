@@ -35,6 +35,7 @@ import { ATTENDANCE_SUMMARY_GUIDE } from "@/constants/guides/attendance";
 import { ChartDonut } from "@/components/charts/pie-chart";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 
 const defaultFrom = () => {
   const d = new Date();
@@ -43,14 +44,18 @@ const defaultFrom = () => {
 };
 const defaultTo = () => new Date().toISOString().slice(0, 10);
 
-type ClassOption = { id: number; name: string; stream?: { name: string }; session?: { name: string } };
+type ClassOption = { id: number; name: string; session_id?: number; enrollments_count?: number; stream?: { name: string }; session?: { id?: number; name: string } };
 
 export default function AttendanceReportsSummary() {
   useRegisterGuide(ATTENDANCE_SUMMARY_GUIDE);
+  const [sessionId, setSessionId] = useState<string>("all");
   const [level, setLevel] = useState<AttendanceLevel | "all">("all");
   const [classId, setClassId] = useState<string>("all");
   const [fromDate, setFromDate] = useState(defaultFrom());
   const [toDate, setToDate] = useState(defaultTo());
+
+  const { data: sessionsRes } = useCollegeSessions({});
+  const sessions = sessionsRes?.data ?? [];
 
   const { data: classesRes } = useQuery({
     queryKey: ["attendance-classes"],
@@ -62,10 +67,11 @@ export default function AttendanceReportsSummary() {
     () => ({
       from_date: fromDate,
       to_date: toDate,
+      ...(sessionId && sessionId !== "all" ? { session_id: Number(sessionId) } : {}),
       ...(classId && classId !== "all" ? { lms_class_id: Number(classId) } : {}),
       ...(level && level !== "all" ? { level: level as AttendanceLevel } : {}),
     }),
-    [fromDate, toDate, classId, level]
+    [fromDate, toDate, sessionId, classId, level]
   );
 
   const { data: summaryRes, isLoading } = useQuery({
@@ -76,14 +82,19 @@ export default function AttendanceReportsSummary() {
   const summary = payload?.summary;
   const thresholdPercentage = payload?.threshold_percentage ?? 75;
 
-  const classOptions = useMemo(
-    () =>
-      classes.map((c: any) => ({
+  const classOptions = useMemo(() => {
+    if (sessionId && sessionId !== "all") {
+      const filtered = classes.filter((c: any) => String(c.session_id || c.session?.id) === String(sessionId));
+      return filtered.map((c: any) => ({
         value: String(c.id),
-        label: `${c.name}${c.session?.name ? ` (${c.session.name})` : ""}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
-      })),
-    [classes]
-  );
+        label: `${c.name}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
+      }));
+    }
+    return classes.map((c: any) => ({
+      value: String(c.id),
+      label: `${c.name}${c.session?.name ? ` (${c.session.name})` : ""}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
+    }));
+  }, [classes, sessionId]);
 
   const totalRecords = summary?.total ?? 0;
   const presentRate = summary?.percentage_present ?? 0;
@@ -168,7 +179,24 @@ export default function AttendanceReportsSummary() {
         {/* ─── Filters Bar Card ─── */}
         <Card className="rounded-2xl border border-sidebar-border/60 bg-card p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 flex-1">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Session Filter</Label>
+                <Select value={sessionId} onValueChange={(v) => { setSessionId(v); setClassId("all"); }}>
+                  <SelectTrigger className="h-10 rounded-xl border-border bg-background font-medium">
+                    <SelectValue placeholder="All Sessions" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="all">All Sessions</SelectItem>
+                    {sessions.map((s: any) => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.name}{s.is_current ? " (Current)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Calendar className="size-3.5" /> From Date

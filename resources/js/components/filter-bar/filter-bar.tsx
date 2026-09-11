@@ -40,7 +40,7 @@ export interface FilterFieldConfig {
     label: string;
     placeholder?: string;
     tooltip?: string;
-    options?: any[];             // FieldOption[] or FilterOption[] — both work
+    options?: any[] | ((values: Record<string, any>) => any[]);             // FieldOption[] or FilterOption[] or dynamic fn
     asyncConfig?: AsyncSelectConfig;
     searchable?: boolean;
     className?: string;
@@ -199,7 +199,7 @@ function SearchGroupInput({ selectName, searchName, options, placeholder, toolti
 // ============================================================================
 
 export function FilterRenderer({ config }: { config: FilterBarConfig }) {
-    const { mode, control } = useFilterBar();
+    const { mode, control, values } = useFilterBar();
 
     // Search & SearchGroup are immediate (bar-only), rendered outside the sidebar
     const searchEl = config.search && (
@@ -226,21 +226,24 @@ export function FilterRenderer({ config }: { config: FilterBarConfig }) {
         <div className="flex flex-col gap-3">
             <Each
                 of={config.filters}
-                render={(field) => (
-                    <ControlledFormComponent
-                        control={control}
-                        name={field.name}
-                        type={field.type}
-                        label={field.label}
-                        placeholder={field.placeholder}
-                        tooltip={field.tooltip}
-                        options={field.options}
-                        asyncConfig={field.asyncConfig}
-                        searchable={field.searchable}
-                        disabled={field.disabled}
-                        className={field.className}
-                    />
-                )}
+                render={(field) => {
+                    const resolvedOptions = typeof field.options === "function" ? field.options(values) : field.options;
+                    return (
+                        <ControlledFormComponent
+                            control={control}
+                            name={field.name}
+                            type={field.type}
+                            label={field.label}
+                            placeholder={field.placeholder}
+                            tooltip={field.tooltip}
+                            options={resolvedOptions}
+                            asyncConfig={field.asyncConfig}
+                            searchable={field.searchable}
+                            disabled={field.disabled}
+                            className={field.className}
+                        />
+                    );
+                }}
                 keyExtractor={(f) => f.name}
             />
         </div>
@@ -403,12 +406,13 @@ interface FilterBarProps {
     children: React.ReactNode;
     values: Record<string, any>;
     onChange: (updates: Record<string, any>) => void;
+    onReset?: () => void;
     className?: string;
     /** Show the Filter sidebar button. Defaults to true only when FilterBar.Renderer is used. */
     showFilterButton?: boolean;
 }
 
-export const FilterBar = ({ id, children, values, onChange, className, showFilterButton }: FilterBarProps) => {
+export const FilterBar = ({ id, children, values, onChange, onReset, className, showFilterButton }: FilterBarProps) => {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
     // Auto-detect if Renderer is used by scanning children
@@ -436,8 +440,19 @@ export const FilterBar = ({ id, children, values, onChange, className, showFilte
     };
 
     const handleReset = () => {
+        if (onReset) {
+            onReset();
+            setIsSidebarOpen(false);
+            return;
+        }
         const cleared: Record<string, any> = {};
-        Object.keys(values).forEach((k) => (cleared[k] = ""));
+        Object.keys(values).forEach((k) => {
+            if (["page", "perPage", "per_page", "limit"].includes(k)) {
+                cleared[k] = values[k];
+            } else {
+                cleared[k] = "";
+            }
+        });
         onChange(cleared);
         resetSidebar(cleared);
         setIsSidebarOpen(false);
@@ -457,7 +472,7 @@ export const FilterBar = ({ id, children, values, onChange, className, showFilte
     };
 
     const activeCount = Object.keys(values).filter((k) =>
-        !["search_text", "search", "query", "q", "search_by", "search_mode", "searchType"].includes(k) &&
+        !["search_text", "search", "query", "q", "search_by", "search_mode", "searchType", "page", "perPage", "per_page", "limit"].includes(k) &&
         values[k] !== "" && values[k] !== undefined && values[k] !== null && values[k] !== "all"
     ).length;
 

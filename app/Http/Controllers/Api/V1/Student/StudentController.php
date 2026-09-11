@@ -815,8 +815,14 @@ class StudentController extends BaseController
         $filters = $request->only([
             'academic_session_id', 'stream_id', 'status', 'name', 'email', 
             'mobile', 'per_page', 'is_verified', 'reg_no', 'lms_class_id',
-            'abc_status', 'hostel_status', 'transport_status', 'gender', 'category'
+            'abc_status', 'hostel_status', 'transport_status', 'gender', 'category',
+            'search', 'q'
         ]);
+        if ($request->filled('search')) {
+            $filters['search'] = $request->input('search');
+        } elseif ($request->filled('q')) {
+            $filters['search'] = $request->input('q');
+        }
         $collegeId = InstitutionContext::getActiveInstitutionId($request->user());
         $paginator = $this->dashboardService->getStudentsList($filters, $collegeId);
         
@@ -827,6 +833,21 @@ class StudentController extends BaseController
             $q->where('roles.key', 'student')
                 ->where('user_roles.institution_id', $collegeId);
         });
+
+        if (!empty($filters['search']) && is_string($filters['search'])) {
+            $search = '%' . strtolower($filters['search']) . '%';
+            $statsQuery->where(function ($q) use ($search, $collegeId) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhere('mobile', 'like', $search)
+                  ->orWhereHas('studentProfile', function ($sq) use ($search, $collegeId) {
+                      $sq->where('student_profiles.institution_id', $collegeId)
+                         ->where(function ($ssq) use ($search) {
+                             $ssq->whereRaw('LOWER(reg_no) LIKE ?', [$search])
+                                 ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search]);
+                         });
+                  });
+            });
+        }
 
         if (!empty($filters['name']) && is_string($filters['name'])) {
             $statsQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($filters['name']) . '%']);

@@ -38,21 +38,25 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from 'react';
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { ATTENDANCE_DAILY_GUIDE } from "@/constants/guides/attendance";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { cn } from "@/lib/utils";
 import Each from '@/components/Each';
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+// Helper: auto-derive current date YYYY-MM-DD
+const defaultDate = () => new Date().toISOString().split("T")[0];
 
-function getInitialClassIdFromUrl(): string {
+const getInitialClassIdFromUrl = () => {
   if (typeof window === "undefined") return "";
-  return new URLSearchParams(window.location.search).get("classId") ?? "";
-}
+  const params = new URLSearchParams(window.location.search);
+  return params.get("class_id") || "";
+};
 
-type ClassOption = { id: number; name: string; enrollments_count?: number; stream?: { name: string }; session?: { name: string } };
+type ClassOption = { id: number; name: string; session_id?: number; enrollments_count?: number; stream?: { name: string }; session?: { id?: number; name: string } };
 type AllocationOption = { id: number; subject: { id: number; name: string; code?: string } | null };
 
 export default function AttendanceReportsDaily() {
   useRegisterGuide(ATTENDANCE_DAILY_GUIDE);
+  const [sessionId, setSessionId] = useState<string>("all");
   const [level, setLevel] = useState<AttendanceLevel>("class");
   const [classId, setClassId] = useState<string>(getInitialClassIdFromUrl);
   const [date, setDate] = useState(defaultDate());
@@ -60,6 +64,9 @@ export default function AttendanceReportsDaily() {
   const [studentSearch, setStudentSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [classSearch, setClassSearch] = useState("");
+
+  const { data: sessionsRes } = useCollegeSessions({});
+  const sessions = sessionsRes?.data ?? [];
 
   const { data: classesRes, isLoading: classesLoading } = useQuery({
     queryKey: ["attendance-classes"],
@@ -93,14 +100,20 @@ export default function AttendanceReportsDaily() {
   const rawRecords = (payload?.records ?? []) as AttendanceRecordRow[];
   const summary = payload?.summary;
 
-  const classOptions = useMemo(
-    () =>
-      classes.map((c: any) => ({
+  const classOptions = useMemo(() => {
+    if (sessionId && sessionId !== "all") {
+      const filtered = classes.filter((c: any) => String(c.session_id || c.session?.id) === String(sessionId));
+      return filtered.map((c: any) => ({
         value: String(c.id),
-        label: `${c.name}${c.session?.name ? ` (${c.session.name})` : ""}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
-      })),
-    [classes]
-  );
+        label: `${c.name}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
+      }));
+    }
+    return classes.map((c: any) => ({
+      value: String(c.id),
+      label: `${c.name}${c.session?.name ? ` (${c.session.name})` : ""}${c.stream?.name && c.stream.name !== c.name ? ` · ${c.stream.name}` : ""}`,
+    }));
+  }, [classes, sessionId]);
+
   const allocationOptions = useMemo(
     () =>
       allocations.map((a) => ({
@@ -128,12 +141,16 @@ export default function AttendanceReportsDaily() {
 
   // Filtered classes for class selector matrix
   const filteredClasses = useMemo(() => {
-    if (!classSearch.trim()) return classes;
+    let list = classes;
+    if (sessionId && sessionId !== "all") {
+      list = list.filter((c: any) => String(c.session_id || c.session?.id) === String(sessionId));
+    }
+    if (!classSearch.trim()) return list;
     const q = classSearch.toLowerCase();
-    return classes.filter(
+    return list.filter(
       (c) => c.name.toLowerCase().includes(q) || c.stream?.name?.toLowerCase().includes(q)
     );
-  }, [classes, classSearch]);
+  }, [classes, sessionId, classSearch]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -172,7 +189,24 @@ export default function AttendanceReportsDaily() {
         {/* ─── Filters & Actions Bar ─── */}
         <Card className="rounded-3xl border border-sidebar-border/60 bg-card p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 flex-1">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Session</Label>
+                <Select value={sessionId} onValueChange={(v) => { setSessionId(v); setClassId(""); setAllocationId(""); }}>
+                  <SelectTrigger className="h-11 rounded-xl border-border bg-background font-medium">
+                    <SelectValue placeholder="All Sessions" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="all">All Sessions</SelectItem>
+                    {sessions.map((s: any) => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.name}{s.is_current ? " (Current)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tracking Level</Label>
                 <Select value={level} onValueChange={(v) => setLevel(v as AttendanceLevel)}>
