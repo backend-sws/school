@@ -95,12 +95,55 @@ function buildItemOptions(items: ItemOption[]) {
   return [
     { key: "select-item", text: "Select item", value: "" },
     ...items.map((i) => {
-      const loc = i.location ? ` • 📍 Loc: ${i.location}` : "";
-      const cat = i.category?.name ? `[${i.category.name}] ` : "";
+      const catName = i.category?.name;
+      const codeText = i.code ? ` (${i.code})` : "";
+      const locText = i.location ? `Loc: ${i.location}` : "";
+
+      const searchText = [
+        catName ? `[${catName}]` : "",
+        i.name,
+        i.code,
+        `Stock: ${i.current_quantity}`,
+        locText,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
       return {
         key: String(i.id),
-        text: `${cat}${i.name} ${i.code ? `(${i.code})` : ""} — Stock: ${i.current_quantity}${loc}`,
         value: String(i.id),
+        text: searchText,
+        triggerText: `${catName ? `[${catName}] ` : ""}${i.name}${codeText} — Stock: ${i.current_quantity}`,
+        label: (
+          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+            {catName && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-muted text-muted-foreground border border-border/60 shrink-0">
+                {catName}
+              </span>
+            )}
+            <span className="font-semibold text-foreground text-xs">{i.name}</span>
+            {i.code && (
+              <span className="text-muted-foreground text-[11px]">({i.code})</span>
+            )}
+          </div>
+        ),
+        subtext: (
+          <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] leading-tight">
+            <span className="inline-flex items-center text-muted-foreground shrink-0">
+              Stock: <strong className="ml-1 text-foreground font-semibold">{i.current_quantity}</strong>
+            </span>
+            {i.location ? (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-medium bg-amber-500/15 text-amber-900 dark:text-amber-200 border border-amber-500/30 break-words max-w-full">
+                <MapPin className="size-3 shrink-0 text-amber-600 dark:text-amber-400" />
+                <span>Loc: <span className="font-semibold text-amber-950 dark:text-amber-100">{i.location}</span></span>
+              </span>
+            ) : (
+              <span className="text-muted-foreground/60 text-[10px] italic">
+                📍 Loc: Not set
+              </span>
+            )}
+          </div>
+        ),
       };
     }),
   ];
@@ -456,9 +499,10 @@ export function InventorySaleDialog({
                       }}
                       options={itemSelectOptions.filter((o) => o.value !== "")}
                       placeholder="Select item to sell..."
-                      searchPlaceholder="Search item name or code..."
+                      searchPlaceholder="Search item name, code, or location..."
                       emptyText={categoryFilter ? "No sellable items in this category" : "No sellable items found"}
                       className="w-full bg-background"
+                      popoverClassName="w-[max(var(--radix-popover-trigger-width),460px)] sm:w-[520px] max-w-[min(92vw,600px)]"
                     />
                   )}
                 />
@@ -467,7 +511,7 @@ export function InventorySaleDialog({
 
             {/* Storage Location & Available Stock pill (if item selected) */}
             {selectedItem && (
-              <div className="p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between">
+              <div className="p-2 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
                   <MapPin className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
                   <span>Storage Location:</span>

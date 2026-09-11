@@ -136,8 +136,46 @@ class TransportAssignmentController extends BaseController
             }
         }
 
-        // Analytics calculation: calculate total assignments and monthly revenue
-        $allAssignments = TransportAssignment::where('institution_id', $institutionId)->get();
+        // Filter-aware assignments for analytics stats
+        $statsAssignmentsQuery = TransportAssignment::query()->where('institution_id', $institutionId);
+        $hasFilters = false;
+
+        if ($request->filled('route_id') && $request->route_id !== 'all') {
+            $statsAssignmentsQuery->where('transport_route_id', $request->route_id);
+            $hasFilters = true;
+        }
+        if ($request->filled('stop_id') && $request->stop_id !== 'all') {
+            $statsAssignmentsQuery->where('transport_stop_id', $request->stop_id);
+            $hasFilters = true;
+        }
+        if ($request->filled('session_id') && $request->session_id !== 'all') {
+            $sessionId = $request->session_id;
+            $statsAssignmentsQuery->whereHas('user.studentProfile', function ($sp) use ($sessionId) {
+                $sp->where('session_id', $sessionId);
+            });
+            $hasFilters = true;
+        }
+        if ($request->filled('class_id') && $request->class_id !== 'all') {
+            $classId = $request->class_id;
+            $statsAssignmentsQuery->whereHas('user.studentProfile.currentEnrollments', function ($q2) use ($classId) {
+                $q2->where('lms_class_id', $classId);
+            });
+            $hasFilters = true;
+        }
+        if ($request->filled('vehicle_id') && $request->vehicle_id !== 'all') {
+            $vehicleRouteIds = \App\Models\TransportVehicle::where('id', $request->vehicle_id)->pluck('transport_route_id');
+            $statsAssignmentsQuery->whereIn('transport_route_id', $vehicleRouteIds);
+            $hasFilters = true;
+        }
+        if ($request->filled('search')) {
+            $search = '%' . strtolower($request->search) . '%';
+            $statsAssignmentsQuery->whereHas('user', function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search]);
+            });
+            $hasFilters = true;
+        }
+
+        $allAssignments = $statsAssignmentsQuery->get();
         $totalAssignments = $allAssignments->count();
 
         // Active assignments (if effective_until has passed for all records e.g. session boundary, fallback to all assignments so stats reflect current registered passengers)
@@ -158,22 +196,78 @@ class TransportAssignmentController extends BaseController
             $monthlyRevenue += $amount;
         }
 
-        // Calculate total pending transport dues across all students with assignments (cached for 60s)
-        $totalTransportDues = \Illuminate\Support\Facades\Cache::remember("transport_total_dues_{$institutionId}", 60, function () use ($allAssignments, $institutionId) {
+        // Calculate total pending transport dues and total expected revenue across all students with assignments
+        $computeFinancials = function () use ($allAssignments, $institutionId) {
             $userIds = $allAssignments->pluck('user_id')->unique();
             $students = \App\Models\User::whereIn('id', $userIds)->get();
-            $total = 0.0;
+            $totalExpected = 0.0;
+            $totalDues = 0.0;
+            $totalCollected = 0.0;
+
             foreach ($students as $student) {
-                $total += $this->calculateStudentTransportDue($student, $institutionId);
+                $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
+                if (empty($matrixResult['matrix'])) {
+                    continue;
+                }
+                foreach ($matrixResult['matrix'] as $row) {
+                    $tFee = (float) ($row['transport_fee'] ?? 0);
+                    if ($tFee <= 0) {
+                        continue;
+                    }
+                    $totalExpected += $tFee;
+
+                    $status = $row['status'] ?? 'unpaid';
+                    if ($status === 'paid') {
+                        $totalCollected += $tFee;
+                    } elseif ($status === 'unpaid') {
+                        $totalDues += $tFee;
+                    } else {
+                        $balance = (float) ($row['balance'] ?? 0);
+                        $due = min($tFee, max(0.0, $balance));
+                        $totalDues += $due;
+                        $totalCollected += ($tFee - $due);
+                    }
+                }
             }
-            return round($total, 2);
-        });
+
+            // Fallback estimation if ledger matrix has no records for these students
+            if ($totalExpected <= 0.0 && $allAssignments->isNotEmpty()) {
+                foreach ($allAssignments as $assign) {
+                    $amount = (float) ($assign->monthly_amount ?? 0);
+                    if ($amount === 0.0) {
+                        $rs = \App\Models\TransportRouteStop::where('transport_route_id', $assign->transport_route_id)
+                            ->where('transport_stop_id', $assign->transport_stop_id)
+                            ->first();
+                        $amount = $rs ? (float) $rs->fare : 0.00;
+                    }
+                    $from = $assign->effective_from ? \Carbon\Carbon::parse($assign->effective_from) : null;
+                    $until = $assign->effective_until ? \Carbon\Carbon::parse($assign->effective_until) : null;
+                    $months = ($from && $until) ? max(1, ($until->year - $from->year) * 12 + ($until->month - $from->month) + 1) : 12;
+                    $totalExpected += ($amount * $months);
+                }
+                $totalDues = $totalExpected;
+            }
+
+            return [
+                'total_expected'  => round($totalExpected, 2),
+                'total_dues'      => round($totalDues, 2),
+                'total_collected' => round($totalCollected, 2),
+            ];
+        };
+
+        if ($hasFilters) {
+            $financials = $computeFinancials();
+        } else {
+            $financials = \Illuminate\Support\Facades\Cache::remember("transport_financials_{$institutionId}", 60, $computeFinancials);
+        }
 
         $stats = [
             'total_assignments' => $totalAssignments,
             'active_assignments' => $activeAssignments->count(),
             'monthly_revenue' => $monthlyRevenue,
-            'total_transport_dues' => $totalTransportDues,
+            'total_estimated_revenue' => $financials['total_expected'] ?? 0.0,
+            'total_transport_dues' => $financials['total_dues'] ?? 0.0,
+            'total_transport_collected' => $financials['total_collected'] ?? 0.0,
             'total_routes' => (int) \App\Models\TransportRoute::where('institution_id', $institutionId)->where('is_active', true)->count(),
             'total_vehicles' => (int) \App\Models\TransportVehicle::where('institution_id', $institutionId)->where('status', 'active')->count(),
         ];
@@ -228,6 +322,11 @@ class TransportAssignmentController extends BaseController
             $assignment = $this->assignmentService->createAssignment($validated);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return $this->validationError($e->errors(), $e->getMessage());
+        }
+
+        $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId();
+        if ($institutionId) {
+            \Illuminate\Support\Facades\Cache::forget("transport_financials_{$institutionId}");
         }
 
         $assignment->load(['user:id,name,email', 'transportRoute:id,name,code', 'transportStop:id,name,code']);
@@ -286,6 +385,10 @@ class TransportAssignmentController extends BaseController
 
         $transport_assignment->update($validated);
 
+        if ($transport_assignment->institution_id) {
+            \Illuminate\Support\Facades\Cache::forget("transport_financials_{$transport_assignment->institution_id}");
+        }
+
         return $this->successWithMap($transport_assignment->fresh(['user', 'transportRoute', 'transportStop']), 'passthrough', 'Assignment updated successfully');
     }
 
@@ -295,7 +398,12 @@ class TransportAssignmentController extends BaseController
             return $this->forbidden('You do not have permission to delete transport assignments.');
         }
 
+        $instId = $transport_assignment->institution_id;
         $transport_assignment->delete();
+
+        if ($instId) {
+            \Illuminate\Support\Facades\Cache::forget("transport_financials_{$instId}");
+        }
 
         return $this->success(null, 'Assignment deleted');
     }

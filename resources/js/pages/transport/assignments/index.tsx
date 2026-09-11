@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { FilterBar } from "@/components/filter-bar";
 import { getSerialNumber } from "@/lib/utils";
 import { Head, Link } from "@inertiajs/react";
-import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2, Coins, ReceiptText, ArrowUpRight } from "lucide-react";
+import { ClipboardList, Pencil, Plus, Trash2, IndianRupee, AlertCircle, BusFront, Download, Loader2, Coins, ReceiptText, ArrowUpRight, Wallet } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -128,7 +128,7 @@ const TransportAssignmentsIndex = () => {
   });
 
   const list = (assignmentsRes?.data ?? []) as any[];
-  const stats = (assignmentsRes as any)?.meta?.stats ?? { total_assignments: 0, monthly_revenue: 0, total_transport_dues: 0, total_routes: 0, total_vehicles: 0 };
+  const stats = (assignmentsRes as any)?.meta?.stats ?? { total_assignments: 0, monthly_revenue: 0, total_estimated_revenue: 0, total_transport_dues: 0, total_routes: 0, total_vehicles: 0 };
 
   const filterConfig = useMemo(() => ({
     filters: [
@@ -300,7 +300,7 @@ const TransportAssignmentsIndex = () => {
             guidance={TRANSPORT_ASSIGNMENTS_GUIDE}
           />
           {/* Analytics stats cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
               <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-1">
@@ -323,6 +323,20 @@ const TransportAssignmentsIndex = () => {
                 </div>
                 <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <IndianRupee className="size-5" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-card border-border/50 shadow-sm">
+              <CardContent className="p-5 flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-wider text-indigo-600/90 dark:text-indigo-400/90">Est. Total Revenue</p>
+                  <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+                    ₹{new Intl.NumberFormat("en-IN", { minimumFractionDigits: 0 }).format(stats.total_estimated_revenue ?? 0)}
+                  </p>
+                </div>
+                <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                  <Wallet className="size-5" />
                 </div>
               </CardContent>
             </Card>

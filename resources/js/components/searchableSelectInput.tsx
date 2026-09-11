@@ -16,16 +16,29 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 
+export interface SearchableSelectOption {
+    key: string;
+    text: string;
+    value: any;
+    triggerText?: string;
+    label?: React.ReactNode;
+    subtext?: React.ReactNode;
+    [key: string]: any;
+}
+
 interface SearchableSelectProps {
-    options: { key: string; text: string; value: any }[];
+    options: SearchableSelectOption[];
     value?: any;
     onChange: (value: any) => void;
     placeholder?: string;
     disabled?: boolean;
     className?: string;
+    popoverClassName?: string;
     emptyText?: string;
     searchPlaceholder?: string;
     listMaxHeight?: string;
+    renderOption?: (option: SearchableSelectOption, isSelected: boolean) => React.ReactNode;
+    renderTrigger?: (selectedOption?: SearchableSelectOption) => React.ReactNode;
 }
 
 /** Detects if options look like years (all numeric, 4 digits) for smarter placeholder */
@@ -44,9 +57,12 @@ export function SearchableSelectField({
     placeholder = "Select option...",
     disabled,
     className,
+    popoverClassName,
     emptyText = "No results found",
     searchPlaceholder,
-    listMaxHeight = "max-h-[220px]",
+    listMaxHeight = "max-h-[260px]",
+    renderOption,
+    renderTrigger,
 }: SearchableSelectProps) {
     const [open, setOpen] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState("");
@@ -89,8 +105,12 @@ export function SearchableSelectField({
                         className
                     )}
                 >
-                    <span className="truncate text-left">
-                        {selectedOption ? selectedOption.text : placeholder}
+                    <span className="truncate text-left flex-1">
+                        {renderTrigger
+                            ? renderTrigger(selectedOption)
+                            : selectedOption
+                            ? (selectedOption.triggerText ?? selectedOption.text)
+                            : placeholder}
                     </span>
                     <ChevronDown
                         className={cn(
@@ -101,7 +121,10 @@ export function SearchableSelectField({
                 </Button>
             </PopoverTrigger>
             <PopoverContent
-                className="w-[var(--radix-popover-trigger-width)] min-w-[260px] p-0 z-[1200]"
+                className={cn(
+                    "p-0 z-[1200]",
+                    popoverClassName || "w-[var(--radix-popover-trigger-width)] min-w-[260px]"
+                )}
                 align="start"
                 sideOffset={4}
                 onOpenAutoFocus={(e) => e.preventDefault()}
@@ -141,12 +164,28 @@ export function SearchableSelectField({
                                             setOpen(false);
                                         }}
                                         className={cn(
-                                            "flex items-center justify-between rounded-md px-2 py-1.5 cursor-pointer text-xs",
+                                            "flex items-start justify-between rounded-md px-2.5 py-2 cursor-pointer text-xs gap-2",
                                             isSelected && "bg-primary/10 text-primary font-medium"
                                         )}
                                     >
-                                        <span className="truncate mr-2">{option.text}</span>
-                                        {isSelected && <Check className="size-3.5 shrink-0 text-primary" />}
+                                        <div className="flex flex-col flex-1 min-w-0">
+                                            {renderOption ? (
+                                                renderOption(option, isSelected)
+                                            ) : option.label ? (
+                                                <>
+                                                    <div className="min-w-0">{option.label}</div>
+                                                    {option.subtext}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className={cn("text-xs leading-normal", !option.subtext && "truncate")}>
+                                                        {option.text}
+                                                    </span>
+                                                    {option.subtext}
+                                                </>
+                                            )}
+                                        </div>
+                                        {isSelected && <Check className="size-3.5 shrink-0 text-primary mt-0.5" />}
                                     </CommandItem>
                                 );
                             })}
