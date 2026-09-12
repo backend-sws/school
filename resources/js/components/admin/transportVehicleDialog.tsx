@@ -28,9 +28,10 @@ interface TransportVehicleDialogProps {
   open: boolean;
   onClose: (open: boolean) => void;
   data?: TransportVehicleDialogData;
+  onSuccess?: () => void;
 }
 
-export function TransportVehicleDialog({ open, onClose, data }: TransportVehicleDialogProps) {
+export function TransportVehicleDialog({ open, onClose, data, onSuccess }: TransportVehicleDialogProps) {
   const isEditMode = !!data?.id;
   const dataId = data?.id;
 
@@ -95,10 +96,18 @@ export function TransportVehicleDialog({ open, onClose, data }: TransportVehicle
       reset({
         registration_number: vehicleDetail.registration_number ?? "",
         vehicle_type: (vehicleDetail.vehicle_type as "bus" | "van" | "cab") ?? "bus",
+        model_name: vehicleDetail.model_name ?? "",
+        fuel_type: (vehicleDetail.fuel_type as "diesel" | "petrol" | "cng" | "electric") ?? "diesel",
         capacity: vehicleDetail.capacity ?? "",
+        current_odometer: vehicleDetail.current_odometer ?? "",
         transport_route_id: vehicleDetail.transport_route_id ?? "",
         transport_driver_id: vehicleDetail.transport_driver_id ?? "",
         status: (vehicleDetail.status as "active" | "maintenance" | "inactive") ?? "active",
+        insurance_policy_number: vehicleDetail.insurance_policy_number ?? "",
+        insurance_expiry_date: vehicleDetail.insurance_expiry_date ? String(vehicleDetail.insurance_expiry_date).slice(0, 10) : "",
+        puc_expiry_date: vehicleDetail.puc_expiry_date ? String(vehicleDetail.puc_expiry_date).slice(0, 10) : "",
+        fitness_expiry_date: vehicleDetail.fitness_expiry_date ? String(vehicleDetail.fitness_expiry_date).slice(0, 10) : "",
+        permit_expiry_date: vehicleDetail.permit_expiry_date ? String(vehicleDetail.permit_expiry_date).slice(0, 10) : "",
         notes: vehicleDetail.notes ?? "",
       });
     } else {
@@ -107,23 +116,28 @@ export function TransportVehicleDialog({ open, onClose, data }: TransportVehicle
   }, [isEditMode, vehicleDetail, reset, open]);
 
   const { mutate: handleMutation, isPending: isSaving } = useMutation({
-    mutationFn: (payload: TransportVehicleFormValues) =>
-      isEditMode
-        ? transportApi.vehicles.update(dataId!, {
-          ...payload,
-          transport_route_id: payload.transport_route_id === "" ? null : Number(payload.transport_route_id),
-          transport_driver_id: payload.transport_driver_id === "" ? null : Number(payload.transport_driver_id),
-        })
-        : transportApi.vehicles.store({
-          ...payload,
-          capacity: Number(payload.capacity),
-          transport_route_id: payload.transport_route_id === "" ? null : Number(payload.transport_route_id),
-          transport_driver_id: payload.transport_driver_id === "" ? null : Number(payload.transport_driver_id),
-        }),
+    mutationFn: (payload: TransportVehicleFormValues) => {
+      const cleanPayload: Record<string, any> = {
+        ...payload,
+        capacity: Number(payload.capacity),
+        current_odometer: payload.current_odometer !== "" && payload.current_odometer !== undefined ? Number(payload.current_odometer) : 0,
+        transport_route_id: payload.transport_route_id === "" ? null : Number(payload.transport_route_id),
+        transport_driver_id: payload.transport_driver_id === "" ? null : Number(payload.transport_driver_id),
+        insurance_expiry_date: payload.insurance_expiry_date || null,
+        puc_expiry_date: payload.puc_expiry_date || null,
+        fitness_expiry_date: payload.fitness_expiry_date || null,
+        permit_expiry_date: payload.permit_expiry_date || null,
+      };
+
+      return isEditMode
+        ? transportApi.vehicles.update(dataId!, cleanPayload)
+        : transportApi.vehicles.store(cleanPayload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transport-vehicles"] });
       reset(TRANSPORT_VEHICLE_FORM_INITIAL);
       onClose(false);
+      onSuccess?.();
     },
   });
 

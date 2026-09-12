@@ -45,15 +45,29 @@ class TransportVehicleController extends BaseController
         $validated = $request->validate([
             'registration_number' => 'required|string|max:30',
             'vehicle_type' => 'nullable|string|max:30|in:bus,van,cab',
+            'model_name' => 'nullable|string|max:100',
+            'make_year' => 'nullable|integer|min:1990|max:2099',
+            'chassis_number' => 'nullable|string|max:100',
+            'engine_number' => 'nullable|string|max:100',
+            'fuel_type' => 'nullable|string|max:30|in:diesel,petrol,cng,electric',
             'capacity' => 'required|integer|min:1',
+            'current_odometer' => 'nullable|numeric|min:0',
             'transport_route_id' => 'nullable|exists:transport_routes,id',
             'transport_driver_id' => 'nullable|exists:transport_drivers,id',
             'status' => 'nullable|string|max:20|in:active,maintenance,inactive',
+            'insurance_policy_number' => 'nullable|string|max:100',
+            'insurance_expiry_date' => 'nullable|date',
+            'puc_expiry_date' => 'nullable|date',
+            'fitness_expiry_date' => 'nullable|date',
+            'road_tax_expiry_date' => 'nullable|date',
+            'permit_expiry_date' => 'nullable|date',
             'notes' => 'nullable|string',
         ]);
 
         $validated['vehicle_type'] = $validated['vehicle_type'] ?? 'bus';
+        $validated['fuel_type'] = $validated['fuel_type'] ?? 'diesel';
         $validated['status'] = $validated['status'] ?? 'active';
+        $validated['current_odometer'] = $validated['current_odometer'] ?? 0;
 
         $vehicle = TransportVehicle::create($validated);
 
@@ -80,10 +94,22 @@ class TransportVehicleController extends BaseController
         $validated = $request->validate([
             'registration_number' => 'sometimes|string|max:30',
             'vehicle_type' => 'nullable|string|max:30|in:bus,van,cab',
+            'model_name' => 'nullable|string|max:100',
+            'make_year' => 'nullable|integer|min:1990|max:2099',
+            'chassis_number' => 'nullable|string|max:100',
+            'engine_number' => 'nullable|string|max:100',
+            'fuel_type' => 'nullable|string|max:30|in:diesel,petrol,cng,electric',
             'capacity' => 'sometimes|integer|min:1',
+            'current_odometer' => 'nullable|numeric|min:0',
             'transport_route_id' => 'nullable|exists:transport_routes,id',
             'transport_driver_id' => 'nullable|exists:transport_drivers,id',
             'status' => 'nullable|string|max:20|in:active,maintenance,inactive',
+            'insurance_policy_number' => 'nullable|string|max:100',
+            'insurance_expiry_date' => 'nullable|date',
+            'puc_expiry_date' => 'nullable|date',
+            'fitness_expiry_date' => 'nullable|date',
+            'road_tax_expiry_date' => 'nullable|date',
+            'permit_expiry_date' => 'nullable|date',
             'notes' => 'nullable|string',
         ]);
 
@@ -101,5 +127,17 @@ class TransportVehicleController extends BaseController
         $transport_vehicle->delete();
 
         return $this->success(null, 'Vehicle deleted');
+    }
+
+    public function export(Request $request)
+    {
+        if (! $request->user()->hasAbility('view_transport_vehicles')) {
+            return $this->forbidden('You do not have permission to export vehicles.');
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\TransportVehicleExport($request->all()),
+            'transport_vehicles_' . now()->format('Y-m-d') . '.xlsx'
+        );
     }
 }

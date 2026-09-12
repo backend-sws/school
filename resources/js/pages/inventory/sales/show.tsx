@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { PermissionGate } from "@/components/PermissionGate";
 import { Head, Link, usePage } from "@inertiajs/react";
-import { ShoppingCart, Printer, MapPin, Pencil, RotateCcw } from "lucide-react";
+import { ShoppingCart, Printer, MapPin, Pencil, RotateCcw, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import inventoryApi from "@/lib/api/inventoryApi";
 import { InventorySaleDialog } from "@/components/admin/inventorySaleDialog";
@@ -48,9 +48,10 @@ type Sale = {
 };
 
 const InventorySalesShow = () => {
-  const { id } = usePage().props as { id: number };
+  const { id } = usePage<{ id: number }>().props;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isReturnOpen, setIsReturnOpen] = useState(false);
+  const [isNewSaleOpen, setIsNewSaleOpen] = useState(false);
 
   const { data: res, isLoading } = useQuery({
     queryKey: ["inventory-sale", id],
@@ -78,6 +79,12 @@ const InventorySalesShow = () => {
     <>
       <Head title={`Sale #${sale.id}`} />
       <InventorySaleDialog
+        open={isNewSaleOpen}
+        sale={null}
+        onClose={() => setIsNewSaleOpen(false)}
+        onSuccess={() => setIsNewSaleOpen(false)}
+      />
+      <InventorySaleDialog
         open={isEditOpen}
         sale={sale}
         onClose={() => setIsEditOpen(false)}
@@ -102,8 +109,9 @@ const InventorySalesShow = () => {
             <Link href="/inventory/sales">Back to list</Link>
           </Button>
           <PermissionGate can="create_inventory_sales">
-            <Button size="sm" asChild>
-              <Link href="/inventory/sales/create">New sale</Link>
+            <Button size="sm" onClick={() => setIsNewSaleOpen(true)}>
+              <Plus className="mr-1.5 size-4" />
+              New sale
             </Button>
           </PermissionGate>
           {sale.payment_status === "pending" && (

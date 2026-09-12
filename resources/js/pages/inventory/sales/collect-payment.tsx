@@ -18,7 +18,7 @@ const BREADCRUMBS = [
 ];
 
 export default function InventorySaleCollectPayment() {
-    const { id } = usePage().props as unknown as { id: number };
+    const { id } = usePage<{ id: number }>().props;
     const queryClient = useQueryClient();
 
     const { data: res, isLoading } = useQuery({

@@ -55,10 +55,19 @@ export type TransportDriverFormValues = z.infer<typeof TransportDriverFormSchema
 export const TransportVehicleFormSchema = z.object({
   registration_number: safeRequiredString(30, "Registration number is required"),
   vehicle_type: z.enum(["bus", "van", "cab"], { message: "Select vehicle type" }),
+  model_name: safeOptionalString(100, "Model name"),
+  fuel_type: z.enum(["diesel", "petrol", "cng", "electric"]).optional().default("diesel"),
   capacity: z.union([z.literal(""), z.coerce.number().int().min(1, "Capacity must be at least 1")], { message: "Enter seat capacity" }),
+  current_odometer: z.union([z.literal(""), z.coerce.number().min(0)]).optional(),
   transport_route_id: z.union([z.literal(""), z.coerce.number().int()]).optional(),
   transport_driver_id: z.union([z.literal(""), z.coerce.number().int()]).optional(),
   status: z.enum(["active", "maintenance", "inactive"], { message: "Select status" }),
+  insurance_policy_number: safeOptionalString(100, "Insurance policy number"),
+  insurance_expiry_date: safeOptionalString(50, "Insurance expiry date"),
+  puc_expiry_date: safeOptionalString(50, "PUC expiry date"),
+  fitness_expiry_date: safeOptionalString(50, "Fitness expiry date"),
+  road_tax_expiry_date: safeOptionalString(50, "Road tax expiry date"),
+  permit_expiry_date: safeOptionalString(50, "Permit expiry date"),
   notes: safeOptionalString(500, "Notes"),
 });
 export type TransportVehicleFormValues = z.infer<typeof TransportVehicleFormSchema>;

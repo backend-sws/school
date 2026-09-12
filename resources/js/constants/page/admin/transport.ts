@@ -152,25 +152,49 @@ export const TRANSPORT_DRIVER_DIALOG_FORM_LAYOUT = [
   { name: "is_active", label: "Active", type: FORM_TYPE.SELECT, options: [{ key: "yes", text: "Yes", value: true }, { key: "no", text: "No", value: false }], tooltip: "Inactive drivers are hidden from new vehicle assignments; existing links remain." },
 ];
 
+export const TRANSPORT_FUEL_TYPE_OPTIONS = [
+  { key: "diesel", text: "Diesel", value: "diesel" },
+  { key: "petrol", text: "Petrol", value: "petrol" },
+  { key: "cng", text: "CNG", value: "cng" },
+  { key: "electric", text: "Electric", value: "electric" },
+];
+
 // ─── Vehicle dialog form (options injected in component for route/driver) ─────
 export const TRANSPORT_VEHICLE_FORM_INITIAL = {
   registration_number: "",
   vehicle_type: "bus" as "bus" | "van" | "cab",
+  model_name: "",
+  fuel_type: "diesel" as "diesel" | "petrol" | "cng" | "electric",
   capacity: "" as number | "",
+  current_odometer: "" as number | "",
   transport_route_id: "" as number | "",
   transport_driver_id: "" as number | "",
   status: "active" as "active" | "maintenance" | "inactive",
+  insurance_policy_number: "",
+  insurance_expiry_date: "",
+  puc_expiry_date: "",
+  fitness_expiry_date: "",
+  road_tax_expiry_date: "",
+  permit_expiry_date: "",
   notes: "",
 };
 
 export const TRANSPORT_VEHICLE_DIALOG_FORM_LAYOUT = [
-  { name: "registration_number", label: "Registration number", type: FORM_TYPE.TEXT, placeholder: "e.g. KA01AB1234", required: true, maxLength: 30, tooltip: "Official vehicle registration number. Must be unique per institution. Used in manifests and occupancy." },
-  { name: "vehicle_type", label: "Type", type: FORM_TYPE.SELECT, placeholder: "e.g. Bus", required: true, options: TRANSPORT_VEHICLE_TYPE_OPTIONS, tooltip: "Type of vehicle (Bus, Van, Cab). Affects capacity expectations and reporting." },
-  { name: "capacity", label: "Capacity (seats)", type: FORM_TYPE.NUMBER_TEXT, placeholder: "e.g. 40", required: true, tooltip: "Maximum number of seats. Used for occupancy reports (assigned students vs capacity)." },
-  { name: "transport_route_id", label: "Route", type: FORM_TYPE.SELECT, searchable: true, placeholder: "e.g. Route A – North", tooltip: "Optional. Assign this vehicle to a route for manifest and occupancy. Can be changed later." },
-  { name: "transport_driver_id", label: "Driver", type: FORM_TYPE.SELECT, searchable: true, placeholder: "e.g. Ramesh Kumar", tooltip: "Optional. Assign a driver to this vehicle. Driver must be added under Transport → Drivers first." },
-  { name: "status", label: "Status", type: FORM_TYPE.SELECT, placeholder: "e.g. Active", options: TRANSPORT_VEHICLE_STATUS_OPTIONS, tooltip: "Active: in use. Maintenance: temporarily off. Inactive: no longer in fleet." },
-  { name: "notes", label: "Notes", type: FORM_TYPE.TEXTAREA, placeholder: "e.g. AC bus, WiFi enabled", rows: 2, maxLength: 500, tooltip: "Optional notes (e.g. features, maintenance history). Max 500 characters." },
+  { name: "registration_number", label: "Registration number", type: FORM_TYPE.TEXT, placeholder: "e.g. KA01AB1234", required: true, maxLength: 30, tooltip: "Official vehicle registration number. Must be unique per institution." },
+  { name: "model_name", label: "Make / Model Name", type: FORM_TYPE.TEXT, placeholder: "e.g. Tata Starbus 32, Force Traveller", maxLength: 100, tooltip: "Vehicle make and model name." },
+  { name: "vehicle_type", label: "Type", type: FORM_TYPE.SELECT, placeholder: "e.g. Bus", required: true, options: TRANSPORT_VEHICLE_TYPE_OPTIONS, tooltip: "Type of vehicle (Bus, Van, Cab)." },
+  { name: "fuel_type", label: "Fuel Type", type: FORM_TYPE.SELECT, placeholder: "e.g. Diesel", options: TRANSPORT_FUEL_TYPE_OPTIONS, tooltip: "Fuel used by vehicle." },
+  { name: "capacity", label: "Capacity (seats)", type: FORM_TYPE.NUMBER_TEXT, placeholder: "e.g. 40", required: true, tooltip: "Maximum number of seats for student occupancy." },
+  { name: "current_odometer", label: "Current Odometer (KM)", type: FORM_TYPE.NUMBER_TEXT, placeholder: "e.g. 15000", tooltip: "Initial odometer reading in KM." },
+  { name: "transport_route_id", label: "Route", type: FORM_TYPE.SELECT, searchable: true, placeholder: "e.g. Route A – North", tooltip: "Optional. Assign this vehicle to a route." },
+  { name: "transport_driver_id", label: "Driver", type: FORM_TYPE.SELECT, searchable: true, placeholder: "e.g. Ramesh Kumar", tooltip: "Optional. Assign a driver to this vehicle." },
+  { name: "status", label: "Status", type: FORM_TYPE.SELECT, placeholder: "e.g. Active", options: TRANSPORT_VEHICLE_STATUS_OPTIONS, tooltip: "Active: in use. Maintenance: temporarily off. Inactive: retired." },
+  { name: "insurance_policy_number", label: "Insurance Policy No", type: FORM_TYPE.TEXT, placeholder: "e.g. POL-99238120", maxLength: 100, tooltip: "Vehicle insurance policy number." },
+  { name: "insurance_expiry_date", label: "Insurance Expiry Date", type: FORM_TYPE.DATE, tooltip: "Expiry date of vehicle insurance." },
+  { name: "puc_expiry_date", label: "PUC Expiry Date", type: FORM_TYPE.DATE, tooltip: "Pollution Under Control certificate expiry." },
+  { name: "fitness_expiry_date", label: "Fitness Expiry Date", type: FORM_TYPE.DATE, tooltip: "Vehicle fitness certificate expiry date." },
+  { name: "permit_expiry_date", label: "Permit Expiry Date", type: FORM_TYPE.DATE, tooltip: "School bus permit expiry date." },
+  { name: "notes", label: "Notes", type: FORM_TYPE.TEXTAREA, placeholder: "e.g. AC bus, WiFi enabled, GPS installed", rows: 2, maxLength: 500, tooltip: "Optional notes. Max 500 characters." },
 ];
 
 // ─── Assignment dialog form (options: students, routes, stops per route in component) ─────

@@ -432,6 +432,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/routes', fn() => Inertia::render('transport/routes/index'))->name('routes.index');
                 Route::get('/routes/{id}', fn($id) => Inertia::render('transport/routes/show', ['id' => (int) $id]))->name('routes.show');
                 Route::get('/vehicles', fn() => Inertia::render('transport/vehicles/index'))->name('vehicles.index');
+                Route::get('/vehicles/{id}', fn($id) => Inertia::render('transport/vehicles/show', ['id' => (int) $id]))->name('vehicles.show');
                 Route::get('/drivers', fn() => Inertia::render('transport/drivers/index'))->name('drivers.index');
                 Route::get('/assignments', fn() => Inertia::render('transport/assignments/index'))->name('assignments.index');
                 Route::get('/reports/manifest', fn() => Inertia::render('transport/reports/manifest'))->name('reports.manifest');

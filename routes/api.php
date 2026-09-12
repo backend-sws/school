@@ -499,7 +499,18 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::put('routes/{transport_route}/stops', [\App\Http\Controllers\Api\V1\Transport\TransportRouteController::class, 'updateStops'])->whereNumber('transport_route');
                 Route::delete('routes/{transport_route}/stops/{route_stop_id}', [\App\Http\Controllers\Api\V1\Transport\TransportRouteController::class, 'destroyStop'])->whereNumber('transport_route')->whereNumber('route_stop_id');
                 Route::apiResource('drivers', \App\Http\Controllers\Api\V1\Transport\TransportDriverController::class)->parameters(['drivers' => 'transport_driver']);
+                Route::get('vehicles/export', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleController::class, 'export']);
+                Route::get('vehicles/fleet-analytics', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleAnalyticsController::class, 'fleetAnalytics']);
+                Route::get('vehicles/fleet-audit-logs', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleAnalyticsController::class, 'fleetAuditLogs']);
+                Route::get('vehicles/{id}/analytics', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleAnalyticsController::class, 'vehicleAnalytics'])->whereNumber('id');
+                Route::get('vehicles/{id}/audit-logs', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleAnalyticsController::class, 'vehicleAuditLogs'])->whereNumber('id');
                 Route::apiResource('vehicles', \App\Http\Controllers\Api\V1\Transport\TransportVehicleController::class)->parameters(['vehicles' => 'transport_vehicle']);
+                Route::get('vehicle-logs/export', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleLogController::class, 'export']);
+                Route::apiResource('vehicle-logs', \App\Http\Controllers\Api\V1\Transport\TransportVehicleLogController::class)->parameters(['vehicle-logs' => 'vehicle_log']);
+                Route::get('vehicle-fuels/export', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::class, 'export']);
+                Route::apiResource('vehicle-fuels', \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::class)->parameters(['vehicle-fuels' => 'vehicle_fuel']);
+                Route::get('vehicle-expenses/export', [\App\Http\Controllers\Api\V1\Transport\TransportVehicleExpenseController::class, 'export']);
+                Route::apiResource('vehicle-expenses', \App\Http\Controllers\Api\V1\Transport\TransportVehicleExpenseController::class)->parameters(['vehicle-expenses' => 'vehicle_expense']);
                 Route::get('assignments/export', [\App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::class, 'export']);
                 Route::apiResource('assignments', \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::class)->parameters(['assignments' => 'transport_assignment']);
                 Route::get('reports/manifest', [\App\Http\Controllers\Api\V1\Transport\TransportReportController::class, 'manifest']);
