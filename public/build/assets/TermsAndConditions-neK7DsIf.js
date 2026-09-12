@@ -1,1 +1,0 @@
-import{c as r,j as s}from"./app-CpL1Q3Bt.js";import{L as n}from"./legal-page-layout-CNEtLv_u.js";import"./app-B7qWJiIz.js";import"./AppBrand-Celx2GKh.js";import"./arrow-left-BFVWNMnA.js";function u(i){const t=r.c(2),{content:e}=i;let o;return t[0]!==e?(o=s.jsx(n,{title:"Terms & Conditions",content:e}),t[0]=e,t[1]=o):o=t[1],o}export{u as default};

@@ -1,0 +1,1 @@
+import{b as o}from"./app-C_L6r7HP.js";const e=[["path",{d:"m18 8 4 4-4 4",key:"1ak13k"}],["path",{d:"M2 12h20",key:"9i4pu4"}],["path",{d:"m6 8-4 4 4 4",key:"15zrgr"}]],a=o("MoveHorizontal",e);export{a as M};
