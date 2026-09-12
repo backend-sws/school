@@ -398,7 +398,7 @@ class ClassStudentRosterController extends BaseController
         if ($classId) {
             $classTests = LmsTest::query()
                 ->where('lms_class_id', $classId)
-                ->with(['questions:id,lms_test_id,marks'])
+                ->with(['questions:id,lms_test_id,points'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -416,7 +416,7 @@ class ClassStudentRosterController extends BaseController
             $totalScoreMax = 0;
 
             $testsList = $classTests->map(function ($test) use ($attempts, &$completedCount, &$totalScoreAchieved, &$totalScoreMax) {
-                $maxTestMarks = (float) $test->questions->sum('marks');
+                $maxTestMarks = (float) $test->questions->sum('points');
                 if ($maxTestMarks <= 0) $maxTestMarks = 100.0;
 
                 $testAttempts = $attempts->get($test->id) ?? collect();
