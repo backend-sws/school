@@ -93,7 +93,9 @@ export default function PaymentCollectModal({
     const paidAmount = isFullWaiver ? 0 : Number(rawPaidInput !== undefined ? rawPaidInput : netPayable);
     const remainingBalance = Math.max(0, netPayable - paidAmount);
     const isPartial = paidAmount > 0 && paidAmount < netPayable;
-    const isFull = paidAmount >= netPayable && netPayable > 0;
+    const isFull = paidAmount === netPayable && netPayable > 0;
+    const isAdvance = paidAmount > netPayable;
+    const advanceAmount = Math.max(0, paidAmount - netPayable);
 
     // Sync default amount when monthData changes or modal opens
     useEffect(() => {
@@ -124,10 +126,8 @@ export default function PaymentCollectModal({
         } else if (mode === "concession" && netPayable > 0) {
             setValue("payment_mode", "cash");
             setValue("paid_amount", netPayable);
-        } else if (paidAmount > netPayable) {
-            setValue("paid_amount", netPayable);
         }
-    }, [discountAmount, rawBalance, netPayable, mode, paidAmount, setValue]);
+    }, [discountAmount, rawBalance, netPayable, mode, setValue]);
 
     const collectMutation = useMutation({
         mutationFn: (data: any) => api.post("/fees/ledger/collect", data),
@@ -394,8 +394,36 @@ export default function PaymentCollectModal({
                                     control={control as any}
                                     name="paid_amount"
                                     type={FORM_TYPE.NUMBER}
-                                    placeholder={`Enter amount (max ₹${netPayable.toLocaleString()})`}
+                                    placeholder={netPayable > 0 ? `Enter amount (₹${netPayable.toLocaleString()} or enter higher for advance)` : "Enter amount"}
                                 />
+
+                                {/* Quick advance preset chips */}
+                                {monthFee > 0 && netPayable > 0 && (
+                                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                                        <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1">
+                                            <Sparkles className="size-2.5 text-sky-500" /> Advance Presets:
+                                        </span>
+                                        {[1, 2, 3, 6].map((monthsCount) => {
+                                            const presetAmount = netPayable + (monthFee * monthsCount);
+                                            const isSelected = paidAmount === presetAmount;
+                                            return (
+                                                <button
+                                                    key={monthsCount}
+                                                    type="button"
+                                                    onClick={() => setValue("paid_amount", presetAmount, { shouldValidate: true })}
+                                                    className={cn(
+                                                        "text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all cursor-pointer",
+                                                        isSelected
+                                                            ? "bg-sky-600 text-white border-sky-600 shadow-sm"
+                                                            : "bg-sky-50 hover:bg-sky-100 text-sky-700 border-sky-200"
+                                                    )}
+                                                >
+                                                    +{monthsCount} Mo (₹{presetAmount.toLocaleString()})
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
 
                                 {/* Dynamic settlement message */}
                                 {isPartial && (
@@ -414,6 +442,23 @@ export default function PaymentCollectModal({
                                     <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px]">
                                         <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
                                         <span><strong>Full Clearance:</strong> Clears all ₹{netPayable.toLocaleString()} dues for this month.</span>
+                                    </div>
+                                )}
+
+                                {isAdvance && (
+                                    <div className="flex items-start gap-2 p-2.5 rounded-md bg-sky-50 border border-sky-200 text-sky-950 text-xs leading-relaxed">
+                                        <Sparkles className="size-3.5 text-sky-600 shrink-0 mt-0.5" />
+                                        <div>
+                                            <span className="font-bold text-sky-900 flex items-center gap-1.5">
+                                                <span>Advance Payment Included</span>
+                                                <span className="text-[10px] font-bold bg-sky-200/90 text-sky-900 px-1.5 py-0.2 rounded-full">
+                                                    +₹{advanceAmount.toLocaleString()} Advance
+                                                </span>
+                                            </span>
+                                            <span className="text-[11px] text-sky-900/90 mt-0.5 block">
+                                                ₹<strong>{netPayable.toLocaleString()}</strong> clears all dues for this month. The extra <strong>₹{advanceAmount.toLocaleString()}</strong> will be credited as <strong>Advance</strong> and will automatically adjust against upcoming month dues in the ledger.
+                                            </span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -510,7 +555,11 @@ export default function PaymentCollectModal({
                         onClick={handleSubmit(onSubmit as any)}
                         disabled={collectMutation.isPending}
                         className={`w-full h-10 font-bold text-xs shadow-md ${
-                            isFullWaiver ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""
+                            isFullWaiver
+                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                : isAdvance
+                                ? "bg-sky-600 hover:bg-sky-700 text-white"
+                                : ""
                         }`}
                     >
                         {collectMutation.isPending
@@ -519,6 +568,8 @@ export default function PaymentCollectModal({
                             ? `Confirm & Waive Month (₹${discountAmount.toLocaleString()})`
                             : isPartial
                             ? `Collect ₹${paidAmount.toLocaleString()} & Update Ledger (₹${remainingBalance.toLocaleString()} Due in Next Month)`
+                            : isAdvance
+                            ? `Collect ₹${paidAmount.toLocaleString()} (₹${advanceAmount.toLocaleString()} Advance Credit) & Update Ledger`
                             : `Collect ₹${paidAmount.toLocaleString()} & Update Ledger`}
                     </Button>
                 </DialogFooter>

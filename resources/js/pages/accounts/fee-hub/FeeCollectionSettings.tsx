@@ -31,6 +31,7 @@ const defaultSettings: FeeCollectionSettings = {
     fee_due_day_of_month: 5,
     reminder_days_before_due: 3,
     overdue_reminder_after_days: 7,
+    overdue_payment_grace_days: 3,
     late_fee_enabled: false,
     late_fee_after_days: 10,
     late_fee_type: "fixed",
@@ -58,6 +59,7 @@ useRegisterGuide(COLLECTION_SETTINGS_GUIDE);
                 fee_due_day_of_month: settings.fee_due_day_of_month ?? 5,
                 reminder_days_before_due: settings.reminder_days_before_due ?? 3,
                 overdue_reminder_after_days: settings.overdue_reminder_after_days ?? 7,
+                overdue_payment_grace_days: settings.overdue_payment_grace_days ?? 3,
                 late_fee_enabled: !!settings.late_fee_enabled,
                 late_fee_after_days: settings.late_fee_after_days ?? 10,
                 late_fee_type: settings.late_fee_type ?? "fixed",
@@ -196,6 +198,24 @@ useRegisterGuide(COLLECTION_SETTINGS_GUIDE);
                                                 }))
                                             }
                                         />
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <Label>Overdue payment grace days (SMS & Reminder deadline)</Label>
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            max={30}
+                                            value={form.overdue_payment_grace_days}
+                                            onChange={(e) =>
+                                                setForm((f) => ({
+                                                    ...f,
+                                                    overdue_payment_grace_days: parseInt(e.target.value, 10) || 1,
+                                                }))
+                                            }
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            Number of days given to clear overdue balance when reminder is sent (used in SMS: &quot;Kindly pay before {'{date}'} to prevent penalties&quot;).
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-4">

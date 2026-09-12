@@ -17,6 +17,8 @@ return [
 
     'overdue_reminder_after_days' => (int) env('FEE_OVERDUE_REMINDER_AFTER_DAYS', 7),
 
+    'overdue_payment_grace_days' => (int) env('FEE_OVERDUE_PAYMENT_GRACE_DAYS', 3),
+
     'late_fee' => [
         'enabled' => env('FEE_LATE_FEE_ENABLED', false),
         'after_days' => (int) env('FEE_LATE_FEE_AFTER_DAYS', 10),

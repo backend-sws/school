@@ -57,6 +57,7 @@ class FeePayment extends Model
         'payment_date' => 'datetime',
         'ledger_snapshot' => 'array',
         'payable_entity_id' => 'integer',
+        'created_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

@@ -42,7 +42,7 @@ const COLUMNS = [
   { key: "category", label: "Category" },
   { key: "quantity", label: "Stock" },
   { key: "min_stock", label: "Min Stock" },
-  { key: "price", label: "Price (Cost / Sell)" },
+  { key: "price", label: "Sale Price" },
   { key: "stock_value", label: "Stock Value" },
   { key: "action", label: "Actions" },
 ];
@@ -361,22 +361,19 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
                       Stock Value
                     </span>
                     <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
-                      Cost (₹)
+                      Sale (₹)
                     </span>
                   </div>
                   <h3 className="text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
                     {isLoading
                       ? "..."
-                      : `₹${Number(stats?.total_stock_value ?? 0).toLocaleString("en-IN", {
+                      : `₹${Number(stats?.total_retail_value ?? 0).toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}`}
                   </h3>
                   <p className="text-[10px] text-muted-foreground">
-                    Retail: ₹{Number(stats?.total_retail_value ?? 0).toLocaleString("en-IN", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    Estimated sale value of inventory
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-200">
@@ -557,46 +554,31 @@ useRegisterGuide(INVENTORY_ITEMS_GUIDE);
                         {Number(row.min_stock ?? 0)}
                       </TableCell>
                       <TableCell className="font-mono text-sm">
-                        <div>
-                          <span className="font-medium">
-                            ₹{Number(row.purchase_price ?? 0).toLocaleString("en-IN", {
+                        <span className="font-medium text-foreground">
+                          {Number(row.selling_price ?? 0) > 0 ? (
+                            `₹${Number(row.selling_price).toLocaleString("en-IN", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
-                            })}
-                          </span>
-                          {row.selling_price ? (
-                            <span className="text-[11px] text-muted-foreground block">
-                              Sell: ₹{Number(row.selling_price).toLocaleString("en-IN", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </span>
-                          ) : null}
-                        </div>
+                            })}`
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </span>
                       </TableCell>
                       <TableCell className="font-mono text-sm">
-                        <div>
-                          <span className="font-bold text-foreground">
-                            ₹{(
+                        <span className="font-bold text-foreground">
+                          {Number(row.selling_price ?? 0) > 0 && Number(row.current_quantity ?? 0) > 0 ? (
+                            `₹${(
                               Number(row.current_quantity ?? 0) *
-                              Number(row.purchase_price ?? row.selling_price ?? 0)
+                              Number(row.selling_price)
                             ).toLocaleString("en-IN", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
-                            })}
-                          </span>
-                          {row.selling_price && Number(row.current_quantity ?? 0) > 0 ? (
-                            <span className="text-[11px] text-muted-foreground block">
-                              Retail: ₹{(
-                                Number(row.current_quantity ?? 0) *
-                                Number(row.selling_price)
-                              ).toLocaleString("en-IN", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </span>
-                          ) : null}
-                        </div>
+                            })}`
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </span>
                       </TableCell>
                       <TableCell className="w-1/6">
                         <div className="flex items-center gap-0.5">

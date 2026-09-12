@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Head } from "@inertiajs/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { feeCollectionApi } from "@/lib/api/feeCollectionApi";
@@ -6,6 +6,9 @@ import lmsApi from "@/lib/api/lmsApi";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ModalDialog } from "@/components/shared/Modal";
 
 import {
     TableRow,
@@ -101,18 +104,73 @@ export default function DuesOverduePage() {
     const list = duesData?.list ?? duesData?.data ?? [];
     const dueDate = duesData?.due_date ?? "";
 
+    const { data: settingsRes } = useQuery({
+        queryKey: ["fee-collection-settings"],
+        queryFn: () => feeCollectionApi.getCollectionSettings(),
+    });
+    const graceDays = (settingsRes as any)?.data?.overdue_payment_grace_days ?? 3;
+
+    const [overdueModal, setOverdueModal] = useState<{
+        open: boolean;
+        studentIds?: number[];
+        studentName?: string;
+        payBeforeDate: string;
+    }>({
+        open: false,
+        payBeforeDate: "",
+    });
+
+    const openOverdueModal = (options?: { studentIds?: number[]; studentName?: string }) => {
+        const d = new Date();
+        d.setDate(d.getDate() + (Number(graceDays) || 3));
+        setOverdueModal({
+            open: true,
+            studentIds: options?.studentIds,
+            studentName: options?.studentName,
+            payBeforeDate: d.toISOString().split("T")[0],
+        });
+    };
+
+    const formattedDeadlinePreview = useMemo(() => {
+        if (!overdueModal.payBeforeDate) return "";
+        try {
+            const parts = overdueModal.payBeforeDate.split("-");
+            if (parts.length === 3) {
+                const dateObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                return dateObj.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+            }
+        } catch {
+            return overdueModal.payBeforeDate;
+        }
+        return overdueModal.payBeforeDate;
+    }, [overdueModal.payBeforeDate]);
+
     const sendReminderMutation = useMutation({
-        mutationFn: (body: { period: string; type: "due_soon" | "overdue"; student_ids?: number[] }) =>
+        mutationFn: (body: { period: string; type: "due_soon" | "overdue"; student_ids?: number[]; pay_before_date?: string }) =>
             feeCollectionApi.sendReminder(body),
         onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ["fee-dues"] });
             toast.success(data?.message ?? `Reminders sent: ${data?.data?.sent_count ?? 0}`);
+            setOverdueModal((prev) => ({ ...prev, open: false }));
         },
         onError: () => toast.error("Failed to send reminders."),
     });
 
+    const handleConfirmOverdueReminder = () => {
+        sendReminderMutation.mutate({
+            period: filter.period,
+            type: "overdue",
+            student_ids: overdueModal.studentIds,
+            pay_before_date: overdueModal.payBeforeDate,
+        });
+    };
+
     const handleBulkReminder = () => {
-        sendReminderMutation.mutate({ period: filter.period, type: filter.reminderType as "due_soon" | "overdue" });
+        if (filter.reminderType === "overdue") {
+            openOverdueModal();
+        } else {
+            sendReminderMutation.mutate({ period: filter.period, type: "due_soon" });
+        }
     };
 
     const baseFilterConfig = useFilterRegistry("dues_overdue");
@@ -427,7 +485,13 @@ export default function DuesOverduePage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => sendReminderMutation.mutate({ period: filter.period, type: filter.reminderType as "due_soon" | "overdue", student_ids: [row.user_id] })}
+                                                            onClick={() => {
+                                                                if (filter.reminderType === "overdue") {
+                                                                    openOverdueModal({ studentIds: [row.user_id], studentName: row.student_name });
+                                                                } else {
+                                                                    sendReminderMutation.mutate({ period: filter.period, type: "due_soon", student_ids: [row.user_id] });
+                                                                }
+                                                            }}
                                                             disabled={sendReminderMutation.isPending}
                                                             className="size-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
                                                         >
@@ -451,6 +515,59 @@ export default function DuesOverduePage() {
                             </DataTable>
                         </CardContent>
                     </Card>
+
+                    {overdueModal.open && (
+                        <ModalDialog
+                            open={overdueModal.open}
+                            onClose={() => setOverdueModal((prev) => ({ ...prev, open: false }))}
+                            title="Send Overdue Fee Reminder"
+                            description={`Set the payment deadline date to include in the SMS reminder for ${filter.period}.`}
+                            submitLabel={sendReminderMutation.isPending ? "Sending..." : "Send Reminder"}
+                            isLoading={sendReminderMutation.isPending}
+                            primaryDisabled={!overdueModal.payBeforeDate || sendReminderMutation.isPending}
+                            onPrimaryClick={handleConfirmOverdueReminder}
+                            secondaryLabel="Cancel"
+                            onSecondaryClick={() => setOverdueModal((prev) => ({ ...prev, open: false }))}
+                        >
+                            <div className="space-y-4 py-2">
+                                <div className="text-xs text-muted-foreground">
+                                    {overdueModal.studentName ? (
+                                        <span>Sending reminder to <strong>{overdueModal.studentName}</strong>.</span>
+                                    ) : (
+                                        <span>Sending bulk overdue reminders to <strong>{list.length}</strong> listed student(s).</span>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="pay-before-date" className="text-sm font-medium">
+                                        Pay Before Deadline <span className="text-destructive">*</span>
+                                    </Label>
+                                    <Input
+                                        id="pay-before-date"
+                                        type="date"
+                                        min={new Date().toISOString().split("T")[0]}
+                                        value={overdueModal.payBeforeDate}
+                                        onChange={(e) =>
+                                            setOverdueModal((prev) => ({ ...prev, payBeforeDate: e.target.value }))
+                                        }
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Default is {graceDays} days from today (configured in Fee Collection Settings).
+                                    </p>
+                                </div>
+
+                                <div className="rounded-lg bg-muted/60 p-3 text-xs space-y-1.5 border border-border/60">
+                                    <div className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                                        <Send className="size-3.5 text-primary" />
+                                        SMS Message Preview (DLT Approved Template):
+                                    </div>
+                                    <p className="text-foreground italic leading-relaxed">
+                                        &ldquo;Dear {overdueModal.studentName || "[Student Name]"}, your fee of Rupees Date [Amount] for {filter.period} is overdue. Kindly pay before <span className="font-semibold underline text-primary">{formattedDeadlinePreview || "[Date]"}</span> to prevent penalties. PRADYUMAN&rdquo;
+                                    </p>
+                                </div>
+                            </div>
+                        </ModalDialog>
+                    )}
                 </PageContainer>
             </TooltipProvider>
         </>

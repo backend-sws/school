@@ -424,6 +424,7 @@ class FeeDuesController extends BaseController
             'type' => 'required|string|in:due_soon,overdue',
             'student_ids' => 'nullable|array',
             'student_ids.*' => 'integer|exists:users,id',
+            'pay_before_date' => 'nullable|date',
         ]);
 
         $periodKey = $validated['period'];
@@ -432,6 +433,14 @@ class FeeDuesController extends BaseController
 
         $targetSessionId = $this->resolveSessionIdForPeriod($institutionId, $periodKey);
         $settings = $this->feeCollectionService->getSettings($institutionId);
+
+        $payBeforeDate = null;
+        if (!empty($validated['pay_before_date'])) {
+            $payBeforeDate = \Carbon\Carbon::parse($validated['pay_before_date']);
+        } else {
+            $graceDays = (int) ($settings['overdue_payment_grace_days'] ?? 3);
+            $payBeforeDate = now()->addDays($graceDays);
+        }
 
         $query = LmsClassEnrollment::query()
             ->where('role', 'student')
@@ -486,6 +495,7 @@ class FeeDuesController extends BaseController
                             $periodDues['balance'],
                             $institutionId,
                             $ledger,
+                            $payBeforeDate,
                         ));
                     }
                 } catch (\Throwable $e) {

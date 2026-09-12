@@ -159,10 +159,33 @@ class StaffService
         }
 
         if ($request->filled('role')) {
-            $roleKey = $request->role;
-            $query->whereHas('roles', function ($q) use ($roleKey) {
-                $q->withoutGlobalScope('institution_scope')->where('roles.key', $roleKey);
-            });
+            $roleKey = strtolower(trim($request->role));
+            if ($roleKey === 'teacher') {
+                $query->where(function ($q) use ($collegeId) {
+                    $q->whereHas('roles', function ($rq) {
+                        $rq->withoutGlobalScope('institution_scope')
+                           ->where(function ($r) {
+                               $r->where('roles.name', 'LIKE', '%teacher%')
+                                 ->orWhere('roles.key', 'LIKE', 'teacher%')
+                                 ->orWhere('roles.key', 'staff');
+                           });
+                    })->orWhereExists(function ($sq) use ($collegeId) {
+                        $sq->select(DB::raw(1))
+                            ->from('staff_profiles as sp')
+                            ->whereColumn('sp.user_id', 'users.id')
+                            ->when($collegeId, fn($cq) => $cq->where('sp.institution_id', $collegeId))
+                            ->where('sp.category', 232);
+                    });
+                });
+            } else {
+                $query->whereHas('roles', function ($q) use ($roleKey) {
+                    $q->withoutGlobalScope('institution_scope')
+                      ->where(function ($rq) use ($roleKey) {
+                          $rq->where('roles.key', $roleKey)
+                             ->orWhere('roles.key', 'LIKE', $roleKey . '_%');
+                      });
+                });
+            }
         }
 
         if ($request->filled('search')) {

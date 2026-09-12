@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ModalDialog } from "../shared/Modal";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,11 +12,12 @@ import { LmsClassTeacherSchema, type LmsClassTeacherFormValues as FormValues } f
 import type { AsyncSelectConfig } from "@/types";
 
 const TEACHER_ASYNC_CONFIG: AsyncSelectConfig = {
-    queryFn: (params) => UserApi.getUser({ ...params, role: "staff" }),
-    queryKey: UserQueryKeys.all,
+    queryFn: (params) => UserApi.getUser({ ...params, role: "teacher", per_page: 100 }),
+    queryKey: ["users", "teachers"],
     labelKey: "name",
     valueKey: "id",
-    extraParams: { role: "staff" },
+    perPage: 100,
+    extraParams: { role: "teacher" },
 };
 
 interface LmsClassTeacherDialogProps {
@@ -35,10 +36,17 @@ export function LmsClassTeacherDialog({ open, onClose, classId, currentTeacherId
         mode: "onChange",
     });
 
+    useEffect(() => {
+        if (open) {
+            reset({ class_teacher_id: currentTeacherId });
+        }
+    }, [open, currentTeacherId, reset]);
+
     const { mutate, isPending } = useMutation({
         mutationFn: (teacherId: number) => lmsApi.classes.update(classId, { class_teacher_id: teacherId }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["lms-class", classId] });
+            queryClient.invalidateQueries({ queryKey: ["lms-classes"] });
             reset();
             onSuccess?.();
             onClose();

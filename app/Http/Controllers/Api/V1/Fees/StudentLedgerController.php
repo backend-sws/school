@@ -243,6 +243,13 @@ class StudentLedgerController extends BaseController
                     $actualRemarks = trim(($actualRemarks ? $actualRemarks . ' | ' : '') . $discNote);
                 }
 
+                $dueAmount = max(0.0, $baseAmount - $discountAmount);
+                $advanceAmount = max(0.0, $netAmount - $dueAmount);
+                if ($advanceAmount > 0) {
+                    $advNote = 'Includes Advance: ₹' . number_format($advanceAmount, 2);
+                    $actualRemarks = trim(($actualRemarks ? $actualRemarks . ' | ' : '') . $advNote);
+                }
+
                 $primaryPayment = FeePayment::create([
                     'institution_id' => $institutionId,
                     'payment_id' => 'PAY-LEDGER-' . strtoupper(uniqid()),
@@ -269,7 +276,7 @@ class StudentLedgerController extends BaseController
 
             if ($institutionId) {
                 \App\Services\FeeCollectionService::clearCache();
-                $this->periodBalanceProjector->projectPeriod($student, $institutionId, $validated['for_month']);
+                $this->periodBalanceProjector->projectAll($student, $institutionId);
             }
 
             return $primaryPayment;
@@ -291,9 +298,16 @@ class StudentLedgerController extends BaseController
             }
         }
 
-        $message = $netAmount > 0 
-            ? 'Payment recorded and ledger updated.' 
-            : 'Concession / waiver recorded and ledger updated.';
+        $dueAmount = max(0.0, $baseAmount - $discountAmount);
+        $advanceAmount = max(0.0, $netAmount - $dueAmount);
+
+        if ($advanceAmount > 0) {
+            $message = 'Payment of ₹' . number_format($netAmount, 2) . ' recorded (₹' . number_format($advanceAmount, 2) . ' Advance credited for subsequent periods) and ledger updated.';
+        } else {
+            $message = $netAmount > 0 
+                ? 'Payment recorded and ledger updated.' 
+                : 'Concession / waiver recorded and ledger updated.';
+        }
 
         return $this->created($payment, $message);
     }
@@ -342,6 +356,7 @@ class StudentLedgerController extends BaseController
         $validated = $request->validate([
             'payment_id' => 'required|exists:fee_payments,id',
             'reason' => 'required|string|min:3|max:500',
+            'revert_batch' => 'nullable|boolean',
         ]);
 
         $institutionId = self::getActiveInstitutionId($request->user());
@@ -365,59 +380,127 @@ class StudentLedgerController extends BaseController
         $adminName = $request->user()->name ?? 'Admin';
         $timestamp = now()->format('d M Y, h:i A');
 
-        DB::transaction(function () use ($payment, $reason, $adminName, $timestamp, $student, $institutionId) {
-            $auditNote = "Reverted by {$adminName} on {$timestamp}. Reason: {$reason}";
-            $newRemarks = trim(($payment->remarks ? $payment->remarks . " | " : "") . $auditNote);
+        $revertBatch = (bool) ($validated['revert_batch'] ?? false);
+        $paymentsToRevert = collect([$payment]);
 
-            $snapshot = $payment->ledger_snapshot;
-            if (is_string($snapshot)) {
-                $snapshot = json_decode($snapshot, true) ?: [];
-            }
-            if (!is_array($snapshot)) {
-                $snapshot = [];
-            }
-            $snapshot['reversal'] = [
-                'reverted_by' => $adminName,
-                'reverted_at' => now()->toIso8601String(),
-                'reverted_at_formatted' => $timestamp,
-                'reason' => $reason,
-            ];
+        if ($revertBatch) {
+            $snapshot = is_array($payment->ledger_snapshot)
+                ? $payment->ledger_snapshot
+                : (json_decode($payment->ledger_snapshot ?? '', true) ?: []);
+            $batchId = $snapshot['advance_batch_id'] ?? null;
+            $isAdvance = str_starts_with($payment->payment_id, 'PAY-ADV-') || str_contains($payment->remarks ?? '', '[Advance:');
 
-            $payment->update([
-                'payment_status' => 'cancelled',
-                'remarks' => $newRemarks,
-                'ledger_snapshot' => $snapshot,
-            ]);
-
-            // If there's an associated discount/concession payment for the same month/receipt, cancel it as well
-            if ($payment->receipt_no) {
-                $baseReceipt = preg_replace('/-D(\d+)?$/', '', $payment->receipt_no);
-                $concessionPayments = FeePayment::where('user_id', $payment->user_id)
-                    ->where('for_month', $payment->for_month)
-                    ->where('payment_mode', 'concession')
+            if ($batchId) {
+                $batchPayments = FeePayment::where('institution_id', $payment->institution_id)
+                    ->where('user_id', $payment->user_id)
                     ->whereIn('payment_status', ['paid', 'success'])
-                    ->where(function ($q) use ($baseReceipt) {
-                        $q->where('receipt_no', 'like', "{$baseReceipt}-D%");
+                    ->where(function ($q) use ($batchId) {
+                        $q->where('ledger_snapshot->advance_batch_id', $batchId)
+                          ->orWhere('remarks', 'like', "%{$batchId}%");
                     })
                     ->get();
+                if ($batchPayments->isNotEmpty()) {
+                    $paymentsToRevert = $batchPayments;
+                }
+            } elseif ($isAdvance) {
+                $baseReceipt = preg_replace('/-(?:D)?\d+$/', '', $payment->receipt_no ?? '');
+                $query = FeePayment::where('institution_id', $payment->institution_id)
+                    ->where('user_id', $payment->user_id)
+                    ->whereIn('payment_status', ['paid', 'success'])
+                    ->where(function ($q) {
+                        $q->where('payment_id', 'like', 'PAY-ADV%')
+                          ->orWhere('remarks', 'like', '%[Advance:%');
+                    });
 
-                foreach ($concessionPayments as $cp) {
-                    $cp->update([
-                        'payment_status' => 'cancelled',
-                        'remarks' => trim(($cp->remarks ? $cp->remarks . " | " : "") . "Reverted with payment #{$payment->id}. Reason: {$reason}"),
+                if (!empty($baseReceipt)) {
+                    $query->where('receipt_no', 'like', "{$baseReceipt}%");
+                }
+
+                if (!empty($payment->created_at)) {
+                    $createdAt = $payment->created_at instanceof \Carbon\Carbon
+                        ? $payment->created_at->copy()
+                        : \Carbon\Carbon::parse($payment->created_at);
+
+                    $query->whereBetween('created_at', [
+                        $createdAt->copy()->subMinutes(30),
+                        $createdAt->copy()->addMinutes(30),
                     ]);
+                }
+
+                $batchPayments = $query->get();
+                if ($batchPayments->isNotEmpty() && $batchPayments->contains('id', $payment->id)) {
+                    $paymentsToRevert = $batchPayments;
+                }
+            }
+        }
+
+        $revertedCount = 0;
+        $totalRevertedAmount = 0.0;
+
+        DB::transaction(function () use ($paymentsToRevert, $reason, $adminName, $timestamp, $student, $institutionId, &$revertedCount, &$totalRevertedAmount) {
+            foreach ($paymentsToRevert as $p) {
+                if (in_array($p->payment_status, ['cancelled', 'reversed'], true)) {
+                    continue;
+                }
+
+                $auditNote = "Reverted by {$adminName} on {$timestamp}. Reason: {$reason}";
+                $newRemarks = trim(($p->remarks ? $p->remarks . " | " : "") . $auditNote);
+
+                $snapshot = is_array($p->ledger_snapshot)
+                    ? $p->ledger_snapshot
+                    : (json_decode($p->ledger_snapshot ?? '', true) ?: []);
+                $snapshot['reversal'] = [
+                    'reverted_by' => $adminName,
+                    'reverted_at' => now()->toIso8601String(),
+                    'reverted_at_formatted' => $timestamp,
+                    'reason' => $reason,
+                ];
+
+                $p->update([
+                    'payment_status' => 'cancelled',
+                    'remarks' => $newRemarks,
+                    'ledger_snapshot' => $snapshot,
+                ]);
+
+                $revertedCount++;
+                $totalRevertedAmount += (float) ($p->total_amount ?: $p->amount);
+
+                // Cancel associated discount/concession payment for the same month/receipt, if any
+                if ($p->receipt_no) {
+                    $baseReceipt = preg_replace('/-D(\d+)?$/', '', $p->receipt_no);
+                    $concessionPayments = FeePayment::where('user_id', $p->user_id)
+                        ->where('for_month', $p->for_month)
+                        ->where('payment_mode', 'concession')
+                        ->whereIn('payment_status', ['paid', 'success'])
+                        ->where(function ($q) use ($baseReceipt) {
+                            $q->where('receipt_no', 'like', "{$baseReceipt}-D%");
+                        })
+                        ->get();
+
+                    foreach ($concessionPayments as $cp) {
+                        $cp->update([
+                            'payment_status' => 'cancelled',
+                            'remarks' => trim(($cp->remarks ? $cp->remarks . " | " : "") . "Reverted with payment #{$p->id}. Reason: {$reason}"),
+                        ]);
+                    }
                 }
             }
 
             if ($institutionId) {
                 \App\Services\FeeCollectionService::clearCache();
                 if ($student) {
-                    $this->periodBalanceProjector->projectPeriod($student, $institutionId, $payment->for_month);
+                    $this->periodBalanceProjector->projectAll($student, $institutionId);
                 }
             }
         });
 
-        return $this->success(null, 'Payment has been reverted successfully.');
+        if ($revertedCount > 1) {
+            $msg = "Advance payment batch ({$revertedCount} months, ₹" . number_format($totalRevertedAmount, 2) . ") has been reverted successfully.";
+        } else {
+            $msg = 'Payment has been reverted successfully.';
+        }
+
+        return $this->success(null, $msg);
     }
 
     // ─── POST /fees/ledger/mark-as-paid ──────────────────────────────────
@@ -493,7 +576,7 @@ class StudentLedgerController extends BaseController
 
             if ($institutionId) {
                 \App\Services\FeeCollectionService::clearCache();
-                $this->periodBalanceProjector->projectPeriod($student, $institutionId, $validated['for_month']);
+                $this->periodBalanceProjector->projectAll($student, $institutionId);
             }
 
             return $payment;
@@ -584,12 +667,13 @@ class StudentLedgerController extends BaseController
         $receiptNo = $validated['receipt_no'] ?? ('RCP-ADV-' . strtoupper(uniqid()));
         $monthCount = count($validated['months']);
         $monthKeys = collect($validated['months'])->pluck('for_month')->implode(', ');
+        $advanceBatchId = 'ADV-BATCH-' . strtoupper(uniqid());
 
         $paymentDate = !empty($validated['payment_date'])
             ? \Carbon\Carbon::parse($validated['payment_date'])->setTimezone(config('app.timezone', 'Asia/Kolkata'))->setTimeFrom(now())
             : now();
 
-        $payments = DB::transaction(function () use ($institutionId, $student, $validated, $request, $receiptNo, $monthCount, $monthKeys, $paymentDate) {
+        $payments = DB::transaction(function () use ($institutionId, $student, $validated, $request, $receiptNo, $monthCount, $monthKeys, $paymentDate, $advanceBatchId) {
             $payments = [];
 
             foreach ($validated['months'] as $idx => $monthItem) {
@@ -622,6 +706,14 @@ class StudentLedgerController extends BaseController
                     $monthOnline = round(((float) ($validated['online_amount'] ?? 0)) * $ratio, 2);
                 }
 
+                $batchSnapshot = [
+                    'advance_batch_id' => $advanceBatchId,
+                    'base_receipt_no' => $receiptNo,
+                    'batch_months' => $monthKeys,
+                    'batch_month_count' => $monthCount,
+                    'batch_total' => $totalAmount,
+                ];
+
                 if ($monthDiscount > 0) {
                     $advRemarks = trim($validated['discount_reason'] ?? 'Discount applied during advance payment');
                     if (!empty($validated['remarks'])) {
@@ -643,6 +735,8 @@ class StudentLedgerController extends BaseController
                         'collected_by' => $request->user()->id,
                         'receipt_no' => $receiptNo . ($monthCount > 1 ? '-D' . ($idx + 1) : '-D'),
                         'remarks' => $advRemarks,
+                        'payable_entity_type' => 'advance_bulk_collection',
+                        'ledger_snapshot' => $batchSnapshot,
                     ]);
                 }
 
@@ -670,13 +764,15 @@ class StudentLedgerController extends BaseController
                         'cash_amount' => $monthCash,
                         'online_amount' => $monthOnline,
                         'online_transaction_id' => $validated['online_transaction_id'] ?? null,
+                        'payable_entity_type' => 'advance_bulk_collection',
+                        'ledger_snapshot' => $batchSnapshot,
                     ]);
                 }
+            }
 
-                if ($institutionId) {
-                    \App\Services\FeeCollectionService::clearCache();
-                    $this->periodBalanceProjector->projectPeriod($student, $institutionId, $monthKey);
-                }
+            if ($institutionId) {
+                \App\Services\FeeCollectionService::clearCache();
+                $this->periodBalanceProjector->projectAll($student, $institutionId);
             }
 
             return $payments;

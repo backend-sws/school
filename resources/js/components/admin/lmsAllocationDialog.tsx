@@ -27,10 +27,12 @@ const SUBJECT_ASYNC_CONFIG: AsyncSelectConfig = {
 };
 
 const INSTRUCTOR_ASYNC_CONFIG: AsyncSelectConfig = {
-  queryFn: (params) => UserApi.getUser(params),
-  queryKey: UserQueryKeys.all,
+  queryFn: (params) => UserApi.getUser({ ...params, role: "teacher", per_page: 100 }),
+  queryKey: ["users", "teachers"],
   labelKey: "name",
   valueKey: "id",
+  perPage: 100,
+  extraParams: { role: "teacher" },
 };
 
 interface LmsAllocationDialogProps {

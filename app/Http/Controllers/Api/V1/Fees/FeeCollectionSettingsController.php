@@ -46,6 +46,7 @@ class FeeCollectionSettingsController extends BaseController
             'fee_due_day_of_month' => 'nullable|integer|min:1|max:28',
             'reminder_days_before_due' => 'nullable|integer|min:0|max:31',
             'overdue_reminder_after_days' => 'nullable|integer|min:0|max:90',
+            'overdue_payment_grace_days' => 'nullable|integer|min:1|max:30',
             'late_fee_enabled' => 'nullable|boolean',
             'late_fee_after_days' => 'nullable|integer|min:0|max:90',
             'late_fee_type' => 'nullable|string|in:fixed,percent',

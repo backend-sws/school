@@ -62,6 +62,8 @@ class SendFeeOverdueRemindersJob implements ShouldQueue
                         $matrixResult
                     );
                     $ledger = $feeCollectionService->ledgerBreakdownForReminder($periodDues);
+                    $graceDays = (int) ($settings['overdue_payment_grace_days'] ?? 3);
+                    $payBeforeDate = now()->addDays($graceDays);
                     $recipients = $recipientResolver->recipientsForStudent($student);
                     foreach ($recipients as $notifiable) {
                         $notifiable->notify(new FeeOverdueReminderNotification(
@@ -72,6 +74,7 @@ class SendFeeOverdueRemindersJob implements ShouldQueue
                             (float) ($periodDues['balance'] ?? 0),
                             $institutionId,
                             $ledger,
+                            $payBeforeDate,
                         ));
                     }
                 }

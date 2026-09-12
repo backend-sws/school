@@ -67,6 +67,7 @@ class FeeCollectionService
             'fee_due_day_of_month' => (int) ($rows->get('fee_due_day_of_month') ?? $defaults['due_day_of_month'] ?? 5),
             'reminder_days_before_due' => (int) ($rows->get('reminder_days_before_due') ?? $defaults['reminder_days_before_due'] ?? 3),
             'overdue_reminder_after_days' => (int) ($rows->get('overdue_reminder_after_days') ?? $defaults['overdue_reminder_after_days'] ?? 7),
+            'overdue_payment_grace_days' => (int) ($rows->get('overdue_payment_grace_days') ?? $defaults['overdue_payment_grace_days'] ?? 3),
             'late_fee_enabled' => filter_var($rows->get('late_fee_enabled', $defaults['late_fee']['enabled'] ?? false), FILTER_VALIDATE_BOOLEAN),
             'late_fee_after_days' => (int) ($rows->get('late_fee_after_days') ?? $defaults['late_fee']['after_days'] ?? 10),
             'late_fee_type' => $rows->get('late_fee_type', $defaults['late_fee']['type'] ?? 'fixed'),
@@ -784,6 +785,14 @@ class FeeCollectionService
                 'payment_mode'         => $primaryPayment?->payment_mode,
                 'payment_date'         => $primaryPayment?->payment_date?->toDateString(),
                 'remarks'              => $monthRemarks ?: null,
+                'is_advance'           => str_starts_with($primaryPayment?->payment_id ?? '', 'PAY-ADV-') || str_contains($monthRemarks ?? '', '[Advance:'),
+                'advance_batch_id'     => is_array($primaryPayment?->ledger_snapshot)
+                    ? ($primaryPayment->ledger_snapshot['advance_batch_id'] ?? null)
+                    : (
+                        (str_starts_with($primaryPayment?->payment_id ?? '', 'PAY-ADV-') || str_contains($monthRemarks ?? '', '[Advance:'))
+                            ? preg_replace('/-(?:D)?\d+$/', '', $primaryPayment?->receipt_no ?? '')
+                            : null
+                    ),
                 'status'               => $balance <= 0 ? 'paid' : ($paidInMonth > 0 || $monthlyConcession > 0 ? 'partial' : 'unpaid'),
                 'reverted_payments'    => $formattedCancelled->filter(fn($cp) => $cp['for_month'] === $monthKey)->values()->all(),
                 'ad_hoc_charges'       => $adHocCharges->map(fn($c) => [

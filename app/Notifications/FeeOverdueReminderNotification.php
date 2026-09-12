@@ -28,6 +28,7 @@ class FeeOverdueReminderNotification extends Notification implements ShouldQueue
         public float $balanceAmount,
         public int $institutionId,
         public array $ledgerBreakdown = [],
+        public ?Carbon $payBeforeDate = null,
     ) {
     }
 
@@ -92,9 +93,12 @@ class FeeOverdueReminderNotification extends Notification implements ShouldQueue
             }
         }
 
-        $mail->line('**Outstanding balance:** ₹' . number_format($this->balanceAmount, 2))
-            ->action('Pay Now', url('/fees/payments'))
-            ->line('Please clear the outstanding amount immediately to avoid any inconvenience.');
+        $mail->line('**Outstanding balance:** ₹' . number_format($this->balanceAmount, 2));
+        if ($this->payBeforeDate) {
+            $mail->line('Kindly clear the outstanding amount before **' . $this->payBeforeDate->format('d M Y') . '** to avoid penalties.');
+        } else {
+            $mail->line('Please clear the outstanding amount immediately to avoid any inconvenience.');
+        }
 
         return $mail;
     }
@@ -121,12 +125,13 @@ class FeeOverdueReminderNotification extends Notification implements ShouldQueue
                 'student_id' => $this->student->id,
                 'period' => $this->periodKey,
                 'balance_amount' => $this->balanceAmount,
+                'pay_before_date' => $this->payBeforeDate?->toDateString(),
             ]);
     }
 
     public function toSms(object $notifiable): array
     {
-        $vars = $this->templateVariables();
+        $vars = $this->templateVariables('sms');
         $result = NotificationTemplateRenderer::render('fee_overdue_reminder', 'sms', $vars);
 
         return [
@@ -142,7 +147,7 @@ class FeeOverdueReminderNotification extends Notification implements ShouldQueue
 
     public function toWhatsapp(object $notifiable): array
     {
-        $vars = $this->templateVariables();
+        $vars = $this->templateVariables('whatsapp');
         $result = NotificationTemplateRenderer::render('fee_overdue_reminder', 'whatsapp', $vars);
 
         return [
@@ -159,16 +164,26 @@ class FeeOverdueReminderNotification extends Notification implements ShouldQueue
     /**
      * @return array<string, string>
      */
-    private function templateVariables(): array
+    private function templateVariables(string $channel = 'sms'): array
     {
         $L = $this->ledgerBreakdown;
         $fmt = static fn (float $v): string => number_format($v, 2);
+
+        // For SMS, DLT template says: "is overdue. Kindly pay before {date} to prevent penalties."
+        // Therefore {date} must be the future payment deadline (payBeforeDate), not the expired past dueDate.
+        // For WhatsApp, the template says: "(was due {date})", which refers to the past dueDate.
+        if ($channel === 'sms') {
+            $effectiveDate = $this->payBeforeDate 
+                ?? ($this->dueDate->isPast() ? now()->addDays(3) : $this->dueDate);
+        } else {
+            $effectiveDate = $this->dueDate;
+        }
 
         return [
             'amount' => $fmt($this->balanceAmount),
             'name' => $this->student->name,
             'period' => $this->periodKey,
-            'date' => $this->dueDate->format('d M Y'),
+            'date' => $effectiveDate->format('d M Y'),
             'previous_dues' => $fmt((float) ($L['previous_dues'] ?? 0)),
             'period_fee' => $fmt((float) ($L['period_fee'] ?? $this->expectedAmount)),
             'late_fee' => $fmt((float) ($L['late_fee'] ?? 0)),

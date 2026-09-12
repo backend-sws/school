@@ -13,11 +13,12 @@ import { toast } from "sonner";
 import type { AsyncSelectConfig } from "@/types";
 
 const INSTRUCTOR_ASYNC_CONFIG: AsyncSelectConfig = {
-    queryFn: (params) => UserApi.getUser({ ...params, role: "staff" }),
-    queryKey: UserQueryKeys.all,
+    queryFn: (params) => UserApi.getUser({ ...params, role: "teacher", per_page: 100 }),
+    queryKey: ["users", "teachers"],
     labelKey: "name",
     valueKey: "id",
-    extraParams: { role: "staff" },
+    perPage: 100,
+    extraParams: { role: "teacher" },
 };
 
 interface LmsSubjectInstructorDialogProps {

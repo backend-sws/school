@@ -51,4 +51,48 @@ class StudentFeePeriodBalanceProjector
             $payload
         );
     }
+
+    public function projectAll(User $student, int $institutionId, ?int $sessionId = null): void
+    {
+        $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId, $sessionId);
+        if (isset($matrixResult['error'])) {
+            return;
+        }
+
+        $sessionId = $sessionId ?: $student->studentProfile?->session_id;
+        if (!$sessionId) {
+            return;
+        }
+
+        $frequency = (string) ($matrixResult['frequency'] ?? 'monthly');
+
+        foreach ($matrixResult['matrix'] ?? [] as $row) {
+            $periodKey = $row['month_key'] ?? null;
+            if (!$periodKey) {
+                continue;
+            }
+
+            $payload = [
+                'opening_balance' => (float) ($row['previous_dues'] ?? 0),
+                'period_fee' => (float) ($row['monthly_total'] ?? 0),
+                'discount' => (float) ($row['discount'] ?? 0),
+                'late_fee' => (float) ($row['late_fee'] ?? 0),
+                'total_payable' => (float) ($row['total_payable'] ?? 0),
+                'paid_amount' => (float) ($row['paid_amount'] ?? 0),
+                'closing_balance' => (float) ($row['balance'] ?? 0),
+                'frequency' => $frequency,
+            ];
+            $payload['version_hash'] = md5(json_encode($payload));
+
+            StudentFeePeriodBalance::updateOrCreate(
+                [
+                    'institution_id' => $institutionId,
+                    'user_id' => $student->id,
+                    'session_id' => $sessionId,
+                    'period_key' => $periodKey,
+                ],
+                $payload
+            );
+        }
+    }
 }

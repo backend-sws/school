@@ -39,15 +39,6 @@ export const feeCollectionSchema = z.object({
         });
     }
 
-    // Amount collected cannot exceed net payable
-    if (effectivePaid > netDue) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Amount cannot exceed net due of ₹${netDue.toLocaleString()}`,
-            path: ["paid_amount"],
-        });
-    }
-
     // Split payment validation
     if (payment_mode === "split" && effectivePaid > 0) {
         if (Math.abs((cash_amount + online_amount) - effectivePaid) > 0.01) {

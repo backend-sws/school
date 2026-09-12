@@ -31,21 +31,50 @@ class UserController extends BaseController
         $query = User::with(['roles', 'studentProfile.stream']);
 
         // 0. Scope to current institution via users.institution_id
-        $institutionId = $request->input('institution_id', config('ems.default_institution_id'));
+        $institutionId = $request->input('institution_id');
+        if (!$institutionId && auth()->check()) {
+            $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId(auth()->user()) 
+                ?? auth()->user()->institution_id;
+        }
+        if (!$institutionId) {
+            $institutionId = config('ems.default_institution_id');
+        }
+
         if ($institutionId) {
             $query->where('users.institution_id', $institutionId);
-            
-            if ($request->filled('role')) {
-                $query->whereHas('roles', function ($q) use ($request) {
-                    $q->where('roles.key', $request->role);
+        }
+
+        if ($request->filled('role')) {
+            $role = strtolower(trim($request->role));
+            if ($role === 'staff') {
+                $query->where(function ($sq) {
+                    $sq->whereHas('roles', function ($q) {
+                        $q->withoutGlobalScope('institution_scope')
+                          ->whereNotIn('roles.key', ['super_admin', 'student', 'candidate', 'parent']);
+                    })->orWhereHas('staffProfile');
+                });
+            } elseif ($role === 'teacher') {
+                $query->where(function ($sq) {
+                    $sq->whereHas('roles', function ($q) {
+                        $q->withoutGlobalScope('institution_scope')
+                          ->where(function ($rq) {
+                              $rq->where('roles.name', 'LIKE', '%teacher%')
+                                 ->orWhere('roles.key', 'LIKE', 'teacher%')
+                                 ->orWhere('roles.key', 'staff');
+                          });
+                    })->orWhereHas('staffProfile', function ($sp) {
+                        $sp->where('category', 232); // Teaching
+                    });
+                });
+            } else {
+                $query->whereHas('roles', function ($q) use ($role) {
+                    $q->withoutGlobalScope('institution_scope')
+                      ->where(function ($rq) use ($role) {
+                          $rq->where('roles.key', $role)
+                             ->orWhere('roles.key', 'LIKE', $role . '_%');
+                      });
                 });
             }
-        } elseif ($request->filled('role')) {
-            // No institution scope — just filter by role (fallback for super-admin views)
-            $roleKey = $request->role;
-            $query->whereHas('roles', function ($q) use ($roleKey) {
-                $q->where('key', $roleKey);
-            });
         }
 
         // 1. Filter by Status

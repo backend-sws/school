@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { usePage } from "@inertiajs/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getInstitutionLabels } from "@/constants/scopeTypeDisplay";
@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar, Pencil, Zap, Layers, Plus, CheckSquare
+    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar, Pencil, Zap, Layers, Plus, CheckSquare, ChevronLeft, ChevronRight, MoveHorizontal
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -575,6 +575,83 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
         : [];
     const admissionFeeColumns = MATRIX_ADMISSION_COLUMNS;
 
+    const activeAdvanceRows = useMemo(() => {
+        return matrix.filter((r: any) =>
+            Boolean(
+                r.payment_id &&
+                (r.is_advance ||
+                    (r.remarks && r.remarks.includes("[Advance:")) ||
+                    (r.receipt_no && r.receipt_no.includes("RCP-ADV")))
+            )
+        );
+    }, [matrix]);
+
+    const hasActiveAdvance = activeAdvanceRows.length > 0;
+    const latestAdvanceRow = activeAdvanceRows[activeAdvanceRows.length - 1] ?? null;
+    const activeAdvanceMonthsCount = activeAdvanceRows.length;
+
+    // ─── Table Horizontal Drag-To-Scroll ─────────────────────────────────────
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
+    const isDragActiveRef = useRef(false);
+    const hasDraggedRef = useRef(false);
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.button !== 0) return;
+        const target = e.target as HTMLElement;
+        if (target.closest('button, a, input, select, textarea, [role="button"], [role="menuitem"], [data-no-drag]')) {
+            return;
+        }
+        if (!scrollContainerRef.current) return;
+        isDragActiveRef.current = true;
+        setIsDragging(true);
+        hasDraggedRef.current = false;
+        startXRef.current = e.pageX - scrollContainerRef.current.offsetLeft;
+        scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDragActiveRef.current || !scrollContainerRef.current) return;
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = (x - startXRef.current) * 1.35;
+        if (Math.abs(walk) > 4) {
+            hasDraggedRef.current = true;
+        }
+        scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
+    };
+
+    const handleMouseUp = () => {
+        isDragActiveRef.current = false;
+        setIsDragging(false);
+    };
+
+    useEffect(() => {
+        const onGlobalMouseUp = () => {
+            if (isDragActiveRef.current) {
+                isDragActiveRef.current = false;
+                setIsDragging(false);
+            }
+        };
+        window.addEventListener("mouseup", onGlobalMouseUp);
+        return () => window.removeEventListener("mouseup", onGlobalMouseUp);
+    }, []);
+
+    const handleClickCapture = (e: React.MouseEvent) => {
+        if (hasDraggedRef.current) {
+            e.stopPropagation();
+            e.preventDefault();
+            hasDraggedRef.current = false;
+        }
+    };
+
+    const scrollTable = (direction: "left" | "right") => {
+        if (!scrollContainerRef.current) return;
+        const amount = direction === "left" ? -380 : 380;
+        scrollContainerRef.current.scrollBy({ left: amount, behavior: "smooth" });
+    };
+
     useEffect(() => {
         setPhotoError(false);
     }, [studentPhoto]);
@@ -955,12 +1032,51 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                 {/* ─── Financial Matrix ────────────────────────────────────── */}
                 <div className="max-w-[1400px] mx-auto w-full space-y-3">
                     <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-2">
-                            <Receipt className="size-4 text-muted-foreground" />
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Financial Matrix</h3>
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <Receipt className="size-4 text-muted-foreground" />
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Financial Matrix</h3>
+                            </div>
+                            <div className="hidden md:flex items-center gap-1.5 bg-muted/60 border border-border/80 px-2.5 py-1 rounded-lg text-[10px] text-muted-foreground font-medium shadow-2xs">
+                                <MoveHorizontal className="size-3 text-primary" />
+                                <span>Slide middle columns with mouse</span>
+                                <div className="flex items-center gap-1 ml-1.5 border-l pl-1.5 border-border/60">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-5 rounded hover:bg-background text-foreground cursor-pointer"
+                                        onClick={() => scrollTable("left")}
+                                        title="Slide Left"
+                                    >
+                                        <ChevronLeft className="size-3" />
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-5 rounded hover:bg-background text-foreground cursor-pointer"
+                                        onClick={() => scrollTable("right")}
+                                        title="Slide Right"
+                                    >
+                                        <ChevronRight className="size-3" />
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                         {!isStudentPortal && (
                             <div className="flex items-center gap-2">
+                                {hasActiveAdvance && canRevertPayment && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider gap-1.5 border-rose-300 text-rose-600 hover:bg-rose-50 shadow-sm transition-all"
+                                        onClick={() => setRevertingRow(latestAdvanceRow)}
+                                    >
+                                        <RotateCcw className="size-3 text-rose-500" />
+                                        Revert Advance ({activeAdvanceMonthsCount} Mo)
+                                    </Button>
+                                )}
                                 <Button
                                     variant="outline"
                                     size="sm"
@@ -975,26 +1091,47 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                     </div>
 
                     <Card className="rounded-xl border shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <Table className="border-collapse">
+                        <div
+                            ref={scrollContainerRef}
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onClickCapture={handleClickCapture}
+                            className={cn(
+                                "overflow-x-auto",
+                                isDragging ? "cursor-grabbing select-none" : "cursor-grab",
+                                "[&::-webkit-scrollbar]:h-2.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/25 hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/40 [&::-webkit-scrollbar-track]:bg-muted/30"
+                            )}
+                        >
+                            <Table containerClassName="!overflow-visible" className="border-separate border-spacing-0 min-w-full">
                                 <TableHeader>
-                                    <TableRow className="bg-muted hover:bg-muted border-none">
+                                    <TableRow className="bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-900 border-none">
                                         {/* Static leading columns */}
                                         <Each
                                             of={MATRIX_STATIC_COLUMNS}
                                             keyExtractor={(c) => c.key}
-                                            render={(col) => (
-                                                <TableHead className={cn("py-4 font-bold uppercase tracking-wider text-[10px] border-r", col.bgClass, col.align === "left" ? "px-6" : "text-right")}>
-                                                    {col.label}
-                                                </TableHead>
-                                            )}
+                                            render={(col) => {
+                                                const isMonth = col.key === "month";
+                                                return (
+                                                    <TableHead
+                                                        className={cn(
+                                                            "py-4 font-bold uppercase tracking-wider text-[10px] border-r border-b",
+                                                            col.bgClass,
+                                                            col.align === "left" ? "px-4" : "text-right",
+                                                            isMonth && "sticky left-0 z-30 w-[150px] min-w-[150px] max-w-[150px] bg-slate-100 dark:bg-slate-900 border-r shadow-[3px_0_8px_-2px_rgba(0,0,0,0.08)]"
+                                                        )}
+                                                    >
+                                                        {col.label}
+                                                    </TableHead>
+                                                );
+                                            }}
                                         />
                                         {/* Admission fee columns */}
                                         <Each
                                             of={admissionFeeColumns}
                                             keyExtractor={(c) => c.key}
                                             render={(col) => (
-                                                <TableHead className={cn("py-4 text-right font-bold uppercase tracking-wider text-[10px] border-r", col.bgClass)}>
+                                                <TableHead className={cn("py-4 text-right font-bold uppercase tracking-wider text-[10px] border-r border-b", col.bgClass)}>
                                                     {col.label}
                                                 </TableHead>
                                             )}
@@ -1004,23 +1141,31 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                             of={allParticulars}
                                             keyExtractor={(p) => p}
                                             render={(p) => (
-                                                <TableHead className="py-4 text-right font-bold uppercase tracking-wider text-[10px] border-r">{p}</TableHead>
+                                                <TableHead className="py-4 text-right font-bold uppercase tracking-wider text-[10px] border-r border-b">{p}</TableHead>
                                             )}
                                         />
                                         {/* Static trailing columns */}
                                         <Each
                                             of={MATRIX_SUMMARY_COLUMNS}
                                             keyExtractor={(c) => c.key}
-                                            render={(col) => (
-                                                <TableHead className={cn(
-                                                    "py-4 font-bold uppercase tracking-wider text-[10px]",
-                                                    col.key !== "action" && "border-r",
-                                                    col.bgClass, col.textClass,
-                                                    col.align === "center" ? "text-center" : "text-right"
-                                                )}>
-                                                    {col.label}
-                                                </TableHead>
-                                            )}
+                                            render={(col) => {
+                                                const isAction = col.key === "action";
+                                                const isReceipts = col.key === "receipts";
+                                                return (
+                                                    <TableHead
+                                                        className={cn(
+                                                            "py-4 font-bold uppercase tracking-wider text-[10px] border-b",
+                                                            col.key !== "action" && "border-r",
+                                                            col.bgClass, col.textClass,
+                                                            col.align === "center" ? "text-center" : "text-right",
+                                                            isAction && "sticky right-0 z-30 w-[110px] min-w-[110px] max-w-[110px] bg-slate-100 dark:bg-slate-900",
+                                                            isReceipts && "sticky right-[110px] z-30 w-[160px] min-w-[160px] max-w-[160px] bg-slate-100 dark:bg-slate-900 border-l border-r shadow-[-3px_0_8px_-2px_rgba(0,0,0,0.08)]"
+                                                        )}
+                                                    >
+                                                        {col.label}
+                                                    </TableHead>
+                                                );
+                                            }}
                                         />
                                     </TableRow>
                                 </TableHeader>
@@ -1031,7 +1176,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                         render={(row: any) => (
                                             <TableRow className="group border-b last:border-0 hover:bg-muted/30 transition-colors">
                                                 {/* Month */}
-                                                <TableCell className="px-6 py-4 border-r">
+                                                <TableCell className="sticky left-0 z-20 w-[150px] min-w-[150px] max-w-[150px] bg-background group-hover:bg-muted/50 px-4 py-4 border-r border-b shadow-[3px_0_8px_-2px_rgba(0,0,0,0.08)] transition-colors">
                                                     <div className="font-bold text-sm">{row.month_name}</div>
                                                     {row.due_date && (
                                                         <div className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Due: {row.due_date}</div>
@@ -1039,7 +1184,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                     {row.remarks && (
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
-                                                                <div className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded bg-muted/60 border text-muted-foreground text-[9px] font-medium max-w-[150px] truncate cursor-help">
+                                                                <div className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded bg-muted/60 border text-muted-foreground text-[9px] font-medium max-w-[130px] truncate cursor-help">
                                                                     <span className="font-semibold text-foreground">Note:</span>
                                                                     <span className="truncate">{row.remarks}</span>
                                                                 </div>
@@ -1088,8 +1233,27 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                     )}
                                                 </TableCell>
                                                 {/* Previous Dues */}
-                                                <TableCell className="text-right py-4 tabular-nums text-sm font-semibold text-amber-600 bg-amber-500/[0.02] border-r">
-                                                    {formatCurrency(row.previous_dues)}
+                                                <TableCell className={cn(
+                                                    "text-right py-4 tabular-nums text-sm font-semibold border-r border-b",
+                                                    Number(row.previous_dues) < 0 
+                                                        ? "text-emerald-600 bg-emerald-500/[0.04]" 
+                                                        : "text-amber-600 bg-amber-500/[0.02]"
+                                                )}>
+                                                    {Number(row.previous_dues) < 0 ? (
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span className="inline-flex items-center gap-1 cursor-help justify-end font-bold">
+                                                                    <span>{formatCurrency(row.previous_dues)}</span>
+                                                                    <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 border border-emerald-300 px-1 py-0.2 rounded leading-tight">
+                                                                        Adv
+                                                                    </span>
+                                                                </span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>Advance credit adjusted from previous excess payment</TooltipContent>
+                                                        </Tooltip>
+                                                    ) : (
+                                                        formatCurrency(row.previous_dues)
+                                                    )}
                                                 </TableCell>
                                                 {/* Admission fee columns */}
                                                 <Each
@@ -1101,7 +1265,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                         const isOtherFeesBreakdown = col.key === "other_fees" && row.other_fees_details && row.other_fees_details.length > 0;
 
                                                         return (
-                                                            <TableCell className="text-right py-4 tabular-nums text-sm font-medium border-r opacity-80">
+                                                            <TableCell className="text-right py-4 tabular-nums text-sm font-medium border-r border-b opacity-80">
                                                                 {isHostelBreakdown && Number(val) > 0 ? (
                                                                     <Tooltip>
                                                                         <TooltipTrigger asChild>
@@ -1187,7 +1351,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                         const isMonthlyFee = pName.toLowerCase().includes("monthly") || pName.toLowerCase() === "fees" || pName.toLowerCase() === "tuition" || pName.toLowerCase() === "tuition fee";
 
                                                         return (
-                                                            <TableCell className={cn("text-right py-4 tabular-nums text-sm font-medium border-r opacity-70", pValue < 0 && "text-emerald-600 font-bold opacity-100")}>
+                                                            <TableCell className={cn("text-right py-4 tabular-nums text-sm font-medium border-r border-b opacity-70", pValue < 0 && "text-emerald-600 font-bold opacity-100")}>
                                                                 {pValue !== 0 ? (
                                                                     isMonthlyFee && !isStudentPortal ? (
                                                                         <div className="inline-flex items-center justify-end gap-1.5 group/monthly">
@@ -1298,7 +1462,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
 
                                                         const COLUMN_RENDERERS: Record<string, () => React.ReactNode> = {
                                                             receipts: () => (
-                                                                <TableCell className="text-center py-4 border-r">
+                                                                <TableCell className="sticky right-[110px] z-20 w-[160px] min-w-[160px] max-w-[160px] bg-background group-hover:bg-muted/50 text-center py-4 border-l border-r border-b shadow-[-3px_0_8px_-2px_rgba(0,0,0,0.08)] transition-colors">
                                                                     <div className="flex items-center justify-center gap-1.5">
                                                                         {isStudentPortal ? (
                                                                             row.payment_id ? (
@@ -1331,7 +1495,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                 const canPay = !hasPayment && Number(row.balance || 0) > 0;
 
                                                                 return (
-                                                                    <TableCell className="text-center py-4">
+                                                                    <TableCell className="sticky right-0 z-20 w-[110px] min-w-[110px] max-w-[110px] bg-background group-hover:bg-muted/50 text-center py-4 border-b transition-colors">
                                                                         {canPay ? (
                                                                             isStudentPortal ? (
                                                                                 <Button
@@ -1395,6 +1559,8 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                                     <TooltipContent>
                                                                                         {Number(row.balance || 0) > 0
                                                                                             ? "Payment recorded (Remaining balance carried forward to next month)"
+                                                                                            : (!row.payment_id && Number(row.paid_amount || 0) === 0 && row.status === "paid")
+                                                                                            ? "Covered by Advance Payment Credit"
                                                                                             : "Paid in full"}
                                                                                     </TooltipContent>
                                                                                 </Tooltip>
@@ -1424,6 +1590,14 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                         const rawVal = col.rowField ? row[col.rowField] : null;
                                                         const formatter = FORMAT_DISPLAY[col.format ?? ""];
                                                         let display: React.ReactNode = formatter ? formatter(rawVal) : (rawVal || "—");
+
+                                                        if (col.key === "payment_mode" && !rawVal && row.status === "paid" && Number(row.balance || 0) <= 0) {
+                                                            display = (
+                                                                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                                                                    Adv. Credit
+                                                                </span>
+                                                            );
+                                                        }
 
                                                         if (col.key === "receipt_no" && !rawVal && row.reverted_payments?.length > 0) {
                                                             const firstRev = row.reverted_payments[0];
@@ -1506,7 +1680,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
 
                                                         return (
                                                             <TableCell className={cn(
-                                                                "py-4 tabular-nums text-sm font-bold border-r",
+                                                                "py-4 tabular-nums text-sm font-bold border-r border-b",
                                                                 col.bgClass && `${col.bgClass.replace('/5', '/[0.02]')}`,
                                                                 col.textClass,
                                                                 col.align === "center" ? "text-center" : "text-right"
@@ -1520,14 +1694,16 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                         )}
                                     />
                                     {/* Grand Total Row */}
-                                    <TableRow className="bg-muted/70 hover:bg-muted/70 border-t-2">
-                                        <TableCell className="px-6 py-4 font-black text-sm border-r">Grand Total</TableCell>
-                                        <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r bg-amber-500/[0.02]">—</TableCell>
+                                    <TableRow className="bg-muted/80 hover:bg-muted/80 border-t-2">
+                                        <TableCell className="sticky left-0 z-20 w-[150px] min-w-[150px] max-w-[150px] bg-muted/95 group-hover:bg-muted px-4 py-4 font-black text-sm border-r border-b shadow-[3px_0_8px_-2px_rgba(0,0,0,0.08)]">
+                                            Grand Total
+                                        </TableCell>
+                                        <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b bg-amber-500/[0.02]">—</TableCell>
                                         <Each
                                             of={admissionFeeColumns}
                                             keyExtractor={(col) => `total-${col.key}`}
                                             render={(col) => (
-                                                <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r">
+                                                <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b">
                                                     {formatCurrency(matrix.reduce((sum: number, r: any) => sum + Number(r[col.rowField!] ?? 0), 0))}
                                                 </TableCell>
                                             )}
@@ -1536,7 +1712,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                             of={allParticulars}
                                             keyExtractor={(p) => `total-${p}`}
                                             render={(pName) => (
-                                                <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r">
+                                                <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b">
                                                     {formatCurrency(matrix.reduce((sum: number, row: any) => {
                                                         const ep = (row.expected_particulars || []).find((ep: any) => ep.name === pName);
                                                         return sum + (ep?.amount ?? 0);
@@ -1552,7 +1728,18 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                 const isNonSummable = !col.rowField || col.format === "text" || NON_SUMMABLE.has(col.key);
 
                                                 if (isNonSummable) {
-                                                    return <TableCell className={cn("py-4 border-r", col.key === "action" && "border-r-0")} />;
+                                                    const isAction = col.key === "action";
+                                                    const isReceipts = col.key === "receipts";
+                                                    return (
+                                                        <TableCell
+                                                            className={cn(
+                                                                "py-4 border-b",
+                                                                col.key !== "action" && "border-r",
+                                                                isAction && "sticky right-0 z-20 w-[110px] min-w-[110px] max-w-[110px] bg-muted/95 group-hover:bg-muted",
+                                                                isReceipts && "sticky right-[110px] z-20 w-[160px] min-w-[160px] max-w-[160px] bg-muted/95 group-hover:bg-muted border-l border-r shadow-[-3px_0_8px_-2px_rgba(0,0,0,0.08)]"
+                                                            )}
+                                                        />
+                                                    );
                                                 }
 
                                                 let total = 0;
@@ -1579,7 +1766,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
 
                                                 return (
                                                     <TableCell className={cn(
-                                                        "text-right py-4 tabular-nums text-sm font-black border-r",
+                                                        "text-right py-4 tabular-nums text-sm font-black border-r border-b",
                                                         col.bgClass && `${col.bgClass.replace('/5', '/[0.04]')}`,
                                                         col.textClass
                                                     )}>
@@ -1699,6 +1886,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                         onClose={() => setRevertingRow(null)}
                         student={student}
                         paymentRow={revertingRow}
+                        matrix={matrix}
                         onSuccess={() => {
                             queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
                             queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });

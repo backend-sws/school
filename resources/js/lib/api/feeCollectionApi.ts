@@ -7,6 +7,7 @@ export type FeeCollectionSettings = {
   fee_due_day_of_month: number;
   reminder_days_before_due: number;
   overdue_reminder_after_days: number;
+  overdue_payment_grace_days?: number;
   late_fee_enabled: boolean;
   late_fee_after_days: number;
   late_fee_type: string;
@@ -93,6 +94,7 @@ export const feeCollectionApi = {
     period: string;
     type: "due_soon" | "overdue";
     student_ids?: number[];
+    pay_before_date?: string;
   }) =>
     api.post<{ data?: { sent_count: number }; message?: string }>(
       `${BASE}/dues/send-reminder`,
