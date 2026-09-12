@@ -46,6 +46,7 @@ return [
             'timetable',
             'examination',
             'hostel',
+            'gate_security',
             // Specific Modules
             'admission_cell',
             'office_registry',
@@ -74,6 +75,7 @@ return [
             'timetable',
             'examination',
             'hostel',
+            'gate_security',
             // Specific Modules
             'admission_cell',
             'office_registry',

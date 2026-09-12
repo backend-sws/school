@@ -441,6 +441,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         // ==========================================================================
+        // Gate Security & Visitor Pass
+        // ==========================================================================
+        Route::middleware(config('route_permissions.middleware.gate_security'))->group(function () {
+            Route::prefix('gate-security')->name('gate-security.')->group(function () {
+                Route::get('/', fn() => Inertia::render('gate-security/index'))->name('index');
+                Route::get('/visitors', fn() => Inertia::render('gate-security/index'))->name('visitors');
+            });
+        });
+
+        // ==========================================================================
         // Hostel
         // ==========================================================================
         Route::middleware(config('route_permissions.middleware.hostel'))->group(function () {

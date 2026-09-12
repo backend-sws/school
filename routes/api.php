@@ -517,6 +517,15 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::get('reports/occupancy', [\App\Http\Controllers\Api\V1\Transport\TransportReportController::class, 'occupancy']);
             });
 
+            // ─── Gate Security & Visitor Passes ─────────────────────────
+            Route::middleware(config('route_permissions.middleware.gate_security'))->prefix('gate-security')->group(function () {
+                Route::get('passes/lookup', [\App\Http\Controllers\Api\V1\GateSecurity\GatePassController::class, 'lookup']);
+                Route::get('passes/analytics', [\App\Http\Controllers\Api\V1\GateSecurity\GatePassController::class, 'analytics']);
+                Route::get('passes/export', [\App\Http\Controllers\Api\V1\GateSecurity\GatePassController::class, 'export']);
+                Route::post('passes/{id}/checkout', [\App\Http\Controllers\Api\V1\GateSecurity\GatePassController::class, 'checkout'])->whereNumber('id');
+                Route::apiResource('passes', \App\Http\Controllers\Api\V1\GateSecurity\GatePassController::class)->parameters(['passes' => 'gate_pass']);
+            });
+
             // ─── Hostel ────────────────────────────────────────────────
             Route::middleware(config('route_permissions.middleware.hostel'))->prefix('hostel')->group(function () {
                 Route::apiResource('hostels', \App\Http\Controllers\Api\V1\Hostel\HostelController::class);

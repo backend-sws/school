@@ -440,6 +440,22 @@ return [
         ],
     ],
 
+    // ── Gate Security ─────────────────────────────────────────
+    [
+        'key' => 'gate_security',
+        'name' => 'Gate Security & Visitor Register',
+        'description' => 'Campus gate entry, visitor pass issuance, identity verification, vehicle check, and exit logs.',
+        'subscription_module' => 'core',
+        'scope_types' => $ALL_TYPES,
+        'permissions' => [
+            'view_gate_passes',
+            'create_gate_passes',
+            'checkout_gate_passes',
+            'update_gate_passes',
+            'delete_gate_passes',
+        ],
+    ],
+
     // ── Hostel ────────────────────────────────────────────────
     [
         'key' => 'hostel',

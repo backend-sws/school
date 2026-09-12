@@ -4,6 +4,8 @@ import { useAuth } from '@/hooks/use-can';
 interface PermissionGateProps {
     /** Single permission key. */
     can?: string;
+    /** Alias for can. */
+    permission?: string;
     /** Subscription module key. */
     feature?: string;
     /** Show if user has ANY of these permissions (OR). */
@@ -32,6 +34,7 @@ interface PermissionGateProps {
  */
 export function PermissionGate({
     can,
+    permission,
     feature,
     canAny: canAnyKeys,
     canAll: canAllKeys,
@@ -39,15 +42,16 @@ export function PermissionGate({
     children,
 }: PermissionGateProps) {
     const auth = useAuth();
+    const requiredPermission = can ?? permission;
 
     // No gates specified → always render
-    if (!can && !feature && !canAnyKeys && !canAllKeys) {
+    if (!requiredPermission && !feature && !canAnyKeys && !canAllKeys) {
         return <>{children}</>;
     }
 
     let allowed = true;
 
-    if (can) allowed &&= auth.can(can);
+    if (requiredPermission) allowed &&= auth.can(requiredPermission);
     if (feature) allowed &&= auth.hasFeature(feature);
     if (canAnyKeys && canAnyKeys.length > 0) allowed &&= auth.canAny(canAnyKeys);
     if (canAllKeys && canAllKeys.length > 0) allowed &&= auth.canAll(canAllKeys);

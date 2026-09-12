@@ -47,6 +47,7 @@ import vehicleLogs from './vehicle-logs'
 import vehicleFuels from './vehicle-fuels'
 import vehicleExpenses from './vehicle-expenses'
 import assignments from './assignments'
+import passes from './passes'
 import hostels from './hostels'
 import floors from './floors'
 import hostel from './hostel'
@@ -112,6 +113,7 @@ vehicleLogs: Object.assign(vehicleLogs, vehicleLogs),
 vehicleFuels: Object.assign(vehicleFuels, vehicleFuels),
 vehicleExpenses: Object.assign(vehicleExpenses, vehicleExpenses),
 assignments: Object.assign(assignments, assignments),
+passes: Object.assign(passes, passes),
 hostels: Object.assign(hostels, hostels),
 floors: Object.assign(floors, floors),
 hostel: Object.assign(hostel, hostel),

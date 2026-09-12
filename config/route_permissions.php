@@ -19,7 +19,7 @@ return [
     'middleware' => [
         // Polymorphic: all access checks are permission-based, no hardcoded role lists.
         // If a user has ANY permission from the group, they can access the routes.
-        'admin' => ['ensure-permission-group:admin_desk,admission_cell,office_registry,info_pr_hub,accounts_room,expense_tracker,academic_setup,service_branch,redressal_cell,system_console,my_organisation,inventory,transport,attendance,library,lms,timetable,question_bank,examination,hostel'],
+        'admin' => ['ensure-permission-group:admin_desk,admission_cell,office_registry,info_pr_hub,accounts_room,expense_tracker,academic_setup,service_branch,redressal_cell,system_console,my_organisation,inventory,transport,attendance,library,lms,timetable,question_bank,examination,hostel,gate_security'],
         'portal' => ['ensure-permission-group:student_portal'],
         'admin_desk' => ['ensure-permission-group:admin_desk'],
         'admission_cell' => ['ensure-permission-group:admission_cell'],
@@ -45,6 +45,7 @@ return [
         'super_admin_only' => ['ensure-permission-group:my_organisation'],
         'examination' => ['ensure-permission-group:examination'],
         'hostel' => ['ensure-permission-group:hostel'],
+        'gate_security' => ['ensure-permission-group:gate_security'],
     ],
 
     /*
@@ -326,6 +327,14 @@ return [
         'view_transport_reports',
     ],
 
+    'gate_security' => [
+        'view_gate_passes',
+        'create_gate_passes',
+        'checkout_gate_passes',
+        'update_gate_passes',
+        'delete_gate_passes',
+    ],
+
     'hostel' => [
         'view_hostels',
         'create_hostels',
@@ -395,6 +404,14 @@ return [
         'create_questions',
         'update_questions',
         'delete_questions',
+    ],
+
+    'gate_security' => [
+        'view_gate_passes',
+        'create_gate_passes',
+        'checkout_gate_passes',
+        'update_gate_passes',
+        'delete_gate_passes',
     ],
 
 

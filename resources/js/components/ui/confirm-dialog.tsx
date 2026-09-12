@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export type ConfirmVariant = "danger" | "warning" | "info" | "default";
+export type ConfirmVariant = "danger" | "destructive" | "warning" | "info" | "default";
 
 interface ConfirmDialogProps {
     open: boolean;
@@ -24,6 +24,7 @@ interface ConfirmDialogProps {
     onConfirm: () => void;
     isLoading?: boolean;
     confirmText?: string;
+    confirmLabel?: string;
     cancelText?: string;
     variant?: ConfirmVariant;
     confirmationKeyword?: string;
@@ -40,6 +41,13 @@ const variantConfig: Record<
     }
 > = {
     danger: {
+        icon: <Trash2 className="size-5 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />,
+        color: "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-500/10 dark:border-red-500/20",
+        iconBg: "bg-red-100 dark:bg-red-500/20",
+        buttonVariant: "destructive",
+        accentColor: "ring-red-500/20",
+    },
+    destructive: {
         icon: <Trash2 className="size-5 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />,
         color: "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-500/10 dark:border-red-500/20",
         iconBg: "bg-red-100 dark:bg-red-500/20",
@@ -77,13 +85,15 @@ export function ConfirmDialog({
     description,
     onConfirm,
     isLoading,
-    confirmText = "Confirm",
+    confirmText,
+    confirmLabel,
     cancelText = "Cancel",
     variant = "default",
     confirmationKeyword,
 }: ConfirmDialogProps) {
     const [inputValue, setInputValue] = React.useState("");
-    const config = variantConfig[variant];
+    const config = variantConfig[variant] || variantConfig.default;
+    const finalConfirmText = confirmText || confirmLabel || "Confirm";
 
     // Reset input when dialog closes
     React.useEffect(() => {
@@ -172,7 +182,7 @@ export function ConfirmDialog({
                             !isConfirmed && "opacity-30 grayscale cursor-not-allowed translate-y-0 shadow-none pointer-events-none"
                         )}
                     >
-                        <span className="relative z-10 uppercase tracking-wider">{confirmText}</span>
+                        <span className="relative z-10 uppercase tracking-wider">{finalConfirmText}</span>
                         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Button>
                 </DialogFooter>

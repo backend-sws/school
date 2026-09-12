@@ -22,6 +22,7 @@ import HR from './HR'
 import Certificates from './Certificates'
 import Inventory from './Inventory'
 import Transport from './Transport'
+import GateSecurity from './GateSecurity'
 import Hostel from './Hostel'
 import Library from './Library'
 import Attendance from './Attendance'
@@ -54,6 +55,7 @@ HR: Object.assign(HR, HR),
 Certificates: Object.assign(Certificates, Certificates),
 Inventory: Object.assign(Inventory, Inventory),
 Transport: Object.assign(Transport, Transport),
+GateSecurity: Object.assign(GateSecurity, GateSecurity),
 Hostel: Object.assign(Hostel, Hostel),
 Library: Object.assign(Library, Library),
 Attendance: Object.assign(Attendance, Attendance),

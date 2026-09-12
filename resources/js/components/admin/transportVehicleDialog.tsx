@@ -24,9 +24,9 @@ export type TransportVehicleDialogData = {
   notes?: string;
 } | null;
 
-interface TransportVehicleDialogProps {
+export interface TransportVehicleDialogProps {
   open: boolean;
-  onClose: (open: boolean) => void;
+  onClose: (open?: boolean) => void;
   data?: TransportVehicleDialogData;
   onSuccess?: () => void;
 }

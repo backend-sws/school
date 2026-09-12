@@ -397,6 +397,13 @@ return [
     ['key' => 'delete_transport_assignments', 'name' => 'Remove Assignments', 'module' => 'transport', 'scope_types' => $ALL],
     ['key' => 'view_transport_reports', 'name' => 'View Transport Reports (manifests, occupancy)', 'module' => 'transport', 'scope_types' => $ALL],
 
+    // ── Gate Security & Visitor Pass ─────────────────────────────
+    ['key' => 'view_gate_passes', 'name' => 'View Gate Security Register & Passes', 'module' => 'gate_security', 'scope_types' => $ALL],
+    ['key' => 'create_gate_passes', 'name' => 'Check-in Visitors & Issue Gate Pass', 'module' => 'gate_security', 'scope_types' => $ALL],
+    ['key' => 'checkout_gate_passes', 'name' => 'Mark Visitor Exit & Check-out', 'module' => 'gate_security', 'scope_types' => $ALL],
+    ['key' => 'update_gate_passes', 'name' => 'Update Visitor & Pass Details', 'module' => 'gate_security', 'scope_types' => $ALL],
+    ['key' => 'delete_gate_passes', 'name' => 'Delete Gate Pass Records', 'module' => 'gate_security', 'scope_types' => $ALL],
+
     // ── Library ────────────────────────────────────────────────────────────
     ['key' => 'view_library_books', 'name' => 'View Library Books', 'module' => 'library', 'scope_types' => $ALL],
     ['key' => 'create_library_books', 'name' => 'Create Library Books', 'module' => 'library', 'scope_types' => $ALL],

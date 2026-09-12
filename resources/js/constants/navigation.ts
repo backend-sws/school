@@ -212,6 +212,12 @@ export const unifiedSidebarConfig: SidebarConfig = {
                 { title: "Mess Plans", href: "/hostel/mess-plans", icon: Utensils, permission: "view_hostel_mess_plans", feature: "hostel" },
             ],
         },
+        {
+            label: "Gate Security",
+            items: [
+                { title: "Gate Register", href: "/gate-security", icon: ShieldCheck, permission: "view_gate_passes" },
+            ],
+        },
         // --- Temporarily hidden ---
         // {
         //     label: "Library",
@@ -396,4 +402,14 @@ export const HOSTEL_NAVIGATION: SidebarNavGroup[] = [
         ],
     },
 ];
+
+export const GATE_SECURITY_NAVIGATION: SidebarNavGroup[] = [
+    {
+        label: "Gate Security",
+        items: [
+            { title: "Visitor Register", href: "/gate-security", icon: ShieldCheck, permission: "view_gate_passes" },
+        ],
+    },
+];
+
 

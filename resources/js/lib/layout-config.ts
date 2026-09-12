@@ -94,6 +94,8 @@ export const PAGE_LAYOUT_MAP: Record<string, LayoutKey> = {
     "training-placement/":  "admin",
     "transport/":           "admin",
     "hostel/":              "admin",
+    "gate-security/":       "admin",
+    "gate-security":        "admin",
     "verify/":              "admin",
     "website/":             "admin",
 };
