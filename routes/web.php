@@ -29,28 +29,26 @@ Route::get("/verify/id-card/{token}", fn(string $token) => Inertia::render("veri
 // Route::get('/{code}', \App\Http\Controllers\ShortUrlController::class)
 //     ->where('code', '^[a-zA-Z0-9]{4}$')
 //     ->name('short-url.redirect');
-// The Main Landing Page for the root domain (product landing)
-// Only registered when EMS_SKIP_LANDING is false (multi-tenant SaaS mode).
-// Singleton deployments (EMS_SKIP_LANDING=true) skip this so '/' serves the institution website.
-if (!config('ems.skip_landing')) {
-    Route::domain(parse_url(config('app.url'), PHP_URL_HOST))->group(function () {
-        Route::get('/', \App\Http\Controllers\Web\MainLandingController::class)->name('marketing.home');
-    });
-}
-
-// Default root route — serves institution public website when institution ID is configured.
+// The Main Landing Page / Root Route
+// In SaaS mode (EMS_SKIP_LANDING=false):
+//   - Root domain serves the main product landing page (Rishi Vidya)
+//   - Tenant subdomains serve the institution website (WebsiteController)
+// In Singleton mode (EMS_SKIP_LANDING=true):
+//   - Root domain skips product landing, serves institution website if configured, or redirects to /login
 Route::get('/', function (\Illuminate\Http\Request $request) {
     if (config('ems.default_institution_id')) {
         return app(\App\Http\Controllers\Web\WebsiteController::class)->index($request);
     }
 
-    // No institution configured — try marketing landing if it exists, otherwise show login
-    if (Route::has('marketing.home')) {
-        return redirect()->route('marketing.home');
+    if (!config('ems.skip_landing')) {
+        return app(\App\Http\Controllers\Web\MainLandingController::class)($request);
     }
 
     return redirect()->route('login');
 })->name('home');
+
+// Direct alias for marketing landing
+Route::get('/landing', \App\Http\Controllers\Web\MainLandingController::class)->name('marketing.home');
 
 /*
 |--------------------------------------------------------------------------
