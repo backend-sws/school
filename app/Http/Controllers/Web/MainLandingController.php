@@ -24,13 +24,17 @@ class MainLandingController extends Controller
         $data = require database_path('seeders/data/landing.php');
 
         // Onboarded partners — cached 1 hour, public-safe fields only
-        $data['partners'] = Cache::remember('landing_partners', 3600, function () {
-            return Organization::where('status', 1)
-                ->select('name', 'city', 'state', 'logo_url')
-                ->orderBy('name')
-                ->get()
-                ->toArray();
-        });
+        try {
+            $data['partners'] = Cache::remember('landing_partners', 3600, function () {
+                return Organization::where('status', 1)
+                    ->select('name', 'city', 'state', 'logo_url')
+                    ->orderBy('name')
+                    ->get()
+                    ->toArray();
+            });
+        } catch (\Throwable) {
+            $data['partners'] = [];
+        }
 
         return Inertia::render('main-landing', $data);
     }
