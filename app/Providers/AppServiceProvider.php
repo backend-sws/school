@@ -36,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Force disable Inertia SSR unless explicitly enabled via env
+        if (!env('INERTIA_SSR_ENABLED', false)) {
+            config(['inertia.ssr.enabled' => false]);
+        }
+
         if (request()->is('api/*')) {
             request()->headers->set('Accept', 'application/json');
         }
