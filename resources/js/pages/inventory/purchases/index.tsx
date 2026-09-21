@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Head } from "@inertiajs/react";
+import React, { useState, useMemo } from "react";
+import { Head, Link } from "@inertiajs/react";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import DataTable, { TableEmptyState, TableSkeletonLoader } from "@/components/dataTable";
 import Each from "@/components/Each";
@@ -7,16 +7,41 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filter-bar";
-import { ShoppingCart, Plus, Eye, Pencil, IndianRupee, Receipt, User, Package } from "lucide-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ShoppingCart,
+  Plus,
+  Eye,
+  Pencil,
+  IndianRupee,
+  Receipt,
+  User,
+  Package,
+  Building2,
+  FileSpreadsheet,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Download,
+} from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { getSerialNumber } from "@/lib/utils";
 import inventoryApi from "@/lib/api/inventoryApi";
+import inventoryVendorApi, { InventoryVendor } from "@/lib/api/inventoryVendorApi";
 import { PermissionGate } from "@/components/PermissionGate";
 import { FORM_TYPE } from "@/constants";
 import { InventoryPurchaseDialog } from "@/components/admin/inventoryPurchaseDialog";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +49,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
 
 const BREADCRUMBS = [
   { title: "Inventory", href: "/inventory/items" },
@@ -42,10 +66,20 @@ interface PurchaseLine {
 
 interface PurchaseRow {
   id: number;
+  inventory_vendor_id?: number;
   bill_no?: string;
   supplier_name?: string;
+  vendor?: {
+    id: number;
+    name: string;
+    contact_name?: string;
+    contact_phone?: string;
+    city?: string;
+  };
   purchased_at: string;
   total_cost: string | number;
+  payment_status?: "paid" | "credit" | "settled";
+  settled_at?: string;
   payment_mode?: string;
   remarks?: string;
   expense_id?: number;
@@ -59,6 +93,7 @@ const COLUMNS = [
   { key: "supplier", label: "Supplier / Bill" },
   { key: "items", label: "Items" },
   { key: "total_cost", label: "Total Cost" },
+  { key: "payment_status", label: "Status" },
   { key: "purchased_by", label: "Purchased By" },
   { key: "payment_mode", label: "Mode" },
   { key: "actions", label: "Actions" },
@@ -70,6 +105,7 @@ const INITIAL_FILTERS = {
   search: "",
   from_date: "",
   to_date: "",
+  payment_status: "",
 };
 
 const PAYMENT_MODES = [
@@ -77,6 +113,7 @@ const PAYMENT_MODES = [
   { key: "upi", text: "UPI", value: "upi" },
   { key: "bank", text: "Bank Transfer", value: "bank" },
   { key: "cheque", text: "Cheque", value: "cheque" },
+  { key: "credit", text: "Credit / Udhaar", value: "credit" },
 ];
 
 const InventoryPurchasesIndex = () => {
@@ -85,11 +122,47 @@ const InventoryPurchasesIndex = () => {
   const createDisclosure = useDisclosure();
   const [detailRow, setDetailRow] = useState<PurchaseRow | null>(null);
   const [editPurchase, setEditPurchase] = useState<PurchaseRow | null>(null);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+
+  // Export filters
+  const [exportFilters, setExportFilters] = useState({
+    inventory_vendor_id: "all",
+    inventory_item_id: "all",
+    payment_status: "all",
+    from_date: "",
+    to_date: "",
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["inventory-purchases", filter],
     queryFn: () => inventoryApi.purchases.index(filter),
   });
+
+  // Query vendors for export modal
+  const { data: vendorsData } = useQuery({
+    queryKey: ["inventory-vendors-export-list"],
+    queryFn: () => inventoryVendorApi.index({ per_page: 200 }),
+    enabled: exportModalOpen,
+  });
+
+  // Query items for export modal
+  const { data: itemsData } = useQuery({
+    queryKey: ["inventory-items-export-list"],
+    queryFn: () => inventoryApi.items.index({ per_page: 500 }),
+    enabled: exportModalOpen,
+  });
+
+  const vendorsList: InventoryVendor[] = useMemo(() => {
+    const raw = vendorsData?.data;
+    if (Array.isArray(raw?.data)) return raw.data;
+    if (Array.isArray(raw)) return raw;
+    return [];
+  }, [vendorsData]);
+
+  const itemsList = useMemo(() => {
+    const raw = (itemsData as any)?.data?.data ?? (itemsData as any)?.data ?? itemsData ?? [];
+    return Array.isArray(raw) ? raw : [];
+  }, [itemsData]);
 
   const stats = (data as any)?.meta?.stats;
 
@@ -100,6 +173,7 @@ const InventoryPurchasesIndex = () => {
   const onSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["inventory-purchases"] });
     queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+    queryClient.invalidateQueries({ queryKey: ["inventory-vendors"] });
     createDisclosure.onClose();
     setEditPurchase(null);
   };
@@ -107,6 +181,12 @@ const InventoryPurchasesIndex = () => {
   const pmLabel = (mode?: string) => {
     const found = PAYMENT_MODES.find((m) => m.value === mode);
     return found?.text ?? (mode ?? "—");
+  };
+
+  const handleTriggerExport = () => {
+    const url = inventoryApi.purchases.exportUrl(exportFilters);
+    window.open(url, "_blank");
+    setExportModalOpen(false);
   };
 
   return (
@@ -124,51 +204,115 @@ const InventoryPurchasesIndex = () => {
 
       {/* Detail popup */}
       <Dialog open={Boolean(detailRow)} onOpenChange={(o) => !o && setDetailRow(null)}>
-        <DialogContent className="sm:max-w-[560px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Receipt className="size-4 text-primary" />
-              Purchase #{detailRow?.id}
+        <DialogContent className="w-[95vw] sm:max-w-xl max-h-[85vh] flex flex-col p-0 overflow-hidden">
+          <DialogHeader className="p-4 sm:p-5 border-b shrink-0 bg-muted/20">
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Receipt className="size-5 text-primary" />
+              <span>Purchase #{detailRow?.id} Details</span>
             </DialogTitle>
           </DialogHeader>
+
           {detailRow && (
-            <div className="space-y-4 text-sm">
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-4 flex-1 text-sm">
               <div className="grid grid-cols-2 gap-3 rounded-lg border bg-muted/30 p-4">
                 <div>
-                  <p className="text-xs text-muted-foreground">Date</p>
-                  <p className="font-medium">{new Date(detailRow.purchased_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
+                  <p className="text-xs text-muted-foreground">Purchase Date</p>
+                  <p className="font-medium">
+                    {new Date(detailRow.purchased_at).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Purchased By</p>
                   <p className="font-medium">{detailRow.purchased_by?.name ?? "—"}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Supplier</p>
-                  <p className="font-medium">{detailRow.supplier_name ?? "—"}</p>
+                  <p className="text-xs text-muted-foreground">Supplier / Vendor</p>
+                  {detailRow.inventory_vendor_id ? (
+                    <Link
+                      href={`/inventory/vendors/${detailRow.inventory_vendor_id}`}
+                      className="font-semibold text-primary hover:underline flex items-center gap-1 mt-0.5"
+                    >
+                      <Building2 className="size-3.5" />
+                      <span>{detailRow.vendor?.name ?? detailRow.supplier_name ?? `Vendor #${detailRow.inventory_vendor_id}`}</span>
+                    </Link>
+                  ) : (
+                    <p className="font-medium">{detailRow.supplier_name ?? "—"}</p>
+                  )}
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Bill No.</p>
                   <p className="font-mono font-medium">{detailRow.bill_no ?? "—"}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Payment Mode</p>
-                  <p className="font-medium capitalize">{pmLabel(detailRow.payment_mode)}</p>
+                  <p className="text-xs text-muted-foreground">Payment Status</p>
+                  <div className="mt-0.5">
+                    {detailRow.payment_status === "credit" ? (
+                      <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 text-xs font-semibold gap-1">
+                        <Clock className="size-3" />
+                        Credit (Pending Settlement)
+                      </Badge>
+                    ) : detailRow.payment_status === "settled" ? (
+                      <Badge className="bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 text-xs font-semibold gap-1">
+                        <CheckCircle2 className="size-3" />
+                        Settled
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 text-xs font-semibold">
+                        Direct Paid
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Total Cost</p>
-                  <p className="font-bold text-emerald-600 dark:text-emerald-400">₹{Number(detailRow.total_cost).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</p>
+                  <p className="font-bold text-base text-emerald-600 dark:text-emerald-400">
+                    ₹{Number(detailRow.total_cost).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </p>
                 </div>
               </div>
+
+              {detailRow.payment_status === "credit" && (
+                <div className="rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3 text-xs flex items-start gap-2.5 text-amber-800 dark:text-amber-200">
+                  <AlertCircle className="size-4 shrink-0 mt-0.5 text-amber-600" />
+                  <div>
+                    <span className="font-semibold">Credit Purchase (Deferred Expense): </span>
+                    Stock has been incremented. Accounts expense will be automatically created when this payment is settled via the Supplier Ledger.
+                    {detailRow.inventory_vendor_id && (
+                      <div className="mt-1.5">
+                        <Link
+                          href={`/inventory/vendors/${detailRow.inventory_vendor_id}`}
+                          className="inline-flex items-center gap-1 font-semibold text-amber-900 dark:text-amber-100 underline hover:opacity-80"
+                        >
+                          Go to Supplier Ledger to Settle &rarr;
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {detailRow.settled_at && (
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                  <CheckCircle2 className="size-3.5 text-blue-600" />
+                  <span>Settled on {new Date(detailRow.settled_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                </div>
+              )}
 
               {detailRow.expense_id && (
                 <div className="rounded-md bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 px-3 py-2 text-xs flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
                   <IndianRupee className="size-3.5" />
-                  Linked to Expense #{detailRow.expense_id} — auto-recorded in accounts
+                  <span>Linked to Expense #{detailRow.expense_id} — recorded in school accounts</span>
                 </div>
               )}
 
               <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Items Purchased</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  Items Purchased
+                </p>
                 <div className="rounded-lg border overflow-hidden">
                   <table className="w-full text-xs">
                     <thead className="bg-muted/50">
@@ -186,7 +330,9 @@ const InventoryPurchasesIndex = () => {
                             <p className="font-medium">{line.item?.name ?? `Item #${line.inventory_item_id}`}</p>
                             {line.item?.code && <p className="text-muted-foreground font-mono">{line.item.code}</p>}
                           </td>
-                          <td className="px-3 py-2 text-right font-mono">{Number(line.quantity).toFixed(3)} {line.item?.unit ?? ""}</td>
+                          <td className="px-3 py-2 text-right font-mono">
+                            {Number(line.quantity).toFixed(3)} {line.item?.unit ?? ""}
+                          </td>
                           <td className="px-3 py-2 text-right font-mono">₹{Number(line.unit_cost).toFixed(2)}</td>
                           <td className="px-3 py-2 text-right font-mono font-semibold">₹{Number(line.amount).toFixed(2)}</td>
                         </tr>
@@ -194,7 +340,9 @@ const InventoryPurchasesIndex = () => {
                     </tbody>
                     <tfoot className="bg-muted/30 border-t-2">
                       <tr>
-                        <td colSpan={3} className="px-3 py-2 text-right font-semibold text-muted-foreground">Total</td>
+                        <td colSpan={3} className="px-3 py-2 text-right font-semibold text-muted-foreground">
+                          Total
+                        </td>
                         <td className="px-3 py-2 text-right font-bold text-emerald-600 dark:text-emerald-400">
                           ₹{Number(detailRow.total_cost).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                         </td>
@@ -211,7 +359,8 @@ const InventoryPurchasesIndex = () => {
               )}
             </div>
           )}
-          <DialogFooter className="flex justify-between sm:justify-between items-center w-full">
+
+          <DialogFooter className="p-3 sm:p-4 border-t shrink-0 bg-muted/20 flex flex-row items-center justify-between">
             <PermissionGate can="update_inventory_items">
               <Button
                 variant="outline"
@@ -226,7 +375,131 @@ const InventoryPurchasesIndex = () => {
                 <Pencil className="size-3.5" /> Edit Purchase
               </Button>
             </PermissionGate>
-            <Button variant="outline" onClick={() => setDetailRow(null)}>Close</Button>
+            <Button variant="outline" size="sm" onClick={() => setDetailRow(null)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Purchases Modal */}
+      <Dialog open={exportModalOpen} onOpenChange={setExportModalOpen}>
+        <DialogContent className="w-[95vw] sm:max-w-md max-h-[85vh] flex flex-col p-0 overflow-hidden">
+          <DialogHeader className="p-4 sm:p-5 border-b shrink-0 bg-muted/20">
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <FileSpreadsheet className="size-5 text-emerald-600" />
+              <span>Export Purchases Excel Report</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="overflow-y-auto p-4 sm:p-6 space-y-4 flex-1 text-sm">
+            <p className="text-xs text-muted-foreground">
+              Filter and download a comprehensive Excel (.xlsx) sheet of inventory purchases, supplier details, payment statuses, and costs.
+            </p>
+
+            {/* Filter by Vendor */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Supplier / Vendor</Label>
+              <Select
+                value={exportFilters.inventory_vendor_id}
+                onValueChange={(val) =>
+                  setExportFilters({ ...exportFilters, inventory_vendor_id: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All Suppliers" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">-- All Suppliers --</SelectItem>
+                  {vendorsList.map((v) => (
+                    <SelectItem key={v.id} value={String(v.id)}>
+                      {v.name} {v.city ? `(${v.city})` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Filter by Item */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Inventory Item</Label>
+              <Select
+                value={exportFilters.inventory_item_id}
+                onValueChange={(val) =>
+                  setExportFilters({ ...exportFilters, inventory_item_id: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All Items" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">-- All Items --</SelectItem>
+                  {itemsList.map((it: any) => (
+                    <SelectItem key={it.id} value={String(it.id)}>
+                      {it.name} {it.code ? `(${it.code})` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Filter by Payment Status */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Payment Status</Label>
+              <Select
+                value={exportFilters.payment_status}
+                onValueChange={(val) =>
+                  setExportFilters({ ...exportFilters, payment_status: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All Payment Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">-- All Payment Statuses --</SelectItem>
+                  <SelectItem value="credit">⏳ Credit / Unsettled</SelectItem>
+                  <SelectItem value="settled">✅ Settled</SelectItem>
+                  <SelectItem value="paid">Direct Paid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Date Range */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="pur_exp_from" className="text-xs font-semibold">From Date</Label>
+                <Input
+                  id="pur_exp_from"
+                  type="date"
+                  value={exportFilters.from_date}
+                  onChange={(e) => setExportFilters({ ...exportFilters, from_date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="pur_exp_to" className="text-xs font-semibold">To Date</Label>
+                <Input
+                  id="pur_exp_to"
+                  type="date"
+                  value={exportFilters.to_date}
+                  onChange={(e) => setExportFilters({ ...exportFilters, to_date: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="p-3 sm:p-4 border-t shrink-0 bg-muted/20 flex flex-row items-center justify-end gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => setExportModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+              onClick={handleTriggerExport}
+            >
+              <Download className="size-4" />
+              <span>Download (.xlsx)</span>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -240,59 +513,110 @@ const InventoryPurchasesIndex = () => {
           subtitle="Record market purchases — saman khareedne ka record"
         />
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* 4 Stats Cards */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card className="border-emerald-500/30 bg-emerald-500/[0.03]">
-            <CardContent className="p-5 flex items-center justify-between">
+            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Purchases</span>
-                <h3 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Total Purchases
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
                   {isLoading ? "..." : (stats?.total_purchases ?? 0)}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">Purchase entries</p>
+                <p className="text-[10px] text-muted-foreground">Entries recorded</p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <ShoppingCart className="size-5" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-indigo-500/30 bg-indigo-500/[0.03]">
-            <CardContent className="p-5 flex items-center justify-between">
+            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Spent</span>
-                <h3 className="text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
-                  {isLoading ? "..." : `₹${Number(stats?.total_cost ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`}
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Total Spent
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
+                  {isLoading
+                    ? "..."
+                    : `₹${Number(stats?.total_cost ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">Filtered total purchase cost</p>
+                <p className="text-[10px] text-muted-foreground">Filtered purchases cost</p>
               </div>
-              <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+              <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                 <IndianRupee className="size-5" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-amber-500/30 bg-amber-500/[0.03]">
-            <CardContent className="p-5 flex items-center justify-between">
+            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Auto-Linked</span>
-                <h3 className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">Expenses</h3>
-                <p className="text-[10px] text-muted-foreground">Each purchase creates expense entry</p>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Credit Due (Udhaar)
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
+                  {isLoading
+                    ? "..."
+                    : `₹${Number(stats?.total_credit ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`}
+                </h3>
+                <p className="text-[10px] text-muted-foreground">Pending settlements</p>
               </div>
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <Receipt className="size-5" />
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Clock className="size-5" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-500/30 bg-blue-500/[0.03]">
+            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Settled Credit
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+                  {isLoading
+                    ? "..."
+                    : `₹${Number(stats?.total_settled ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`}
+                </h3>
+                <p className="text-[10px] text-muted-foreground">Paid via vendor ledger</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                <CheckCircle2 className="size-5" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="flex justify-end">
-          <PermissionGate can="create_inventory_items">
-            <Button id="new-purchase-btn" onClick={() => createDisclosure.onOpen()}>
-              <Plus className="size-4" />
-              Record Purchase
+        {/* Top actions bar */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <Link href="/inventory/vendors">
+            <Button variant="outline" size="sm" className="gap-1.5 shadow-sm">
+              <Building2 className="size-4 text-primary" />
+              <span>Suppliers Directory</span>
             </Button>
-          </PermissionGate>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExportModalOpen(true)}
+              className="gap-1.5 border-emerald-600/30 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30 shadow-sm"
+            >
+              <FileSpreadsheet className="size-4 text-emerald-600" />
+              <span>Export Excel</span>
+            </Button>
+
+            <PermissionGate can="create_inventory_items">
+              <Button id="new-purchase-btn" size="sm" onClick={() => createDisclosure.onOpen()} className="gap-1.5 shadow-sm">
+                <Plus className="size-4" />
+                <span>Record Purchase</span>
+              </Button>
+            </PermissionGate>
+          </div>
         </div>
 
         <Card>
@@ -301,6 +625,18 @@ const InventoryPurchasesIndex = () => {
               <FilterBar.Renderer
                 config={{
                   filters: [
+                    {
+                      name: "payment_status",
+                      type: FORM_TYPE.SELECT,
+                      label: "Status",
+                      placeholder: "All Payment Statuses",
+                      options: [
+                        { key: "all", text: "All Statuses", value: "" },
+                        { key: "credit", text: "⏳ Credit (Due)", value: "credit" },
+                        { key: "settled", text: "✅ Settled", value: "settled" },
+                        { key: "paid", text: "Direct Paid", value: "paid" },
+                      ],
+                    },
                     {
                       name: "from_date",
                       type: FORM_TYPE.DATE,
@@ -340,7 +676,11 @@ const InventoryPurchasesIndex = () => {
                 isLoading={isLoading}
                 of={(data as any)?.data}
                 nodatafound={
-                  <TableEmptyState colSpan={COLUMNS.length} message="No purchases found" description="Record a purchase using the button above." />
+                  <TableEmptyState
+                    colSpan={COLUMNS.length}
+                    message="No purchases found"
+                    description="Record a purchase or register a vendor using the buttons above."
+                  />
                 }
                 fallback={<TableSkeletonLoader columns={COLUMNS.length} />}
                 render={(row: PurchaseRow, index) => (
@@ -349,11 +689,38 @@ const InventoryPurchasesIndex = () => {
                       {getSerialNumber((data as any)?.meta?.current_page ?? 1, filter.per_page ?? 15, index)}
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-sm">
-                      {new Date(row.purchased_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      {new Date(row.purchased_at).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </TableCell>
                     <TableCell>
-                      <p className="font-medium">{row.supplier_name ?? <span className="text-muted-foreground italic">No supplier</span>}</p>
-                      {row.bill_no && <p className="text-xs text-muted-foreground font-mono">Bill: {row.bill_no}</p>}
+                      {row.inventory_vendor_id ? (
+                        <div>
+                          <Link
+                            href={`/inventory/vendors/${row.inventory_vendor_id}`}
+                            className="group inline-flex items-center gap-1.5 font-medium text-foreground hover:text-primary transition-colors"
+                          >
+                            <Building2 className="size-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                            <span className="underline-offset-2 group-hover:underline">
+                              {row.vendor?.name ?? row.supplier_name ?? `Vendor #${row.inventory_vendor_id}`}
+                            </span>
+                          </Link>
+                          {row.bill_no && (
+                            <p className="text-xs text-muted-foreground font-mono mt-0.5">Bill: {row.bill_no}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="font-medium">
+                            {row.supplier_name ?? <span className="text-muted-foreground italic">No supplier</span>}
+                          </p>
+                          {row.bill_no && (
+                            <p className="text-xs text-muted-foreground font-mono mt-0.5">Bill: {row.bill_no}</p>
+                          )}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
@@ -364,7 +731,9 @@ const InventoryPurchasesIndex = () => {
                           </Badge>
                         ))}
                         {(row.lines ?? []).length > 3 && (
-                          <Badge variant="secondary" className="text-[10px]">+{(row.lines ?? []).length - 3} more</Badge>
+                          <Badge variant="secondary" className="text-[10px]">
+                            +{(row.lines ?? []).length - 3} more
+                          </Badge>
                         )}
                         {(row.lines ?? []).length === 0 && <span className="text-muted-foreground text-xs">—</span>}
                       </div>
@@ -378,13 +747,30 @@ const InventoryPurchasesIndex = () => {
                       )}
                     </TableCell>
                     <TableCell>
+                      {row.payment_status === "credit" ? (
+                        <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-500/20 text-[11px] font-medium gap-1">
+                          ⏳ Credit (Due)
+                        </Badge>
+                      ) : row.payment_status === "settled" ? (
+                        <Badge className="bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 hover:bg-blue-500/20 text-[11px] font-medium gap-1">
+                          ✅ Settled
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-500/20 text-[11px] font-medium gap-1">
+                          Direct Paid
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <span className="flex items-center gap-1 text-sm">
                         <User className="size-3 text-muted-foreground" />
                         {row.purchased_by?.name ?? "—"}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="capitalize text-xs">{pmLabel(row.payment_mode)}</Badge>
+                      <Badge variant="outline" className="capitalize text-xs">
+                        {pmLabel(row.payment_mode)}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">

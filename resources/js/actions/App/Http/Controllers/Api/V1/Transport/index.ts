@@ -8,6 +8,7 @@ import TransportVehicleFuelController from './TransportVehicleFuelController'
 import TransportVehicleExpenseController from './TransportVehicleExpenseController'
 import TransportAssignmentController from './TransportAssignmentController'
 import TransportReportController from './TransportReportController'
+import TransportFuelVendorController from './TransportFuelVendorController'
 const Transport = {
     TransportStopController: Object.assign(TransportStopController, TransportStopController),
 TransportRouteController: Object.assign(TransportRouteController, TransportRouteController),
@@ -19,6 +20,7 @@ TransportVehicleFuelController: Object.assign(TransportVehicleFuelController, Tr
 TransportVehicleExpenseController: Object.assign(TransportVehicleExpenseController, TransportVehicleExpenseController),
 TransportAssignmentController: Object.assign(TransportAssignmentController, TransportAssignmentController),
 TransportReportController: Object.assign(TransportReportController, TransportReportController),
+TransportFuelVendorController: Object.assign(TransportFuelVendorController, TransportFuelVendorController),
 }
 
 export default Transport

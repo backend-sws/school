@@ -15,22 +15,37 @@ class InventoryPurchase extends Model
         'institution_id',
         'bill_no',
         'supplier_name',
+        'inventory_vendor_id',
         'purchased_at',
         'total_cost',
         'payment_mode',
+        'payment_status',
+        'settled_at',
+        'inventory_vendor_settlement_id',
         'purchased_by',
         'remarks',
         'expense_id',
     ];
 
     protected $casts = [
-        'total_cost' => 'decimal:2',
+        'total_cost'   => 'decimal:2',
         'purchased_at' => 'date',
+        'settled_at'   => 'datetime',
     ];
 
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(InventoryVendor::class, 'inventory_vendor_id');
+    }
+
+    public function settlement(): BelongsTo
+    {
+        return $this->belongsTo(InventoryVendorSettlement::class, 'inventory_vendor_settlement_id');
     }
 
     public function purchasedBy(): BelongsTo

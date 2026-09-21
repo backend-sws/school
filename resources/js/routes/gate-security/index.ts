@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:446
+ * @see routes/web.php:450
  * @route '/gate-security'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     index.form = indexForm
 /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
 export const visitors = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -85,7 +85,7 @@ visitors.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
 visitors.url = (options?: RouteQueryOptions) => {
@@ -93,7 +93,7 @@ visitors.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
 visitors.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -101,7 +101,7 @@ visitors.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
 visitors.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -110,7 +110,7 @@ visitors.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
     const visitorsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -119,7 +119,7 @@ visitors.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
         visitorsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -127,7 +127,7 @@ visitors.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:447
+ * @see routes/web.php:451
  * @route '/gate-security/visitors'
  */
         visitorsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -6,6 +6,7 @@ import movements from './movements'
 import reports from './reports'
 import sales from './sales'
 import purchases from './purchases'
+import vendors from './vendors'
 import issues from './issues'
 /**
  * @see routes/web.php:403
@@ -87,6 +88,7 @@ movements: Object.assign(movements, movements),
 reports: Object.assign(reports, reports),
 sales: Object.assign(sales, sales),
 purchases: Object.assign(purchases, purchases),
+vendors: Object.assign(vendors, vendors),
 issues: Object.assign(issues, issues),
 }
 

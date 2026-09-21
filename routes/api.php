@@ -479,7 +479,13 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::post('sales/{inventory_sale}/return', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'recordReturn'])->whereNumber('inventory_sale');
                 Route::get('sales/{inventory_sale}/receipt', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'receipt'])->whereNumber('inventory_sale')->name('inventory.sales.receipt');
                 Route::post('sales/{inventory_sale}/confirm', [\App\Http\Controllers\Api\V1\Inventory\InventorySaleController::class, 'confirm'])->whereNumber('inventory_sale');
+                // ─── Vendors / Suppliers (Master, Ledgers & Settlements) ──
+                Route::apiResource('vendors', \App\Http\Controllers\Api\V1\Inventory\InventoryVendorController::class)->parameters(['vendors' => 'inventory_vendor']);
+                Route::get('vendors/{inventory_vendor}/ledger', [\App\Http\Controllers\Api\V1\Inventory\InventoryVendorController::class, 'ledger'])->whereNumber('inventory_vendor');
+                Route::post('vendors/{inventory_vendor}/settle', [\App\Http\Controllers\Api\V1\Inventory\InventoryVendorController::class, 'settle'])->whereNumber('inventory_vendor');
+
                 // ─── Purchases (Internal — market se kharidna) ──────────
+                Route::get('purchases/export', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'export']);
                 Route::get('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'index']);
                 Route::post('purchases', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'store']);
                 Route::get('purchases/{inventory_purchase}', [\App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::class, 'show'])->whereNumber('inventory_purchase');
@@ -516,7 +522,12 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
                 Route::apiResource('assignments', \App\Http\Controllers\Api\V1\Transport\TransportAssignmentController::class)->parameters(['assignments' => 'transport_assignment']);
                 Route::get('reports/manifest', [\App\Http\Controllers\Api\V1\Transport\TransportReportController::class, 'manifest']);
                 Route::get('reports/occupancy', [\App\Http\Controllers\Api\V1\Transport\TransportReportController::class, 'occupancy']);
+                // Fuel Vendors (Petrol Pumps)
+                Route::get('fuel-vendors/{fuel_vendor}/ledger', [\App\Http\Controllers\Api\V1\Transport\TransportFuelVendorController::class, 'ledger']);
+                Route::post('fuel-vendors/{fuel_vendor}/settle', [\App\Http\Controllers\Api\V1\Transport\TransportFuelVendorController::class, 'settle']);
+                Route::apiResource('fuel-vendors', \App\Http\Controllers\Api\V1\Transport\TransportFuelVendorController::class)->parameters(['fuel-vendors' => 'fuel_vendor']);
             });
+
 
             // ─── Gate Security & Visitor Passes ─────────────────────────
             Route::middleware(config('route_permissions.middleware.gate_security'))->prefix('gate-security')->group(function () {

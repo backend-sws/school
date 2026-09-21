@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Inventory;
 
+use App\Exports\InventoryPurchaseExport;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -10,10 +11,12 @@ use App\Models\InventoryItem;
 use App\Models\InventoryMovement;
 use App\Models\InventoryPurchase;
 use App\Models\InventoryPurchaseLine;
+use App\Models\InventoryVendor;
 use App\Support\InstitutionContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventoryPurchaseController extends BaseController
 {
@@ -24,7 +27,7 @@ class InventoryPurchaseController extends BaseController
         }
 
         $query = InventoryPurchase::query()
-            ->with(['purchasedBy', 'lines.item'])
+            ->with(['purchasedBy', 'lines.item', 'vendor:id,name,city,contact_name,contact_phone', 'settlement'])
             ->orderBy('purchased_at', 'desc')
             ->orderBy('id', 'desc');
 
@@ -34,6 +37,16 @@ class InventoryPurchaseController extends BaseController
         }
         if ($request->filled('to_date')) {
             $query->whereDate('purchased_at', '<=', $request->to_date);
+        }
+
+        // Filter by vendor
+        if ($request->filled('inventory_vendor_id') && $request->inventory_vendor_id !== 'all') {
+            $query->where('inventory_vendor_id', $request->inventory_vendor_id);
+        }
+
+        // Filter by payment_status
+        if ($request->filled('payment_status') && $request->payment_status !== 'all') {
+            $query->where('payment_status', $request->payment_status);
         }
 
         // Filter by purchased_by (staff)
@@ -46,12 +59,15 @@ class InventoryPurchaseController extends BaseController
             $query->whereHas('lines', fn($q) => $q->where('inventory_item_id', $request->item_id));
         }
 
-        // Search bill_no / supplier
+        // Search bill_no / supplier / vendor
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(COALESCE(bill_no, \'\')) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(COALESCE(supplier_name, \'\')) LIKE ?', [$search]);
+                  ->orWhereRaw('LOWER(COALESCE(supplier_name, \'\')) LIKE ?', [$search])
+                  ->orWhereHas('vendor', function ($vq) use ($search) {
+                      $vq->whereRaw('LOWER(name) LIKE ?', [$search]);
+                  });
             });
         }
 
@@ -59,6 +75,8 @@ class InventoryPurchaseController extends BaseController
         $statsQuery = (clone $query)->reorder();
         $totalPurchases = $statsQuery->count();
         $totalCost = (float) ($statsQuery->sum('total_cost') ?? 0);
+        $totalCredit = (float) ((clone $statsQuery)->where('payment_status', 'credit')->sum('total_cost') ?? 0);
+        $totalSettled = (float) ((clone $statsQuery)->where('payment_status', 'settled')->sum('total_cost') ?? 0);
 
         $paginator = $query->paginate($request->input('per_page', 15));
 
@@ -74,9 +92,21 @@ class InventoryPurchaseController extends BaseController
                 'stats' => [
                     'total_purchases' => $totalPurchases,
                     'total_cost' => round($totalCost, 2),
+                    'total_credit' => round($totalCredit, 2),
+                    'total_settled' => round($totalSettled, 2),
                 ],
             ],
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        if (! $request->user()->hasAbility('view_inventory_items')) {
+            return $this->forbidden('You do not have permission to export purchases.');
+        }
+
+        $filename = 'inventory_purchases_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new InventoryPurchaseExport($request->all()), $filename);
     }
 
     public function store(Request $request): JsonResponse
@@ -86,16 +116,25 @@ class InventoryPurchaseController extends BaseController
         }
 
         $validated = $request->validate([
-            'bill_no'       => 'nullable|string|max:100',
-            'supplier_name' => 'nullable|string|max:200',
-            'purchased_at'  => 'required|date',
-            'payment_mode'  => 'nullable|string|max:50',
-            'remarks'       => 'nullable|string',
-            'lines'         => 'required|array|min:1',
+            'bill_no'             => 'nullable|string|max:100',
+            'supplier_name'       => 'nullable|string|max:200',
+            'inventory_vendor_id' => 'nullable|exists:inventory_vendors,id',
+            'purchased_at'        => 'required|date',
+            'payment_mode'        => 'nullable|string|max:50',
+            'payment_status'      => 'nullable|string|in:paid,credit',
+            'remarks'             => 'nullable|string',
+            'lines'               => 'required|array|min:1',
             'lines.*.inventory_item_id' => 'required|exists:inventory_items,id',
             'lines.*.quantity'          => 'required|numeric|min:0.001',
             'lines.*.unit_cost'         => 'nullable|numeric|min:0',
         ]);
+
+        if (!empty($validated['inventory_vendor_id']) && empty($validated['supplier_name'])) {
+            $vendor = InventoryVendor::find($validated['inventory_vendor_id']);
+            if ($vendor) {
+                $validated['supplier_name'] = $vendor->name;
+            }
+        }
 
         $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
         if ($institutionId === null) {
@@ -141,16 +180,21 @@ class InventoryPurchaseController extends BaseController
                 ];
             }
 
+            $paymentStatus = $validated['payment_status'] ?? 'paid';
+            $paymentMode = $paymentStatus === 'credit' ? 'credit' : ($validated['payment_mode'] ?? 'cash');
+
             // Create purchase header
             $purchase = InventoryPurchase::create([
-                'institution_id' => $institutionId,
-                'bill_no'        => $validated['bill_no'] ?? null,
-                'supplier_name'  => $validated['supplier_name'] ?? null,
-                'purchased_at'   => $validated['purchased_at'],
-                'total_cost'     => $totalCost,
-                'payment_mode'   => $validated['payment_mode'] ?? 'cash',
-                'purchased_by'   => auth()->id(),
-                'remarks'        => $validated['remarks'] ?? null,
+                'institution_id'      => $institutionId,
+                'bill_no'             => $validated['bill_no'] ?? null,
+                'supplier_name'       => $validated['supplier_name'] ?? null,
+                'inventory_vendor_id' => $validated['inventory_vendor_id'] ?? null,
+                'purchased_at'        => $validated['purchased_at'],
+                'total_cost'          => $totalCost,
+                'payment_mode'        => $paymentMode,
+                'payment_status'      => $paymentStatus,
+                'purchased_by'        => auth()->id(),
+                'remarks'             => $validated['remarks'] ?? null,
             ]);
 
             // Create lines and FIFO batches
@@ -184,31 +228,34 @@ class InventoryPurchaseController extends BaseController
             InventoryMovement::whereIn('id', collect($linesData)->pluck('movement_id')->filter()->toArray())
                 ->update(['reference_id' => $purchase->id]);
 
-            // --- Auto-create Expense entry ---
-            $expenseCat = $this->getOrCreateInventoryExpenseCategory($institutionId);
-            if ($expenseCat && $totalCost > 0) {
-                $supplier = $validated['supplier_name'] ?? 'Market';
-                $expense = Expense::create([
-                    'institution_id'     => $institutionId,
-                    'expense_category_id'=> $expenseCat->id,
-                    'title'              => 'Inventory Purchase' . ($supplier ? " — {$supplier}" : ''),
-                    'amount'             => $totalCost,
-                    'date'               => $validated['purchased_at'],
-                    'payment_mode'       => $validated['payment_mode'] ?? 'cash',
-                    'reference_no'       => $validated['bill_no'] ?? null,
-                    'payee'              => $supplier,
-                    'description'        => $validated['remarks'] ?? null,
-                    'status'             => 'approved',
-                    'recorded_by'        => auth()->id(),
-                ]);
-                $purchase->update(['expense_id' => $expense->id]);
+            // --- Auto-create Expense entry only for spot-paid purchases ---
+            // Credit purchases will log their cash/bank outflow expense upon settlement!
+            if ($paymentStatus !== 'credit') {
+                $expenseCat = $this->getOrCreateInventoryExpenseCategory($institutionId);
+                if ($expenseCat && $totalCost > 0) {
+                    $supplier = $validated['supplier_name'] ?? 'Market';
+                    $expense = Expense::create([
+                        'institution_id'     => $institutionId,
+                        'expense_category_id'=> $expenseCat->id,
+                        'title'              => 'Inventory Purchase' . ($supplier ? " — {$supplier}" : ''),
+                        'amount'             => $totalCost,
+                        'date'               => $validated['purchased_at'],
+                        'payment_mode'       => $paymentMode,
+                        'reference_no'       => $validated['bill_no'] ?? null,
+                        'payee'              => $supplier,
+                        'description'        => $validated['remarks'] ?? null,
+                        'status'             => 'approved',
+                        'recorded_by'        => auth()->id(),
+                    ]);
+                    $purchase->update(['expense_id' => $expense->id]);
+                }
             }
 
             return $purchase;
         });
 
         return $this->created(
-            $purchase->load(['purchasedBy', 'lines.item', 'expense']),
+            $purchase->load(['purchasedBy', 'lines.item', 'expense', 'vendor', 'settlement']),
             'Purchase recorded successfully'
         );
     }
@@ -220,7 +267,7 @@ class InventoryPurchaseController extends BaseController
         }
 
         return $this->success(
-            $inventory_purchase->load(['purchasedBy', 'lines.item', 'expense']),
+            $inventory_purchase->load(['purchasedBy', 'lines.item', 'expense', 'vendor', 'settlement']),
             'Success'
         );
     }

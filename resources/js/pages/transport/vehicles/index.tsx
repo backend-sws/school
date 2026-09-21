@@ -38,6 +38,7 @@ import {
   History,
   Activity,
   ShieldCheck,
+  ExternalLink,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -143,6 +144,7 @@ const TransportVehiclesIndex = () => {
   const [fuelFromDate, setFuelFromDate] = useState("");
   const [fuelToDate, setFuelToDate] = useState("");
   const [fuelTypeFilter, setFuelTypeFilter] = useState("all");
+  const [fuelPaymentStatus, setFuelPaymentStatus] = useState("all");
 
   // Filter States for Expenses Tab
   const [expenseSearch, setExpenseSearch] = useState("");
@@ -195,8 +197,9 @@ const TransportVehiclesIndex = () => {
     if (fuelFromDate) p.from_date = fuelFromDate;
     if (fuelToDate) p.to_date = fuelToDate;
     if (fuelTypeFilter && fuelTypeFilter !== "all") p.fuel_type = fuelTypeFilter;
+    if (fuelPaymentStatus && fuelPaymentStatus !== "all") p.payment_status = fuelPaymentStatus;
     return p;
-  }, [fuelSearch, fuelVehicleId, fuelFromDate, fuelToDate, fuelTypeFilter]);
+  }, [fuelSearch, fuelVehicleId, fuelFromDate, fuelToDate, fuelTypeFilter, fuelPaymentStatus]);
 
   const { data: allFuelsRes, isLoading: isLoadingFuels } = useQuery({
     queryKey: ["transport-all-fuels", fuelParams],
@@ -1139,7 +1142,7 @@ const TransportVehiclesIndex = () => {
                   </div>
 
                   {/* Filter Bar for Fleet Fuel */}
-                  <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+                  <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2.5">
                     <div className="relative">
                       <Search className="size-3.5 absolute left-2.5 top-2.5 text-muted-foreground" />
                       <Input
@@ -1161,6 +1164,18 @@ const TransportVehiclesIndex = () => {
                             {v.registration_number}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={fuelPaymentStatus} onValueChange={setFuelPaymentStatus}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Payment Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Payment Statuses</SelectItem>
+                        <SelectItem value="credit">⏳ Credit (Unsettled)</SelectItem>
+                        <SelectItem value="settled">✅ Settled</SelectItem>
+                        <SelectItem value="paid">Direct Paid</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -1197,7 +1212,7 @@ const TransportVehiclesIndex = () => {
                       />
                     </div>
 
-                    {(fuelSearch || fuelVehicleId !== "all" || fuelFromDate || fuelToDate || fuelTypeFilter !== "all") && (
+                    {(fuelSearch || fuelVehicleId !== "all" || fuelFromDate || fuelToDate || fuelTypeFilter !== "all" || fuelPaymentStatus !== "all") && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -1207,6 +1222,7 @@ const TransportVehiclesIndex = () => {
                           setFuelFromDate("");
                           setFuelToDate("");
                           setFuelTypeFilter("all");
+                          setFuelPaymentStatus("all");
                         }}
                         className="h-8 text-xs text-muted-foreground gap-1"
                       >
@@ -1237,6 +1253,7 @@ const TransportVehiclesIndex = () => {
                             <TableHead className="text-right font-bold">Total (₹)</TableHead>
                             <TableHead>Calculated Mileage</TableHead>
                             <TableHead>Pump / Vendor</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Receipt</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
@@ -1277,7 +1294,33 @@ const TransportVehiclesIndex = () => {
                                 )}
                               </TableCell>
                               <TableCell className="text-xs">
-                                <div className="truncate max-w-[140px]">{f.vendor_name || "—"}</div>
+                                {f.transport_fuel_vendor_id ? (
+                                  <Link
+                                    href={`/transport/vendors/${f.transport_fuel_vendor_id}`}
+                                    className="font-medium text-primary hover:underline flex items-center gap-1 max-w-[150px] truncate"
+                                    title="View Pump Ledger"
+                                  >
+                                    <span className="truncate">{f.vendor_name || f.fuel_vendor?.name || "Petrol Pump"}</span>
+                                    <ExternalLink className="size-2.5 shrink-0 text-muted-foreground" />
+                                  </Link>
+                                ) : (
+                                  <div className="truncate max-w-[140px]">{f.vendor_name || "—"}</div>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {f.payment_status === "credit" ? (
+                                  <Badge variant="outline" className="border-amber-400 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] px-1.5 py-0 font-semibold">
+                                    ⏳ Credit
+                                  </Badge>
+                                ) : f.payment_status === "settled" ? (
+                                  <Badge variant="outline" className="border-blue-400 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-[10px] px-1.5 py-0 font-semibold">
+                                    ✅ Settled
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] px-1.5 py-0">
+                                    Paid
+                                  </Badge>
+                                )}
                               </TableCell>
                               <TableCell className="text-center">
                                 {f.bill_url ? (

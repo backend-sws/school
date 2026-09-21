@@ -21,10 +21,19 @@ class TransportVehicleFuelController extends BaseController
             'transportVehicle:id,registration_number,vehicle_type,fuel_type,current_odometer',
             'transportDriver:id,name',
             'creator:id,name',
+            'fuelVendor:id,name,location,city,contact_phone',
         ]);
 
         if ($request->filled('transport_vehicle_id')) {
             $query->where('transport_vehicle_id', $request->transport_vehicle_id);
+        }
+
+        if ($request->filled('transport_fuel_vendor_id')) {
+            $query->where('transport_fuel_vendor_id', $request->transport_fuel_vendor_id);
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('payment_status', $request->payment_status);
         }
 
         if ($request->filled('fuel_type')) {
@@ -47,6 +56,9 @@ class TransportVehicleFuelController extends BaseController
                     ->orWhereRaw('LOWER(notes) LIKE ?', [$search])
                     ->orWhereHas('transportVehicle', function ($vq) use ($search) {
                         $vq->whereRaw('LOWER(registration_number) LIKE ?', [$search]);
+                    })
+                    ->orWhereHas('fuelVendor', function ($vq) use ($search) {
+                        $vq->whereRaw('LOWER(name) LIKE ?', [$search]);
                     });
             });
         }
@@ -64,22 +76,24 @@ class TransportVehicleFuelController extends BaseController
         }
 
         $validated = $request->validate([
-            'transport_vehicle_id' => 'required|exists:transport_vehicles,id',
-            'transport_driver_id' => 'nullable|exists:transport_drivers,id',
-            'fuel_date' => 'required|date',
-            'fuel_time' => 'nullable|string',
-            'fuel_type' => 'nullable|string|max:30',
-            'odometer_reading' => 'required|numeric|min:0',
-            'liters' => 'required|numeric|gt:0',
-            'rate_per_liter' => 'required|numeric|gt:0',
-            'total_amount' => 'nullable|numeric|min:0',
-            'is_full_tank' => 'nullable|boolean',
-            'vendor_name' => 'nullable|string|max:150',
-            'payment_mode' => 'nullable|string|max:50',
-            'invoice_number' => 'nullable|string|max:100',
-            'bill_url' => 'nullable|string',
-            'bill_file' => 'nullable|file|mimes:jpeg,png,jpg,pdf,webp|max:10240',
-            'notes' => 'nullable|string',
+            'transport_vehicle_id'     => 'required|exists:transport_vehicles,id',
+            'transport_driver_id'      => 'nullable|exists:transport_drivers,id',
+            'fuel_date'                => 'required|date',
+            'fuel_time'                => 'nullable|string',
+            'fuel_type'                => 'nullable|string|max:30',
+            'odometer_reading'         => 'required|numeric|min:0',
+            'liters'                   => 'required|numeric|gt:0',
+            'rate_per_liter'           => 'required|numeric|gt:0',
+            'total_amount'             => 'nullable|numeric|min:0',
+            'is_full_tank'             => 'nullable|boolean',
+            'vendor_name'              => 'nullable|string|max:150',
+            'transport_fuel_vendor_id' => 'nullable|exists:transport_fuel_vendors,id',
+            'payment_mode'             => 'nullable|string|max:50',
+            'payment_status'           => 'nullable|string|in:paid,credit',
+            'invoice_number'           => 'nullable|string|max:100',
+            'bill_url'                 => 'nullable|string',
+            'bill_file'                => 'nullable|file|mimes:jpeg,png,jpg,pdf,webp|max:10240',
+            'notes'                    => 'nullable|string',
         ]);
 
         $liters = (float) $validated['liters'];
@@ -94,7 +108,15 @@ class TransportVehicleFuelController extends BaseController
         $validated['is_full_tank'] = $isFullTank;
         $validated['fuel_type'] = $validated['fuel_type'] ?? 'diesel';
         $validated['payment_mode'] = $validated['payment_mode'] ?? 'cash';
+        $validated['payment_status'] = $validated['payment_status'] ?? ($validated['payment_mode'] === 'credit' ? 'credit' : 'paid');
         $validated['created_by'] = $request->user()->id;
+
+        if (!empty($validated['transport_fuel_vendor_id']) && empty($validated['vendor_name'])) {
+            $vendor = \App\Models\TransportFuelVendor::find($validated['transport_fuel_vendor_id']);
+            if ($vendor) {
+                $validated['vendor_name'] = $vendor->name;
+            }
+        }
 
         // Handle bill file upload
         $billUrl = $this->handleFileUpload($request, 'bill_file', 'transport/fuels');
@@ -128,7 +150,7 @@ class TransportVehicleFuelController extends BaseController
         }
 
         return $this->created(
-            $fuel->load(['transportVehicle', 'transportDriver', 'creator']),
+            $fuel->load(['transportVehicle', 'transportDriver', 'creator', 'fuelVendor']),
             'Fuel refill recorded successfully'
         );
     }
@@ -139,7 +161,7 @@ class TransportVehicleFuelController extends BaseController
             return $this->forbidden('You do not have permission to view fuel details.');
         }
 
-        $vehicle_fuel->load(['transportVehicle', 'transportDriver', 'creator']);
+        $vehicle_fuel->load(['transportVehicle', 'transportDriver', 'creator', 'fuelVendor', 'settlement']);
 
         return $this->successWithMap($vehicle_fuel, 'passthrough');
     }
@@ -151,22 +173,24 @@ class TransportVehicleFuelController extends BaseController
         }
 
         $validated = $request->validate([
-            'transport_vehicle_id' => 'sometimes|required|exists:transport_vehicles,id',
-            'transport_driver_id' => 'nullable|exists:transport_drivers,id',
-            'fuel_date' => 'sometimes|required|date',
-            'fuel_time' => 'nullable|string',
-            'fuel_type' => 'nullable|string|max:30',
-            'odometer_reading' => 'sometimes|required|numeric|min:0',
-            'liters' => 'sometimes|required|numeric|gt:0',
-            'rate_per_liter' => 'sometimes|required|numeric|gt:0',
-            'total_amount' => 'nullable|numeric|min:0',
-            'is_full_tank' => 'nullable|boolean',
-            'vendor_name' => 'nullable|string|max:150',
-            'payment_mode' => 'nullable|string|max:50',
-            'invoice_number' => 'nullable|string|max:100',
-            'bill_url' => 'nullable|string',
-            'bill_file' => 'nullable|file|mimes:jpeg,png,jpg,pdf,webp|max:10240',
-            'notes' => 'nullable|string',
+            'transport_vehicle_id'     => 'sometimes|required|exists:transport_vehicles,id',
+            'transport_driver_id'      => 'nullable|exists:transport_drivers,id',
+            'fuel_date'                => 'sometimes|required|date',
+            'fuel_time'                => 'nullable|string',
+            'fuel_type'                => 'nullable|string|max:30',
+            'odometer_reading'         => 'sometimes|required|numeric|min:0',
+            'liters'                   => 'sometimes|required|numeric|gt:0',
+            'rate_per_liter'           => 'sometimes|required|numeric|gt:0',
+            'total_amount'             => 'nullable|numeric|min:0',
+            'is_full_tank'             => 'nullable|boolean',
+            'vendor_name'              => 'nullable|string|max:150',
+            'transport_fuel_vendor_id' => 'nullable|exists:transport_fuel_vendors,id',
+            'payment_mode'             => 'nullable|string|max:50',
+            'payment_status'           => 'nullable|string|in:paid,credit',
+            'invoice_number'           => 'nullable|string|max:100',
+            'bill_url'                 => 'nullable|string',
+            'bill_file'                => 'nullable|file|mimes:jpeg,png,jpg,pdf,webp|max:10240',
+            'notes'                    => 'nullable|string',
         ]);
 
         $liters = isset($validated['liters']) ? (float) $validated['liters'] : (float) $vehicle_fuel->liters;
@@ -184,6 +208,12 @@ class TransportVehicleFuelController extends BaseController
         }
 
         unset($validated['bill_file']);
+        if (!empty($validated['transport_fuel_vendor_id']) && empty($validated['vendor_name'])) {
+            $vendor = \App\Models\TransportFuelVendor::find($validated['transport_fuel_vendor_id']);
+            if ($vendor) {
+                $validated['vendor_name'] = $vendor->name;
+            }
+        }
         $vehicle_fuel->update($validated);
 
         // Update vehicle odometer if higher
@@ -194,7 +224,7 @@ class TransportVehicleFuelController extends BaseController
         }
 
         return $this->successWithMap(
-            $vehicle_fuel->fresh(['transportVehicle', 'transportDriver', 'creator']),
+            $vehicle_fuel->fresh(['transportVehicle', 'transportDriver', 'creator', 'fuelVendor', 'settlement']),
             'passthrough',
             'Fuel record updated successfully'
         );

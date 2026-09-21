@@ -23,10 +23,19 @@ class TransportVehicleFuelExport implements FromQuery, WithHeadings, WithMapping
         $query = TransportVehicleFuel::query()->with([
             'transportVehicle:id,registration_number,model_name,fuel_type',
             'transportDriver:id,name',
+            'fuelVendor:id,name,location,city',
         ]);
 
         if (!empty($this->filters['transport_vehicle_id']) && $this->filters['transport_vehicle_id'] !== 'all') {
             $query->where('transport_vehicle_id', $this->filters['transport_vehicle_id']);
+        }
+
+        if (!empty($this->filters['transport_fuel_vendor_id']) && $this->filters['transport_fuel_vendor_id'] !== 'all') {
+            $query->where('transport_fuel_vendor_id', $this->filters['transport_fuel_vendor_id']);
+        }
+
+        if (!empty($this->filters['payment_status']) && $this->filters['payment_status'] !== 'all') {
+            $query->where('payment_status', $this->filters['payment_status']);
         }
 
         if (!empty($this->filters['fuel_type']) && $this->filters['fuel_type'] !== 'all') {
@@ -49,6 +58,9 @@ class TransportVehicleFuelExport implements FromQuery, WithHeadings, WithMapping
                     ->orWhereRaw('LOWER(notes) LIKE ?', [$search])
                     ->orWhereHas('transportVehicle', function ($vq) use ($search) {
                         $vq->whereRaw('LOWER(registration_number) LIKE ?', [$search]);
+                    })
+                    ->orWhereHas('fuelVendor', function ($vq) use ($search) {
+                        $vq->whereRaw('LOWER(name) LIKE ?', [$search]);
                     });
             });
         }
@@ -73,15 +85,26 @@ class TransportVehicleFuelExport implements FromQuery, WithHeadings, WithMapping
             'Full Tank?',
             'Calculated Mileage (km/L)',
             'Petrol Pump / Vendor',
+            'Vendor City / Location',
             'Invoice / Slip No',
             'Payment Mode',
-            'Notes / Remarks'
+            'Payment Status',
+            'Settled Date',
+            'Notes / Remarks',
         ];
     }
 
     public function map($row): array
     {
         $this->rowNumber++;
+
+        $vendorName = $row->fuelVendor?->name ?? $row->vendor_name ?? '—';
+        $vendorLoc = $row->fuelVendor?->city ?? $row->fuelVendor?->location ?? '—';
+        $paymentStatus = match ($row->payment_status) {
+            'credit'  => 'Credit (Unsettled)',
+            'settled' => 'Settled',
+            default   => 'Paid Direct',
+        };
 
         return [
             $this->rowNumber,
@@ -97,9 +120,12 @@ class TransportVehicleFuelExport implements FromQuery, WithHeadings, WithMapping
             number_format((float) $row->total_amount, 2),
             $row->is_full_tank ? 'Yes' : 'No',
             $row->calculated_mileage ? number_format((float) $row->calculated_mileage, 2) . ' km/L' : '—',
-            $row->vendor_name ?? '—',
+            $vendorName,
+            $vendorLoc,
             $row->invoice_number ?? '—',
             ucfirst($row->payment_mode ?? 'cash'),
+            $paymentStatus,
+            $row->settled_at ? $row->settled_at->format('Y-m-d') : '—',
             $row->notes ?? '—',
         ];
     }

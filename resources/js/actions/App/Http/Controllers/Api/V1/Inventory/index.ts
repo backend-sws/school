@@ -4,6 +4,7 @@ import InventoryItemController from './InventoryItemController'
 import InventoryMovementController from './InventoryMovementController'
 import InventoryReportController from './InventoryReportController'
 import InventorySaleController from './InventorySaleController'
+import InventoryVendorController from './InventoryVendorController'
 import InventoryPurchaseController from './InventoryPurchaseController'
 import InventoryIssueController from './InventoryIssueController'
 const Inventory = {
@@ -13,6 +14,7 @@ InventoryItemController: Object.assign(InventoryItemController, InventoryItemCon
 InventoryMovementController: Object.assign(InventoryMovementController, InventoryMovementController),
 InventoryReportController: Object.assign(InventoryReportController, InventoryReportController),
 InventorySaleController: Object.assign(InventorySaleController, InventorySaleController),
+InventoryVendorController: Object.assign(InventoryVendorController, InventoryVendorController),
 InventoryPurchaseController: Object.assign(InventoryPurchaseController, InventoryPurchaseController),
 InventoryIssueController: Object.assign(InventoryIssueController, InventoryIssueController),
 }

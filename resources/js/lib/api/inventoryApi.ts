@@ -1,8 +1,10 @@
 import api from "./api";
+import inventoryVendorApi from "./inventoryVendorApi";
 
 const BASE = "/inventory";
 
 const inventoryApi = {
+  vendors: inventoryVendorApi,
   locations: {
     index: (params?: Record<string, unknown>) =>
       api.get(`${BASE}/locations`, { params }),
@@ -83,6 +85,10 @@ const inventoryApi = {
       api.post(`${BASE}/purchases`, data),
     update: (id: string | number, data: Record<string, unknown>) =>
       api.put(`${BASE}/purchases/${id}`, data),
+    exportUrl: (params?: Record<string, string>) => {
+      const q = params ? new URLSearchParams(params).toString() : "";
+      return `/api/v1/inventory/purchases/export${q ? `?${q}` : ""}`;
+    },
   },
   issues: {
     index: (params?: Record<string, unknown>) =>

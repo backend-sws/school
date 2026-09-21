@@ -2,7 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FilterBar } from "@/components/filter-bar";
-import { Bus, MapPin, ClipboardList, Car, Users, FileText, BarChart3, ArrowRight } from "lucide-react";
+import { Bus, MapPin, ClipboardList, Car, Users, FileText, BarChart3, ArrowRight, Fuel } from "lucide-react";
 import { TRANSPORT_BREADCRUMBS, TRANSPORT_GUIDELINES, TRANSPORT_TIP } from "@/constants/page/admin/transport";
 import Each from "@/components/Each";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +42,7 @@ const setupLinks: TransportLink[] = [
   { title: "Routes", href: "/transport/routes", icon: ClipboardList, description: "Build routes with ordered stops and optional arrival/departure times." },
   { title: "Vehicles", href: "/transport/vehicles", icon: Car, description: "Register buses and vans. Assign a route and driver to each vehicle." },
   { title: "Drivers", href: "/transport/drivers", icon: Users, description: "Manage driver details, licenses, and contact information." },
+  { title: "Fuel Vendors", href: "/transport/vendors", icon: Fuel, description: "Petrol pumps, credit ledgers, fuel refill history, and settlements." },
 ];
 
 const assignmentLinks: TransportLink[] = [

@@ -1,0 +1,1 @@
+import{a as o}from"./api-DbsTeVcB.js";const s="/fee-regulation-profiles",a={index:e=>o.get(s,{params:e}),show:e=>o.get(`${s}/${e}`).then(t=>t?.data??t),store:e=>o.post(s,e),update:(e,t)=>o.put(`${s}/${e}`,t),clone:(e,t)=>o.post(`${s}/${e}/clone`,t),destroy:e=>o.delete(`${s}/${e}`)};export{a as f};

@@ -24,7 +24,11 @@ class TransportVehicleFuel extends Model
         'total_amount',
         'is_full_tank',
         'vendor_name',
+        'transport_fuel_vendor_id',
         'payment_mode',
+        'payment_status',
+        'transport_fuel_vendor_settlement_id',
+        'settled_at',
         'invoice_number',
         'bill_url',
         'calculated_mileage',
@@ -33,14 +37,25 @@ class TransportVehicleFuel extends Model
     ];
 
     protected $casts = [
-        'fuel_date' => 'date',
-        'odometer_reading' => 'decimal:2',
-        'liters' => 'decimal:2',
-        'rate_per_liter' => 'decimal:2',
-        'total_amount' => 'decimal:2',
-        'is_full_tank' => 'boolean',
+        'fuel_date'          => 'date',
+        'odometer_reading'   => 'decimal:2',
+        'liters'             => 'decimal:2',
+        'rate_per_liter'     => 'decimal:2',
+        'total_amount'       => 'decimal:2',
+        'is_full_tank'       => 'boolean',
         'calculated_mileage' => 'decimal:2',
+        'settled_at'         => 'datetime',
     ];
+
+    public function fuelVendor(): BelongsTo
+    {
+        return $this->belongsTo(TransportFuelVendor::class, 'transport_fuel_vendor_id');
+    }
+
+    public function settlement(): BelongsTo
+    {
+        return $this->belongsTo(TransportFuelVendorSettlement::class, 'transport_fuel_vendor_settlement_id');
+    }
 
     public function institution(): BelongsTo
     {

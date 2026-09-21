@@ -39,6 +39,7 @@ import categories from './categories'
 import locations from './locations'
 import items from './items'
 import inventory from './inventory'
+import vendors from './vendors'
 import stops from './stops'
 import routes from './routes'
 import drivers from './drivers'
@@ -47,6 +48,7 @@ import vehicleLogs from './vehicle-logs'
 import vehicleFuels from './vehicle-fuels'
 import vehicleExpenses from './vehicle-expenses'
 import assignments from './assignments'
+import fuelVendors from './fuel-vendors'
 import passes from './passes'
 import hostels from './hostels'
 import floors from './floors'
@@ -105,6 +107,7 @@ categories: Object.assign(categories, categories),
 locations: Object.assign(locations, locations),
 items: Object.assign(items, items),
 inventory: Object.assign(inventory, inventory),
+vendors: Object.assign(vendors, vendors),
 stops: Object.assign(stops, stops),
 routes: Object.assign(routes, routes),
 drivers: Object.assign(drivers, drivers),
@@ -113,6 +116,7 @@ vehicleLogs: Object.assign(vehicleLogs, vehicleLogs),
 vehicleFuels: Object.assign(vehicleFuels, vehicleFuels),
 vehicleExpenses: Object.assign(vehicleExpenses, vehicleExpenses),
 assignments: Object.assign(assignments, assignments),
+fuelVendors: Object.assign(fuelVendors, fuelVendors),
 passes: Object.assign(passes, passes),
 hostels: Object.assign(hostels, hostels),
 floors: Object.assign(floors, floors),

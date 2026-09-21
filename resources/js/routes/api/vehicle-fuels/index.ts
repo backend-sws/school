@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:60
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:72
  * @route '/api/v1/transport/vehicle-fuels'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:60
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:72
  * @route '/api/v1/transport/vehicle-fuels'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:60
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:72
  * @route '/api/v1/transport/vehicle-fuels'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:60
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:72
  * @route '/api/v1/transport/vehicle-fuels'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::store
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:60
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:72
  * @route '/api/v1/transport/vehicle-fuels'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 export const show = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 show.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ show.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: num
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 show.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ show.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: num
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
     const showForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
         showForm.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::show
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:136
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
         showForm.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 export const update = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -251,7 +251,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 update.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -284,7 +284,7 @@ update.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: n
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 update.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ update.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: n
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -303,7 +303,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
     const updateForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -318,7 +318,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
         updateForm.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -332,7 +332,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::update
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:147
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
         updateForm.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -348,7 +348,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:203
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 export const destroy = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -363,7 +363,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:203
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 destroy.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -396,7 +396,7 @@ destroy.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:203
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
 destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -406,7 +406,7 @@ destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fue
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:203
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
     const destroyForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -421,7 +421,7 @@ destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fue
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportVehicleFuelController::destroy
- * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:203
+ * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
         destroyForm.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

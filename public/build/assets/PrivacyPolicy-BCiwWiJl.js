@@ -1,1 +1,0 @@
-import{c as e,j as c}from"./app-DX-111SG.js";import{L as s}from"./legal-page-layout-wpmWxBgJ.js";import"./app-B7qWJiIz.js";import"./AppBrand-DNNs1-vw.js";import"./arrow-left-CL-OsEWW.js";function u(r){const t=e.c(2),{content:i}=r;let o;return t[0]!==i?(o=c.jsx(s,{title:"Privacy Policy",content:i}),t[0]=i,t[1]=o):o=t[1],o}export{u as default};

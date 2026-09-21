@@ -1,4 +1,5 @@
 import api from "./api";
+import fuelVendorApi from "./fuelVendorApi";
 
 const BASE = "/transport";
 
@@ -132,6 +133,7 @@ const transportApi = {
     manifest: (params: { route_id: number; date?: string }) => api.get(`${BASE}/reports/manifest`, { params }),
     occupancy: (params?: { date?: string }) => api.get(`${BASE}/reports/occupancy`, { params }),
   },
+  fuelVendors: fuelVendorApi,
 };
 
 export default transportApi;

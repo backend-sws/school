@@ -4,9 +4,10 @@ import routes from './routes'
 import vehicles from './vehicles'
 import drivers from './drivers'
 import assignments from './assignments'
+import vendors from './vendors'
 import reports from './reports'
 /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -20,7 +21,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -28,7 +29,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -36,7 +37,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +46,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +55,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -62,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:428
+ * @see routes/web.php:430
  * @route '/transport'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,6 +84,7 @@ routes: Object.assign(routes, routes),
 vehicles: Object.assign(vehicles, vehicles),
 drivers: Object.assign(drivers, drivers),
 assignments: Object.assign(assignments, assignments),
+vendors: Object.assign(vendors, vendors),
 reports: Object.assign(reports, reports),
 }
 

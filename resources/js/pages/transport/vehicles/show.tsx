@@ -36,6 +36,7 @@ import {
   CheckCircle2,
   Clock,
   Car,
+  ExternalLink,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -889,6 +890,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                           <TableHead className="text-right font-bold text-emerald-700 dark:text-emerald-400">Total (₹)</TableHead>
                           <TableHead>Calculated Mileage</TableHead>
                           <TableHead>Petrol Pump / Slip</TableHead>
+                          <TableHead className="text-center">Status</TableHead>
                           <TableHead className="text-center">Bill Receipt</TableHead>
                           <TableHead className="w-20 text-center">Actions</TableHead>
                         </TableRow>
@@ -929,11 +931,37 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                               )}
                             </TableCell>
                             <TableCell className="text-xs">
-                              <div className="truncate max-w-[140px]" title={f.vendor_name || ""}>
-                                {f.vendor_name || "—"}
-                              </div>
+                              {f.transport_fuel_vendor_id ? (
+                                <Link
+                                  href={`/transport/vendors/${f.transport_fuel_vendor_id}`}
+                                  className="font-medium text-primary hover:underline flex items-center gap-1 max-w-[140px] truncate"
+                                  title="View Pump Ledger"
+                                >
+                                  <span className="truncate">{f.vendor_name || f.fuel_vendor?.name || "Petrol Pump"}</span>
+                                  <ExternalLink className="size-2.5 shrink-0 text-muted-foreground" />
+                                </Link>
+                              ) : (
+                                <div className="truncate max-w-[140px]" title={f.vendor_name || ""}>
+                                  {f.vendor_name || "—"}
+                                </div>
+                              )}
                               {f.invoice_number && (
-                                <span className="text-[10px] text-muted-foreground font-mono">Slip #{f.invoice_number}</span>
+                                <span className="text-[10px] text-muted-foreground font-mono block">Slip #{f.invoice_number}</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {f.payment_status === "credit" ? (
+                                <Badge variant="outline" className="border-amber-400 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] px-1.5 py-0 font-semibold">
+                                  ⏳ Credit
+                                </Badge>
+                              ) : f.payment_status === "settled" ? (
+                                <Badge variant="outline" className="border-blue-400 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-[10px] px-1.5 py-0 font-semibold">
+                                  ✅ Settled
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] px-1.5 py-0">
+                                  Paid
+                                </Badge>
                               )}
                             </TableCell>
                             <TableCell className="text-center">

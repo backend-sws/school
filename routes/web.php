@@ -416,6 +416,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/sales/{id}', fn($id) => Inertia::render('inventory/sales/show', ['id' => (int) $id]))->name('sales.show');
                 Route::get('/sales/{id}/collect-payment', fn($id) => Inertia::render('inventory/sales/collect-payment', ['id' => (int) $id]))->name('sales.collect-payment');
                 Route::get('/purchases', fn() => Inertia::render('inventory/purchases/index'))->name('purchases.index');
+                Route::get('/vendors', fn() => Inertia::render('inventory/vendors/index'))->name('vendors.index');
+                Route::get('/vendors/{id}', fn($id) => Inertia::render('inventory/vendors/show', ['id' => (int) $id]))->name('vendors.show');
                 Route::get('/issues', fn() => Inertia::render('inventory/issues/index'))->name('issues.index');
             });
         });
@@ -433,6 +435,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/vehicles/{id}', fn($id) => Inertia::render('transport/vehicles/show', ['id' => (int) $id]))->name('vehicles.show');
                 Route::get('/drivers', fn() => Inertia::render('transport/drivers/index'))->name('drivers.index');
                 Route::get('/assignments', fn() => Inertia::render('transport/assignments/index'))->name('assignments.index');
+                Route::get('/vendors', fn() => Inertia::render('transport/vendors/index'))->name('vendors.index');
+                Route::get('/vendors/{id}', fn($id) => Inertia::render('transport/vendors/show', ['id' => (int) $id]))->name('vendors.show');
                 Route::get('/reports/manifest', fn() => Inertia::render('transport/reports/manifest'))->name('reports.manifest');
                 Route::get('/reports/occupancy', fn() => Inertia::render('transport/reports/occupancy'))->name('reports.occupancy');
             });
