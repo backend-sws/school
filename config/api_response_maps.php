@@ -236,14 +236,19 @@ return [
         'keys' => [
             'id',
             'name',
+            'session_id',
+            'session.name',
+            'session',
             'profile_type',
             'gender',
             'category',
             'description',
             'is_default',
+            'fee_collection_frequency',
             'items',
         ],
     ],
+
 
     'fee_dues_index' => [
         'keys' => [

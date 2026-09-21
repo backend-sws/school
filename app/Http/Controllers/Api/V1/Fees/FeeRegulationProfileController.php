@@ -26,7 +26,7 @@ class FeeRegulationProfileController extends BaseController
         }
 
         $query = FeeRegulationProfile::where('institution_id', $institutionId)
-            ->with('items.feeType');
+            ->with(['items.feeType', 'session']);
 
         // Search — supports targeted search_by or blanket search
         if ($search = $request->input('search')) {
@@ -41,10 +41,16 @@ class FeeRegulationProfileController extends BaseController
             });
         }
 
-        // Sidebar filters
+        // Sidebar / query filters
         if ($profileType = $request->input('profile_type')) {
             if ($profileType !== 'all') {
                 $query->where('profile_type', $profileType);
+            }
+        }
+
+        if ($sessionId = $request->input('session_id')) {
+            if ($sessionId !== 'all') {
+                $query->where('session_id', $sessionId);
             }
         }
 
@@ -62,6 +68,7 @@ class FeeRegulationProfileController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'session_id' => 'nullable|integer|exists:academic_sessions,id',
             'name' => 'required|string|max:200',
             'profile_type' => 'nullable|string|max:30|in:' . implode(',', array_map(fn($p) => $p->value, FeeSlot::profileTypes())),
             'gender' => 'nullable|string|max:20|in:' . implode(',', array_map(fn($g) => $g->value, FeeSlot::genders())),
@@ -80,6 +87,12 @@ class FeeRegulationProfileController extends BaseController
         }
 
         $isDefault = $validated['is_default'] ?? false;
+        $sessionId = $validated['session_id'] ?? null;
+        if (!$sessionId) {
+            $sessionId = \App\Models\Session::where('institution_id', $institutionId)
+                ->where('is_current', true)
+                ->value('id');
+        }
 
         // Begin a database transaction to ensure data integrity
         DB::beginTransaction();
@@ -94,6 +107,7 @@ class FeeRegulationProfileController extends BaseController
             // Create the new fee regulation profile
             $profile = FeeRegulationProfile::create([
                 'institution_id' => $institutionId,
+                'session_id' => $sessionId,
                 'name' => $validated['name'],
                 'profile_type' => $validated['profile_type'] ?? null,
                 'gender' => $validated['gender'] ?? null,
@@ -115,13 +129,12 @@ class FeeRegulationProfileController extends BaseController
             DB::commit();
 
         } catch (\Exception $e) {
-
             DB::rollBack();
-            return $this->error('Something went wrong while creating the profile.', 500);
+            return $this->error('Something went wrong while creating the profile: ' . $e->getMessage(), 500);
         }
 
         // Load the relationship before returning the response
-        $profile->load('items.feeType');
+        $profile->load(['items.feeType', 'session']);
 
         return $this->created($profile, 'Fee profile created successfully');
     }
@@ -138,10 +151,15 @@ class FeeRegulationProfileController extends BaseController
             return $this->error('Not found.', 404);
         }
 
-        $fee_regulation_profile->load('items.feeType');
+        $fee_regulation_profile->load(['items.feeType', 'session']);
 
         return $this->success([
             'id' => $fee_regulation_profile->id,
+            'session_id' => $fee_regulation_profile->session_id,
+            'session' => $fee_regulation_profile->session ? [
+                'id' => $fee_regulation_profile->session->id,
+                'name' => $fee_regulation_profile->session->name,
+            ] : null,
             'name' => $fee_regulation_profile->name,
             'profile_type' => $fee_regulation_profile->profile_type,
             'gender' => $fee_regulation_profile->gender,
@@ -175,6 +193,7 @@ class FeeRegulationProfileController extends BaseController
         }
 
         $validated = $request->validate([
+            'session_id' => 'nullable|integer|exists:academic_sessions,id',
             'name' => 'sometimes|string|max:200',
             'profile_type' => 'nullable|string|max:30|in:' . implode(',', array_map(fn($p) => $p->value, FeeSlot::profileTypes())),
             'gender' => 'nullable|string|max:20|in:' . implode(',', array_map(fn($g) => $g->value, FeeSlot::genders())),
@@ -203,6 +222,7 @@ class FeeRegulationProfileController extends BaseController
 
             // Update the current fee regulation profile
             $fee_regulation_profile->update([
+                'session_id' => array_key_exists('session_id', $validated) ? $validated['session_id'] : $fee_regulation_profile->session_id,
                 'name' => $validated['name'] ?? $fee_regulation_profile->name,
                 'profile_type' => array_key_exists('profile_type', $validated) ? $validated['profile_type'] : $fee_regulation_profile->profile_type,
                 'gender' => array_key_exists('gender', $validated) ? $validated['gender'] : $fee_regulation_profile->gender,
@@ -230,13 +250,66 @@ class FeeRegulationProfileController extends BaseController
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error('Something went wrong while updating the profile.', 500);
+            return $this->error('Something went wrong while updating the profile: ' . $e->getMessage(), 500);
         }
 
         // Load relationships before returning the updated model
-        $fee_regulation_profile->load('items.feeType');
+        $fee_regulation_profile->load(['items.feeType', 'session']);
 
         return $this->successWithMap($fee_regulation_profile->fresh(), 'passthrough', 'Fee profile updated successfully');
+    }
+
+    /**
+     * Clone an existing fee regulation profile into a target session.
+     */
+    public function clone(Request $request, $id): JsonResponse
+    {
+        $fee_regulation_profile = FeeRegulationProfile::with('items')->findOrFail($id);
+        $institutionId = self::getActiveInstitutionId($request->user());
+
+        if (!$institutionId || (int) $fee_regulation_profile->institution_id !== (int) $institutionId) {
+            return $this->error('Not found.', 404);
+        }
+
+        $validated = $request->validate([
+            'target_session_id' => 'required|integer|exists:academic_sessions,id',
+            'name' => 'nullable|string|max:200',
+        ]);
+
+        $targetSession = \App\Models\Session::findOrFail($validated['target_session_id']);
+
+        DB::beginTransaction();
+        try {
+            $newName = $validated['name'] ?? ($fee_regulation_profile->name . ' (' . $targetSession->name . ')');
+
+            $cloned = FeeRegulationProfile::create([
+                'institution_id' => $institutionId,
+                'session_id' => $targetSession->id,
+                'name' => $newName,
+                'profile_type' => $fee_regulation_profile->profile_type,
+                'gender' => $fee_regulation_profile->gender,
+                'category' => $fee_regulation_profile->category,
+                'description' => $fee_regulation_profile->description,
+                'is_default' => false,
+                'fee_collection_frequency' => $fee_regulation_profile->fee_collection_frequency,
+            ]);
+
+            foreach ($fee_regulation_profile->items as $item) {
+                FeeRegulationProfileItem::create([
+                    'profile_id' => $cloned->id,
+                    'fee_type_id' => $item->fee_type_id,
+                    'amount' => $item->amount,
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error('Failed to clone fee profile: ' . $e->getMessage(), 500);
+        }
+
+        $cloned->load(['items.feeType', 'session']);
+        return $this->created($cloned, 'Fee profile cloned to ' . $targetSession->name . ' successfully');
     }
 
     /**

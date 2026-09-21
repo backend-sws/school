@@ -297,6 +297,7 @@ Route::prefix(env('API_VERSION', 'v1'))->name('api.')->group(function () {
             Route::middleware(config('route_permissions.middleware.accounts_room'))->group(function () {
                 Route::post('fee-types/restore-defaults', [\App\Http\Controllers\Api\V1\Fees\FeeTypeController::class, 'restoreDefaults']);
                 Route::apiResource('fee-types', \App\Http\Controllers\Api\V1\Fees\FeeTypeController::class);
+                Route::post('fee-regulation-profiles/{id}/clone', [\App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::class, 'clone']);
                 Route::apiResource('fee-regulation-profiles', \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::class);
                 Route::apiResource('fee-payments', \App\Http\Controllers\Api\V1\Fees\FeePaymentController::class);
                 Route::post('fee-payments/{payment}/collect', [\App\Http\Controllers\Api\V1\Fees\FeePaymentController::class, 'collect']);

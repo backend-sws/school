@@ -99,9 +99,15 @@ class StudentProfile extends Model
 
         static::updated(function ($model) {
             if ($model->isDirty('fee_regulation_profile_id')) {
-                \App\Models\StudentFeePeriodBalance::where('user_id', $model->user_id)->delete();
+                $sessionId = $model->session_id;
+                $query = \App\Models\StudentFeePeriodBalance::where('user_id', $model->user_id);
+                if ($sessionId) {
+                    $query->where('session_id', $sessionId);
+                }
+                $query->delete();
             }
         });
+
     }
 
     public function user(): BelongsTo

@@ -12,7 +12,7 @@ import {
 } from "@/constants/feeProfile/formConfig";
 import { FeeProfileQueryKeys } from "@/lib/querykey/feeProfile";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { SlidersHorizontal, Plus, Pencil, Trash2 } from "lucide-react";
+import { SlidersHorizontal, Plus, Pencil, Trash2, Copy, Loader2 } from "lucide-react";
 import Each from "@/components/Each";
 import { PageContainer } from "@/components/shared/page/PageContainer";
 import { MainPageHeader } from "@/components/shared/page/MainPageHeader";
@@ -20,6 +20,24 @@ import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import DataTable, { TableEmptyState, TableSkeletonLoader } from "@/components/dataTable";
 import { FilterBar } from "@/components/filter-bar";
@@ -35,6 +53,11 @@ const DEFAULT_PAGE_SIZE = 15;
 export default function Profiles() {
     const queryClient = useQueryClient();
     const deleteDisclosure = useDisclosure<FeeProfile>();
+    const cloneDisclosure = useDisclosure<FeeProfile>();
+    const { sessions } = useCollegeSessions();
+    const [targetSessionId, setTargetSessionId] = React.useState<string>("");
+    const [cloneName, setCloneName] = React.useState<string>("");
+
     useRegisterGuide(FEE_PROFILES_GUIDE);
     const contentMap = useInstitutionContent();
     const CONTENT = useMemo(() => getFeeProfileContent(contentMap), [contentMap]);
@@ -46,6 +69,7 @@ export default function Profiles() {
         search: "",
         search_by: "name",
         profile_type: "",
+        session_id: "",
         page: 1,
         perPage: DEFAULT_PAGE_SIZE,
     });
@@ -54,13 +78,21 @@ export default function Profiles() {
 
     // ─── Query (backend pagination) ──────────────────────
     const { data: profilesRes, isLoading: profilesLoading } = useQuery({
-        queryKey: FeeProfileQueryKeys.list({ page: filter.page, perPage: filter.perPage, search: filter.search, search_by: filter.search_by, profile_type: filter.profile_type }),
+        queryKey: FeeProfileQueryKeys.list({
+            page: filter.page,
+            perPage: filter.perPage,
+            search: filter.search,
+            search_by: filter.search_by,
+            profile_type: filter.profile_type,
+            session_id: filter.session_id,
+        }),
         queryFn: () => feeProfilesApi.index({
             page: filter.page,
             per_page: filter.perPage,
             search: filter.search || undefined,
             search_by: filter.search_by || undefined,
-            profile_type: filter.profile_type || undefined,
+            profile_type: filter.profile_type === "all" ? undefined : filter.profile_type || undefined,
+            session_id: filter.session_id === "all" ? undefined : filter.session_id || undefined,
         }),
     });
 
@@ -75,6 +107,20 @@ export default function Profiles() {
             toast.success("Fee profile deleted.");
         },
         onError: () => toast.error("Failed to delete fee profile."),
+    });
+
+    // ─── Clone mutation ──────────────────────────────────
+    const cloneMutation = useMutation({
+        mutationFn: ({ id, target_session_id, name }: { id: number; target_session_id: number; name?: string }) =>
+            feeProfilesApi.clone(id, { target_session_id, name }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: FeeProfileQueryKeys.all });
+            cloneDisclosure.onClose();
+            toast.success("Fee profile cloned successfully for the new session!");
+        },
+        onError: (err: any) => {
+            toast.error(err?.response?.data?.message || "Failed to clone fee profile.");
+        },
     });
 
     return (
@@ -148,6 +194,17 @@ export default function Profiles() {
                                                         )}
                                                     </div>
                                                 </TableCell>
+                                                <TableCell>
+                                                    {row.session?.name ? (
+                                                        <Badge variant="outline" className="text-[11px] font-medium bg-muted/40">
+                                                            {row.session.name}
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="secondary" className="text-[10px] text-muted-foreground font-normal">
+                                                            All Sessions
+                                                        </Badge>
+                                                    )}
+                                                </TableCell>
                                                 <TableCell className="capitalize">{(row.profile_type ?? "—").replace("_", " ")}</TableCell>
                                                 <TableCell className="uppercase">{row.category ?? "—"}</TableCell>
                                                 <TableCell className="capitalize">{row.gender ?? "—"}</TableCell>
@@ -157,6 +214,20 @@ export default function Profiles() {
                                                 <TableCell>{row.items?.length ?? 0} item(s)</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-0.5">
+                                                        <TooltipWrapper content="Clone to New Session">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon-sm"
+                                                                className="text-muted-foreground hover:text-primary"
+                                                                onClick={() => {
+                                                                    setCloneName(`${row.name}`);
+                                                                    setTargetSessionId("");
+                                                                    cloneDisclosure.onOpen(row);
+                                                                }}
+                                                            >
+                                                                <Copy className="size-4" aria-hidden />
+                                                            </Button>
+                                                        </TooltipWrapper>
                                                         <TooltipWrapper content="Edit">
                                                             <Button
                                                                 variant="ghost"
@@ -203,6 +274,83 @@ export default function Profiles() {
                         }}
                         isLoading={destroyMutation.isPending}
                     />
+
+                    {/* ─── Clone to New Session Dialog ─────────────────── */}
+                    <Dialog
+                        open={cloneDisclosure.isOpen}
+                        onOpenChange={(open) => !open && cloneDisclosure.onClose()}
+                    >
+                        <DialogContent className="sm:max-w-[460px]">
+                            <DialogHeader>
+                                <DialogTitle>Clone Profile to New Session</DialogTitle>
+                                <DialogDescription>
+                                    Duplicate this fee profile and all its fee heads into a new academic session. Existing student ledgers in the current session will remain completely untouched.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="space-y-4 py-2">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="target-session-select" className="text-xs font-semibold">
+                                        Target Academic Session <span className="text-destructive">*</span>
+                                    </Label>
+                                    <Select value={targetSessionId} onValueChange={setTargetSessionId}>
+                                        <SelectTrigger id="target-session-select">
+                                            <SelectValue placeholder="Select academic session..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {sessions.map((s) => (
+                                                <SelectItem key={s.value} value={s.value}>
+                                                    {s.text}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="clone-profile-name" className="text-xs font-semibold">
+                                        New Profile Name (Optional)
+                                    </Label>
+                                    <Input
+                                        id="clone-profile-name"
+                                        value={cloneName}
+                                        onChange={(e) => setCloneName(e.target.value)}
+                                        placeholder={cloneDisclosure.data?.name || "Profile Name"}
+                                    />
+                                    <p className="text-[11px] text-muted-foreground">
+                                        Leave as is or modify. After cloning, you can edit fee items and rates anytime.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <DialogFooter className="gap-2 sm:gap-0">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => cloneDisclosure.onClose()}
+                                    disabled={cloneMutation.isPending}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="button"
+                                    disabled={!targetSessionId || cloneMutation.isPending}
+                                    onClick={() => {
+                                        if (cloneDisclosure.data && targetSessionId) {
+                                            cloneMutation.mutate({
+                                                id: cloneDisclosure.data.id,
+                                                target_session_id: Number(targetSessionId),
+                                                name: cloneName.trim() || undefined,
+                                            });
+                                        }
+                                    }}
+                                >
+                                    {cloneMutation.isPending && <Loader2 className="size-4 animate-spin mr-1.5" />}
+                                    Clone Profile
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </PageContainer>
             </TooltipProvider>
         </>

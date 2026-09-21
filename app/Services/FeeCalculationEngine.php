@@ -60,13 +60,19 @@ class FeeCalculationEngine
         ?string $gender = null,
         ?string $profileType = null,
         ?int $profileId = null,
+        ?int $sessionId = null,
     ): array {
+        if (!$sessionId && $admissionHeadId) {
+            $sessionId = \App\Models\AdmissionHead::where('id', $admissionHeadId)->value('session_id');
+        }
+
         // 1. Try to resolve a matching FeeRegulationProfile
         if ($profileId) {
             $profile = FeeRegulationProfile::with('items.feeType')->find($profileId);
         } else {
-            $profile = $this->resolveProfile($institutionId, $profileType, $category, $gender);
+            $profile = $this->resolveProfile($institutionId, $profileType, $category, $gender, $sessionId);
         }
+
 
         if ($profile) {
             return $this->buildBreakdownFromProfile($profile);
@@ -105,6 +111,7 @@ class FeeCalculationEngine
         ?string $gender = null,
         ?string $profileType = null,
         ?int $profileId = null,
+        ?int $sessionId = null,
     ): array {
         $cacheKey = implode('_', [
             $institutionId,
@@ -114,6 +121,7 @@ class FeeCalculationEngine
             $gender ?? 'null',
             $profileType ?? 'null',
             $profileId ?? 'null',
+            $sessionId ?? 'null',
         ]);
 
         if (isset(self::$recurringFeeCache[$cacheKey])) {
@@ -127,7 +135,8 @@ class FeeCalculationEngine
             $category,
             $gender,
             $profileType,
-            $profileId
+            $profileId,
+            $sessionId
         );
 
         self::$recurringFeeCache[$cacheKey] = $result;
@@ -142,13 +151,15 @@ class FeeCalculationEngine
         ?string $gender = null,
         ?string $profileType = null,
         ?int $profileId = null,
+        ?int $sessionId = null,
     ): array {
         // 1. Try profile match first
         if ($profileId) {
             $profile = FeeRegulationProfile::with('items.feeType')->find($profileId);
         } else {
-            $profile = $this->resolveProfile($institutionId, $profileType, $category, $gender);
+            $profile = $this->resolveProfile($institutionId, $profileType, $category, $gender, $sessionId);
         }
+
 
         if ($profile) {
             $recurringCategories = [FeeCategory::RECURRING->value];
@@ -328,19 +339,40 @@ class FeeCalculationEngine
         ?string $profileType = null,
         ?string $category = null,
         ?string $gender = null,
+        ?int $sessionId = null,
     ): ?FeeRegulationProfile {
-        $profiles = FeeRegulationProfile::where('institution_id', $institutionId)
-            ->with('items.feeType')
-            ->get();
+        $query = FeeRegulationProfile::where('institution_id', $institutionId)
+            ->with('items.feeType');
+
+        if ($sessionId) {
+            $query->where(function ($q) use ($sessionId) {
+                $q->where('session_id', $sessionId)
+                  ->orWhereNull('session_id');
+            });
+        }
+
+        $profiles = $query->get();
 
         if ($profiles->isEmpty()) {
             return null;
         }
 
         // Score each profile: higher = better match
-        $scored = $profiles->map(function ($p) use ($profileType, $category, $gender) {
+        $scored = $profiles->map(function ($p) use ($profileType, $category, $gender, $sessionId) {
             $score = 0;
             $matches = 0;
+
+            // Session priority: explicit matching session gets +8 bonus; null session is fallback (+0)
+            if ($sessionId !== null) {
+                if ($p->session_id !== null) {
+                    if ((int) $p->session_id === (int) $sessionId) {
+                        $score += 8;
+                        $matches++;
+                    } else {
+                        return ['profile' => $p, 'score' => -1]; // Mismatch session = disqualified
+                    }
+                }
+            }
 
             // Profile type match
             if ($p->profile_type !== null && $profileType !== null) {
@@ -389,6 +421,7 @@ class FeeCalculationEngine
 
         return $best ? $best['profile'] : null;
     }
+
 
     // ═══════════════════════════════════════════════════════════════════
     //  EFFECTIVE RULES (Scope Override Chain)

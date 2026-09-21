@@ -15,11 +15,13 @@ import { FeeTypeQueryKeys } from "@/lib/querykey/fees";
 import { InventoryQueryKeys } from "@/lib/querykey/inventory";
 import { TransportQueryKeys } from "@/lib/querykey/transport";
 import { extractApiList, computeFeeBreakdown } from "@/lib/utils";
+import { useCollegeSessions } from "@/hooks/useCollegeSessions";
 
 // ── Hook ────────────────────────────────────────────────────────────────
 
 export function useServicesStep() {
   const { control, watch, getValues, setValue } = useFormContext<ApplicationDeskFormValues>();
+  const { sessions, rawSessions, currentSessionId } = useCollegeSessions();
 
   // ── Field Arrays ──────────────────────────────────────────────────
   const {
@@ -36,6 +38,7 @@ export function useServicesStep() {
   } = useFieldArray({ control, name: "inventory_items" });
 
   // ── Local State ───────────────────────────────────────────────────
+  const [selectedSessionId, setSelectedSessionId] = useState<string>("");
   const [selectedFeeId, setSelectedFeeId] = useState<string | number>("");
   const [selectedFeeName, setSelectedFeeName] = useState<string>("");
   const [selectedFeeCategory, setSelectedFeeCategory] = useState<string>("");
@@ -56,11 +59,38 @@ export function useServicesStep() {
       : ""
   );
 
-  // ── Fee Profile — Eager Load (for auto-default) ───────────────────
+  /** Fetch selected profile detail */
+  const { data: profileDetail, isFetching: isFetchingProfile } = useQuery({
+    queryKey: FeeProfileQueryKeys.profileDetail(selectedProfileId),
+    queryFn: () => feeProfilesApi.show(Number(selectedProfileId)),
+    enabled: !!selectedProfileId,
+  });
+
+  // ── Initialize selectedSessionId from currentSessionId as soon as sessions load ─────────
+  useEffect(() => {
+    if (!selectedSessionId && currentSessionId) {
+      setSelectedSessionId(currentSessionId);
+    }
+  }, [currentSessionId, selectedSessionId]);
+
+  // ── Sync selectedSessionId from loaded profile (for prefill / edit flow) ────────────────
+  useEffect(() => {
+    if (profileDetail && !selectedSessionId) {
+      const profile: any = profileDetail?.data ?? profileDetail;
+      if (profile?.session_id) {
+        setSelectedSessionId(String(profile.session_id));
+      }
+    }
+  }, [profileDetail, selectedSessionId]);
+
+  // ── Fee Profile — Eager Load (for auto-default, only when session is known) ──────────────
 
   const { data: feeProfilesRes } = useQuery({
-    queryKey: FeeProfileQueryKeys.list(),
-    queryFn: () => feeProfilesApi.index(),
+    queryKey: [...FeeProfileQueryKeys.list(), selectedSessionId],
+    queryFn: () => feeProfilesApi.index({
+      session_id: selectedSessionId && selectedSessionId !== "all" ? selectedSessionId : undefined,
+    }),
+    enabled: !!selectedSessionId,
   });
 
   const feeProfiles: FeeProfile[] = useMemo(
@@ -77,13 +107,6 @@ export function useServicesStep() {
       setValue("fee_regulation_profile_id", defaultProfile.id);
     }
   }, [feeProfiles, selectedProfileId, setValue]);
-
-  /** Fetch selected profile detail */
-  const { data: profileDetail, isFetching: isFetchingProfile } = useQuery({
-    queryKey: FeeProfileQueryKeys.profileDetail(selectedProfileId),
-    queryFn: () => feeProfilesApi.show(Number(selectedProfileId)),
-    enabled: !!selectedProfileId,
-  });
 
   /** Populate fee table when profile detail loads (ONLY for initial auto-load on mount) */
   useEffect(() => {
@@ -114,25 +137,53 @@ export function useServicesStep() {
 
   // ── Async Configs ─────────────────────────────────────────────────
 
-  /** Fee Profile async config */
+  /** Fee Profile async config (scoped to selected academic session, disabled until session known) */
   const profileAsyncConfig: AsyncSelectConfig = useMemo(
     () => ({
       queryFn: async (params: Record<string, any>) => {
-        const res = await feeProfilesApi.index(params);
+        const effectiveSessionId = selectedSessionId && selectedSessionId !== "all" ? selectedSessionId : undefined;
+        const queryParams = {
+          ...params,
+          session_id: effectiveSessionId,
+        };
+        const res = await feeProfilesApi.index(queryParams);
         const items = extractApiList<FeeProfile>(res);
         const formatted = items.map((p) => ({
           ...p,
-          _display_name: `${p.name}${p.is_default ? " (Default)" : ""}`,
+          _display_name: `${p.name}${p.session?.name ? ` [${p.session.name}]` : ""}${p.is_default ? " (Default)" : ""}`,
         }));
         return { ...((res as any)?.data ?? res), data: formatted };
       },
-      queryKey: FeeProfileQueryKeys.all,
+      queryKey: [...FeeProfileQueryKeys.all, selectedSessionId || "none"],
+      extraParams: { session_id: selectedSessionId && selectedSessionId !== "all" ? selectedSessionId : undefined },
       labelKey: "_display_name",
       valueKey: "id",
       searchKey: "search",
+      // Disable until session is initialized (empty string = not yet loaded)
+      enabled: !!selectedSessionId,
     }),
-    [],
+    [selectedSessionId],
   );
+
+  const selectedSessionName = useMemo(() => {
+    if (!selectedSessionId || selectedSessionId === "all") return "";
+    const match = rawSessions.find((s: any) => String(s.id) === String(selectedSessionId));
+    return match?.name ?? "";
+  }, [selectedSessionId, rawSessions]);
+
+  const handleSessionChange = useCallback((newSessionId: string) => {
+    setSelectedSessionId(newSessionId);
+    if (selectedProfileId) {
+      const profile: any = profileDetail?.data ?? profileDetail;
+      if (newSessionId && newSessionId !== "all") {
+        if (!profile?.session_id || String(profile.session_id) !== String(newSessionId)) {
+          setSelectedProfileId("");
+          setValue("fee_regulation_profile_id", "" as any);
+          replaceFee([]);
+        }
+      }
+    }
+  }, [profileDetail, selectedProfileId, setValue, replaceFee]);
 
   /** Fee Types async config (for manual add) */
   const feeTypeAsyncConfig: AsyncSelectConfig = useMemo(
@@ -411,6 +462,12 @@ export function useServicesStep() {
   return {
     control,
     watch,
+
+    // Academic Session Filter
+    sessions,
+    selectedSessionId,
+    selectedSessionName,
+    handleSessionChange,
 
     // Fee Profile
     profileAsyncConfig,

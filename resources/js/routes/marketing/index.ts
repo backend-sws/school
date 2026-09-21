@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: home.url(options),
@@ -11,13 +11,13 @@ export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 home.definition = {
     methods: ["get","head"],
-    url: '//127.0.0.1',
+    url: '/landing',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
 home.url = (options?: RouteQueryOptions) => {
     return home.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ home.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: home.url(options),
@@ -35,7 +35,7 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: home.url(options),
@@ -45,7 +45,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
     const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: home.url(options),
@@ -55,7 +55,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
         homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: home.url(options),
@@ -64,7 +64,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Web\MainLandingController::__invoke
  * @see app/Http/Controllers/Web/MainLandingController.php:17
- * @route '//127.0.0.1'
+ * @route '/landing'
  */
         homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: home.url({

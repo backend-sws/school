@@ -66,7 +66,7 @@ export default function FeeProfileForm() {
     } = useForm<FeeProfileFormInputValues>({
         resolver: zodResolver(permittedSchema) as any,
         mode: "onChange",
-        defaultValues: FEE_PROFILE_DEFAULT_VALUES,
+        defaultValues: FEE_PROFILE_DEFAULT_VALUES as any,
     });
 
     const items = watch("items");
@@ -75,7 +75,7 @@ export default function FeeProfileForm() {
     // ─── Populate form when editing ──────────────────────
     React.useEffect(() => {
         if (editData) {
-            const base = pick(editData, ["name", "profile_type", "category", "gender", "fee_collection_frequency", "description", "is_default"]);
+            const base = pick(editData, ["name", "session_id", "profile_type", "category", "gender", "fee_collection_frequency", "description", "is_default"]);
             const items = editData.items?.length
                 ? editData.items.map((i: Record<string, any>) => pick(i, ["fee_type_id", "amount"]))
                 : FEE_PROFILE_DEFAULT_VALUES.items;
@@ -107,14 +107,19 @@ export default function FeeProfileForm() {
 
     // ─── Handlers ────────────────────────────────────────
     const onSubmit = (data: FeeProfileFormInputValues) => {
-        const payload = {
+        const payload: FeeProfileFormData = {
             ...data,
+            session_id: !data.session_id || (data.session_id as any) === "_none" ? null : Number(data.session_id),
             profile_type: data.profile_type === "_none" ? null : data.profile_type,
             category: data.category === "_none" ? null : data.category,
             gender: data.gender === "_none" ? null : data.gender,
             fee_collection_frequency: data.fee_collection_frequency === "_none" ? null : data.fee_collection_frequency,
             description: data.description?.trim() || null,
-        } as FeeProfileFormData;
+            items: (data.items || []).map((item) => ({
+                fee_type_id: Number(item.fee_type_id),
+                amount: Number(item.amount),
+            })),
+        };
 
         if (isEdit && props.id) {
             updateMutation.mutate({ id: props.id, data: payload });
@@ -175,6 +180,7 @@ export default function FeeProfileForm() {
                                                 required={field.required}
                                                 tooltip={field.tooltip}
                                                 options={field.options as any}
+                                                asyncConfig={(field as any).asyncConfig}
                                                 className={field.name === "description" ? "md:col-span-2" : ""}
                                             />
                                         )}

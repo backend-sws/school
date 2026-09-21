@@ -173,9 +173,97 @@ class FeeCollectionService
         $frequency = $this->resolveFrequencyForStudent($student, $institutionId, $class);
         $periodCount = $frequency === 'quarterly' ? 4 : 12;
 
+        // 1. Pull admission-head-scoped fees and application for the given session first
+        $admissionApp = collect(self::$bulkAdmissionApps[$student->id] ?? [])
+            ->filter(function($app) use ($session) {
+                return $app->session_id == $session->id || ($app->admissionHead && $app->admissionHead->session_id == $session->id);
+            })
+            ->sortByDesc('submitted_at')
+            ->first();
+
         $targetStreamId = $class?->stream_id ?? $profile->stream_id;
         $targetClassId = $class?->id;
-        $targetFeeRegId = $profile->fee_regulation_profile_id;
+
+        // Resolve fee regulation profile for this session:
+        // Priority:
+        // a) Application's fee_regulation_profile_id if specific to this session
+        // b) If student's profile session matches target session, use profile's fee_regulation_profile_id if it belongs to this session
+        // c) If querying historical/destination session and student transitioned TO this session, find transition's application profile
+        // d) Match FeeRegulationProfile by session and class stream name (using comprehensive aliases)
+        // e) Match FeeRegulationProfile by session and targetStreamId name (using aliases)
+        // f) ONLY fallback to student profile's fee_regulation_profile_id if it belongs to this session or is global
+        $targetFeeRegId = null;
+        if ($admissionApp && !empty($admissionApp->fee_regulation_profile_id)) {
+            $appProfileSessionId = \App\Models\FeeRegulationProfile::where('id', $admissionApp->fee_regulation_profile_id)->value('session_id');
+            if (!$appProfileSessionId || (int) $appProfileSessionId === (int) $session->id) {
+                $targetFeeRegId = $admissionApp->fee_regulation_profile_id;
+            }
+        } elseif ((int) ($sessionId ?? $profile->session_id) === (int) $profile->session_id && $profile->fee_regulation_profile_id) {
+            $pSessionId = \App\Models\FeeRegulationProfile::where('id', $profile->fee_regulation_profile_id)->value('session_id');
+            if (!$pSessionId || (int) $pSessionId === (int) $session->id) {
+                $targetFeeRegId = $profile->fee_regulation_profile_id;
+            }
+        }
+
+        if (!$targetFeeRegId && $sessionId) {
+            $transition = \App\Models\StudentTransition::where('user_id', $student->id)
+                ->where('to_session_id', $sessionId)
+                ->latest('processed_at')
+                ->first();
+
+            if ($transition) {
+                $appId = null;
+                if ($transition->transitionable_type === \App\Models\ReadmissionDetail::class && $transition->transitionable_id) {
+                    $appId = \App\Models\ReadmissionDetail::where('id', $transition->transitionable_id)->value('admission_application_id');
+                }
+                if ($appId) {
+                    $tApp = \App\Models\AdmissionApplication::find($appId);
+                    $tSessionId = \App\Models\FeeRegulationProfile::where('id', $tApp?->fee_regulation_profile_id)->value('session_id');
+                    if (!$tSessionId || (int) $tSessionId === (int) $session->id) {
+                        $targetFeeRegId = $tApp?->fee_regulation_profile_id;
+                    }
+                }
+            }
+        }
+
+        if (!$targetFeeRegId && $class) {
+            $streamName = $class->stream?->name ?? '';
+            if ($streamName) {
+                $aliases = self::getStreamNameAliases($streamName);
+                $matchedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $institutionId)
+                    ->where('session_id', $session->id)
+                    ->where(function ($q) use ($aliases) {
+                        foreach ($aliases as $alias) {
+                            $q->orWhere('name', $alias);
+                        }
+                    })
+                    ->first();
+                $targetFeeRegId = $matchedProfile?->id;
+            }
+        }
+
+        if (!$targetFeeRegId && $targetStreamId) {
+            $streamName = \App\Models\Stream::where('id', $targetStreamId)->value('name');
+            if ($streamName) {
+                $aliases = self::getStreamNameAliases($streamName);
+                $matchedProfile = \App\Models\FeeRegulationProfile::where('institution_id', $institutionId)
+                    ->where('session_id', $session->id)
+                    ->where(function ($q) use ($aliases) {
+                        foreach ($aliases as $alias) {
+                            $q->orWhere('name', $alias);
+                        }
+                    })
+                    ->first();
+                $targetFeeRegId = $matchedProfile?->id;
+            }
+        }
+
+        if (!$targetFeeRegId && $profile->fee_regulation_profile_id) {
+            $pSessionId = \App\Models\FeeRegulationProfile::where('id', $profile->fee_regulation_profile_id)->value('session_id');
+            if (!$pSessionId || (int) $pSessionId === (int) $session->id) {
+                $targetFeeRegId = $profile->fee_regulation_profile_id;
+            }
+        }
 
         $isHistoricalSession = $sessionId && $sessionId != $profile->session_id;
         if ($isHistoricalSession && !$class) {
@@ -195,6 +283,7 @@ class FeeCollectionService
                 $profile->gender ?? null,
                 null,
                 $targetFeeRegId,
+                $session->id,
             );
         }
 
@@ -204,16 +293,7 @@ class FeeCollectionService
         $allParticulars = $feeBreakdown['items'];
         $oneTimeCharges = $feeBreakdown['one_time_charges'] ?? [];
 
-
-        // Also pull admission-head-scoped one-time fees for the given session
-        $admissionApp = collect(self::$bulkAdmissionApps[$student->id] ?? [])
-            ->filter(function($app) use ($session) {
-                return $app->session_id == $session->id || ($app->admissionHead && $app->admissionHead->session_id == $session->id);
-            })
-            ->sortByDesc('submitted_at')
-            ->first();
-
-        // Respect custom fee type exclusions from student's individual admission/readmission fee breakdown
+        // Respect custom fee type exclusions & locked amounts from student's individual admission/readmission fee breakdown snapshot
         if ($admissionApp && is_array($admissionApp->fee_breakdown) && !empty($admissionApp->fee_breakdown) && !empty($allParticulars)) {
             $safeName = function($name) {
                 if (is_array($name)) {
@@ -228,20 +308,41 @@ class FeeCollectionService
                 ->map(fn($n) => $safeName($n))
                 ->all();
 
+            $appAmountMap = [];
+            foreach ($admissionApp->fee_breakdown as $item) {
+                $name = $safeName($item['name'] ?? '');
+                if ($name && isset($item['amount'])) {
+                    $appAmountMap[$name] = (float) $item['amount'];
+                }
+            }
+
             $allParticulars = collect($allParticulars)->filter(function ($item) use ($allowedNames, $safeName) {
                 $name = $safeName($item['name'] ?? '');
                 return in_array($name, $allowedNames);
+            })->map(function ($item) use ($appAmountMap, $safeName) {
+                $name = $safeName($item['name'] ?? '');
+                if (isset($appAmountMap[$name])) {
+                    $item['amount'] = $appAmountMap[$name];
+                }
+                return $item;
             })->values()->all();
 
             $oneTimeCharges = collect($oneTimeCharges)->filter(function ($item) use ($allowedNames, $safeName) {
                 $name = $safeName($item['name'] ?? '');
                 return in_array($name, $allowedNames);
+            })->map(function ($item) use ($appAmountMap, $safeName) {
+                $name = $safeName($item['name'] ?? '');
+                if (isset($appAmountMap[$name])) {
+                    $item['amount'] = $appAmountMap[$name];
+                }
+                return $item;
             })->values()->all();
 
             // Re-calculate the expected net/gross values based on the filtered list of fees
             $grossExpected = collect($allParticulars)->sum('amount');
             $periodExpected = $grossExpected;
         }
+
 
         // If the engine returned no recurring fees (e.g. missing profile), fallback to the admission application's recurring items
         // so they correctly appear in the matrix as separate columns (Tuition, Electricity, etc)
@@ -428,11 +529,11 @@ class FeeCollectionService
         $academicStartMonth = app(AcademicCalendarService::class)->getStartMonth($institutionId);
         $startDate = Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay();
 
-        $admissionDate = $profile->admission_date ?? $student->created_at ?? null;
-
-        // Find the index of the first period that is at or after the admission date
+        $chargeFromAdmMonth = $institutionSettings['charge_fees_from_admission_month'] ?? false;
+        $admissionDate = $admissionApp?->admission_date ?? $profile->admission_date ?? null;
         $admissionPeriodIndex = 0;
-        if ($admissionDate) {
+
+        if ($chargeFromAdmMonth && $admissionDate) {
             $admMonthKey = $admissionDate->format('Y-m');
             for ($k = 0; $k < $periodCount; $k++) {
                 $checkDate = $startDate->copy();
@@ -452,9 +553,10 @@ class FeeCollectionService
         // payments are now included in the payment query and will be matched to their
         // respective month automatically. The admission summary card handles the rest.
         
-        // Fetch manually imported arrears from the ledger
+        // Fetch manually imported arrears from the ledger (scoped strictly to this session)
         $importedArrearsRow = \App\Models\StudentFeePeriodBalance::where('user_id', $student->id)
             ->where('institution_id', $institutionId)
+            ->where('session_id', $session->id)
             ->where('period_key', 'arrears')
             ->first();
         $accumulatedArrears = $importedArrearsRow ? (float) $importedArrearsRow->opening_balance : 0.0;
@@ -507,10 +609,20 @@ class FeeCollectionService
 
             $dueDate = $this->getDueDateForPeriod($institutionId, $monthKey, $frequency);
 
-            $monthPayments = $payments->filter(function ($p) use ($monthKey, $i, $admissionPeriodIndex) {
+            $monthPayments = $payments->filter(function ($p) use ($monthKey, $i, $admissionPeriodIndex, $session) {
                 if ($p->for_month === $monthKey) return true;
                 if (!$p->for_month && $p->payment_date) {
                     if ($p->payable_entity_type === 'admission_application' || str_starts_with($p->payment_id ?? '', 'PAY-ADM-')) {
+                        // Ensure admission payment strictly belongs to this session
+                        $app = null;
+                        if ($p->payable_entity_type === 'admission_application' && $p->payable_entity_id) {
+                            $app = collect(self::$bulkAdmissionApps[$p->user_id] ?? [])->firstWhere('id', $p->payable_entity_id)
+                                ?: AdmissionApplication::withoutGlobalScopes()->find($p->payable_entity_id);
+                        }
+                        $appSessionId = $app?->session_id ?? ($app?->admissionHead?->session_id ?? null);
+                        if ($appSessionId && (int) $appSessionId !== (int) $session->id) {
+                            return false;
+                        }
                         return $i === $admissionPeriodIndex;
                     }
                     return $p->payment_date->format('Y-m') === $monthKey;
@@ -545,24 +657,31 @@ class FeeCollectionService
 
             // Apply per-student monthly fee overrides if present
             if (!$skipRecurring && $studentMonthlyOverrides->isNotEmpty() && !empty($monthParticulars)) {
-                $matchedOverride = $studentMonthlyOverrides->first(fn($o) => $o->for_month === $monthKey)
-                    ?: $studentMonthlyOverrides->first(fn($o) => empty($o->for_month) || $o->for_month === 'all');
+                $matchedOverride = $studentMonthlyOverrides->filter(function ($o) use ($session) {
+                    return is_null($o->session_id) || (int) $o->session_id === (int) $session->id;
+                })->first(fn($o) => $o->for_month === $monthKey)
+                    ?: $studentMonthlyOverrides->filter(function ($o) use ($session) {
+                        return is_null($o->session_id) || (int) $o->session_id === (int) $session->id;
+                    })->first(fn($o) => empty($o->for_month) || $o->for_month === 'all');
 
                 if ($matchedOverride) {
                     $newAmount = (float) $matchedOverride->overridden_amount;
                     $origAmount = (float) $matchedOverride->original_amount;
-                    $diff = $newAmount - $origAmount;
 
                     $applied = false;
                     foreach ($monthParticulars as &$part) {
                         $pName = strtolower(trim((string) ($part['name'] ?? '')));
                         $matchName = strtolower(trim((string) ($matchedOverride->fee_name ?? 'monthly fee')));
                         if ($pName === $matchName || (in_array($pName, ['monthly fee', 'fees', 'tuition', 'tuition fee']) && !$applied)) {
+                            $currentPartAmount = (float) ($part['amount'] ?? 0);
                             $part['amount'] = $newAmount;
                             $part['is_overridden'] = true;
                             $part['override_id'] = $matchedOverride->id;
                             $part['original_amount'] = $origAmount;
                             $part['override_remarks'] = $matchedOverride->remarks;
+                            $diff = $newAmount - $currentPartAmount;
+                            $monthExpected += $diff;
+                            $monthGross += $diff;
                             $applied = true;
                             break;
                         }
@@ -570,17 +689,16 @@ class FeeCollectionService
                     unset($part);
 
                     if (!$applied && !empty($monthParticulars)) {
+                        $currentPartAmount = (float) ($monthParticulars[0]['amount'] ?? 0);
                         $monthParticulars[0]['amount'] = $newAmount;
                         $monthParticulars[0]['is_overridden'] = true;
                         $monthParticulars[0]['override_id'] = $matchedOverride->id;
                         $monthParticulars[0]['original_amount'] = $origAmount;
                         $monthParticulars[0]['override_remarks'] = $matchedOverride->remarks;
-                        $applied = true;
-                    }
-
-                    if ($applied) {
+                        $diff = $newAmount - $currentPartAmount;
                         $monthExpected += $diff;
                         $monthGross += $diff;
+                        $applied = true;
                     }
                 }
             }
@@ -1352,5 +1470,53 @@ class FeeCollectionService
             'other_fees'    => $otherFees,
             'discount'      => $discount,
         ];
+    }
+
+    /**
+     * Generate common stream name aliases (e.g. "Nursery" <-> "NUR", "Class I" <-> "I", etc.)
+     */
+    public static function getStreamNameAliases(string $name): array
+    {
+        $name = trim($name);
+        $aliases = [$name];
+
+        $romanMap = [
+            '1' => 'I', '2' => 'II', '3' => 'III', '4' => 'IV', '5' => 'V',
+            '6' => 'VI', '7' => 'VII', '8' => 'VIII', '9' => 'IX', '10' => 'X',
+            '11' => 'XI', '12' => 'XII'
+        ];
+        $invRoman = array_flip($romanMap);
+
+        $clean = preg_replace('/^(Class|Std|Grade)\s+/i', '', $name);
+        if ($clean !== $name) {
+            $aliases[] = $clean;
+        }
+
+        $upperClean = strtoupper($clean);
+        if (isset($invRoman[$upperClean])) {
+            $digit = $invRoman[$upperClean];
+            $aliases[] = (string) $digit;
+            $aliases[] = "Class {$digit}";
+            $aliases[] = "Class {$upperClean}";
+        } elseif (isset($romanMap[$clean])) {
+            $roman = $romanMap[$clean];
+            $aliases[] = $roman;
+            $aliases[] = "Class {$roman}";
+            $aliases[] = "Class {$clean}";
+        }
+
+        if (in_array(strtoupper($clean), ['NUR', 'NURSERY', 'NUR.', 'PRE-NUR', 'PRE-NURSERY'])) {
+            $aliases = array_merge($aliases, ['NUR', 'Nursery', 'Nur', 'Nur.', 'Pre-Nur', 'Pre-Nursery']);
+        }
+
+        if (in_array(strtoupper(str_replace('.', '', $clean)), ['LKG', 'LOWER KG', 'KG1', 'KG 1'])) {
+            $aliases = array_merge($aliases, ['LKG', 'L.K.G.', 'Lower KG', 'KG-1', 'KG 1']);
+        }
+
+        if (in_array(strtoupper(str_replace('.', '', $clean)), ['UKG', 'UPPER KG', 'KG2', 'KG 2'])) {
+            $aliases = array_merge($aliases, ['UKG', 'U.K.G.', 'Upper KG', 'KG-2', 'KG 2']);
+        }
+
+        return array_values(array_unique($aliases));
     }
 }

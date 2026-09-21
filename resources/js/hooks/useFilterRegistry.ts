@@ -259,6 +259,14 @@ export function useFilterRegistry(type: FilterRegistryType): FilterBarConfig {
         fee_profiles: {
             filters: [
                 {
+                    name: "session_id",
+                    type: FORM_TYPE.SELECT,
+                    label: "Session",
+                    placeholder: "All Sessions",
+                    tooltip: "Filter by academic session",
+                    options: sessionOptions,
+                },
+                {
                     name: "profile_type",
                     type: FORM_TYPE.SELECT,
                     label: "Type",

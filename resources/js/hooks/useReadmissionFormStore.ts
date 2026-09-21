@@ -159,6 +159,38 @@ export function useReadmissionFormStore(): UseFormReturn<ApplicationDeskFormValu
                 }
             }
 
+            // Ensure phone numbers have +91 country code
+            const formatPhone = (val: any) => {
+                if (!val) return "";
+                const s = String(val).trim();
+                if (!s) return "";
+                if (s.startsWith("+")) return s;
+                const digits = s.replace(/\D/g, "");
+                if (digits.length === 10) return `+91${digits}`;
+                if (digits.length === 12 && digits.startsWith("91")) return `+${digits}`;
+                if (digits.length > 0) return `+91${digits}`;
+                return s;
+            };
+
+            if (merged.mobile) {
+                merged.mobile = formatPhone(merged.mobile);
+            }
+            if (merged.father_mobile) {
+                merged.father_mobile = formatPhone(merged.father_mobile);
+            }
+            if (merged.guardian_snapshot && typeof merged.guardian_snapshot === "object") {
+                const gs = merged.guardian_snapshot as Record<string, any>;
+                if (gs.local_guardian?.phone) {
+                    gs.local_guardian.phone = formatPhone(gs.local_guardian.phone);
+                }
+                if (gs.emergency_contact?.mobile) {
+                    gs.emergency_contact.mobile = formatPhone(gs.emergency_contact.mobile);
+                }
+                if (gs.emergency_contact?.alternate_mobile) {
+                    gs.emergency_contact.alternate_mobile = formatPhone(gs.emergency_contact.alternate_mobile);
+                }
+            }
+
             form.reset(merged as ApplicationDeskFormValues);
             persist(merged);
         },

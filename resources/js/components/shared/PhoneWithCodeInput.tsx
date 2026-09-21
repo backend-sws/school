@@ -76,17 +76,26 @@ export function PhoneWithCodeInput({
           DEFAULT_COUNTRY;
         return { country: defaultC, phone: "" };
       }
-      // Try to match a known dial code prefix
+      const strVal = String(val).trim();
+
+      // Try to match a known dial code prefix (+91, +1, etc.)
       for (const c of COUNTRY_CODES) {
-        if (val.startsWith(c.dial)) {
-          return { country: c, phone: val.slice(c.dial.length).trim() };
+        if (strVal.startsWith(c.dial)) {
+          return { country: c, phone: strVal.slice(c.dial.length).trim() };
         }
       }
+
+      // If starts with 91 and has 12 digits (India number without +)
+      if (/^91[6-9]\d{9}$/.test(strVal)) {
+        const inCountry = COUNTRY_CODES.find((c) => c.code === "IN") ?? DEFAULT_COUNTRY;
+        return { country: inCountry, phone: strVal.slice(2) };
+      }
+
       // No match — treat entire value as phone with default country
       const defaultC =
         COUNTRY_CODES.find((c) => c.code === defaultCountryCode) ??
         DEFAULT_COUNTRY;
-      return { country: defaultC, phone: val };
+      return { country: defaultC, phone: strVal };
     },
     [defaultCountryCode],
   );
@@ -100,11 +109,25 @@ export function PhoneWithCodeInput({
   const [search, setSearch] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const emitValue = useCallback(
+    (country: CountryCode, phone: string) => {
+      const cleaned = phone.replace(/\D/g, "");
+      onChange(cleaned ? `${country.dial}${cleaned}` : "");
+    },
+    [onChange],
+  );
+
   // Sync internal state when external value changes (e.g. session storage hydration, form reset, step navigation)
   useEffect(() => {
     setSelectedCountry(parsed.country);
     setPhoneNumber(parsed.phone);
-  }, [parsed.country, parsed.phone]);
+
+    // If incoming value has digits but doesn't start with '+',
+    // automatically sync the full international number with country dial code to parent form
+    if (parsed.phone && value && !String(value).trim().startsWith("+")) {
+      emitValue(parsed.country, parsed.phone);
+    }
+  }, [parsed.country, parsed.phone, value, emitValue]);
 
   const filteredCountries = useMemo(
     () =>
@@ -119,14 +142,6 @@ export function PhoneWithCodeInput({
     [search],
   );
 
-  const emitValue = useCallback(
-    (country: CountryCode, phone: string) => {
-      const cleaned = phone.replace(/\D/g, "");
-      onChange(cleaned ? `${country.dial}${cleaned}` : "");
-    },
-    [onChange],
-  );
-
   const handleCountrySelect = (country: CountryCode) => {
     setSelectedCountry(country);
     setOpen(false);
@@ -137,7 +152,12 @@ export function PhoneWithCodeInput({
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, "");
+    let raw = e.target.value.replace(/\D/g, "");
+    // If user pasted a number starting with the country's dial code without + (e.g. 919876543210)
+    const dialDigits = selectedCountry.dial.replace(/\D/g, "");
+    if (dialDigits && raw.startsWith(dialDigits) && raw.length > selectedCountry.maxLength) {
+      raw = raw.slice(dialDigits.length);
+    }
     const limited = raw.slice(0, selectedCountry.maxLength);
     setPhoneNumber(limited);
     emitValue(selectedCountry, limited);

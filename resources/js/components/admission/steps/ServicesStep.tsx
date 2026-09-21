@@ -59,6 +59,11 @@ export function ServicesStep({
   const {
     control,
     watch,
+    // Academic Session Filter
+    sessions,
+    selectedSessionId,
+    selectedSessionName,
+    handleSessionChange,
     // Fee Profile
     profileAsyncConfig,
     selectedProfileId,
@@ -132,6 +137,10 @@ export function ServicesStep({
             profileAsyncConfig={profileAsyncConfig}
             selectedProfileId={selectedProfileId}
             onProfileSelect={handleProfileSelect}
+            sessions={sessions}
+            selectedSessionId={selectedSessionId}
+            selectedSessionName={selectedSessionName}
+            onSessionChange={handleSessionChange}
           />
         </section>
 

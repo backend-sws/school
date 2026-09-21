@@ -276,7 +276,7 @@ export function AsyncSelectField({
     extraParams = {},
     multiple = false,
     enabled = true,
-  } = asyncConfig;
+  } = asyncConfig || ({} as any);
 
   // Keep queryFn in a ref to avoid dependency-related refetches when inline queryFn reference changes
   const queryFnRef = useRef(queryFn);
@@ -300,7 +300,7 @@ export function AsyncSelectField({
   // ── Core fetch function (no caching, always fresh) ───
   const fetchItems = useCallback(
     async (search: string): Promise<OptionType[]> => {
-      if (!enabled) return [];
+      if (!enabled || typeof queryFnRef.current !== "function") return [];
       try {
         const params: Record<string, any> = {
           page: 1,
@@ -331,8 +331,8 @@ export function AsyncSelectField({
 
   // ── Initial load: fetch on mount + whenever extraParams change ──
   useEffect(() => {
-    // Skip if disabled
-    if (!enabled) {
+    // Skip if disabled or queryFn not provided
+    if (!enabled || typeof queryFnRef.current !== "function") {
       setDefaultOptions([]);
       return;
     }

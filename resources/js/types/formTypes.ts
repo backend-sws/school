@@ -20,8 +20,8 @@ export interface FormFieldConfig {
     options?: readonly { key: string; value: string | boolean; text: string }[];
     /** Tooltip text */
     tooltip?: string;
-    /** Permission key (REQUIRED) — field hidden if user lacks this permission. DB is single source of truth. */
-    permission: string;
+    /** Permission key — field hidden if user lacks this permission. */
+    permission?: string;
     /** Feature/module key — field hidden if subscription lacks this feature. */
     feature?: string;
     /** Visual section header (used by admission forms) */
@@ -30,4 +30,6 @@ export interface FormFieldConfig {
     layout?: "full" | "half";
     /** Max character length for text inputs */
     maxLength?: number;
+    /** Async select config for ASYNC_SELECT fields */
+    asyncConfig?: any;
 }

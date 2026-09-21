@@ -47,14 +47,20 @@ class StudentLedgerController extends BaseController
 
         $student = User::with(['studentProfile.session', 'studentProfile.stream'])->findOrFail($studentId);
 
-        \Illuminate\Support\Facades\DB::table('student_fee_period_balances')
-            ->where('user_id', $studentId)
-            ->where('period_key', '!=', 'arrears')
-            ->delete();
-
         $institutionId = self::getActiveInstitutionId($request->user());
         $requestedSessionId = $validated['session_id'] ?? null;
+        $targetSessionId = $requestedSessionId ?: $student->studentProfile?->session_id;
+
+        if ($targetSessionId) {
+            \Illuminate\Support\Facades\DB::table('student_fee_period_balances')
+                ->where('user_id', $studentId)
+                ->where('session_id', $targetSessionId)
+                ->where('period_key', '!=', 'arrears')
+                ->delete();
+        }
+
         $effectiveStudent = $this->feeCollectionService->resolveEffectiveStudentUserForSession($student, $institutionId, $requestedSessionId);
+
 
         $projectedRows = $this->feeCollectionService->getProjectedPeriodBalances(
             $effectiveStudent,

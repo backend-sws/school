@@ -199,17 +199,24 @@ export function pincodeSchema(message: string = "Pincode must be a 6-digit numbe
 
 /**
  * Phone number validation – handles country code, defaults to +91 for India.
- * Validates leading + and then 10-15 digits.
+ * Validates leading + and then 10-15 digits. Automatically normalizes 10-digit numbers to +91.
  */
 export function phoneSchema(message: string = "Enter a valid phone number with country code (e.g. +91...)") {
-  return z
-    .string()
-    .min(1, "Phone number is required")
-    .regex(/^\+\d{10,15}$/, message);
+  return z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return "";
+      const s = String(val).trim();
+      if (!s) return "";
+      if (/^\d{10}$/.test(s)) return `+91${s}`;
+      if (/^91\d{10}$/.test(s)) return `+${s}`;
+      return s;
+    },
+    z.string().min(1, "Phone number is required").regex(/^\+\d{10,15}$/, message)
+  );
 }
 
 /**
- * Optional phone number validation.
+ * Optional phone number validation. Automatically normalizes 10-digit numbers to +91.
  */
 export function phoneSchemaOptional(message: string = "Enter a valid phone number with country code (e.g. +91...)") {
   return z.preprocess(
@@ -217,6 +224,8 @@ export function phoneSchemaOptional(message: string = "Enter a valid phone numbe
       if (val === null || val === undefined) return "";
       const s = String(val).trim();
       if (s.length <= 4 && s.startsWith("+")) return "";
+      if (/^\d{10}$/.test(s)) return `+91${s}`;
+      if (/^91\d{10}$/.test(s)) return `+${s}`;
       return s;
     },
     z.string().regex(/^\+\d{10,15}$/, message).optional().or(z.literal(""))

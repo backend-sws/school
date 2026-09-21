@@ -95,14 +95,14 @@ class ReadmissionController extends BaseController
             'income'     => $prevGuardian['income'] ?? 0,
             'local_guardian' => [
                 'name' => $prevGuardian['local_guardian']['name'] ?? '',
-                'phone' => $prevGuardian['local_guardian']['phone'] ?? '',
+                'phone' => $this->formatPhoneWithCode($prevGuardian['local_guardian']['phone'] ?? null) ?? '',
                 'relationship' => $prevGuardian['local_guardian']['relationship'] ?? ''
             ],
             'emergency_contact' => [
                 'name' => $prevGuardian['emergency_contact']['name'] ?? '',
                 'relationship' => $prevGuardian['emergency_contact']['relationship'] ?? '',
-                'mobile' => $studentProfile->father_mobile ?? $prevGuardian['emergency_contact']['mobile'] ?? '',
-                'alternate_mobile' => $prevGuardian['emergency_contact']['alternate_mobile'] ?? ''
+                'mobile' => $this->formatPhoneWithCode($studentProfile->father_mobile ?? $prevGuardian['emergency_contact']['mobile'] ?? null) ?? '',
+                'alternate_mobile' => $this->formatPhoneWithCode($prevGuardian['emergency_contact']['alternate_mobile'] ?? null) ?? ''
             ],
         ];
         
@@ -121,6 +121,8 @@ class ReadmissionController extends BaseController
                 // Overrides to ensure UI compatibility
                 'user_id'           => $studentProfile->user_id,
                 'student_profile_id'=> $studentProfile->id,
+                'mobile'            => $this->formatPhoneWithCode($existingDraft->mobile ?? $studentProfile->mobile ?? $studentProfile->user?->mobile ?? $studentProfile->user?->phone),
+                'father_mobile'     => $this->formatPhoneWithCode($existingDraft->father_mobile ?? $studentProfile->father_mobile),
                 '_from_stream_id'   => $studentProfile->stream_id,
                 '_from_stream_name' => $studentProfile->stream?->name,
                 '_from_session_id'  => $studentProfile->session_id,
@@ -139,7 +141,7 @@ class ReadmissionController extends BaseController
                 'student_profile_id' => $studentProfile->id,
                 'applicant_name' => $studentProfile->user?->name,
                 'father_name'    => $studentProfile->father_name,
-                'father_mobile'  => $studentProfile->father_mobile,
+                'father_mobile'  => $this->formatPhoneWithCode($studentProfile->father_mobile),
                 'father_qualification' => $studentProfile->father_qualification,
                 'mother_name'    => $studentProfile->mother_name,
                 'dob'            => $studentProfile->dob?->format('Y-m-d'),
@@ -148,7 +150,7 @@ class ReadmissionController extends BaseController
                 'caste'          => $studentProfile->caste,
                 'religion'       => $studentProfile->religion,
                 'nationality'    => $studentProfile->nationality,
-                'mobile'         => $studentProfile->mobile,
+                'mobile'         => $this->formatPhoneWithCode($studentProfile->mobile ?? $studentProfile->user?->mobile ?? $studentProfile->user?->phone),
                 'email'          => $studentProfile->user?->email,
                 'aadhaar_no'     => $studentProfile->aadhar_no,
                 'abc_id'         => $studentProfile->abc_no,
@@ -328,6 +330,31 @@ class ReadmissionController extends BaseController
             ->paginate($request->get('per_page', 20));
 
         return $this->paginated($transitions);
+    }
+
+    /**
+     * Format phone numbers to have international +91 dial code if 10-digit Indian number.
+     */
+    private function formatPhoneWithCode(?string $phone): ?string
+    {
+        if (empty($phone)) {
+            return null;
+        }
+        $phone = trim($phone);
+        if (str_starts_with($phone, '+')) {
+            return $phone;
+        }
+        $digits = preg_replace('/\D/', '', $phone);
+        if (strlen($digits) === 10) {
+            return '+91' . $digits;
+        }
+        if (strlen($digits) === 12 && str_starts_with($digits, '91')) {
+            return '+' . $digits;
+        }
+        if (!empty($digits)) {
+            return '+91' . $digits;
+        }
+        return $phone;
     }
 }
 

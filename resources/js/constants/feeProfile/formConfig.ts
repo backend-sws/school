@@ -1,6 +1,7 @@
 import { FORM_TYPE } from "@/constants/shared/form";
 import type { AsyncSelectConfig } from "@/types";
 import feeTypesApi from "@/lib/api/feeTypesApi";
+import SessionApi from "@/lib/api/sessionApi";
 import { FeeTypeQueryKeys } from "@/lib/querykey/feeType";
 import {
     FEE_SLOT_PROFILE_TYPES,
@@ -37,6 +38,20 @@ export const FEE_PROFILE_FORM_FIELDS: readonly FormFieldConfig[] = [
         permission: "field_fee_profile_name",
     },
     {
+        name: "session_id",
+        label: "Academic Session",
+        type: FORM_TYPE.ASYNC_SELECT,
+        placeholder: "Select academic session (Optional - falls back to current)",
+        tooltip: "Target this fee profile to a specific academic session (e.g. 2025-2026)",
+        asyncConfig: {
+            queryFn: (params: Record<string, any>) => SessionApi.getSessionsWithParams(params),
+            queryKey: ["sessions-list"],
+            labelKey: "name",
+            valueKey: "id",
+            searchKey: "search",
+        },
+    },
+    {
         name: "profile_type",
         label: "Type",
         type: FORM_TYPE.SELECT,
@@ -45,6 +60,7 @@ export const FEE_PROFILE_FORM_FIELDS: readonly FormFieldConfig[] = [
         tooltip: "The profile type determines the context and lifecycle of these fees",
         permission: "field_fee_profile_type",
     },
+
     {
         name: "category",
         label: "Category",
@@ -117,6 +133,7 @@ export const FEE_PROFILE_ITEMS_REPEATER = {
 // ─── Default Values ──────────────────────────────────────
 export const FEE_PROFILE_DEFAULT_VALUES = {
     name: "",
+    session_id: "",
     profile_type: "standard",
     category: "_none",
     gender: "_none",
@@ -165,6 +182,7 @@ export function getFeeProfileColumns(c: InstitutionContentMap) {
     return [
         { key: "sl_no", label: "Sl No." },
         { key: "name", label: c.fee_profiles_col_name },
+        { key: "session", label: "Session" },
         { key: "type", label: c.fee_profiles_col_type },
         { key: "category", label: c.fee_profiles_col_category },
         { key: "gender", label: c.fee_profiles_col_gender },
@@ -173,3 +191,4 @@ export function getFeeProfileColumns(c: InstitutionContentMap) {
         { key: "actions", label: c.fee_profiles_col_actions },
     ];
 }
+

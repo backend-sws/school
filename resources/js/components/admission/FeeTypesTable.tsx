@@ -9,6 +9,13 @@ import { AsyncSelectField } from "@/components/shared/AsyncSelectField";
 import { FORM_TYPE } from "@/constants";
 import { Trash2, Plus, Loader2, IndianRupee } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { AsyncSelectConfig } from "@/types";
 
 // ── Column Config ──────────────────────────────────────────────
@@ -35,6 +42,10 @@ interface FeeTypesTableProps<T extends FieldValues> {
   profileAsyncConfig?: AsyncSelectConfig;
   selectedProfileId?: string | number;
   onProfileSelect?: (id: any) => void;
+  sessions?: { key: string; value: string; text: string }[];
+  selectedSessionId?: string;
+  selectedSessionName?: string;
+  onSessionChange?: (sessionId: string) => void;
 }
 
 // ── Component ──────────────────────────────────────────────────
@@ -54,24 +65,67 @@ export function FeeTypesTable<T extends FieldValues>({
   profileAsyncConfig,
   selectedProfileId,
   onProfileSelect,
+  sessions = [],
+  selectedSessionId,
+  selectedSessionName,
+  onSessionChange,
 }: FeeTypesTableProps<T>) {
   return (
     <div className="flex flex-col gap-0 border border-border/40 overflow-hidden bg-background rounded-none">
-      {/* ── Profile Selector (optional) ─────────────────────── */}
+      {/* ── Session & Profile Filter / Selector ─────────────────── */}
       {profileAsyncConfig && (
-        <div className="flex items-end gap-3 p-4 border-b bg-background rounded-none">
-          <div className="flex-1 min-w-[200px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 border-b bg-background rounded-none items-end">
+          {/* 1. Academic Session Selector */}
+          <div className="sm:col-span-1">
             <label className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground ml-1 mb-1 block">
-              Fee Profile
+              Academic Session
             </label>
-            <AsyncSelectField
-              asyncConfig={profileAsyncConfig}
-              value={selectedProfileId ?? ""}
-              onChange={(val: any) => onProfileSelect?.(val)}
-              placeholder="Select fee profile..."
-            />
+            <Select
+              value={selectedSessionId || "all"}
+              onValueChange={(val) => onSessionChange?.(val === "all" ? "" : val)}
+            >
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="All Sessions" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sessions</SelectItem>
+                {sessions.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.text}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          {isLoading && <Loader2 className="size-5 animate-spin text-muted-foreground mb-2" />}
+
+          {/* 2. Fee Profile Selector (Scoped to Session) */}
+          <div className="sm:col-span-2">
+            <div className="flex items-center justify-between ml-1 mb-1">
+              <label className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground block">
+                Fee Profile
+              </label>
+              {selectedSessionName && (
+                <span className="text-[11px] text-muted-foreground font-medium">
+                  Showing profiles for: <strong className="text-foreground">{selectedSessionName}</strong>
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <AsyncSelectField
+                  asyncConfig={profileAsyncConfig}
+                  value={selectedProfileId ?? ""}
+                  onChange={(val: any) => onProfileSelect?.(val)}
+                  placeholder={
+                    selectedSessionName
+                      ? `Select fee profile for ${selectedSessionName}...`
+                      : "Select fee profile..."
+                  }
+                />
+              </div>
+              {isLoading && <Loader2 className="size-5 animate-spin text-muted-foreground shrink-0" />}
+            </div>
+          </div>
         </div>
       )}
 

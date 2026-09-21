@@ -1,5 +1,79 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
+* @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::clone
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:265
+ * @route '/api/v1/fee-regulation-profiles/{id}/clone'
+ */
+export const clone = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: clone.url(args, options),
+    method: 'post',
+})
+
+clone.definition = {
+    methods: ["post"],
+    url: '/api/v1/fee-regulation-profiles/{id}/clone',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::clone
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:265
+ * @route '/api/v1/fee-regulation-profiles/{id}/clone'
+ */
+clone.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { id: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    id: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        id: args.id,
+                }
+
+    return clone.definition.url
+            .replace('{id}', parsedArgs.id.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::clone
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:265
+ * @route '/api/v1/fee-regulation-profiles/{id}/clone'
+ */
+clone.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: clone.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::clone
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:265
+ * @route '/api/v1/fee-regulation-profiles/{id}/clone'
+ */
+    const cloneForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: clone.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::clone
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:265
+ * @route '/api/v1/fee-regulation-profiles/{id}/clone'
+ */
+        cloneForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: clone.url(args, options),
+            method: 'post',
+        })
+    
+    clone.form = cloneForm
+/**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::index
  * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:21
  * @route '/api/v1/fee-regulation-profiles'
@@ -79,7 +153,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:62
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:68
  * @route '/api/v1/fee-regulation-profiles'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +168,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:62
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:68
  * @route '/api/v1/fee-regulation-profiles'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +177,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:62
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:68
  * @route '/api/v1/fee-regulation-profiles'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +187,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:62
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:68
  * @route '/api/v1/fee-regulation-profiles'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +197,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:62
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:68
  * @route '/api/v1/fee-regulation-profiles'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +208,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 export const show = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +223,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 show.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +251,7 @@ show.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 show.get = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +260,7 @@ show.get = (args: { fee_regulation_profile: string | number } | [fee_regulation_
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +270,7 @@ show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
     const showForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +280,7 @@ show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
         showForm.get = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +289,7 @@ show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:132
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:145
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
         showForm.head = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -231,7 +305,7 @@ show.head = (args: { fee_regulation_profile: string | number } | [fee_regulation
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 export const update = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +320,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 update.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -274,7 +348,7 @@ update.url = (args: { fee_regulation_profile: string | number } | [fee_regulatio
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 update.put = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -283,7 +357,7 @@ update.put = (args: { fee_regulation_profile: string | number } | [fee_regulatio
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -293,7 +367,7 @@ update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulat
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
     const updateForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -308,7 +382,7 @@ update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulat
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
         updateForm.put = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +396,7 @@ update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulat
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:167
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:185
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
         updateForm.patch = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -338,7 +412,7 @@ update.patch = (args: { fee_regulation_profile: string | number } | [fee_regulat
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:318
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 export const destroy = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -353,7 +427,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:318
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 destroy.url = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -381,7 +455,7 @@ destroy.url = (args: { fee_regulation_profile: string | number } | [fee_regulati
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:318
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
 destroy.delete = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -391,7 +465,7 @@ destroy.delete = (args: { fee_regulation_profile: string | number } | [fee_regul
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:318
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
     const destroyForm = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -406,7 +480,7 @@ destroy.delete = (args: { fee_regulation_profile: string | number } | [fee_regul
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeRegulationProfileController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:245
+ * @see app/Http/Controllers/Api/V1/Fees/FeeRegulationProfileController.php:318
  * @route '/api/v1/fee-regulation-profiles/{fee_regulation_profile}'
  */
         destroyForm.delete = (args: { fee_regulation_profile: string | number } | [fee_regulation_profile: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -420,6 +494,6 @@ destroy.delete = (args: { fee_regulation_profile: string | number } | [fee_regul
         })
     
     destroy.form = destroyForm
-const FeeRegulationProfileController = { index, store, show, update, destroy }
+const FeeRegulationProfileController = { clone, index, store, show, update, destroy }
 
 export default FeeRegulationProfileController

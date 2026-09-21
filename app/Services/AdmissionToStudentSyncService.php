@@ -244,6 +244,13 @@ class AdmissionToStudentSyncService
         $existingProfile = StudentProfile::where('user_id', $app->user_id)->first();
         $fromSessionId = $existingProfile?->session_id;
         $fromClassId = $existingProfile?->class_id;
+        if (!$fromClassId && $fromSessionId) {
+            $fromClassId = DB::table('lms_class_enrollments')
+                ->join('lms_classes', 'lms_class_enrollments.lms_class_id', '=', 'lms_classes.id')
+                ->where('lms_class_enrollments.user_id', $app->user_id)
+                ->where('lms_classes.session_id', $fromSessionId)
+                ->value('lms_classes.id');
+        }
 
         $context['profile'] = StudentProfile::updateOrCreate(
             ['user_id' => $app->user_id],
@@ -255,6 +262,11 @@ class AdmissionToStudentSyncService
             $resolvedFromSession = $fromSessionId ?: ($prefs['from_session_id'] ?? null);
             $resolvedFromClass = $fromClassId ?: ($prefs['from_class_id'] ?? null);
 
+            $readmissionDetail = \App\Models\ReadmissionDetail::create([
+                'admission_application_id' => $app->id,
+                'previous_enrollment_status' => $existingProfile?->enrollment_status ?? 'active',
+            ]);
+
             \App\Models\StudentTransition::firstOrCreate(
                 [
                     'user_id' => $app->user_id,
@@ -264,6 +276,8 @@ class AdmissionToStudentSyncService
                 [
                     'institution_id' => $app->institution_id,
                     'student_profile_id' => $context['profile']->id,
+                    'transitionable_type' => \App\Models\ReadmissionDetail::class,
+                    'transitionable_id' => $readmissionDetail->id,
                     'from_session_id' => $resolvedFromSession,
                     'from_class_id' => $resolvedFromClass,
                     'to_class_id' => $app->class_id ?? $app->section_id,
@@ -272,6 +286,7 @@ class AdmissionToStudentSyncService
                     'remarks' => 'Re-admission via application ' . $app->application_id,
                 ]
             );
+
         }
     }
 

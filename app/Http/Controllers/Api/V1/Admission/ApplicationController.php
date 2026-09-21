@@ -349,7 +349,7 @@ class ApplicationController extends BaseController
             'online_amount' => 'nullable|numeric|min:0',
             'online_transaction_id' => 'nullable|required_with:online_amount|string|max:100',
             'documents' => 'nullable|array',
-            'documents.*.doc_type' => 'required|string|in:birth_certificate,aadhaar,tc,marksheet,caste,parent_signature',
+            'documents.*.doc_type' => 'required|string|max:100',
             'documents.*.path' => 'required|string|max:500',
             'discount_amount' => 'nullable|numeric|min:0',
             'discount_reason' => 'nullable|string|max:255',
@@ -690,6 +690,13 @@ class ApplicationController extends BaseController
                             'file_url' => $doc['path'],
                         ]
                     );
+
+                    if ($doc['doc_type'] === 'photo' && !empty($doc['path'])) {
+                        $application->update(['photo_url' => $doc['path']]);
+                        if (!empty($application->user_id)) {
+                            \App\Models\User::where('id', $application->user_id)->update(['photo_url' => $doc['path']]);
+                        }
+                    }
                 }
 
                 // Create transaction record if payment was made
@@ -841,7 +848,7 @@ public function update(Request $request, $id): JsonResponse
             'online_amount' => 'nullable|numeric|min:0',
             'online_transaction_id' => 'nullable|required_with:online_amount|string|max:100',
             'documents' => 'nullable|array',
-            'documents.*.doc_type' => 'required|string|in:birth_certificate,aadhaar,tc,marksheet,caste,parent_signature',
+            'documents.*.doc_type' => 'required|string|max:100',
             'documents.*.path' => 'required|string|max:500',
             'discount_amount' => 'nullable|numeric|min:0',
             'discount_reason' => 'nullable|string|max:255',
@@ -1145,6 +1152,13 @@ public function update(Request $request, $id): JsonResponse
                             'file_url' => $doc['path'],
                         ]
                     );
+
+                    if ($doc['doc_type'] === 'photo' && !empty($doc['path'])) {
+                        $application->update(['photo_url' => $doc['path']]);
+                        if (!empty($application->user_id)) {
+                            \App\Models\User::where('id', $application->user_id)->update(['photo_url' => $doc['path']]);
+                        }
+                    }
                 }
 
                 // Create transaction record if payment was made

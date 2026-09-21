@@ -15,6 +15,7 @@ class FeeRegulationProfile extends Model
 
     protected $fillable = [
         'institution_id',
+        'session_id',
         'name',
         'profile_type',
         'gender',
@@ -26,6 +27,7 @@ class FeeRegulationProfile extends Model
 
     protected $casts = [
         'is_default' => 'boolean',
+        'session_id' => 'integer',
     ];
 
     public function institution(): BelongsTo
@@ -33,8 +35,26 @@ class FeeRegulationProfile extends Model
         return $this->belongsTo(Institution::class);
     }
 
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(Session::class, 'session_id');
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(FeeRegulationProfileItem::class, 'profile_id');
     }
+
+    public function scopeForSession($query, ?int $sessionId)
+    {
+        if (!$sessionId) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($sessionId) {
+            $q->where('session_id', $sessionId)
+              ->orWhereNull('session_id');
+        });
+    }
 }
+

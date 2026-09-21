@@ -104,8 +104,8 @@ export const getContextCards = (labels: any): ContextCardConfig[] => [
         key: "class",
         label: `${labels.streamLabel} & Context`,
         icon: GraduationCap,
-        valuePath: "student_profile.stream.name",
-        fallbackPaths: ["__classInfo.name"],
+        valuePath: "__classInfo.stream.name",
+        fallbackPaths: ["__classInfo.name", "student_profile.stream.name"],
     },
     {
         key: "email",
