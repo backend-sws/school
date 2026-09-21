@@ -40,7 +40,7 @@ export function SessionDialog({ open, onClose, data }: SessionProps) {
 
   const { data: suggestedYears } = useQuery({
     queryKey: ["sessions-suggested-years"],
-    queryFn: () => SessionApi.getSuggestedYears(4),
+    queryFn: () => SessionApi.getSuggestedYears(1),
     enabled: open && !isEditMode,
   });
   
@@ -48,9 +48,9 @@ export function SessionDialog({ open, onClose, data }: SessionProps) {
   const startYear = watch("start_year");
   
   useEffect(() => {
-    // Auto-set end_year to start_year + 4 when start_year changes (only in create mode)
+    // Auto-set end_year to start_year + 1 when start_year changes (only in create mode)
     if (!isEditMode && startYear) {
-      setValue("end_year", Number(startYear) + 4);
+      setValue("end_year", Number(startYear) + 1);
     }
   }, [startYear, isEditMode, setValue]);
   const { data: SessionDetail, isLoading: isLoadingDetail } = useQuery({

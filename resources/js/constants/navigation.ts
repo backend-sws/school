@@ -116,7 +116,7 @@ export const unifiedSidebarConfig: SidebarConfig = {
         {
             label: "Academics",
             items: [
-                { title: "Sessions", href: "/organization/sessions", icon: Calendar, permission: "view_sessions" },
+                { title: "Sessions", href: "/organization/sessions", icon: Calendar, permission: "view_streams" },
                 { title: "Departments", href: "/organization/departments", icon: Building2, permission: "view_departments" },
                 { title: "Levels", href: "/organization/main-streams", icon: Layers, permission: "view_streams", contentKey: "main_streams_title" },
                 { title: "Classes", href: "/organization/streams", icon: GraduationCap, permission: "view_streams", feature: "academics", contentKey: "streams_and_programs_title" },

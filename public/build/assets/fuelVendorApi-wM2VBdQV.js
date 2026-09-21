@@ -1,1 +1,0 @@
-import{a as t}from"./api-DbsTeVcB.js";const o="/transport/fuel-vendors",$={index:e=>t.get(o,{params:e}),show:e=>t.get(`${o}/${e}`),store:e=>t.post(o,e),update:(e,s)=>t.put(`${o}/${e}`,s),destroy:e=>t.delete(`${o}/${e}`),ledger:(e,s)=>t.get(`${o}/${e}/ledger`,{params:s}),settle:(e,s)=>t.post(`${o}/${e}/settle`,s)};export{$ as f};

@@ -88,6 +88,17 @@ const { filter, handleFilter } = useSearchFilter({
     },
   });
 
+  const toggleStatusMutation = useMutation({
+    mutationFn: (id: number | string) => SessionApi.toggleStatus(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+  });
+
+  const handleToggleStatus = (row: any) => {
+    toggleStatusMutation.mutate(row.id);
+  };
+
   const handleDelete = (row: any) => {
     deleteDisclosure.onOpen(row);
   };
@@ -149,18 +160,21 @@ const { filter, handleFilter } = useSearchFilter({
                 className="w-full sm:w-auto"
               >
                 <Plus className="size-4" />
-                <span>Initialize Academic Session</span>
+                <span>Create Academic Session</span>
               </Button>
             </div>
 
           <Card>
             <CardHeader className="pb-4">
               <FilterBar values={filter} onChange={handleFilterChange}>
-                <FilterBar.SmartSelect
-                  name="search"
-                  options={YEAR_FILTER_OPTIONS}
-                  placeholder="Search by name or year..."
-                  tooltip="You can type a name or select/type a year"
+                <FilterBar.Renderer
+                  config={{
+                    filters: [],
+                    search: {
+                      name: "search",
+                      placeholder: "Search by session name or year...",
+                    },
+                  }}
                 />
               </FilterBar>
             </CardHeader>
@@ -224,16 +238,15 @@ const { filter, handleFilter } = useSearchFilter({
                       <TableCell className="w-1/6">
                         <div className="flex  items-center gap-0.5">
                           <Tooltip>
-                            <TooltipTrigger>
-                              {" "}
-                              <Switch
-                                checked={val?.status === 1}
-                              // onCheckedChange={() =>
-                              //   handleToggleStatus(val)
-                              // }
-                              // disabled={toggleStatusMutation.isPending}
-                              />
-                            </TooltipTrigger>{" "}
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center">
+                                <Switch
+                                  checked={val?.status === 1}
+                                  onCheckedChange={() => handleToggleStatus(val)}
+                                  disabled={toggleStatusMutation.isPending}
+                                />
+                              </div>
+                            </TooltipTrigger>
                             <TooltipContent>Status Toggle</TooltipContent>
                           </Tooltip>
                           <Tooltip>

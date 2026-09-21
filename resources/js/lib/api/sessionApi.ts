@@ -25,7 +25,7 @@ const SessionApi = {
   /** Current session for the institution (resolved via academic calendar + is_current fallback). */
   getCurrentSession: () => api.get<{ data?: { id: number; name: string } | null }>(`${API_URL}/current`),
 
-  getSuggestedYears: (durationYears = 4) =>
+  getSuggestedYears: (durationYears = 1) =>
     api.get(`${API_URL}/suggested-years`, { params: { duration_years: durationYears } }),
 
   getPublicSessions: (params?: Record<string, any>) =>
@@ -44,6 +44,8 @@ const SessionApi = {
 
   updateSession: (id: number | string, data: any) =>
     api.put(`${API_URL}/${id}`, data),
+
+  toggleStatus: (id: number | string) => api.patch(`${API_URL}/${id}/toggle-status`),
 
   deleteStream: (id: number | string) => api.delete(`${API_URL}/${id}`),
 };

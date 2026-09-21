@@ -29,7 +29,7 @@ export const INITIAL_SESSION_FILTERS = {
 };
 export const SESSION_FORM_INITIAL_DATA = {
   start_year: new Date().getFullYear(),
-  end_year: new Date().getFullYear() + 4,
+  end_year: new Date().getFullYear() + 1,
 };
 
 const YEAR_OPTIONS = generateYearOptions(1900, 2100);
