@@ -1369,6 +1369,15 @@ public function update(Request $request, $id): JsonResponse
                 $application->update($updateData);
 
                 if ($status === ProcessStatus::APPROVED) {
+                    if ($application->due_amount === null) {
+                        $total = (float) ($application->amount ?? 0);
+                        $discount = (float) ($application->discount_amount ?? 0);
+                        $paid = (float) ($application->cash_amount ?? 0) + (float) ($application->online_amount ?? 0);
+                        $application->update([
+                            'due_amount' => $this->engine->calculateDue($total, $discount, $paid),
+                        ]);
+                    }
+
                     app(AdmissionToStudentSyncService::class)->syncFromApplication($application);
                 }
 

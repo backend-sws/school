@@ -44,9 +44,17 @@ import { RecordPaymentDialog } from "@/components/admission/RecordPaymentDialog"
 import { computeAdmissionDetailSummary } from "@/lib/utils";
 import api from "@/lib/api/api";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { formatCurrency, MATRIX_ADMISSION_COLUMNS } from "@/constants/accounts/ledgerDetailConfig";
+import {
+  formatCurrency,
+  MATRIX_ADMISSION_COLUMNS,
+} from "@/constants/accounts/ledgerDetailConfig";
 import Each from "@/components/Each";
 import {
   APPLICATION_SHOW_BREADCRUMBS,
@@ -58,12 +66,17 @@ import {
 
 const ApplicationsShow = () => {
   const { props } = usePage();
-  const { id, course_for: inertiaScope } = props as unknown as { id: number | string; course_for?: "school" | "college" };
+  const { id, course_for: inertiaScope } = props as unknown as {
+    id: number | string;
+    course_for?: "school" | "college";
+  };
   const queryClient = useQueryClient();
 
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+  const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [rejectRemarks, setRejectRemarks] = useState("");
+  const [approveRemarks, setApproveRemarks] = useState("");
   const [copied, setCopied] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
@@ -75,7 +88,9 @@ const ApplicationsShow = () => {
 
   const response = data as { success?: boolean; data?: Record<string, any> };
   const application = response?.data ?? (data as Record<string, any>);
-  const enrolledUserId = application?.user_id ? Number(application.user_id) : null;
+  const enrolledUserId = application?.user_id
+    ? Number(application.user_id)
+    : null;
 
   const { data: ledgerRes, isLoading: ledgerLoading } = useQuery({
     queryKey: ["application-student-ledger", enrolledUserId],
@@ -84,9 +99,16 @@ const ApplicationsShow = () => {
   });
 
   const ledgerMatrix = (ledgerRes as any)?.data?.matrix ?? [];
-  const feeBreakdown = (application?.fee_breakdown as Array<{ name?: string; amount?: number; type?: string; category?: string }>) ?? [];
-  const isSchool = (inertiaScope || application?.admission_head?.course_for) === "school";
-  
+  const feeBreakdown =
+    (application?.fee_breakdown as Array<{
+      name?: string;
+      amount?: number;
+      type?: string;
+      category?: string;
+    }>) ?? [];
+  const isSchool =
+    (inertiaScope || application?.admission_head?.course_for) === "school";
+
   const summary = useMemo(() => {
     if (!application) {
       return {
@@ -106,18 +128,33 @@ const ApplicationsShow = () => {
   }, [application]);
 
   const processMutation = useMutation({
-    mutationFn: (payload: { status: string; remarks?: string; section_id?: number | string }) =>
-      AdmissionApi.process(id, payload),
+    mutationFn: (payload: {
+      status: string;
+      remarks?: string;
+      section_id?: number | string;
+    }) => AdmissionApi.process(id, payload),
     onSuccess: (_data, variables) => {
       const isApproved = variables.status === "approved";
-      toast.success(isApproved ? "Application approved. Applicant has been onboarded as a student and will appear in the students list." : "Application rejected successfully.");
-      queryClient.invalidateQueries({ queryKey: ApplicationQueryKeys.detail(id) });
+      toast.success(
+        isApproved
+          ? "Application approved. Applicant has been onboarded as a student and will appear in the students list."
+          : "Application rejected successfully.",
+      );
+      queryClient.invalidateQueries({
+        queryKey: ApplicationQueryKeys.detail(id),
+      });
       setIsRejectDialogOpen(false);
+      setIsApproveDialogOpen(false);
       setRejectRemarks("");
+      setApproveRemarks("");
     },
     onError: (_err, variables) => {
       const isApproved = variables?.status === "approved";
-      toast.error(isApproved ? "Failed to approve application." : "Failed to reject application.");
+      toast.error(
+        isApproved
+          ? "Failed to approve application."
+          : "Failed to reject application.",
+      );
     },
   });
 
@@ -126,11 +163,13 @@ const ApplicationsShow = () => {
   };
 
   const handleApprove = () => {
-    processMutation.mutate({ status: "approved" });
+    processMutation.mutate({
+      status: "approved",
+      remarks: approveRemarks.trim() || undefined,
+    });
   };
 
-  const paymentDone = application?.payment_status === "success" || application?.payment_status === "paid";
-  const canShowApprove = paymentDone && application?.process_status === "pending";
+  const canShowApprove = application?.process_status === "pending";
 
   const handleCopyId = () => {
     if (application?.application_id) {
@@ -141,14 +180,27 @@ const ApplicationsShow = () => {
     }
   };
 
-  const breadcrumbs = APPLICATION_SHOW_BREADCRUMBS(id, application?.application_id ? String(application.application_id) : undefined);
+  const breadcrumbs = APPLICATION_SHOW_BREADCRUMBS(
+    id,
+    application?.application_id
+      ? String(application.application_id)
+      : undefined,
+  );
 
   /** Academic details – must run before any early return to satisfy Rules of Hooks */
   const { academicDetails, academicDisplayItems } = useMemo(() => {
     if (!application) {
-      return { academicDetails: {} as Record<string, string>, academicDisplayItems: [] as { label: string; value: string; isSemester?: boolean }[] };
+      return {
+        academicDetails: {} as Record<string, string>,
+        academicDisplayItems: [] as {
+          label: string;
+          value: string;
+          isSemester?: boolean;
+        }[],
+      };
     }
-    const sessionName = application.session?.name || application.session_name || null;
+    const sessionName =
+      application.session?.name || application.session_name || null;
     const mainProgram =
       application.main_stream_name ??
       application.admission_head?.main_stream?.name ??
@@ -172,28 +224,56 @@ const ApplicationsShow = () => {
         application.stream?.name ||
         null);
     const sectionOrSemester = isSchool
-      ? (application.section_name || application.lms_section?.name || application.lmsSection?.name || null)
-      : (application.semester != null && application.semester !== "" ? String(application.semester) : null);
+      ? application.section_name ||
+        application.lms_section?.name ||
+        application.lmsSection?.name ||
+        null
+      : application.semester != null && application.semester !== ""
+        ? String(application.semester)
+        : null;
 
     const hasValue = (v: string | null | undefined) =>
       v != null && v !== "" && v !== "—" && String(v).toUpperCase() !== "N/A";
 
     const details: Record<string, string> = {};
-    if (hasValue(sessionName)) details[isSchool ? "academic_session" : "admission_session"] = sessionName!;
-    if (hasValue(mainProgram!)) details[isSchool ? "program_level" : "main_program"] = mainProgram!;
-    if (hasValue(branchStream!)) details[isSchool ? "admission_class" : "branch_stream"] = branchStream!;
-    if (hasValue(sectionOrSemester!)) details[isSchool ? "provisional_section" : "current_semester"] = sectionOrSemester!;
+    if (hasValue(sessionName))
+      details[isSchool ? "academic_session" : "admission_session"] =
+        sessionName!;
+    if (hasValue(mainProgram!))
+      details[isSchool ? "program_level" : "main_program"] = mainProgram!;
+    if (hasValue(branchStream!))
+      details[isSchool ? "admission_class" : "branch_stream"] = branchStream!;
+    if (hasValue(sectionOrSemester!))
+      details[isSchool ? "provisional_section" : "current_semester"] =
+        sectionOrSemester!;
 
     const sessionLabel = isSchool ? "Academic Session" : "Admission Session";
     const mainLabel = isSchool ? "Program / Level" : "Main Stream";
     const branchLabel = isSchool ? "Admission Class" : "Branch / Stream";
     const sectionLabel = isSchool ? "Provisional Section" : "Current Semester";
 
-    const displayItems: { label: string; value: string; isSemester?: boolean }[] = [];
-    displayItems.push({ label: sessionLabel, value: hasValue(sessionName) ? sessionName! : "—" });
-    displayItems.push({ label: mainLabel, value: hasValue(mainProgram) ? mainProgram! : "—" });
-    displayItems.push({ label: branchLabel, value: hasValue(branchStream) ? branchStream! : "—" });
-    displayItems.push({ label: sectionLabel, value: hasValue(sectionOrSemester) ? sectionOrSemester! : "—", isSemester: !isSchool && hasValue(sectionOrSemester) });
+    const displayItems: {
+      label: string;
+      value: string;
+      isSemester?: boolean;
+    }[] = [];
+    displayItems.push({
+      label: sessionLabel,
+      value: hasValue(sessionName) ? sessionName! : "—",
+    });
+    displayItems.push({
+      label: mainLabel,
+      value: hasValue(mainProgram) ? mainProgram! : "—",
+    });
+    displayItems.push({
+      label: branchLabel,
+      value: hasValue(branchStream) ? branchStream! : "—",
+    });
+    displayItems.push({
+      label: sectionLabel,
+      value: hasValue(sectionOrSemester) ? sectionOrSemester! : "—",
+      isSemester: !isSchool && hasValue(sectionOrSemester),
+    });
 
     return { academicDetails: details, academicDisplayItems: displayItems };
   }, [application, inertiaScope, isSchool]);
@@ -228,7 +308,9 @@ const ApplicationsShow = () => {
             </p>
           </div>
           <Link href="/admission/applications">
-            <Button variant="outline" className="rounded-xl">Return to List</Button>
+            <Button variant="outline" className="rounded-xl">
+              Return to List
+            </Button>
           </Link>
         </div>
       </>
@@ -242,7 +324,9 @@ const ApplicationsShow = () => {
 
   return (
     <>
-      <Head title={`${application.applicant_name ?? "Application"} – ${application.application_id}`} />
+      <Head
+        title={`${application.applicant_name ?? "Application"} – ${application.application_id}`}
+      />
 
       {/* Hero Header Section */}
       <div className="relative border-b bg-muted/5">
@@ -259,11 +343,21 @@ const ApplicationsShow = () => {
                     className="ml-1 h-6 w-6 hover:text-primary/70"
                     title="Copy ID"
                   >
-                    {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+                    {copied ? (
+                      <Check className="size-3" />
+                    ) : (
+                      <Copy className="size-3" />
+                    )}
                   </Button>
                 </div>
                 <p className="text-muted-foreground text-xs flex items-center gap-1.5">
-                  <Clock className="size-3" /> Submitted on {application.submitted_at ? new Date(application.submitted_at).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) : "—"}
+                  <Clock className="size-3" /> Submitted on{" "}
+                  {application.submitted_at
+                    ? new Date(application.submitted_at).toLocaleDateString(
+                        "en-IN",
+                        { day: "numeric", month: "short", year: "numeric" },
+                      )
+                    : "—"}
                 </p>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
@@ -276,15 +370,15 @@ const ApplicationsShow = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-
           {/* Main Info Columns */}
           <div className="lg:col-span-8 space-y-10">
-
             {/* Financial Summary Section */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 text-primary">
                 <CreditCard className="size-5" />
-                <h3 className="text-xl font-bold tracking-tight text-foreground">Financial Summary</h3>
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  Financial Summary
+                </h3>
               </div>
 
               <TotalSummaryCard
@@ -305,20 +399,34 @@ const ApplicationsShow = () => {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-muted hover:bg-muted">
-                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px]">Fee Type</TableHead>
-                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px] text-right">Category</TableHead>
-                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px] text-right">Amount</TableHead>
+                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px]">
+                            Fee Type
+                          </TableHead>
+                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px] text-right">
+                            Category
+                          </TableHead>
+                          <TableHead className="px-6 py-3 font-bold uppercase tracking-wider text-[10px] text-right">
+                            Amount
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         <Each
                           of={feeBreakdown}
-                          keyExtractor={(item, index) => `${item.name}-${index}`}
+                          keyExtractor={(item, index) =>
+                            `${item.name}-${index}`
+                          }
                           render={(item) => (
                             <TableRow>
-                              <TableCell className="px-6 py-3 font-semibold text-sm">{item.name ?? "Fee"}</TableCell>
-                              <TableCell className="px-6 py-3 text-right text-xs uppercase text-muted-foreground">{item.category ?? item.type ?? "—"}</TableCell>
-                              <TableCell className="px-6 py-3 text-right tabular-nums font-bold">{formatCurrency(item.amount ?? 0)}</TableCell>
+                              <TableCell className="px-6 py-3 font-semibold text-sm">
+                                {item.name ?? "Fee"}
+                              </TableCell>
+                              <TableCell className="px-6 py-3 text-right text-xs uppercase text-muted-foreground">
+                                {item.category ?? item.type ?? "—"}
+                              </TableCell>
+                              <TableCell className="px-6 py-3 text-right tabular-nums font-bold">
+                                {formatCurrency(item.amount ?? 0)}
+                              </TableCell>
                             </TableRow>
                           )}
                         />
@@ -331,29 +439,48 @@ const ApplicationsShow = () => {
               {enrolledUserId && application.process_status === "approved" && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
-                    <h4 className="text-sm font-bold tracking-tight">Monthly Fee Schedule</h4>
+                    <h4 className="text-sm font-bold tracking-tight">
+                      Monthly Fee Schedule
+                    </h4>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/accounts/fee-hub/students?student=${enrolledUserId}`}>Open Full Ledger</Link>
+                      <Link
+                        href={`/accounts/fee-hub/students?student=${enrolledUserId}`}
+                      >
+                        Open Full Ledger
+                      </Link>
                     </Button>
                   </div>
                   {ledgerLoading ? (
-                    <p className="text-sm text-muted-foreground">Loading monthly schedule…</p>
+                    <p className="text-sm text-muted-foreground">
+                      Loading monthly schedule…
+                    </p>
                   ) : ledgerMatrix.length > 0 ? (
                     <Card className="rounded-xl border shadow-sm overflow-hidden">
                       <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-muted hover:bg-muted">
-                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase">Month</TableHead>
+                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase">
+                                Month
+                              </TableHead>
                               <Each
                                 of={MATRIX_ADMISSION_COLUMNS}
                                 keyExtractor={(col) => col.key}
                                 render={(col) => (
-                                  <TableHead key={col.key} className="px-4 py-3 text-[10px] font-bold uppercase text-right">{col.label}</TableHead>
+                                  <TableHead
+                                    key={col.key}
+                                    className="px-4 py-3 text-[10px] font-bold uppercase text-right"
+                                  >
+                                    {col.label}
+                                  </TableHead>
                                 )}
                               />
-                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase text-right">Monthly Fee</TableHead>
-                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase text-right">Arrears</TableHead>
+                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase text-right">
+                                Monthly Fee
+                              </TableHead>
+                              <TableHead className="px-4 py-3 text-[10px] font-bold uppercase text-right">
+                                Arrears
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -362,18 +489,30 @@ const ApplicationsShow = () => {
                               keyExtractor={(row: any) => row.month_key}
                               render={(row: any) => (
                                 <TableRow>
-                                  <TableCell className="px-4 py-3 font-semibold text-sm">{row.month_name}</TableCell>
+                                  <TableCell className="px-4 py-3 font-semibold text-sm">
+                                    {row.month_name}
+                                  </TableCell>
                                   <Each
                                     of={MATRIX_ADMISSION_COLUMNS}
                                     keyExtractor={(col) => col.key}
                                     render={(col) => (
-                                      <TableCell key={col.key} className="px-4 py-3 text-right tabular-nums text-sm">
-                                        {formatCurrency(row[col.rowField!] ?? 0, col.format === "currency-positive")}
+                                      <TableCell
+                                        key={col.key}
+                                        className="px-4 py-3 text-right tabular-nums text-sm"
+                                      >
+                                        {formatCurrency(
+                                          row[col.rowField!] ?? 0,
+                                          col.format === "currency-positive",
+                                        )}
                                       </TableCell>
                                     )}
                                   />
-                                  <TableCell className="px-4 py-3 text-right tabular-nums text-sm">{formatCurrency(row.monthly_total ?? 0)}</TableCell>
-                                  <TableCell className="px-4 py-3 text-right tabular-nums text-sm text-rose-600">{formatCurrency(row.balance ?? 0, true)}</TableCell>
+                                  <TableCell className="px-4 py-3 text-right tabular-nums text-sm">
+                                    {formatCurrency(row.monthly_total ?? 0)}
+                                  </TableCell>
+                                  <TableCell className="px-4 py-3 text-right tabular-nums text-sm text-rose-600">
+                                    {formatCurrency(row.balance ?? 0, true)}
+                                  </TableCell>
                                 </TableRow>
                               )}
                             />
@@ -382,7 +521,9 @@ const ApplicationsShow = () => {
                       </div>
                     </Card>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No monthly fee schedule available yet.</p>
+                    <p className="text-sm text-muted-foreground">
+                      No monthly fee schedule available yet.
+                    </p>
                   )}
                 </div>
               )}
@@ -394,7 +535,9 @@ const ApplicationsShow = () => {
             <section className="space-y-6">
               <div className="flex items-center gap-2 text-primary">
                 <User className="size-5" />
-                <h3 className="text-xl font-bold tracking-tight text-foreground">Personal Information</h3>
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  Personal Information
+                </h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InfoCard
@@ -410,7 +553,15 @@ const ApplicationsShow = () => {
                 <InfoCard
                   icon={Calendar}
                   label="Date of Birth"
-                  value={application.dob ? new Date(application.dob).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) : "—"}
+                  value={
+                    application.dob
+                      ? new Date(application.dob).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "—"
+                  }
                 />
                 <InfoCard
                   icon={User}
@@ -437,7 +588,9 @@ const ApplicationsShow = () => {
             <section className="space-y-6">
               <div className="flex items-center gap-2 text-primary">
                 <GraduationCap className="size-5" />
-                <h3 className="text-xl font-bold tracking-tight text-foreground">Academic Details</h3>
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  Academic Details
+                </h3>
               </div>
               <div className="grid grid-cols-1 gap-4">
                 <div className="rounded-2xl border-2 border-primary/10 bg-primary/[0.02] p-6 shadow-sm">
@@ -447,14 +600,21 @@ const ApplicationsShow = () => {
                         of={academicDisplayItems}
                         keyExtractor={(item) => item.label}
                         render={(item, index) => (
-                          <div className={`space-y-1.5 ${index > 0 ? "border-l border-border/40 md:pl-6" : ""}`}>
+                          <div
+                            className={`space-y-1.5 ${index > 0 ? "border-l border-border/40 md:pl-6" : ""}`}
+                          >
                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                               {item.label}
                             </p>
                             <div className="flex items-center gap-2">
-                              <p className="text-lg font-bold text-foreground">{item.value}</p>
+                              <p className="text-lg font-bold text-foreground">
+                                {item.value}
+                              </p>
                               {item.isSemester && (
-                                <Badge variant="outline" className="text-[10px] font-bold uppercase bg-background border-primary/20">
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] font-bold uppercase bg-background border-primary/20"
+                                >
                                   Level {application.semester ?? 1}
                                 </Badge>
                               )}
@@ -464,7 +624,9 @@ const ApplicationsShow = () => {
                       />
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No academic details recorded.</p>
+                    <p className="text-sm text-muted-foreground">
+                      No academic details recorded.
+                    </p>
                   )}
                 </div>
 
@@ -475,8 +637,12 @@ const ApplicationsShow = () => {
                         <MapPin className="size-5 text-primary/70" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Application Type</p>
-                        <h4 className="text-lg font-bold capitalize">{application.application_type ?? "General"}</h4>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          Application Type
+                        </p>
+                        <h4 className="text-lg font-bold capitalize">
+                          {application.application_type ?? "General"}
+                        </h4>
                       </div>
                     </div>
                   </div>
@@ -487,8 +653,12 @@ const ApplicationsShow = () => {
                         <GraduationCap className="size-5 text-primary/70" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Previous Board</p>
-                        <h4 className="text-lg font-bold">{application.previous_board ?? "N/A"}</h4>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          Previous Board
+                        </p>
+                        <h4 className="text-lg font-bold">
+                          {application.previous_board ?? "N/A"}
+                        </h4>
                       </div>
                     </div>
                     {application.previous_marks && (
@@ -500,7 +670,6 @@ const ApplicationsShow = () => {
                 </div>
               </div>
             </section>
-
           </div>
 
           {/* Sidebar Actions Column */}
@@ -508,17 +677,35 @@ const ApplicationsShow = () => {
             <div className="rounded-2xl border-2 border-border bg-background p-6 space-y-8">
               <div className="space-y-4">
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Payment Status</p>
-                  <Badge variant="outline" className={`w-full py-2.5 text-sm font-bold rounded-xl border-2 justify-center ${paymentColors[application.payment_status as string] ?? paymentColors.pending}`}>
-                    <div className={`size-2 rounded-full mr-2 ${paymentDotColors[application.payment_status as string] ?? paymentDotColors.pending}`} />
-                    {String(application.payment_status ?? "pending").toUpperCase()}
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Payment Status
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className={`w-full py-2.5 text-sm font-bold rounded-xl border-2 justify-center ${paymentColors[application.payment_status as string] ?? paymentColors.pending}`}
+                  >
+                    <div
+                      className={`size-2 rounded-full mr-2 ${paymentDotColors[application.payment_status as string] ?? paymentDotColors.pending}`}
+                    />
+                    {String(
+                      application.payment_status ?? "pending",
+                    ).toUpperCase()}
                   </Badge>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Application Status</p>
-                  <Badge variant="outline" className={`w-full py-2.5 text-sm font-bold rounded-xl border-2 justify-center ${statusColors[application.process_status as string] || statusColors.pending}`}>
-                    <div className={`size-2 rounded-full mr-2 ${statusDotColors[application.process_status as string] ?? statusDotColors.pending}`} />
-                    {String(application.process_status ?? "pending").toUpperCase()}
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Application Status
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className={`w-full py-2.5 text-sm font-bold rounded-xl border-2 justify-center ${statusColors[application.process_status as string] || statusColors.pending}`}
+                  >
+                    <div
+                      className={`size-2 rounded-full mr-2 ${statusDotColors[application.process_status as string] ?? statusDotColors.pending}`}
+                    />
+                    {String(
+                      application.process_status ?? "pending",
+                    ).toUpperCase()}
                   </Badge>
                   {application.process_status === "approved" && (
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
@@ -533,8 +720,12 @@ const ApplicationsShow = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-lg font-bold tracking-tight">Quick Actions</h4>
-                  <p className="text-muted-foreground text-xs">Management tools</p>
+                  <h4 className="text-lg font-bold tracking-tight">
+                    Quick Actions
+                  </h4>
+                  <p className="text-muted-foreground text-xs">
+                    Management tools
+                  </p>
                 </div>
 
                 <div className="grid gap-2">
@@ -568,15 +759,22 @@ const ApplicationsShow = () => {
                   {canShowApprove && (
                     <Button
                       variant="default"
-                      className="w-full h-12 justify-between rounded-xl px-4 bg-green-600 text-white hover:bg-green-700"
-                      onClick={handleApprove}
+                      className="w-full h-12 justify-between rounded-xl px-4 bg-green-600 text-white hover:bg-green-700 shadow-sm"
+                      onClick={() => setIsApproveDialogOpen(true)}
                       disabled={processMutation.isPending}
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="size-4" />
                         <span className="font-bold text-sm">
-                          {processMutation.isPending ? "Approving..." : "Approve Admission"}
+                          {processMutation.isPending
+                            ? "Approving..."
+                            : "Approve Admission"}
                         </span>
+                        {summary.dueAmount > 0 && (
+                          <span className="ml-1 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider bg-white/20 text-white rounded-full">
+                            With Dues
+                          </span>
+                        )}
                       </div>
                       <ChevronRight className="size-4 opacity-50" />
                     </Button>
@@ -590,7 +788,9 @@ const ApplicationsShow = () => {
                     >
                       <div className="flex items-center gap-2.5">
                         <Ban className="size-4" />
-                        <span className="font-bold text-sm">Reject Application</span>
+                        <span className="font-bold text-sm">
+                          Reject Application
+                        </span>
                       </div>
                       <ChevronRight className="size-4 opacity-50" />
                     </Button>
@@ -602,22 +802,108 @@ const ApplicationsShow = () => {
             <div className="rounded-xl border border-border bg-muted/10 p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <Info className="size-4 text-primary" />
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Concierge Support</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Concierge Support
+                </h4>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-2.5 text-sm">
                   <Phone className="size-3.5 text-muted-foreground" />
-                  <span className="font-medium">{(props as any).institution?.phone || '+91 1234567890'}</span>
+                  <span className="font-medium">
+                    {(props as any).institution?.phone || "+91 1234567890"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-sm">
                   <Mail className="size-3.5 text-muted-foreground" />
-                  <span className="font-medium">{(props as any).institution?.email || 'admission@institution.edu'}</span>
+                  <span className="font-medium">
+                    {(props as any).institution?.email ||
+                      "admission@institution.edu"}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Approve Dialog */}
+      <Dialog open={isApproveDialogOpen} onOpenChange={setIsApproveDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-md p-6">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-bold text-green-600 flex items-center gap-2">
+              <ShieldCheck className="size-6" /> Approve Admission
+            </DialogTitle>
+            <DialogDescription className="text-sm">
+              Are you sure you want to approve{" "}
+              <span className="font-bold text-foreground">
+                {application?.applicant_name}
+              </span>
+              ? This will onboard the applicant as an active student.
+            </DialogDescription>
+          </DialogHeader>
+
+          {summary.dueAmount > 0 ? (
+            <div className="rounded-xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 space-y-2 text-xs">
+              <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-200">
+                <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>
+                  Approval with Outstanding Dues (₹
+                  {summary.dueAmount.toLocaleString()})
+                </span>
+              </div>
+              <p className="text-amber-800 dark:text-amber-300 leading-relaxed">
+                The remaining due balance of{" "}
+                <span className="font-bold">
+                  ₹{summary.dueAmount.toLocaleString()}
+                </span>{" "}
+                will automatically be transferred to the student's{" "}
+                <strong>Fee Ledger</strong> as dues/arrears. Remaining fees can
+                be collected later from the Fee Collection module.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-3.5 text-xs flex items-center gap-2.5 text-green-800 dark:text-green-200">
+              <Check className="size-4 text-green-600 shrink-0" />
+              <span>All admission fees have been fully settled.</span>
+            </div>
+          )}
+
+          <div className="py-2 space-y-2">
+            <Label
+              htmlFor="approve-remarks"
+              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            >
+              Approval Remarks / Notes (Optional)
+            </Label>
+            <Textarea
+              id="approve-remarks"
+              value={approveRemarks}
+              onChange={(e) => setApproveRemarks(e.target.value)}
+              placeholder="e.g. Approved with parent undertaking for remaining dues..."
+              className="rounded-xl border-2 min-h-[80px] text-sm"
+            />
+          </div>
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsApproveDialogOpen(false)}
+              disabled={processMutation.isPending}
+              className="rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleApprove}
+              disabled={processMutation.isPending}
+              className="rounded-xl px-6 bg-green-600 hover:bg-green-700 text-white font-bold"
+            >
+              {processMutation.isPending ? "Approving..." : "Confirm & Approve"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reject Dialog */}
       <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
@@ -627,11 +913,20 @@ const ApplicationsShow = () => {
               <Ban className="size-6" /> Reject Application
             </DialogTitle>
             <DialogDescription className="text-sm">
-              Are you sure you want to reject <span className="font-bold text-foreground">{application.applicant_name}</span>? This action is irreversible.
+              Are you sure you want to reject{" "}
+              <span className="font-bold text-foreground">
+                {application.applicant_name}
+              </span>
+              ? This action is irreversible.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-2">
-            <Label htmlFor="remarks" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Reason for rejection</Label>
+            <Label
+              htmlFor="remarks"
+              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            >
+              Reason for rejection
+            </Label>
             <Textarea
               id="remarks"
               placeholder="Enter remarks..."
@@ -641,17 +936,25 @@ const ApplicationsShow = () => {
             />
           </div>
           <DialogFooter className="flex gap-2">
-            <Button variant="ghost" onClick={() => setIsRejectDialogOpen(false)} disabled={processMutation.isPending} className="rounded-xl">
+            <Button
+              variant="ghost"
+              onClick={() => setIsRejectDialogOpen(false)}
+              disabled={processMutation.isPending}
+              className="rounded-xl"
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleReject} disabled={processMutation.isPending} className="rounded-xl px-6">
+            <Button
+              variant="destructive"
+              onClick={handleReject}
+              disabled={processMutation.isPending}
+              className="rounded-xl px-6"
+            >
               {processMutation.isPending ? "Processing..." : "Confirm Reject"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-
 
       {/* Payment Dialog */}
       <RecordPaymentDialog
@@ -671,21 +974,51 @@ ApplicationsShow.layoutProps = {
 };
 
 // Internal Helper Components
-const InfoCard = ({ icon: Icon, label, value, className = "" }: { icon: any, label: string, value?: string, className?: string }) => (
+const InfoCard = ({
+  icon: Icon,
+  label,
+  value,
+  className = "",
+}: {
+  icon: any;
+  label: string;
+  value?: string;
+  className?: string;
+}) => (
   <div className="space-y-1.5 p-3.5 rounded-xl bg-muted/5 border-2 border-transparent hover:border-border transition-colors">
-    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
+    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+      {label}
+    </p>
     <div className="flex items-center gap-2">
       <Icon className="size-3.5 text-primary/60" />
-      <p className={`text-base font-bold text-foreground tracking-tight leading-none ${className}`}>
+      <p
+        className={`text-base font-bold text-foreground tracking-tight leading-none ${className}`}
+      >
         {value || "—"}
       </p>
     </div>
   </div>
 );
 
-const ActionBtn = ({ icon: Icon, label, href }: { icon: any; label: string; href: string }) => (
-  <Button variant="outline" className="w-full h-12 justify-between rounded-xl border border-border hover:bg-muted/50 transition-all px-4 bg-background" asChild>
-    <a href={href} target={href.includes('api') ? "_blank" : "_self"} rel="noopener noreferrer">
+const ActionBtn = ({
+  icon: Icon,
+  label,
+  href,
+}: {
+  icon: any;
+  label: string;
+  href: string;
+}) => (
+  <Button
+    variant="outline"
+    className="w-full h-12 justify-between rounded-xl border border-border hover:bg-muted/50 transition-all px-4 bg-background"
+    asChild
+  >
+    <a
+      href={href}
+      target={href.includes("api") ? "_blank" : "_self"}
+      rel="noopener noreferrer"
+    >
       <div className="flex items-center gap-2.5">
         <Icon className="size-4 text-muted-foreground" />
         <span className="font-bold text-sm">{label}</span>

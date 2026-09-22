@@ -445,7 +445,7 @@ update.patch = (args: { application: string | number } | [application: string | 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1471
+ * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1480
  * @route '/api/v1/applications/{application}'
  */
 export const destroy = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -460,7 +460,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1471
+ * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1480
  * @route '/api/v1/applications/{application}'
  */
 destroy.url = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -493,7 +493,7 @@ destroy.url = (args: { application: number | { id: number } } | [application: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\Admission\ApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1471
+ * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1480
  * @route '/api/v1/applications/{application}'
  */
 destroy.delete = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -503,7 +503,7 @@ destroy.delete = (args: { application: number | { id: number } } | [application:
 
     /**
 * @see \App\Http\Controllers\Api\V1\Admission\ApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1471
+ * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1480
  * @route '/api/v1/applications/{application}'
  */
     const destroyForm = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -518,7 +518,7 @@ destroy.delete = (args: { application: number | { id: number } } | [application:
 
             /**
 * @see \App\Http\Controllers\Api\V1\Admission\ApplicationController::destroy
- * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1471
+ * @see app/Http/Controllers/Api/V1/Admission/ApplicationController.php:1480
  * @route '/api/v1/applications/{application}'
  */
         destroyForm.delete = (args: { application: number | { id: number } } | [application: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
