@@ -21,8 +21,12 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
+  RotateCcw,
   Download,
 } from "lucide-react";
+import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useSearchFilter from "@/hooks/useSearchfilter";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -78,12 +82,15 @@ interface PurchaseRow {
   };
   purchased_at: string;
   total_cost: string | number;
-  payment_status?: "paid" | "credit" | "settled";
+  payment_status?: "paid" | "credit" | "settled" | "reverted";
   settled_at?: string;
   payment_mode?: string;
   remarks?: string;
   expense_id?: number;
   purchased_by?: { id: number; name: string };
+  reverted_at?: string;
+  reverted_by?: { id: number; name: string };
+  revert_reason?: string;
   lines?: PurchaseLine[];
 }
 
@@ -123,6 +130,11 @@ const InventoryPurchasesIndex = () => {
   const [detailRow, setDetailRow] = useState<PurchaseRow | null>(null);
   const [editPurchase, setEditPurchase] = useState<PurchaseRow | null>(null);
   const [exportModalOpen, setExportModalOpen] = useState(false);
+
+  // Revert purchase states
+  const [revertRow, setRevertRow] = useState<PurchaseRow | null>(null);
+  const [revertReason, setRevertReason] = useState("");
+  const [isReverting, setIsReverting] = useState(false);
 
   // Export filters
   const [exportFilters, setExportFilters] = useState({
@@ -187,6 +199,47 @@ const InventoryPurchasesIndex = () => {
     const url = inventoryApi.purchases.exportUrl(exportFilters);
     window.open(url, "_blank");
     setExportModalOpen(false);
+  };
+
+  const handleOpenRevert = (row: PurchaseRow) => {
+    setRevertRow(row);
+    setRevertReason("");
+  };
+
+  const handleConfirmRevert = async () => {
+    if (!revertRow) return;
+    if (!revertReason.trim() || revertReason.trim().length < 3) {
+      toast.error("Please enter a valid reason for reverting (at least 3 characters).");
+      return;
+    }
+
+    setIsReverting(true);
+    try {
+      const res = await inventoryApi.purchases.revert(revertRow.id, { reason: revertReason.trim() });
+      toast.success((res as any)?.data?.message || "Purchase reverted successfully. Stock deducted.");
+      setRevertRow(null);
+      setRevertReason("");
+      if (detailRow?.id === revertRow.id) {
+        setDetailRow((prev) =>
+          prev
+            ? {
+                ...prev,
+                payment_status: "reverted",
+                reverted_at: new Date().toISOString(),
+                revert_reason: revertReason.trim(),
+              }
+            : null
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: ["inventory-purchases"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-vendors"] });
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.message || err?.message || "Failed to revert purchase";
+      toast.error(errorMsg);
+    } finally {
+      setIsReverting(false);
+    }
   };
 
   return (
@@ -275,6 +328,35 @@ const InventoryPurchasesIndex = () => {
                 </div>
               </div>
 
+              {detailRow.payment_status === "reverted" && (
+                <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3.5 text-xs text-destructive flex items-start gap-2.5">
+                  <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+                  <div className="space-y-1.5 flex-1">
+                    <p className="font-bold text-sm">Purchase Reverted / Cancelled</p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      This purchase was reverted
+                      {detailRow.reverted_at
+                        ? ` on ${new Date(detailRow.reverted_at).toLocaleString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}`
+                        : ""}
+                      {detailRow.reverted_by?.name ? ` by ${detailRow.reverted_by.name}` : ""}.
+                      The stock has been removed from inventory and linked expense voided.
+                    </p>
+                    {detailRow.revert_reason && (
+                      <div className="mt-1 p-2.5 rounded bg-background/80 border text-foreground font-medium">
+                        <span className="font-bold text-destructive">Reason: </span>
+                        {detailRow.revert_reason}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {detailRow.payment_status === "credit" && (
                 <div className="rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3 text-xs flex items-start gap-2.5 text-amber-800 dark:text-amber-200">
                   <AlertCircle className="size-4 shrink-0 mt-0.5 text-amber-600" />
@@ -361,22 +443,141 @@ const InventoryPurchasesIndex = () => {
           )}
 
           <DialogFooter className="p-3 sm:p-4 border-t shrink-0 bg-muted/20 flex flex-row items-center justify-between">
-            <PermissionGate can="update_inventory_items">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const r = detailRow;
-                  setDetailRow(null);
-                  setEditPurchase(r);
-                }}
-                className="gap-1.5"
-              >
-                <Pencil className="size-3.5" /> Edit Purchase
-              </Button>
-            </PermissionGate>
+            <div className="flex items-center gap-2">
+              {detailRow && detailRow.payment_status !== "reverted" && (
+                <>
+                  <PermissionGate can="update_inventory_items">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!detailRow) return;
+                        const r = detailRow;
+                        setDetailRow(null);
+                        setEditPurchase(r);
+                      }}
+                      className="gap-1.5"
+                    >
+                      <Pencil className="size-3.5" /> Edit Purchase
+                    </Button>
+                  </PermissionGate>
+                  <PermissionGate can="delete_inventory_items">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (!detailRow) return;
+                        handleOpenRevert(detailRow);
+                      }}
+                      className="gap-1.5"
+                    >
+                      <RotateCcw className="size-3.5" /> Revert Purchase
+                    </Button>
+                  </PermissionGate>
+                </>
+              )}
+            </div>
             <Button variant="outline" size="sm" onClick={() => setDetailRow(null)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Revert Purchase Confirmation Modal */}
+      <Dialog
+        open={Boolean(revertRow)}
+        onOpenChange={(o) => !o && !isReverting && setRevertRow(null)}
+      >
+        <DialogContent className="w-[95vw] sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
+          <DialogHeader className="p-4 sm:p-5 border-b shrink-0 bg-destructive/5">
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg text-destructive">
+              <RotateCcw className="size-5" />
+              <span>Revert Purchase #{revertRow?.id}</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {revertRow && (
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-4 flex-1 text-sm">
+              <div className="rounded-lg border bg-muted/40 p-3.5 space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Supplier:</span>
+                  <span className="font-semibold">
+                    {revertRow.vendor?.name ?? revertRow.supplier_name ?? "—"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Bill No:</span>
+                  <span className="font-mono">{revertRow.bill_no ?? "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Total Amount:</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                    ₹{Number(revertRow.total_cost).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Payment Status:</span>
+                  <Badge variant="outline" className="text-[10px] capitalize">
+                    {revertRow.payment_status}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Items:</span>
+                  <span>{revertRow.lines?.length ?? 0} item line(s)</span>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3.5 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+                <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+                <div className="space-y-1">
+                  <p className="font-semibold">Important Warning</p>
+                  <p>
+                    Reverting this purchase will <strong>deduct the purchased stock</strong> from current inventory, record a return movement audit, and void/cancel any linked school expense.
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    If any of these items have already been issued to students or departments, the reversal will be blocked to avoid negative inventory.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="revert-reason" className="text-xs font-semibold flex items-center gap-1">
+                  Reason for Reversion <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="revert-reason"
+                  placeholder="E.g. Wrong bill entered, supplier delivered incorrect items, duplicate entry..."
+                  value={revertReason}
+                  onChange={(e) => setRevertReason(e.target.value)}
+                  className="min-h-[90px] text-xs resize-none"
+                  disabled={isReverting}
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  A descriptive reason is required for audit and accounting records.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="p-3 sm:p-4 border-t shrink-0 bg-muted/20 flex flex-row items-center justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setRevertRow(null)}
+              disabled={isReverting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleConfirmRevert}
+              disabled={isReverting || revertReason.trim().length < 3}
+              className="gap-1.5"
+            >
+              <RotateCcw className="size-3.5" />
+              {isReverting ? "Reverting..." : "Confirm Revert"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -460,6 +661,7 @@ const InventoryPurchasesIndex = () => {
                   <SelectItem value="credit">⏳ Credit / Unsettled</SelectItem>
                   <SelectItem value="settled">✅ Settled</SelectItem>
                   <SelectItem value="paid">Direct Paid</SelectItem>
+                  <SelectItem value="reverted">❌ Reverted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -635,6 +837,7 @@ const InventoryPurchasesIndex = () => {
                         { key: "credit", text: "⏳ Credit (Due)", value: "credit" },
                         { key: "settled", text: "✅ Settled", value: "settled" },
                         { key: "paid", text: "Direct Paid", value: "paid" },
+                        { key: "reverted", text: "❌ Reverted", value: "reverted" },
                       ],
                     },
                     {
@@ -747,7 +950,11 @@ const InventoryPurchasesIndex = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {row.payment_status === "credit" ? (
+                      {row.payment_status === "reverted" ? (
+                        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 hover:bg-destructive/15 text-[11px] font-medium gap-1">
+                          ❌ Reverted
+                        </Badge>
+                      ) : row.payment_status === "credit" ? (
                         <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-500/20 text-[11px] font-medium gap-1">
                           ⏳ Credit (Due)
                         </Badge>
@@ -782,17 +989,32 @@ const InventoryPurchasesIndex = () => {
                         >
                           <Eye className="size-4" />
                         </Button>
-                        <PermissionGate can="update_inventory_items">
-                          <Button
-                            size="icon-sm"
-                            variant="ghost"
-                            onClick={() => setEditPurchase(row)}
-                            title="Edit Purchase"
-                            className="text-muted-foreground hover:text-foreground"
-                          >
-                            <Pencil className="size-4" />
-                          </Button>
-                        </PermissionGate>
+                        {row.payment_status !== "reverted" && (
+                          <>
+                            <PermissionGate can="update_inventory_items">
+                              <Button
+                                size="icon-sm"
+                                variant="ghost"
+                                onClick={() => setEditPurchase(row)}
+                                title="Edit Purchase"
+                                className="text-muted-foreground hover:text-foreground"
+                              >
+                                <Pencil className="size-4" />
+                              </Button>
+                            </PermissionGate>
+                            <PermissionGate can="delete_inventory_items">
+                              <Button
+                                size="icon-sm"
+                                variant="ghost"
+                                onClick={() => handleOpenRevert(row)}
+                                title="Revert Purchase"
+                                className="text-destructive/80 hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <RotateCcw className="size-4" />
+                              </Button>
+                            </PermissionGate>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

@@ -27,7 +27,7 @@ class InventoryPurchaseController extends BaseController
         }
 
         $query = InventoryPurchase::query()
-            ->with(['purchasedBy', 'lines.item', 'vendor:id,name,city,contact_name,contact_phone', 'settlement'])
+            ->with(['purchasedBy', 'revertedBy:id,name', 'lines.item', 'vendor:id,name,city,contact_name,contact_phone', 'settlement'])
             ->orderBy('purchased_at', 'desc')
             ->orderBy('id', 'desc');
 
@@ -74,9 +74,10 @@ class InventoryPurchaseController extends BaseController
         // Stats before pagination
         $statsQuery = (clone $query)->reorder();
         $totalPurchases = $statsQuery->count();
-        $totalCost = (float) ($statsQuery->sum('total_cost') ?? 0);
+        $totalCost = (float) ((clone $statsQuery)->where('payment_status', '!=', 'reverted')->sum('total_cost') ?? 0);
         $totalCredit = (float) ((clone $statsQuery)->where('payment_status', 'credit')->sum('total_cost') ?? 0);
         $totalSettled = (float) ((clone $statsQuery)->where('payment_status', 'settled')->sum('total_cost') ?? 0);
+        $totalReverted = (float) ((clone $statsQuery)->where('payment_status', 'reverted')->sum('total_cost') ?? 0);
 
         $paginator = $query->paginate($request->input('per_page', 15));
 
@@ -94,6 +95,7 @@ class InventoryPurchaseController extends BaseController
                     'total_cost' => round($totalCost, 2),
                     'total_credit' => round($totalCredit, 2),
                     'total_settled' => round($totalSettled, 2),
+                    'total_reverted' => round($totalReverted, 2),
                 ],
             ],
         ]);
@@ -267,7 +269,7 @@ class InventoryPurchaseController extends BaseController
         }
 
         return $this->success(
-            $inventory_purchase->load(['purchasedBy', 'lines.item', 'expense', 'vendor', 'settlement']),
+            $inventory_purchase->load(['purchasedBy', 'revertedBy:id,name', 'lines.item', 'expense', 'vendor', 'settlement']),
             'Success'
         );
     }
@@ -276,6 +278,10 @@ class InventoryPurchaseController extends BaseController
     {
         if (! $request->user()->hasAbility('update_inventory_items') && ! $request->user()->hasAbility('create_inventory_items')) {
             return $this->forbidden('You do not have permission to update purchases.');
+        }
+
+        if ($inventory_purchase->payment_status === 'reverted') {
+            return $this->error('Cannot edit a purchase that has been reverted.', 422);
         }
 
         $validated = $request->validate([
@@ -562,6 +568,128 @@ class InventoryPurchaseController extends BaseController
             );
         } catch (\InvalidArgumentException $e) {
             return $this->error($e->getMessage(), 422);
+        }
+    }
+
+    /**
+     * Revert an inventory purchase with a mandatory reason.
+     * Subtracts stock, marks batches depleted, cancels expense, and logs inventory return movement.
+     */
+    public function revert(Request $request, InventoryPurchase $inventory_purchase): JsonResponse
+    {
+        if (! $request->user()->hasAbility('delete_inventory_items') && ! $request->user()->hasAbility('update_inventory_items')) {
+            return $this->forbidden('You do not have permission to revert purchases.');
+        }
+
+        $validated = $request->validate([
+            'reason' => 'required|string|min:3|max:500',
+        ]);
+
+        $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+        if ($institutionId === null) {
+            return $this->error('Active institution context is required.', 400);
+        }
+
+        if ($inventory_purchase->institution_id !== $institutionId) {
+            return $this->forbidden('This purchase does not belong to the active institution.');
+        }
+
+        if ($inventory_purchase->payment_status === 'reverted') {
+            return $this->error('This purchase has already been reverted.', 422);
+        }
+
+        if ($inventory_purchase->payment_status === 'settled') {
+            return $this->error('Cannot revert a settled purchase. Please reverse the vendor settlement payment first.', 422);
+        }
+
+        try {
+            $purchase = DB::transaction(function () use ($inventory_purchase, $validated, $institutionId) {
+                $inventory_purchase->load(['lines.item']);
+
+                $itemIds = $inventory_purchase->lines->pluck('inventory_item_id')->unique()->values()->all();
+                $items = InventoryItem::whereIn('id', $itemIds)->lockForUpdate()->get()->keyBy('id');
+
+                // 1. Validate that no items from this purchase have been consumed/issued
+                foreach ($inventory_purchase->lines as $line) {
+                    $batch = InventoryBatch::where('purchase_line_id', $line->id)->first();
+                    $item = $items->get($line->inventory_item_id);
+                    $itemName = $item ? $item->name : "Item #{$line->inventory_item_id}";
+
+                    if ($batch) {
+                        $consumed = (float) $batch->received_quantity - (float) $batch->remaining_quantity;
+                        if ($consumed > 0.0001) {
+                            throw new \InvalidArgumentException("Cannot revert because {$consumed} unit(s) of '{$itemName}' have already been issued or consumed from this purchase.");
+                        }
+                    }
+
+                    if ($item && (float) $item->current_quantity < (float) $line->quantity) {
+                        throw new \InvalidArgumentException("Cannot revert because available stock for '{$itemName}' ({$item->current_quantity}) is less than the purchased quantity ({$line->quantity}).");
+                    }
+                }
+
+                // 2. Process stock reversal, movements, and batches
+                foreach ($inventory_purchase->lines as $line) {
+                    $item = $items->get($line->inventory_item_id);
+                    $qty = (float) $line->quantity;
+
+                    if ($item) {
+                        $item->decrement('current_quantity', $qty);
+                        $newQty = (float) $item->fresh()->current_quantity;
+
+                        // Create return/reversal movement
+                        InventoryMovement::create([
+                            'institution_id'    => $institutionId,
+                            'inventory_item_id' => $item->id,
+                            'type'              => 'return',
+                            'quantity'          => $qty,
+                            'quantity_after'    => $newQty,
+                            'reference_type'    => 'purchase_revert',
+                            'reference_id'      => $inventory_purchase->id,
+                            'performed_by'      => auth()->id(),
+                            'remarks'           => 'Purchase Revert: ' . $validated['reason'],
+                        ]);
+                    }
+
+                    // Deplete batch so it is never consumed
+                    $batch = InventoryBatch::where('purchase_line_id', $line->id)->first();
+                    if ($batch) {
+                        $batch->update([
+                            'status'             => 'depleted',
+                            'remaining_quantity' => 0,
+                        ]);
+                    }
+                }
+
+                // 3. Void/Reject associated expense if one was created
+                if ($inventory_purchase->expense_id) {
+                    $expense = Expense::find($inventory_purchase->expense_id);
+                    if ($expense) {
+                        $expense->update([
+                            'status'           => 'rejected',
+                            'rejection_reason' => 'Purchase reverted: ' . $validated['reason'],
+                        ]);
+                    }
+                }
+
+                // 4. Mark purchase header as reverted
+                $inventory_purchase->update([
+                    'payment_status' => 'reverted',
+                    'reverted_at'    => now(),
+                    'reverted_by'    => auth()->id(),
+                    'revert_reason'  => $validated['reason'],
+                ]);
+
+                return $inventory_purchase;
+            });
+
+            return $this->success(
+                $purchase->load(['purchasedBy', 'revertedBy:id,name', 'lines.item', 'expense', 'vendor', 'settlement']),
+                'Purchase reverted successfully and stock has been restored.'
+            );
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        } catch (\Throwable $e) {
+            return $this->error('Failed to revert purchase: ' . $e->getMessage(), 500);
         }
     }
 

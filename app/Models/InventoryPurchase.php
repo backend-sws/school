@@ -24,6 +24,9 @@ class InventoryPurchase extends Model
         'inventory_vendor_settlement_id',
         'purchased_by',
         'remarks',
+        'reverted_at',
+        'reverted_by',
+        'revert_reason',
         'expense_id',
     ];
 
@@ -31,6 +34,7 @@ class InventoryPurchase extends Model
         'total_cost'   => 'decimal:2',
         'purchased_at' => 'date',
         'settled_at'   => 'datetime',
+        'reverted_at'  => 'datetime',
     ];
 
     public function institution(): BelongsTo
@@ -51,6 +55,11 @@ class InventoryPurchase extends Model
     public function purchasedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'purchased_by');
+    }
+
+    public function revertedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reverted_by');
     }
 
     public function expense(): BelongsTo

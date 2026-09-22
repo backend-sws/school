@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::exportMethod
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:102
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:104
  * @route '/api/v1/inventory/purchases/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:112
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:114
  * @route '/api/v1/inventory/purchases'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:112
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:114
  * @route '/api/v1/inventory/purchases'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:112
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:114
  * @route '/api/v1/inventory/purchases'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:112
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:114
  * @route '/api/v1/inventory/purchases'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::store
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:112
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:114
  * @route '/api/v1/inventory/purchases'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 export const show = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 show.url = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ show.url = (args: { inventory_purchase: number | { id: number } } | [inventory_p
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 show.get = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ show.get = (args: { inventory_purchase: number | { id: number } } | [inventory_p
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
     const showForm = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
         showForm.get = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::show
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:263
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:265
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
         showForm.head = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ show.head = (args: { inventory_purchase: number | { id: number } } | [inventory_
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:275
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:277
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 export const update = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -329,7 +329,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:275
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:277
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 update.url = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ update.url = (args: { inventory_purchase: number | { id: number } } | [inventory
 
 /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:275
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:277
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
 update.put = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -372,7 +372,7 @@ update.put = (args: { inventory_purchase: number | { id: number } } | [inventory
 
     /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:275
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:277
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
     const updateForm = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -387,7 +387,7 @@ update.put = (args: { inventory_purchase: number | { id: number } } | [inventory
 
             /**
 * @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::update
- * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:275
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:277
  * @route '/api/v1/inventory/purchases/{inventory_purchase}'
  */
         updateForm.put = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -401,6 +401,85 @@ update.put = (args: { inventory_purchase: number | { id: number } } | [inventory
         })
     
     update.form = updateForm
-const InventoryPurchaseController = { exportMethod, index, store, show, update, export: exportMethod }
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:578
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}/revert'
+ */
+export const revert = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: revert.url(args, options),
+    method: 'post',
+})
+
+revert.definition = {
+    methods: ["post"],
+    url: '/api/v1/inventory/purchases/{inventory_purchase}/revert',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:578
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}/revert'
+ */
+revert.url = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { inventory_purchase: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { inventory_purchase: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    inventory_purchase: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        inventory_purchase: typeof args.inventory_purchase === 'object'
+                ? args.inventory_purchase.id
+                : args.inventory_purchase,
+                }
+
+    return revert.definition.url
+            .replace('{inventory_purchase}', parsedArgs.inventory_purchase.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:578
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}/revert'
+ */
+revert.post = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: revert.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:578
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}/revert'
+ */
+    const revertForm = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: revert.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Api\V1\Inventory\InventoryPurchaseController::revert
+ * @see app/Http/Controllers/Api/V1/Inventory/InventoryPurchaseController.php:578
+ * @route '/api/v1/inventory/purchases/{inventory_purchase}/revert'
+ */
+        revertForm.post = (args: { inventory_purchase: number | { id: number } } | [inventory_purchase: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: revert.url(args, options),
+            method: 'post',
+        })
+    
+    revert.form = revertForm
+const InventoryPurchaseController = { exportMethod, index, store, show, update, revert, export: exportMethod }
 
 export default InventoryPurchaseController
