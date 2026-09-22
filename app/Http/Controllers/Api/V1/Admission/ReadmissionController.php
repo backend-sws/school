@@ -108,6 +108,18 @@ class ReadmissionController extends BaseController
         
         $hasLocalGuardian = !empty($guardianSnapshot['local_guardian']['name']);
 
+        $transportAssignment = \App\Models\TransportAssignment::where('user_id', $studentProfile->user_id)
+            ->latest('created_at')->first();
+        $hostelAllocation = \App\Models\HostelAllocation::where('user_id', $studentProfile->user_id)
+            ->latest('created_at')->first();
+
+        $latestFare = null;
+        if ($transportAssignment?->transport_route_id && $transportAssignment?->transport_stop_id) {
+            $latestFare = \App\Models\TransportRouteStop::where('transport_route_id', $transportAssignment->transport_route_id)
+                ->where('transport_stop_id', $transportAssignment->transport_stop_id)
+                ->value('fare');
+        }
+
         return $this->success([
             'student_profile_id' => $studentProfile->id,
             'prefill' => $existingDraft ? array_merge([
@@ -131,10 +143,8 @@ class ReadmissionController extends BaseController
                 '_from_reg_no'      => $studentProfile->reg_no,
                 '_previous_session_dues' => $previousSessionDues,
                 // Fetch assignments (latest, even if expired, for prefill convenience)
-                '_transportAssignment' => $transportAssignment = \App\Models\TransportAssignment::where('user_id', $studentProfile->user_id)
-                                ->latest('created_at')->first(),
-                '_hostelAllocation' => $hostelAllocation = \App\Models\HostelAllocation::where('user_id', $studentProfile->user_id)
-                                ->latest('created_at')->first(),
+                '_transportAssignment' => $transportAssignment,
+                '_hostelAllocation' => $hostelAllocation,
             ]) : [
                 // Identity
                 'user_id'        => $studentProfile->user_id,
@@ -198,7 +208,7 @@ class ReadmissionController extends BaseController
                 // Transport
                 'transport_route_id' => $transportAssignment?->transport_route_id ?? '',
                 'transport_stop_id'  => $transportAssignment?->transport_stop_id ?? '',
-                'transport_amount'   => $transportAssignment?->monthly_amount ?? 0,
+                'transport_amount'   => $latestFare ?? $transportAssignment?->monthly_amount ?? 0,
 
                 // Hostel
                 'hostel_required' => $hostelAllocation ? true : false,

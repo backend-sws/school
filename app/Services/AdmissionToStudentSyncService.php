@@ -260,7 +260,49 @@ class AdmissionToStudentSyncService
         if ($this->isReadmission($app) && $context['sessionId']) {
             $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
             $resolvedFromSession = $fromSessionId ?: ($prefs['from_session_id'] ?? null);
-            $resolvedFromClass = $fromClassId ?: ($prefs['from_class_id'] ?? null);
+
+            // Safely resolve from_class_id to ensure it references an existing LmsClass or null
+            $fromClassCandidate = $fromClassId ?: ($prefs['from_class_id'] ?? null);
+            $resolvedFromClass = null;
+            if ($fromClassCandidate) {
+                $resolvedFromClass = $this->resolveLmsClassIdForEnrollment(
+                    $app,
+                    (int) $fromClassCandidate,
+                    $resolvedFromSession ? (int) $resolvedFromSession : null,
+                    $existingProfile?->stream_id
+                );
+            }
+
+            // Safely resolve to_class_id (check section_id first, then class_id, then auto-resolve from stream)
+            $resolvedToClass = null;
+            if (!empty($app->section_id)) {
+                $resolvedToClass = $this->resolveLmsClassIdForEnrollment(
+                    $app,
+                    (int) $app->section_id,
+                    $context['sessionId'],
+                    $context['streamId']
+                );
+            }
+            if (!$resolvedToClass && !empty($app->class_id)) {
+                $resolvedToClass = $this->resolveLmsClassIdForEnrollment(
+                    $app,
+                    (int) $app->class_id,
+                    $context['sessionId'],
+                    $context['streamId']
+                );
+            }
+            if (!$resolvedToClass && $context['streamId']) {
+                $autoClass = $this->resolveClassWithLeastEnrollments($app, $context['sessionId'], $context['streamId']);
+                $resolvedToClass = $autoClass?->id;
+            }
+
+            // Guarantee valid foreign key or null
+            if ($resolvedFromClass && !LmsClass::where('id', $resolvedFromClass)->where('institution_id', $app->institution_id)->exists()) {
+                $resolvedFromClass = null;
+            }
+            if ($resolvedToClass && !LmsClass::where('id', $resolvedToClass)->where('institution_id', $app->institution_id)->exists()) {
+                $resolvedToClass = null;
+            }
 
             $readmissionDetail = \App\Models\ReadmissionDetail::create([
                 'admission_application_id' => $app->id,
@@ -280,13 +322,20 @@ class AdmissionToStudentSyncService
                     'transitionable_id' => $readmissionDetail->id,
                     'from_session_id' => $resolvedFromSession,
                     'from_class_id' => $resolvedFromClass,
-                    'to_class_id' => $app->class_id ?? $app->section_id,
+                    'to_class_id' => $resolvedToClass,
                     'status' => 'approved',
                     'processed_at' => now(),
                     'remarks' => 'Re-admission via application ' . $app->application_id,
                 ]
             );
 
+            // Deactivate previous active class enrollment
+            if ($resolvedFromClass) {
+                LmsClassEnrollment::where('user_id', $app->user_id)
+                    ->where('lms_class_id', $resolvedFromClass)
+                    ->where('status', 'active')
+                    ->update(['status' => 'readmitted']);
+            }
         }
     }
 
@@ -365,7 +414,16 @@ class AdmissionToStudentSyncService
             $autoClass = $this->resolveClassWithLeastEnrollments($app, $sessionId, $streamId);
             if ($autoClass) {
                 $resolvedLmsClassIds = [$autoClass->id];
-                $app->updateQuietly(['class_id' => $autoClass->id]);
+                $appUpdate = [];
+                if (empty($app->section_id)) {
+                    $appUpdate['section_id'] = $autoClass->id;
+                }
+                if (empty($app->class_id)) {
+                    $appUpdate['class_id'] = $autoClass->id;
+                }
+                if (!empty($appUpdate)) {
+                    $app->updateQuietly($appUpdate);
+                }
             }
         }
 
@@ -387,6 +445,14 @@ class AdmissionToStudentSyncService
                 ['lms_class_id' => $classId, 'user_id' => $app->user_id],
                 ['enrolled_at' => now(), 'role' => 'student', 'status' => 'active']
             );
+        }
+
+        if ($this->isReadmission($app) && !empty($resolvedLmsClassIds)) {
+            \App\Models\StudentTransition::where('user_id', $app->user_id)
+                ->where('to_session_id', $sessionId)
+                ->where('type', 'readmission')
+                ->whereNull('to_class_id')
+                ->update(['to_class_id' => $resolvedLmsClassIds[0]]);
         }
     }
 
@@ -587,20 +653,47 @@ class AdmissionToStudentSyncService
 
         // Transport Allocation
         if ($app->transport_stop_id && $app->transport_route_id) {
-            \App\Models\TransportAssignment::updateOrCreate(
-                [
+            $effectiveDate = $app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now();
+
+            if ($this->isReadmission($app)) {
+                $existingTransport = \App\Models\TransportAssignment::where('institution_id', $app->institution_id)
+                    ->where('user_id', $userId)
+                    ->whereNull('effective_until')
+                    ->first();
+
+                if ($existingTransport) {
+                    $existingTransport->update([
+                        'effective_until' => $effectiveDate->copy()->subDay(),
+                        'remarks' => 'Completed prior to re-admission in new session',
+                    ]);
+                }
+
+                \App\Models\TransportAssignment::create([
                     'institution_id' => $app->institution_id,
                     'user_id' => $userId,
-                ],
-                [
                     'transport_route_id' => $app->transport_route_id,
                     'transport_stop_id' => $app->transport_stop_id,
                     'monthly_amount' => $app->transport_amount ?? 0,
-                    'effective_from' => $app->admission_date ?? now(),
+                    'effective_from' => $effectiveDate,
                     'effective_until' => null, // active
-                    'remarks' => 'Assigned during admission',
-                ]
-            );
+                    'remarks' => 'Assigned during re-admission to new session',
+                ]);
+            } else {
+                \App\Models\TransportAssignment::updateOrCreate(
+                    [
+                        'institution_id' => $app->institution_id,
+                        'user_id' => $userId,
+                    ],
+                    [
+                        'transport_route_id' => $app->transport_route_id,
+                        'transport_stop_id' => $app->transport_stop_id,
+                        'monthly_amount' => $app->transport_amount ?? 0,
+                        'effective_from' => $effectiveDate,
+                        'effective_until' => null, // active
+                        'remarks' => 'Assigned during admission',
+                    ]
+                );
+            }
         }
 
         // Hostel Allocation
@@ -617,18 +710,46 @@ class AdmissionToStudentSyncService
                 $bedId = $bed?->id;
             }
 
+            $effectiveDate = $app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now();
+
             if ($allocation) {
-                // Free old bed if changed
-                if ($allocation->hostel_bed_id && $allocation->hostel_bed_id !== $bedId) {
-                    \App\Models\HostelBed::where('id', $allocation->hostel_bed_id)->update(['status' => 'vacant']);
+                if ($this->isReadmission($app)) {
+                    // Close the old allocation as of the day before the new session/admission date so historical ledger keeps the old rate
+                    $allocation->update([
+                        'check_out_date' => $effectiveDate->copy()->subDay(),
+                        'status' => 'checked_out',
+                        'remarks' => 'Completed prior to re-admission in new session',
+                    ]);
+
+                    // Free old bed if changed
+                    if ($allocation->hostel_bed_id && $allocation->hostel_bed_id !== $bedId) {
+                        \App\Models\HostelBed::where('id', $allocation->hostel_bed_id)->update(['status' => 'vacant']);
+                    }
+
+                    \App\Models\HostelAllocation::create([
+                        'institution_id' => $app->institution_id,
+                        'user_id' => $userId,
+                        'hostel_room_id' => $app->hostel_room_id,
+                        'hostel_bed_id' => $bedId,
+                        'monthly_amount' => $app->hostel_amount ?? 0,
+                        'check_in_date' => $effectiveDate,
+                        'check_out_date' => null,
+                        'status' => 'active',
+                        'remarks' => 'Allocated during re-admission to new session',
+                    ]);
+                } else {
+                    // Normal edit within same admission
+                    if ($allocation->hostel_bed_id && $allocation->hostel_bed_id !== $bedId) {
+                        \App\Models\HostelBed::where('id', $allocation->hostel_bed_id)->update(['status' => 'vacant']);
+                    }
+                    
+                    $allocation->update([
+                        'hostel_room_id' => $app->hostel_room_id,
+                        'hostel_bed_id' => $bedId ?? $allocation->hostel_bed_id,
+                        'monthly_amount' => $app->hostel_amount ?? 0,
+                        'remarks' => 'Updated during admission',
+                    ]);
                 }
-                
-                $allocation->update([
-                    'hostel_room_id' => $app->hostel_room_id,
-                    'hostel_bed_id' => $bedId ?? $allocation->hostel_bed_id,
-                    'monthly_amount' => $app->hostel_amount ?? 0,
-                    'remarks' => 'Updated during readmission',
-                ]);
             } else {
                 \App\Models\HostelAllocation::create([
                     'institution_id' => $app->institution_id,
@@ -636,7 +757,7 @@ class AdmissionToStudentSyncService
                     'hostel_room_id' => $app->hostel_room_id,
                     'hostel_bed_id' => $bedId,
                     'monthly_amount' => $app->hostel_amount ?? 0,
-                    'check_in_date' => $app->admission_date ?? now(),
+                    'check_in_date' => $effectiveDate,
                     'check_out_date' => null,
                     'status' => 'active',
                     'remarks' => 'Allocated during admission',
