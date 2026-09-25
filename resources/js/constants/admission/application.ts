@@ -708,7 +708,7 @@ export const ADMISSION_STEP_CONFIG: AdmissionStepConfig[] = [
     slug: "services",
     label: "Fees & Services",
     iconName: "Wallet",
-    validationFields: ["fees", "inventory_items", "transport_stop_id", "transport_amount", "hostel_required", "hostel_amount", "discount_amount", "discount_reason"],
+    validationFields: ["fees", "inventory_items", "transport_route_id", "transport_stop_id", "transport_amount", "hostel_required", "hostel_amount", "discount_amount", "discount_reason"],
   },
   {
     key: "payment",

@@ -301,7 +301,7 @@ const ApplicationsNew = () => {
 
   const onContinueFromServices = async () => {
     const isValid = await trigger([
-      "fees", "inventory_items", "transport_stop_id", "transport_amount",
+      "fees", "inventory_items", "transport_route_id", "transport_stop_id", "transport_amount",
       "hostel_required", "hostel_amount", "discount_amount", "discount_reason",
     ]);
     if (isValid) {
@@ -315,11 +315,6 @@ const ApplicationsNew = () => {
     const paymentValues = getValues();
     const { grandTotal } = computeFeeBreakdown(paymentValues);
     const { totalPaid } = computePaymentSummary(paymentValues, grandTotal);
-
-    if (totalPaid > grandTotal) {
-      toast.error("Overpayment is not allowed. Please reduce collected amount before continuing.");
-      return;
-    }
 
     const isValid = await form.trigger([
       "cash_amount", "online_amount", "online_transaction_id",

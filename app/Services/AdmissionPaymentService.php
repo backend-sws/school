@@ -53,6 +53,7 @@ class AdmissionPaymentService
         $netPayable = max(0, round((float) $application->amount - $discountAmount, 2));
         $remainingAllowed = max(0, round($netPayable - ((float) ($application->cash_amount ?? 0) + (float) ($application->online_amount ?? 0)), 2));
 
+        $advanceAmount = max(0, round($cumulativePaid - $netPayable, 2));
         $this->assertOverpaymentNotAllowed(
             $cumulativePaid,
             $netPayable,
@@ -92,9 +93,12 @@ class AdmissionPaymentService
                 'cash_amount' => $newCash,
                 'online_amount' => $newOnline,
                 'online_transaction_id' => $data['online_transaction_id'] ?? null,
-                'remarks' => $data['notes'] ?? 'Admission fee payment',
+                'remarks' => $advanceAmount > 0
+                    ? ($data['notes'] ?? 'Admission fee payment') . ' [Advance: ₹' . number_format($advanceAmount, 2) . ']'
+                    : ($data['notes'] ?? 'Admission fee payment'),
                 'discount' => $discountAmount,
                 'due' => $dueAmount,
+                'advance_amount' => $advanceAmount,
             ]);
 
             $this->processInventorySaleForAdmission($application, $newCollected, $recordedBy);
@@ -146,16 +150,11 @@ class AdmissionPaymentService
     }
 
     /**
-     * Prevent collecting more than payable amount.
+     * Overpayment is allowed: excess payment is recorded as advance in the student's fee ledger.
      */
     private function assertOverpaymentNotAllowed(float $cumulativePaid, float $netPayable, float $remainingAllowed): void
     {
-        if ($cumulativePaid > $netPayable) {
-            throw new RuntimeException(sprintf(
-                'Overpayment is not allowed. Remaining payable amount is %s.',
-                number_format($remainingAllowed, 2, '.', '')
-            ));
-        }
+        // Overpayment is allowed: excess payment is recorded as advance in the student's fee ledger.
     }
 
     // ── Private Helpers ──────────────────────────────────────────────
@@ -213,9 +212,10 @@ class AdmissionPaymentService
             'payable_entity_type'   => 'admission_application',
             'payable_entity_id'     => $application->id,
             'ledger_snapshot'       => [
-                'discount'   => $data['discount'],
-                'due'        => $data['due'],
-                'total_fees' => $application->amount,
+                'discount'       => $data['discount'],
+                'due'            => $data['due'],
+                'total_fees'     => $application->amount,
+                'advance_amount' => $data['advance_amount'] ?? 0,
             ],
         ]);
      }

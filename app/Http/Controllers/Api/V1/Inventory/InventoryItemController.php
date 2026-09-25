@@ -17,9 +17,11 @@ class InventoryItemController extends BaseController
 
         $query = InventoryItem::query()->with('category');
 
-        // Filter items available for sale (excludes non-sellable categories)
+        // Filter items available for sale (excludes non-sellable categories and items without positive selling price)
         if ($request->boolean('for_sale')) {
             $query->where('is_active', true)
+                ->whereNotNull('selling_price')
+                ->where('selling_price', '>', 0)
                 ->where(function ($q) {
                     $q->whereHas('category', function ($cq) {
                         $cq->where('is_sellable', true);

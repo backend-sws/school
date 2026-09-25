@@ -604,11 +604,7 @@ class AdmissionSubmissionController extends BaseController
 
     private function assertNoAdmissionOverpayment(float $totalAmount, float $discountAmount, float $totalPaid): void
     {
-        $netPayable = max(0, round($totalAmount - $discountAmount, 2));
-
-        if ($totalPaid > $netPayable) {
-            throw new RuntimeException('Admission payment exceeds payable amount.');
-        }
+        // Overpayment is allowed: excess payment is recorded as advance in the student's fee ledger.
     }
 
     /**

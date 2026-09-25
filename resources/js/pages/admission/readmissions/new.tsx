@@ -317,7 +317,7 @@ const ReadmissionsNew = () => {
 
   const onContinueFromServices = async () => {
     const isValid = await trigger([
-      "fees", "inventory_items", "transport_stop_id", "transport_amount",
+      "fees", "inventory_items", "transport_route_id", "transport_stop_id", "transport_amount",
       "hostel_required", "hostel_amount", "discount_amount", "discount_reason",
     ]);
     if (isValid) goToStep("payment");
@@ -410,6 +410,7 @@ const ReadmissionsNew = () => {
         quantity: i.quantity,
         price: i.price,
       })),
+      transport_route_id: values.transport_route_id ? Number(values.transport_route_id) : undefined,
       transport_stop_id: values.transport_stop_id ? Number(values.transport_stop_id) : undefined,
       transport_amount: values.transport_amount ? Number(values.transport_amount) : 0,
       fee_regulation_profile_id: values.fee_regulation_profile_id ? Number(values.fee_regulation_profile_id) : undefined,

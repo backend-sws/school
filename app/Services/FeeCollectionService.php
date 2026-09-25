@@ -736,9 +736,13 @@ class FeeCollectionService
                 }
             } 
             
-            if ($tAmount <= 0 && $i > $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0) {
-                // Fallback: only if no assignment record has ever been created for this student
-                if ($studentTransports->isEmpty()) {
+            if ($tAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0) {
+                // Fallback: if no active transport assignment record covers this period for this student,
+                // apply the admission recurring transport amount for the entire academic year
+                $hasActiveTransportInPeriod = $studentTransports->contains(function ($t) use ($monthStart, $monthEnd) {
+                    return $t->effective_from <= $monthEnd && (is_null($t->effective_until) || $t->effective_until->copy()->endOfDay() >= $monthStart);
+                });
+                if (!$hasActiveTransportInPeriod) {
                     $tAmount = (float) $admissionSummary['transport_amount'] * $monthsInPeriod;
                     $monthExpected += $tAmount;
                     $monthGross += $tAmount;
@@ -763,9 +767,13 @@ class FeeCollectionService
                 }
             }
             
-            if ($hAmount <= 0 && $i > $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0) {
-                // Fallback: only if no allocation record has ever been created for this student
-                if ($studentHostels->isEmpty()) {
+            if ($hAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0) {
+                // Fallback: if no active hostel allocation record covers this period for this student,
+                // apply the admission recurring hostel amount for the entire academic year
+                $hasActiveHostelInPeriod = $studentHostels->contains(function ($h) use ($monthStart, $monthEnd) {
+                    return $h->check_in_date <= $monthEnd && (is_null($h->check_out_date) || $h->check_out_date->copy()->endOfDay() >= $monthStart);
+                });
+                if (!$hasActiveHostelInPeriod) {
                     $hAmount = (float) $admissionSummary['hostel_amount'] * $monthsInPeriod;
                     $monthExpected += $hAmount;
                     $monthGross += $hAmount;
@@ -938,8 +946,77 @@ class FeeCollectionService
             'matrix'              => $matrix,
             'reverted_history'    => $formattedCancelled->values()->all(),
             'total_pending'       => $accumulatedArrears,
+            'dues_breakdown'      => $this->calculateDuesBreakdown($matrix, $accumulatedArrears),
             'admission_summary'   => $admissionSummary,
             'one_time_charges'    => $oneTimeCharges,
+        ];
+    }
+
+    /**
+     * Calculate head-wise breakdown of student's net outstanding dues.
+     */
+    public function calculateDuesBreakdown(array $matrix, float $totalPending): array
+    {
+        if ($totalPending <= 0.0) {
+            return [
+                'total_dues'     => 0.0,
+                'transport_due'  => 0.0,
+                'hostel_due'     => 0.0,
+                'academic_due'   => 0.0,
+                'has_dues'       => false,
+                'advance_credit' => round(abs(min(0.0, $totalPending)), 2),
+            ];
+        }
+
+        $remainingPending = $totalPending;
+        $transportDue = 0.0;
+        $hostelDue = 0.0;
+
+        $reversed = array_reverse($matrix);
+        foreach ($reversed as $row) {
+            if ($remainingPending <= 0.0) {
+                break;
+            }
+
+            $tFee = (float) ($row['transport_fee'] ?? 0.0);
+            $hFee = (float) ($row['hostel_fee'] ?? 0.0);
+
+            $newCharges = max(0.0, (float) ($row['total_payable'] ?? 0.0) - (float) ($row['previous_dues'] ?? 0.0));
+            if ($newCharges <= 0.0) {
+                $newCharges = (float) ($row['monthly_total'] ?? 0.0)
+                    + (float) ($row['admission_fee'] ?? 0.0)
+                    + (float) ($row['hostel_fee'] ?? 0.0)
+                    + (float) ($row['other_fees'] ?? 0.0)
+                    + (float) ($row['late_fee'] ?? 0.0);
+            }
+
+            $unpaidInPeriod = min($remainingPending, $newCharges > 0.0 ? $newCharges : $remainingPending);
+
+            if ($tFee > 0.0) {
+                $dueT = min($tFee, $unpaidInPeriod);
+                $transportDue += $dueT;
+            }
+
+            if ($hFee > 0.0) {
+                $remAfterT = max(0.0, $unpaidInPeriod - ($tFee > 0 ? min($tFee, $unpaidInPeriod) : 0));
+                $dueH = min($hFee, $remAfterT);
+                $hostelDue += $dueH;
+            }
+
+            $remainingPending -= $unpaidInPeriod;
+        }
+
+        $transportDue = round(min($transportDue, $totalPending), 2);
+        $hostelDue = round(min($hostelDue, max(0.0, $totalPending - $transportDue)), 2);
+        $academicDue = round(max(0.0, $totalPending - $transportDue - $hostelDue), 2);
+
+        return [
+            'total_dues'     => round($totalPending, 2),
+            'transport_due'  => $transportDue,
+            'hostel_due'     => $hostelDue,
+            'academic_due'   => $academicDue,
+            'has_dues'       => true,
+            'advance_credit' => 0.0,
         ];
     }
 

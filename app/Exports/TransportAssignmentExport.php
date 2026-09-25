@@ -113,16 +113,30 @@ class TransportAssignmentExport implements FromQuery, WithHeadings, WithMapping,
             try {
                 $feeService = app(\App\Services\FeeCollectionService::class);
                 $matrixResult = $feeService->getStudentLedgerMatrix($row->user, $this->institutionId);
-                foreach ($matrixResult['matrix'] ?? [] as $mRow) {
-                    $tFee = (float) ($mRow['transport_fee'] ?? 0);
-                    if ($tFee <= 0) continue;
-                    $status = $mRow['status'] ?? 'unpaid';
-                    if ($status === 'paid') continue;
-                    if ($status === 'unpaid') {
-                        $transportDue += $tFee;
-                    } else {
-                        $transportDue += min($tFee, max(0.0, (float)($mRow['balance'] ?? 0)));
+                $totalPending = (float) ($matrixResult['total_pending'] ?? 0.0);
+                if ($totalPending > 0.0 && !empty($matrixResult['matrix'])) {
+                    $remainingPending = $totalPending;
+                    $reversedMatrix = array_reverse($matrixResult['matrix']);
+                    foreach ($reversedMatrix as $mRow) {
+                        if ($remainingPending <= 0.0) {
+                            break;
+                        }
+                        $tFee = (float) ($mRow['transport_fee'] ?? 0.0);
+                        $newCharges = max(0.0, (float) ($mRow['total_payable'] ?? 0.0) - (float) ($mRow['previous_dues'] ?? 0.0));
+                        if ($newCharges <= 0.0) {
+                            $newCharges = (float) ($mRow['monthly_total'] ?? 0.0)
+                                + (float) ($mRow['admission_fee'] ?? 0.0)
+                                + (float) ($mRow['hostel_fee'] ?? 0.0)
+                                + (float) ($mRow['other_fees'] ?? 0.0)
+                                + (float) ($mRow['late_fee'] ?? 0.0);
+                        }
+                        $unpaidInPeriod = min($remainingPending, $newCharges > 0.0 ? $newCharges : $remainingPending);
+                        if ($tFee > 0.0) {
+                            $transportDue += min($tFee, $unpaidInPeriod);
+                        }
+                        $remainingPending -= $unpaidInPeriod;
                     }
+                    $transportDue = min($transportDue, $totalPending);
                 }
             } catch (\Throwable $e) {
                 $transportDue = 0.0;

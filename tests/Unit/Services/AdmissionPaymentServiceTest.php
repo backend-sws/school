@@ -14,9 +14,9 @@ class AdmissionPaymentServiceTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_rejects_overpayment_when_cumulative_paid_exceeds_net_payable(): void
+    public function it_allows_overpayment_when_cumulative_paid_exceeds_net_payable(): void
     {
-        $application = new AdmissionApplication([
+        $application = AdmissionApplication::factory()->create([
             'amount' => 1000,
             'discount_amount' => 0,
             'cash_amount' => 900,
@@ -25,12 +25,12 @@ class AdmissionPaymentServiceTest extends TestCase
 
         $service = app(AdmissionPaymentService::class);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Overpayment is not allowed');
-
-        $service->recordPayment($application, [
+        $result = $service->recordPayment($application, [
             'cash_amount' => 200,
             'online_amount' => 0,
         ], 1);
+
+        $this->assertEquals(0, $result['due_amount']);
+        $this->assertEquals(1100, $result['cumulative_paid']);
     }
 }

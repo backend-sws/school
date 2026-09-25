@@ -27,21 +27,6 @@ export const paymentDeskFormSchema = z
             return online <= 0 || tid.length > 0;
         },
         { message: "Transaction / UTR ID is required for online payments.", path: ["online_transaction_id"] }
-    )
-    .refine(
-        (data) => {
-            const cash = Number(data.cash_amount) || 0;
-            const online = Number(data.online_amount) || 0;
-            const totalCollected = cash + online;
-            const remainingDue = Number(data.remaining_due);
-
-            if (!Number.isFinite(remainingDue) || remainingDue < 0) {
-                return true;
-            }
-
-            return totalCollected <= remainingDue;
-        },
-        { message: "Collected amount cannot exceed remaining due amount.", path: ["online_amount"] }
     );
 
 export type PaymentDeskFormValues = z.infer<typeof paymentDeskFormSchema>;

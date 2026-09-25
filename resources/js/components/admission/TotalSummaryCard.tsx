@@ -24,12 +24,18 @@ interface TotalSummaryCardProps {
 }
 
 // ── Payment stat cards config ──────────────────────────────────
-const buildPaymentStats = (cashAmount: number, onlineAmount: number, totalPaid: number, dueAmount: number) => [
-  { label: "Cash Collection", value: cashAmount, icon: Banknote, color: "" },
-  { label: "Online / UPI", value: onlineAmount, icon: Globe, color: "" },
-  { label: "Net Received", value: totalPaid, icon: Banknote, color: "text-green-600", bg: "bg-green-500/10 border-green-500/20" },
-  { label: "Due Amount", value: dueAmount, icon: Banknote, color: dueAmount > 0 ? "text-amber-500" : "text-green-600", bg: dueAmount > 0 ? "bg-amber-500/10 border-amber-500/20" : "bg-green-500/10 border-green-500/20" },
-];
+const buildPaymentStats = (cashAmount: number, onlineAmount: number, totalPaid: number, dueAmount: number, grandTotal: number) => {
+  const isAdvance = totalPaid > grandTotal;
+  const advanceAmount = isAdvance ? totalPaid - grandTotal : 0;
+  return [
+    { label: "Cash Collection", value: cashAmount, icon: Banknote, color: "" },
+    { label: "Online / UPI", value: onlineAmount, icon: Globe, color: "" },
+    { label: "Net Received", value: totalPaid, icon: Banknote, color: "text-green-600", bg: "bg-green-500/10 border-green-500/20" },
+    isAdvance
+      ? { label: "Advance Credit", value: advanceAmount, icon: Banknote, color: "text-blue-600", bg: "bg-blue-500/10 border-blue-500/20" }
+      : { label: "Due Amount", value: dueAmount, icon: Banknote, color: dueAmount > 0 ? "text-amber-500" : "text-green-600", bg: dueAmount > 0 ? "bg-amber-500/10 border-amber-500/20" : "bg-green-500/10 border-green-500/20" },
+  ];
+};
 
 // ── Component ──────────────────────────────────────────────────
 export function TotalSummaryCard({
@@ -61,7 +67,7 @@ export function TotalSummaryCard({
   }
 
   const paymentStats = showPayment
-    ? buildPaymentStats(cashAmount ?? 0, onlineAmount ?? 0, totalPaid, dueAmount ?? 0)
+    ? buildPaymentStats(cashAmount ?? 0, onlineAmount ?? 0, totalPaid, dueAmount ?? 0, grandTotal)
     : [];
 
   return (

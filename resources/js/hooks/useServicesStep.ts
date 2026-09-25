@@ -200,8 +200,8 @@ export function useServicesStep() {
   /** Inventory Items async config */
   const inventoryAsyncConfig: AsyncSelectConfig = useMemo(
     () => ({
-      queryFn: (params: Record<string, any>) => inventoryApi.items.index(params),
-      queryKey: InventoryQueryKeys.all,
+      queryFn: (params: Record<string, any>) => inventoryApi.items.index({ ...params, for_sale: true }),
+      queryKey: [...InventoryQueryKeys.all, "for_sale"],
       labelKey: "name",
       valueKey: "id",
       searchKey: "search",

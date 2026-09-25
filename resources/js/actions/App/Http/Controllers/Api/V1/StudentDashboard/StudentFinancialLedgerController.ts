@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
 export const downloadReceipt = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ downloadReceipt.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
 downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: nu
 
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
 downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: nu
 })
 /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
 downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +146,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
 
     /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
     const downloadReceiptForm = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
 
             /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
         downloadReceiptForm.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +165,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
         })
             /**
 * @see \App\Http\Controllers\Api\V1\StudentDashboard\StudentFinancialLedgerController::downloadReceipt
- * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:121
+ * @see app/Http/Controllers/Api/V1/StudentDashboard/StudentFinancialLedgerController.php:122
  * @route '/api/v1/student/financial-ledger/receipt/{payment}'
  */
         downloadReceiptForm.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

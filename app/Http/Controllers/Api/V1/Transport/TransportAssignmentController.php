@@ -16,36 +16,58 @@ class TransportAssignmentController extends BaseController
     ) {}
 
     /**
+     * Calculate outstanding transport fees due from a student ledger matrix.
+     */
+    protected function calculateStudentTransportDueFromMatrix(array $matrixResult): float
+    {
+        if (empty($matrixResult['matrix'])) {
+            return 0.0;
+        }
+
+        $totalPending = (float) ($matrixResult['total_pending'] ?? 0.0);
+        if ($totalPending <= 0.0) {
+            return 0.0;
+        }
+
+        $transportDue = 0.0;
+        $remainingPending = $totalPending;
+
+        // Walk backwards from latest billing period to oldest
+        $reversedMatrix = array_reverse($matrixResult['matrix']);
+        foreach ($reversedMatrix as $row) {
+            if ($remainingPending <= 0.0) {
+                break;
+            }
+
+            $tFee = (float) ($row['transport_fee'] ?? 0.0);
+            $newCharges = max(0.0, (float) ($row['total_payable'] ?? 0.0) - (float) ($row['previous_dues'] ?? 0.0));
+            if ($newCharges <= 0.0) {
+                $newCharges = (float) ($row['monthly_total'] ?? 0.0)
+                    + (float) ($row['admission_fee'] ?? 0.0)
+                    + (float) ($row['hostel_fee'] ?? 0.0)
+                    + (float) ($row['other_fees'] ?? 0.0)
+                    + (float) ($row['late_fee'] ?? 0.0);
+            }
+
+            $unpaidInPeriod = min($remainingPending, $newCharges > 0.0 ? $newCharges : $remainingPending);
+
+            if ($tFee > 0.0) {
+                $transportDue += min($tFee, $unpaidInPeriod);
+            }
+
+            $remainingPending -= $unpaidInPeriod;
+        }
+
+        return round(min($transportDue, $totalPending), 2);
+    }
+
+    /**
      * Calculate outstanding transport fees due for a student.
      */
     protected function calculateStudentTransportDue(\App\Models\User $student, int $institutionId): float
     {
         $matrixResult = $this->feeCollectionService->getStudentLedgerMatrix($student, $institutionId);
-        if (empty($matrixResult['matrix'])) {
-            return 0.0;
-        }
-
-        $transportDue = 0.0;
-        foreach ($matrixResult['matrix'] as $row) {
-            $tFee = (float) ($row['transport_fee'] ?? 0);
-            if ($tFee <= 0) {
-                continue;
-            }
-
-            $status = $row['status'] ?? 'unpaid';
-            if ($status === 'paid') {
-                continue;
-            }
-
-            if ($status === 'unpaid') {
-                $transportDue += $tFee;
-            } else {
-                $balance = (float) ($row['balance'] ?? 0);
-                $transportDue += min($tFee, max(0.0, $balance));
-            }
-        }
-
-        return round($transportDue, 2);
+        return $this->calculateStudentTransportDueFromMatrix($matrixResult);
     }
 
     public function index(Request $request): JsonResponse
@@ -204,25 +226,18 @@ class TransportAssignmentController extends BaseController
                 if (empty($matrixResult['matrix'])) {
                     continue;
                 }
-                foreach ($matrixResult['matrix'] as $row) {
-                    $tFee = (float) ($row['transport_fee'] ?? 0);
-                    if ($tFee <= 0) {
-                        continue;
-                    }
-                    $totalExpected += $tFee;
 
-                    $status = $row['status'] ?? 'unpaid';
-                    if ($status === 'paid') {
-                        $totalCollected += $tFee;
-                    } elseif ($status === 'unpaid') {
-                        $totalDues += $tFee;
-                    } else {
-                        $balance = (float) ($row['balance'] ?? 0);
-                        $due = min($tFee, max(0.0, $balance));
-                        $totalDues += $due;
-                        $totalCollected += ($tFee - $due);
-                    }
+                $studentExpected = 0.0;
+                foreach ($matrixResult['matrix'] as $row) {
+                    $studentExpected += (float) ($row['transport_fee'] ?? 0.0);
                 }
+
+                $studentDue = $this->calculateStudentTransportDueFromMatrix($matrixResult);
+                $studentCollected = max(0.0, $studentExpected - $studentDue);
+
+                $totalExpected += $studentExpected;
+                $totalDues += $studentDue;
+                $totalCollected += $studentCollected;
             }
 
             // Fallback estimation if ledger matrix has no records for these students

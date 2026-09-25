@@ -1,5 +1,5 @@
 import React from "react";
-import { Control, FieldValues, UseFormWatch } from "react-hook-form";
+import { Control, FieldValues, UseFormWatch, useWatch } from "react-hook-form";
 import Each from "@/components/Each";
 import DataTable, { TableSkeletonLoader } from "@/components/dataTable";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,69 @@ const INVENTORY_COLUMNS = [
   { key: "total", label: "Total" },
   { key: "actions", label: "" },
 ];
+
+// ── Sub-component for Reactive Row Calculations ────────────────
+interface InventoryTableRowProps<T extends FieldValues> {
+  control: Control<T>;
+  name: string;
+  idx: number;
+  field: any;
+  onRemove: (index: number) => void;
+}
+
+function InventoryTableRow<T extends FieldValues>({
+  control,
+  name,
+  idx,
+  field,
+  onRemove,
+}: InventoryTableRowProps<T>) {
+  const price = useWatch({
+    control,
+    name: `${name}.${idx}.price` as any,
+    defaultValue: field.price ?? 0,
+  });
+  const quantity = useWatch({
+    control,
+    name: `${name}.${idx}.quantity` as any,
+    defaultValue: field.quantity ?? 1,
+  });
+
+  const title = (field as any)._title ?? "Unknown Item";
+  const numPrice = Number(price) || 0;
+  const numQty = Number(quantity) || 0;
+  const total = numPrice * numQty;
+
+  return (
+    <TableRow className="hover:bg-muted/50">
+      <TableCell className="font-medium">{title}</TableCell>
+      <TableCell>₹{numPrice.toLocaleString()}</TableCell>
+      <TableCell>
+        <ControlledFormComponent
+          control={control as Control<FieldValues>}
+          name={`${name}.${idx}.quantity` as any}
+          type={FORM_TYPE.NUMBER_TEXT}
+          maxLength={10}
+          className="h-8 py-0 rounded-none"
+        />
+      </TableCell>
+      <TableCell className="font-semibold text-primary">
+        ₹{total.toLocaleString()}
+      </TableCell>
+      <TableCell>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-destructive rounded-none"
+          onClick={() => onRemove(idx)}
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 // ── Props ──────────────────────────────────────────────────────
 interface InventoryTableProps<T extends FieldValues> {
@@ -72,40 +135,16 @@ export function InventoryTable<T extends FieldValues>({
               </TableCell>
             </TableRow>
           }
-          render={(field, idx) => {
-            const title = (field as any)._title ?? "Unknown Item";
-            const price = Number(watch(`${name}.${idx}.price` as any)) || 0;
-            const qty = Number(watch(`${name}.${idx}.quantity` as any)) || 0;
-            return (
-              <TableRow className="hover:bg-muted/50">
-                <TableCell className="font-medium">{title}</TableCell>
-                <TableCell>₹{price.toLocaleString()}</TableCell>
-                <TableCell>
-                  <ControlledFormComponent
-                    control={control as Control<FieldValues>}
-                    name={`${name}.${idx}.quantity` as any}
-                    type={FORM_TYPE.NUMBER_TEXT}
-                    maxLength={10}
-                    className="h-8 py-0 rounded-none"
-                  />
-                </TableCell>
-                <TableCell className="font-semibold text-primary">
-                  ₹{(price * qty).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive rounded-none"
-                    onClick={() => onRemove(idx)}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          }}
+          render={(field, idx) => (
+            <InventoryTableRow
+              key={(field as { id?: string }).id ?? idx}
+              control={control}
+              name={name}
+              idx={idx}
+              field={field}
+              onRemove={onRemove}
+            />
+          )}
         />
       </DataTable>
 

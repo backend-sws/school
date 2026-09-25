@@ -61,7 +61,9 @@ export function RecordPaymentDialog({
   const desk = computePaymentDeskTotals(
     application,
     { cash: Number(cashAmount) || 0, online: Number(onlineAmount) || 0 },
-    concessionAmount !== "" && concessionAmount != null ? Number(concessionAmount) : undefined
+    concessionAmount != null && String(concessionAmount).trim() !== ""
+      ? Number(concessionAmount)
+      : undefined
   );
   const isOverCollection = desk.totalCollected > desk.dueAmount;
   const remainingBalance = Math.max(0, desk.remaining);
@@ -106,24 +108,17 @@ export function RecordPaymentDialog({
   const onSubmit = (data: PaymentDeskFormValues) => {
     const cash = Number(data.cash_amount) || 0;
     const online = Number(data.online_amount) || 0;
+    const concession = Number(data.concession_amount) || 0;
     const totalCollected = cash + online;
-
-    if (totalCollected > desk.dueAmount) {
-      toast.error("Collected amount cannot exceed remaining due amount.");
-      return;
-    }
 
     recordPaymentMutation.mutate({
       cash_amount: cash || undefined,
       online_amount: online || undefined,
       online_transaction_id:
         data.online_transaction_id?.trim() || undefined,
-      concession_amount:
-        data.concession_amount !== "" && data.concession_amount != null
-          ? Number(data.concession_amount)
-          : undefined,
+      concession_amount: concession > 0 ? concession : undefined,
       concession_reason:
-        data.concession_amount !== "" && data.concession_amount != null && data.concession_reason?.trim()
+        concession > 0 && data.concession_reason?.trim()
           ? data.concession_reason.trim()
           : undefined,
       notes: data.notes?.trim() || undefined,

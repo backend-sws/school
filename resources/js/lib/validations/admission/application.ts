@@ -283,19 +283,8 @@ export const applicationDeskFormSchema = z
     const discountAmt = (Number(data.discount_amount) || 0) + computedDiscount;
     const grandTotal = Math.max(0, feeSum + invSum + transportAmt + hostelAmt - discountAmt);
 
-    if (totalPaid > grandTotal) {
-      const message = `Total payment (₹${totalPaid.toLocaleString()}) cannot exceed Grand Total (₹${grandTotal.toLocaleString()}).`;
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message,
-        path: ["cash_amount"],
-      });
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message,
-        path: ["online_amount"],
-      });
-    }
+    // Note: Excess payment (totalPaid > grandTotal) is permitted as Advance and credited to the student's fee ledger.
+
 
     if (online > 0 && !(data.online_transaction_id ?? "").trim()) {
       ctx.addIssue({

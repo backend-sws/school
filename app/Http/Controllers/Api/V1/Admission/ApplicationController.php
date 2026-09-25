@@ -721,6 +721,8 @@ class ApplicationController extends BaseController
 
                     // Dual-write: create FeePayment so admission payment appears in student ledger
                     $totalPaid = ($validated['cash_amount'] ?? 0) + ($validated['online_amount'] ?? 0);
+                    $netPayable = max(0, round((float) $total - (float) ($validated['discount_amount'] ?? 0), 2));
+                    $advanceAmount = max(0, round($totalPaid - $netPayable, 2));
                     FeePayment::create([
                         'institution_id'        => $application->institution_id,
                         'payment_id'            => 'PAY-ADM-' . strtoupper(uniqid()),
@@ -735,14 +737,17 @@ class ApplicationController extends BaseController
                         'cash_amount'           => $application->cash_amount ?: null,
                         'online_amount'         => $application->online_amount ?: null,
                         'online_transaction_id' => $application->online_transaction_id ?? null,
-                        'remarks'               => 'Admission fee (desk)',
+                        'remarks'               => $advanceAmount > 0
+                            ? 'Admission fee (desk) [Advance: ₹' . number_format($advanceAmount, 2) . ']'
+                            : 'Admission fee (desk)',
                         'payable_entity_type'   => 'admission_application',
                         'payable_entity_id'     => $application->id,
                         'ledger_snapshot'       => [
-                            'fees'       => $feeBreakdown ?? ($validated['fees'] ?? []),
-                            'discount'   => $validated['discount_amount'] ?? 0,
-                            'due'        => $validated['due_amount'] ?? 0,
-                            'total_fees' => $total,
+                            'fees'           => $feeBreakdown ?? ($validated['fees'] ?? []),
+                            'discount'       => $validated['discount_amount'] ?? 0,
+                            'due'            => $validated['due_amount'] ?? 0,
+                            'total_fees'     => $total,
+                            'advance_amount' => $advanceAmount,
                         ],
                     ]);
 
@@ -1460,11 +1465,7 @@ public function update(Request $request, $id): JsonResponse
 
     private function assertNoAdmissionOverpayment(float $totalAmount, float $discountAmount, float $totalPaid): void
     {
-        $netPayable = max(0, round($totalAmount - $discountAmount, 2));
-
-        if ($totalPaid > $netPayable) {
-            throw new RuntimeException('Admission payment exceeds payable amount.');
-        }
+        // Overpayment is allowed: excess payment is recorded as advance in the student's fee ledger.
     }
 
     /**

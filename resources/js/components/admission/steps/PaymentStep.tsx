@@ -101,22 +101,31 @@ export function PaymentStep({
                                     <span className="text-2xl font-black text-green-600 tabular-nums">₹{totalPaid.toLocaleString()}</span>
                                 </div>
                                 <div className="hidden sm:block h-10 w-px bg-border/60" />
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground block tracking-wider">Due Amount</span>
-                                    <span className={`text-2xl font-black tabular-nums ${dueAmount > 0 ? "text-amber-500" : "text-green-600"}`}>
-                                        ₹{dueAmount.toLocaleString()}
-                                    </span>
-                                </div>
+                                {isOverPayment ? (
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400 block tracking-wider">Advance Credit</span>
+                                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tabular-nums">
+                                            ₹{(totalPaid - grandTotal).toLocaleString()}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase text-muted-foreground block tracking-wider">Due Amount</span>
+                                        <span className={`text-2xl font-black tabular-nums ${dueAmount > 0 ? "text-amber-500" : "text-green-600"}`}>
+                                            ₹{dueAmount.toLocaleString()}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Overpayment block banner */}
+                        {/* Advance payment banner */}
                         {isOverPayment && (
-                            <div className="flex items-start gap-3 p-3 rounded-none bg-destructive/10 border border-destructive/30 text-destructive">
+                            <div className="flex items-start gap-3 p-3 rounded-none bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400">
                                 <AlertCircle className="size-4 mt-0.5 shrink-0" />
                                 <p className="text-xs font-medium leading-relaxed">
-                                    <span className="font-bold">Overpayment not allowed.</span>{" "}
-                                    Total payment cannot exceed the grand total. Please reduce cash/online amount before continuing.
+                                    <span className="font-bold">Advance payment detected.</span>{" "}
+                                    Extra payment of ₹{(totalPaid - grandTotal).toLocaleString()} will be recorded as advance in the student&apos;s fee ledger and adjusted against upcoming fees.
                                 </p>
                             </div>
                         )}

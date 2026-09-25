@@ -21,7 +21,7 @@ class AdmissionOverpaymentGuardTest extends TestCase
     }
 
     #[Test]
-    public function admission_store_blocks_overpayment_with_422_error_map(): void
+    public function admission_store_allows_overpayment_as_advance(): void
     {
         $user = User::factory()->create();
         $head = AdmissionHead::factory()->create();
@@ -35,12 +35,12 @@ class AdmissionOverpaymentGuardTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(422)
-            ->assertJsonPath('error_code', 'admission.overpayment_not_allowed');
+            ->assertStatus(201)
+            ->assertJsonPath('data.due_amount', 0);
     }
 
     #[Test]
-    public function record_payment_blocks_overpayment_with_422_error_map(): void
+    public function record_payment_allows_overpayment_as_advance(): void
     {
         $user = User::factory()->create();
         $application = AdmissionApplication::factory()->create([
@@ -61,7 +61,7 @@ class AdmissionOverpaymentGuardTest extends TestCase
         );
 
         $response
-            ->assertStatus(422)
-            ->assertJsonPath('error_code', 'admission.overpayment_not_allowed');
+            ->assertStatus(200)
+            ->assertJsonPath('data.due_amount', 0);
     }
 }

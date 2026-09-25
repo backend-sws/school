@@ -652,8 +652,21 @@ class AdmissionToStudentSyncService
         $userId = $context['user']->id;
 
         // Transport Allocation
-        if ($app->transport_stop_id && $app->transport_route_id) {
-            $effectiveDate = $app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now();
+        $stopId = $app->transport_stop_id;
+        $routeId = $app->transport_route_id;
+        if (!$routeId && $stopId) {
+            $routeId = \App\Models\TransportRouteStop::where('id', $stopId)->value('transport_route_id')
+                ?: \App\Models\TransportRouteStop::where('transport_stop_id', $stopId)->value('transport_route_id');
+            if ($routeId) {
+                $app->update(['transport_route_id' => $routeId]);
+            }
+        }
+
+        if ($stopId && $routeId) {
+            $session = $app->session ?? $app->admissionHead?->session ?? \App\Models\Session::find($context['sessionId'] ?? null);
+            $academicStartMonth = app(\App\Services\AcademicCalendarService::class)->getStartMonth($app->institution_id);
+            $sessionStartDate = $session ? \Carbon\Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay() : null;
+            $effectiveDate = $sessionStartDate ?? ($app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now());
 
             if ($this->isReadmission($app)) {
                 $existingTransport = \App\Models\TransportAssignment::where('institution_id', $app->institution_id)
@@ -671,8 +684,8 @@ class AdmissionToStudentSyncService
                 \App\Models\TransportAssignment::create([
                     'institution_id' => $app->institution_id,
                     'user_id' => $userId,
-                    'transport_route_id' => $app->transport_route_id,
-                    'transport_stop_id' => $app->transport_stop_id,
+                    'transport_route_id' => $routeId,
+                    'transport_stop_id' => $stopId,
                     'monthly_amount' => $app->transport_amount ?? 0,
                     'effective_from' => $effectiveDate,
                     'effective_until' => null, // active
@@ -685,8 +698,8 @@ class AdmissionToStudentSyncService
                         'user_id' => $userId,
                     ],
                     [
-                        'transport_route_id' => $app->transport_route_id,
-                        'transport_stop_id' => $app->transport_stop_id,
+                        'transport_route_id' => $routeId,
+                        'transport_stop_id' => $stopId,
                         'monthly_amount' => $app->transport_amount ?? 0,
                         'effective_from' => $effectiveDate,
                         'effective_until' => null, // active

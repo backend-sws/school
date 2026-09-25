@@ -105,6 +105,7 @@ class StudentFinancialLedgerController extends BaseController
             ],
             'matrix' => app(ApiResponseMapService::class)->filterCollection($pagedMatrix, 'fee_ledger_matrix_row'),
             'total_pending' => $result['total_pending'] ?? 0,
+            'dues_breakdown' => $result['dues_breakdown'] ?? null,
             'admission_summary' => $result['admission_summary'] ?? null,
             'one_time_charges' => $result['one_time_charges'] ?? [],
             'available_sessions' => $availableSessions,

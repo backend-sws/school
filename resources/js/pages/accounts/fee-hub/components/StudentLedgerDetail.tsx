@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar, Pencil, Zap, Layers, Plus, CheckSquare, ChevronLeft, ChevronRight, MoveHorizontal
+    CreditCard, AlertCircle, Mail, Bell, Link2, Download, CheckCircle2, Check, Receipt, Send, Loader2, CalendarRange, RotateCcw, AlertTriangle, User, Calendar, Pencil, Zap, Layers, Plus, CheckSquare, ChevronLeft, ChevronRight, MoveHorizontal, Wallet, BusFront, Building2, GraduationCap
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -556,6 +556,7 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
     const matrix = data?.matrix || [];
     const classInfo = data?.class || {};
     const admissionSummary = data?.admission_summary || null;
+    const duesBreakdown = data?.dues_breakdown || null;
     const oneTimeCharges = data?.one_time_charges || [];
     const availableSessions = data?.available_sessions || [];
     const revertedHistory = data?.reverted_history || [];
@@ -852,6 +853,96 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                         render={(card) => <ContextCard config={card} student={student} classInfo={classInfo} />}
                     />
                 </div>
+
+                {/* ─── Dues & Balance Breakdown ────────────────────────────── */}
+                {duesBreakdown && (
+                    <div className="max-w-[1400px] mx-auto w-full space-y-3">
+                        <div className="flex items-center justify-between px-1">
+                            <div className="flex items-center gap-2">
+                                <Wallet className="size-4 text-muted-foreground" />
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Outstanding Dues & Head-wise Breakdown</h3>
+                                {duesBreakdown.has_dues ? (
+                                    <Badge variant="destructive" className="text-[9px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 border-rose-500/20">
+                                        Pending Dues
+                                    </Badge>
+                                ) : (
+                                    <Badge variant="default" className="text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                                        Paid in Full
+                                    </Badge>
+                                )}
+                            </div>
+                        </div>
+
+                        <Card className="rounded-xl border shadow-sm overflow-hidden bg-card">
+                            <CardContent className="p-0">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
+                                    {/* 1. Total Outstanding */}
+                                    <div className="p-5 space-y-1 bg-muted/20">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <AlertCircle className={cn("size-4", duesBreakdown.total_dues > 0 ? "text-rose-500" : "text-emerald-500")} />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider">Total Ledger Dues</span>
+                                        </div>
+                                        <p className={cn("text-2xl font-black tabular-nums", duesBreakdown.total_dues > 0 ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400")}>
+                                            {formatCurrency(duesBreakdown.total_dues)}
+                                        </p>
+                                        <p className="text-[11px] text-muted-foreground">
+                                            {duesBreakdown.total_dues > 0 ? "Net pending across all fee heads" : duesBreakdown.advance_credit > 0 ? `Advance Credit: ${formatCurrency(duesBreakdown.advance_credit)}` : "All dues settled"}
+                                        </p>
+                                    </div>
+
+                                    {/* 2. Academic / Tuition Dues */}
+                                    <div className="p-5 space-y-1">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <GraduationCap className="size-4 text-indigo-500" />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider">Tuition & Academic Dues</span>
+                                        </div>
+                                        <p className="text-2xl font-black text-foreground tabular-nums">
+                                            {formatCurrency(duesBreakdown.academic_due)}
+                                        </p>
+                                        <p className="text-[11px] text-muted-foreground">
+                                            Monthly tuition, exam & course heads
+                                        </p>
+                                    </div>
+
+                                    {/* 3. Transport Dues */}
+                                    <div className="p-5 space-y-1 bg-amber-500/[0.02]">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <BusFront className="size-4 text-amber-600 dark:text-amber-400" />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Transport Dues</span>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <p className="text-2xl font-black text-amber-700 dark:text-amber-400 tabular-nums">
+                                                {formatCurrency(duesBreakdown.transport_due)}
+                                            </p>
+                                            {duesBreakdown.transport_due > 0 && (
+                                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 font-bold border-amber-300 text-amber-700 bg-amber-50">
+                                                    In Transport Module
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        <p className="text-[11px] text-muted-foreground">
+                                            Bus / vehicle route pending dues
+                                        </p>
+                                    </div>
+
+                                    {/* 4. Hostel Dues / Status */}
+                                    <div className="p-5 space-y-1">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <Building2 className="size-4 text-teal-600" />
+                                            <span className="text-[10px] font-bold uppercase tracking-wider">Hostel & Mess Dues</span>
+                                        </div>
+                                        <p className="text-2xl font-black text-foreground tabular-nums">
+                                            {formatCurrency(duesBreakdown.hostel_due)}
+                                        </p>
+                                        <p className="text-[11px] text-muted-foreground">
+                                            Room & mess plan outstanding
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* ─── Admission Fee Summary ───────────────────────────────── */}
                 {admissionSummary && (
@@ -1702,11 +1793,36 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                         <Each
                                             of={admissionFeeColumns}
                                             keyExtractor={(col) => `total-${col.key}`}
-                                            render={(col) => (
-                                                <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b">
-                                                    {formatCurrency(matrix.reduce((sum: number, r: any) => sum + Number(r[col.rowField!] ?? 0), 0))}
-                                                </TableCell>
-                                            )}
+                                            render={(col) => {
+                                                const sumBilled = matrix.reduce((sum: number, r: any) => sum + Number(r[col.rowField!] ?? 0), 0);
+                                                if (col.key === "transport_fee" && duesBreakdown && duesBreakdown.transport_due > 0) {
+                                                    return (
+                                                        <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b">
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <div className="cursor-help inline-flex flex-col items-end">
+                                                                        <span>{formatCurrency(sumBilled)}</span>
+                                                                        <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                                                                            Due: {formatCurrency(duesBreakdown.transport_due)}
+                                                                        </span>
+                                                                    </div>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="top" className="text-xs p-2 space-y-1">
+                                                                    <p className="font-bold text-foreground">Transport Fee Summary:</p>
+                                                                    <p className="text-muted-foreground">Total Billed: <span className="font-bold text-foreground">{formatCurrency(sumBilled)}</span></p>
+                                                                    <p className="text-muted-foreground">Pending Due: <span className="font-bold text-amber-600">{formatCurrency(duesBreakdown.transport_due)}</span></p>
+                                                                    <p className="text-[10px] text-muted-foreground/80 italic">Matches Transport Assignments module</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TableCell>
+                                                    );
+                                                }
+                                                return (
+                                                    <TableCell className="text-right py-4 tabular-nums text-sm font-bold border-r border-b">
+                                                        {formatCurrency(sumBilled)}
+                                                    </TableCell>
+                                                );
+                                            }}
                                         />
                                         <Each
                                             of={allParticulars}
@@ -1760,6 +1876,43 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                 } else if (col.key === "arrears") {
                                                     const grandTotalPayable = firstRowPrevDues + totalParticularsSum - totalDiscountSum;
                                                     total = grandTotalPayable - grandTotalPaid;
+                                                    return (
+                                                        <TableCell className={cn(
+                                                            "text-right py-4 tabular-nums text-sm font-black border-r border-b",
+                                                            col.bgClass && `${col.bgClass.replace('/5', '/[0.04]')}`,
+                                                            col.textClass
+                                                        )}>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <div className="cursor-help inline-flex flex-col items-end">
+                                                                        <span>{formatCurrency(total)}</span>
+                                                                        {duesBreakdown && duesBreakdown.has_dues && duesBreakdown.transport_due > 0 && (
+                                                                            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">
+                                                                                Tr: {formatCurrency(duesBreakdown.transport_due)}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="top" className="text-xs p-2.5 space-y-1 bg-popover text-popover-foreground border shadow-xl">
+                                                                    <p className="font-bold text-foreground">Total Arrears Breakdown:</p>
+                                                                    <div className="flex justify-between gap-4 text-muted-foreground">
+                                                                        <span>Transport Due:</span>
+                                                                        <span className="font-bold text-amber-600">{formatCurrency(duesBreakdown?.transport_due ?? 0)}</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between gap-4 text-muted-foreground">
+                                                                        <span>Tuition & Academic:</span>
+                                                                        <span className="font-bold text-indigo-600">{formatCurrency(duesBreakdown?.academic_due ?? 0)}</span>
+                                                                    </div>
+                                                                    {(duesBreakdown?.hostel_due ?? 0) > 0 && (
+                                                                        <div className="flex justify-between gap-4 text-muted-foreground">
+                                                                            <span>Hostel Due:</span>
+                                                                            <span className="font-bold text-teal-600">{formatCurrency(duesBreakdown?.hostel_due ?? 0)}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TableCell>
+                                                    );
                                                 } else {
                                                     total = matrix.reduce((sum: number, r: any) => sum + Math.max(0, Number(r[col.rowField!] ?? 0)), 0);
                                                 }
