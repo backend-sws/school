@@ -561,7 +561,7 @@ class ApplicationController extends BaseController
 
         // Calculate total amount using FeeCalculationEngine
         $total = 0;
-        $feeBreakdown = null;
+        $feeBreakdown = [];
 
         if (!empty($validated['admission_head_id'])) {
             // Use the engine for deterministic, profile-aware fee calculation
@@ -574,46 +574,49 @@ class ApplicationController extends BaseController
                 $validated['fee_regulation_profile_id'] ?? null
             );
             $total = $engineResult['gross']; // Use gross, discount is tracked separately
-            $feeBreakdown = $engineResult['items'];
+            $feeBreakdown = $engineResult['items'] ?? [];
             if (!empty($engineResult['profile_id'])) {
                 $validated['fee_regulation_profile_id'] = $engineResult['profile_id'];
             }
-        }
-
-        // Add transport and hostel on top of the engine-computed fee
-        if (!empty($validated['transport_amount'])) {
-            $transportAmount = (float) $validated['transport_amount'];
-            $total += $transportAmount;
-            if (is_array($feeBreakdown)) {
-                $feeBreakdown[] = [
-                    'name'     => 'Transport Fee (Advance)',
-                    'amount'   => $transportAmount,
-                    'type'     => 'transport',
-                    'category' => 'services',
-                ];
-            }
-        }
-        if (!empty($validated['hostel_required']) && !empty($validated['hostel_amount'])) {
-            $hostelAmount = (float) $validated['hostel_amount'];
-            $total += $hostelAmount;
-            if (is_array($feeBreakdown)) {
-                $feeBreakdown[] = [
-                    'name'     => 'Hostel Fee (Advance)',
-                    'amount'   => $hostelAmount,
-                    'type'     => 'hostel',
-                    'category' => 'services',
-                ];
-            }
-        }
-
-        // If engine had no rules (e.g. no admission head), fall back to fees[] array
-        if ($feeBreakdown === null && isset($validated['fees']) && is_array($validated['fees'])) {
+        } elseif (isset($validated['fees']) && is_array($validated['fees'])) {
+            // If engine had no rules (e.g. no admission head), fall back to fees[] array
             $feeBreakdown = $this->admissionFeeBreakdownNormalizer->normalize($validated['fees']);
             $total += array_reduce($feeBreakdown, function ($carry, $item) {
                 // For gross total, only sum up positive charges, ignore discount items
                 return $carry + (($item['category'] === 'discount') ? 0 : (float) ($item['amount'] ?? 0));
             }, 0);
         }
+
+        // Auto-resolve hostel_amount if hostel_required and hostel_room_id provided but hostel_amount empty
+        if (!empty($validated['hostel_required']) && !empty($validated['hostel_room_id']) && empty($validated['hostel_amount'])) {
+            $room = \App\Models\HostelRoom::find($validated['hostel_room_id']);
+            if ($room && $room->monthly_fee > 0) {
+                $validated['hostel_amount'] = (float) $room->monthly_fee;
+            }
+        }
+
+        // Add transport and hostel on top of the fee
+        if (!empty($validated['transport_amount'])) {
+            $transportAmount = (float) $validated['transport_amount'];
+            $total += $transportAmount;
+            $feeBreakdown[] = [
+                'name'     => 'Transport Fee (Advance)',
+                'amount'   => $transportAmount,
+                'type'     => 'transport',
+                'category' => 'services',
+            ];
+        }
+        if (!empty($validated['hostel_required']) && !empty($validated['hostel_amount'])) {
+            $hostelAmount = (float) $validated['hostel_amount'];
+            $total += $hostelAmount;
+            $feeBreakdown[] = [
+                'name'     => 'Hostel Fee (Advance)',
+                'amount'   => $hostelAmount,
+                'type'     => 'hostel',
+                'category' => 'services',
+            ];
+        }
+
         if (isset($validated['inventory_items']) && is_array($validated['inventory_items'])) {
             $inventoryTotal = array_reduce($validated['inventory_items'], fn($carry, $item) => $carry + (($item['price'] ?? 0) * ($item['quantity'] ?? 1)), 0);
             $total += $inventoryTotal;
@@ -1017,7 +1020,7 @@ public function update(Request $request, $id): JsonResponse
 
         // Calculate total amount using FeeCalculationEngine
         $total = 0;
-        $feeBreakdown = null;
+        $feeBreakdown = [];
 
         if (!empty($validated['admission_head_id'])) {
             // Use the engine for deterministic, profile-aware fee calculation
@@ -1030,46 +1033,49 @@ public function update(Request $request, $id): JsonResponse
                 $validated['fee_regulation_profile_id'] ?? null
             );
             $total = $engineResult['gross']; // Use gross, discount is tracked separately
-            $feeBreakdown = $engineResult['items'];
+            $feeBreakdown = $engineResult['items'] ?? [];
             if (!empty($engineResult['profile_id'])) {
                 $validated['fee_regulation_profile_id'] = $engineResult['profile_id'];
             }
-        }
-
-        // Add transport and hostel on top of the engine-computed fee
-        if (!empty($validated['transport_amount'])) {
-            $transportAmount = (float) $validated['transport_amount'];
-            $total += $transportAmount;
-            if (is_array($feeBreakdown)) {
-                $feeBreakdown[] = [
-                    'name'     => 'Transport Fee (Advance)',
-                    'amount'   => $transportAmount,
-                    'type'     => 'transport',
-                    'category' => 'services',
-                ];
-            }
-        }
-        if (!empty($validated['hostel_required']) && !empty($validated['hostel_amount'])) {
-            $hostelAmount = (float) $validated['hostel_amount'];
-            $total += $hostelAmount;
-            if (is_array($feeBreakdown)) {
-                $feeBreakdown[] = [
-                    'name'     => 'Hostel Fee (Advance)',
-                    'amount'   => $hostelAmount,
-                    'type'     => 'hostel',
-                    'category' => 'services',
-                ];
-            }
-        }
-
-        // If engine had no rules (e.g. no admission head), fall back to fees[] array
-        if ($feeBreakdown === null && isset($validated['fees']) && is_array($validated['fees'])) {
+        } elseif (isset($validated['fees']) && is_array($validated['fees'])) {
+            // If engine had no rules (e.g. no admission head), fall back to fees[] array
             $feeBreakdown = $this->admissionFeeBreakdownNormalizer->normalize($validated['fees']);
             $total += array_reduce($feeBreakdown, function ($carry, $item) {
                 // For gross total, only sum up positive charges, ignore discount items
                 return $carry + (($item['category'] === 'discount') ? 0 : (float) ($item['amount'] ?? 0));
             }, 0);
         }
+
+        // Auto-resolve hostel_amount if hostel_required and hostel_room_id provided but hostel_amount empty
+        if (!empty($validated['hostel_required']) && !empty($validated['hostel_room_id']) && empty($validated['hostel_amount'])) {
+            $room = \App\Models\HostelRoom::find($validated['hostel_room_id']);
+            if ($room && $room->monthly_fee > 0) {
+                $validated['hostel_amount'] = (float) $room->monthly_fee;
+            }
+        }
+
+        // Add transport and hostel on top of the fee
+        if (!empty($validated['transport_amount'])) {
+            $transportAmount = (float) $validated['transport_amount'];
+            $total += $transportAmount;
+            $feeBreakdown[] = [
+                'name'     => 'Transport Fee (Advance)',
+                'amount'   => $transportAmount,
+                'type'     => 'transport',
+                'category' => 'services',
+            ];
+        }
+        if (!empty($validated['hostel_required']) && !empty($validated['hostel_amount'])) {
+            $hostelAmount = (float) $validated['hostel_amount'];
+            $total += $hostelAmount;
+            $feeBreakdown[] = [
+                'name'     => 'Hostel Fee (Advance)',
+                'amount'   => $hostelAmount,
+                'type'     => 'hostel',
+                'category' => 'services',
+            ];
+        }
+
         if (isset($validated['inventory_items']) && is_array($validated['inventory_items'])) {
             $inventoryTotal = array_reduce($validated['inventory_items'], fn($carry, $item) => $carry + (($item['price'] ?? 0) * ($item['quantity'] ?? 1)), 0);
             $total += $inventoryTotal;

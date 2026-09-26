@@ -1148,8 +1148,8 @@ class FeeCollectionService
         }
 
         // Also check by name and normalized mobile for any duplicate/original student user in the same institution
-        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?? ''));
-        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?: $student->studentProfile?->mobile ?: ''));
+        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : '';
         if (!empty($last10)) {
             $otherUserIds = User::where('institution_id', $institutionId)
                 ->where('id', '!=', $studentId)
@@ -1157,7 +1157,12 @@ class FeeCollectionService
                 ->where(function ($q) use ($last10) {
                     $q->where('mobile', $last10)
                       ->orWhere('mobile', '+91' . $last10)
-                      ->orWhere('mobile', '91' . $last10);
+                      ->orWhere('mobile', '91' . $last10)
+                      ->orWhereHas('studentProfile', function ($sp) use ($last10) {
+                          $sp->where('mobile', $last10)
+                             ->orWhere('mobile', '+91' . $last10)
+                             ->orWhere('mobile', '91' . $last10);
+                      });
                 })
                 ->pluck('id');
             $linkedUserIds = $linkedUserIds->merge($otherUserIds);
@@ -1201,25 +1206,77 @@ class FeeCollectionService
             return $student;
         }
 
-        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?? ''));
-        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+        // 1. If this student user record itself was in this session (via transitions, enrollments, fee payments, etc.),
+        // then this user IS the student of that session.
+        $hasSessionRecords = \App\Models\StudentTransition::where('user_id', $student->id)
+            ->where(function ($q) use ($sessionId) {
+                $q->where('from_session_id', $sessionId)
+                  ->orWhere('to_session_id', $sessionId);
+            })->exists()
+            || \Illuminate\Support\Facades\DB::table('lms_class_enrollments')
+                ->join('lms_classes', 'lms_class_enrollments.lms_class_id', '=', 'lms_classes.id')
+                ->where('lms_class_enrollments.user_id', $student->id)
+                ->where('lms_classes.session_id', $sessionId)
+                ->exists()
+            || \Illuminate\Support\Facades\DB::table('student_fee_period_balances')
+                ->where('user_id', $student->id)
+                ->where('session_id', $sessionId)
+                ->exists()
+            || \App\Models\FeePayment::where('user_id', $student->id)
+                ->where('session_id', $sessionId)
+                ->exists();
 
-        $linkedUser = User::where('institution_id', $institutionId)
-            ->where('id', '!=', $student->id)
-            ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
-            ->where(function ($q) use ($last10) {
-                if (!empty($last10)) {
+        if ($hasSessionRecords) {
+            return $student;
+        }
+
+        // 2. If this student has re-admission applications that explicitly linked an original student profile ID
+        $readmissionApps = AdmissionApplication::where('user_id', $student->id)
+            ->where('application_type', 're-admission')
+            ->get();
+
+        foreach ($readmissionApps as $rApp) {
+            $origProfileId = $rApp->student_profile_id ?? ($rApp->subject_preferences['student_profile_id'] ?? null);
+            if ($origProfileId) {
+                $origProfile = StudentProfile::find($origProfileId);
+                if ($origProfile && (int) $origProfile->session_id === (int) $sessionId && $origProfile->user_id && (int) $origProfile->user_id !== (int) $student->id) {
+                    $origUser = User::find($origProfile->user_id);
+                    if ($origUser) {
+                        return $origUser;
+                    }
+                }
+            }
+        }
+
+        // 3. Fallback: match by name and verified 10-digit mobile number across users and student_profiles
+        $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?: $student->studentProfile?->mobile ?: ''));
+        $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : '';
+
+        if (!empty($last10)) {
+            $linkedUser = User::where('institution_id', $institutionId)
+                ->where('id', '!=', $student->id)
+                ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
+                ->where(function ($q) use ($last10) {
                     $q->where('mobile', $last10)
                       ->orWhere('mobile', '+91' . $last10)
-                      ->orWhere('mobile', '91' . $last10);
-                }
-            })
-            ->whereHas('studentProfile', function ($q) use ($sessionId) {
-                $q->where('session_id', $sessionId);
-            })
-            ->first();
+                      ->orWhere('mobile', '91' . $last10)
+                      ->orWhereHas('studentProfile', function ($sp) use ($last10) {
+                          $sp->where('mobile', $last10)
+                             ->orWhere('mobile', '+91' . $last10)
+                             ->orWhere('mobile', '91' . $last10);
+                      });
+                })
+                ->whereHas('studentProfile', function ($q) use ($sessionId) {
+                    $q->where('session_id', $sessionId);
+                })
+                ->first();
 
-        return $linkedUser ?? $student;
+            if ($linkedUser) {
+                return $linkedUser;
+            }
+        }
+
+        return $student;
     }
 
     public function resolveFrequencyForStudent(User $student, int $institutionId, ?LmsClass $class = null): string

@@ -93,9 +93,7 @@ export function useReadmissionFormStore(): UseFormReturn<ApplicationDeskFormValu
         return () => {
             subscription.unsubscribe();
             if (timerRef.current) clearTimeout(timerRef.current);
-            if (latestValuesRef.current) {
-                persist(latestValuesRef.current);
-            }
+            persist(form.getValues());
         };
     }, [form, persist]);
 
@@ -116,6 +114,7 @@ export function useReadmissionFormStore(): UseFormReturn<ApplicationDeskFormValu
     const saveNow = useCallback(() => {
         if (timerRef.current) clearTimeout(timerRef.current);
         const current = form.getValues();
+        latestValuesRef.current = current;
         persist(current);
     }, [form, persist]);
 

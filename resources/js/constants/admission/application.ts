@@ -40,6 +40,8 @@ export const APPLICATION_DESK_FORM_DEFAULT_VALUES = {
   government_portal_name: "",
   has_tc: false,
   hostel_required: false,
+  hostel_id: "" as string | number,
+  hostel_room_id: "" as string | number,
   hostel_amount: 0,
   mobile: "",
   email: "",

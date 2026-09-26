@@ -415,20 +415,20 @@ export function useServicesStep() {
 
   const handleHostelChange = useCallback(
     (val: any) => {
-      setValue("hostel_id" as any, val || null);
-      setValue("hostel_room_id" as any, null);
-      setValue("hostel_amount" as any, 0);
+      setValue("hostel_id" as any, val || null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+      setValue("hostel_room_id" as any, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+      setValue("hostel_amount" as any, 0, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
     },
     [setValue]
   );
 
   const handleHostelRoomChange = useCallback(
     (val: any, meta?: any) => {
-      setValue("hostel_room_id" as any, val || null);
+      setValue("hostel_room_id" as any, val || null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
       if (meta && meta.raw && meta.raw.monthly_fee !== undefined) {
-        setValue("hostel_amount" as any, Number(meta.raw.monthly_fee) || 0);
+        setValue("hostel_amount" as any, Number(meta.raw.monthly_fee) || 0, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
       } else {
-        setValue("hostel_amount" as any, 0);
+        setValue("hostel_amount" as any, 0, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
       }
     },
     [setValue]

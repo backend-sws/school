@@ -395,7 +395,7 @@ const ApplicationsNew = () => {
       hostel_required: values.hostel_required ?? undefined,
       hostel_id: values.hostel_id ? Number(values.hostel_id) : undefined,
       hostel_room_id: values.hostel_room_id ? Number(values.hostel_room_id) : undefined,
-      hostel_amount: values.hostel_amount ? Number(values.hostel_amount) : undefined,
+      hostel_amount: values.hostel_amount !== "" && values.hostel_amount !== undefined ? Number(values.hostel_amount) : undefined,
       medical_condition: values.medical_condition || undefined,
       disability: values.disability || undefined,
       allergy: values.allergy || undefined,

@@ -140,8 +140,8 @@ export const applicationDeskFormSchema = z
     government_portal_name: safeOptionalString(200, "Government portal name"),
     // Hostel
     hostel_required: z.boolean().default(false),
-    hostel_id: z.coerce.number().nullable().optional(),
-    hostel_room_id: z.coerce.number().nullable().optional(),
+    hostel_id: z.union([z.string(), z.number()]).nullable().optional(),
+    hostel_room_id: z.union([z.string(), z.number()]).nullable().optional(),
     hostel_amount: numericStringOptional(),
 
     // Contact – mobile and email required (preprocess so undefined becomes "" and we get a clear validation message)

@@ -92,11 +92,9 @@ export function useAdmissionFormStore(): UseFormReturn<ApplicationDeskFormValues
 
         return () => {
             subscription.unsubscribe();
-            // Cancel pending debounce and flush immediately
+            // Cancel pending debounce and flush immediately with freshest form values
             if (timerRef.current) clearTimeout(timerRef.current);
-            if (latestValuesRef.current) {
-                persist(latestValuesRef.current);
-            }
+            persist(form.getValues());
         };
     }, [form, persist]);
 
@@ -119,6 +117,7 @@ export function useAdmissionFormStore(): UseFormReturn<ApplicationDeskFormValues
     const saveNow = useCallback(() => {
         if (timerRef.current) clearTimeout(timerRef.current);
         const current = form.getValues();
+        latestValuesRef.current = current;
         persist(current);
     }, [form, persist]);
 

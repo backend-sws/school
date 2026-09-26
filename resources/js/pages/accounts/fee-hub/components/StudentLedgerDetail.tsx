@@ -404,6 +404,8 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
             setAdHocForm({ name: "", amount: "", remarks: "" });
             queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
             queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+            queryClient.invalidateQueries({ queryKey: ["dues-overdue"] });
         },
         onError: (err: any) => toast.error(err.response?.data?.message || "Failed to add ad-hoc charge."),
     });
@@ -422,6 +424,8 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
             setAdHocForm({ name: "", amount: "", remarks: "" });
             queryClient.invalidateQueries({ queryKey: ["student-ledger-matrix", studentId] });
             queryClient.invalidateQueries({ queryKey: ["student-ledger-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["students-list"] });
+            queryClient.invalidateQueries({ queryKey: ["dues-overdue"] });
         },
         onError: (err: any) => toast.error(err.response?.data?.message || "Failed to update ad-hoc charge."),
     });
