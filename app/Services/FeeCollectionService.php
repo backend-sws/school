@@ -294,7 +294,7 @@ class FeeCollectionService
         $oneTimeCharges = $feeBreakdown['one_time_charges'] ?? [];
 
         // Respect custom fee type exclusions & locked amounts from student's individual admission/readmission fee breakdown snapshot
-        if ($admissionApp && is_array($admissionApp->fee_breakdown) && !empty($admissionApp->fee_breakdown) && !empty($allParticulars)) {
+        if ($admissionApp && is_array($admissionApp->fee_breakdown) && !empty($admissionApp->fee_breakdown)) {
             $safeName = function($name) {
                 if (is_array($name)) {
                     $name = $name['en'] ?? $name['name'] ?? reset($name) ?? '';
@@ -302,45 +302,73 @@ class FeeCollectionService
                 return strtolower(trim((string) $name));
             };
 
-            $allowedNames = collect($admissionApp->fee_breakdown)
-                ->pluck('name')
-                ->filter()
-                ->map(fn($n) => $safeName($n))
-                ->all();
+            // Only filter recurring fee particulars if the admission application actually specified recurring items
+            $appRecurringItems = collect($admissionApp->fee_breakdown)
+                ->filter(fn($item) => ($item['category'] ?? '') === 'recurring')
+                ->values();
 
-            $appAmountMap = [];
-            foreach ($admissionApp->fee_breakdown as $item) {
-                $name = $safeName($item['name'] ?? '');
-                if ($name && isset($item['amount'])) {
-                    $appAmountMap[$name] = (float) $item['amount'];
+            if ($appRecurringItems->isNotEmpty() && !empty($allParticulars)) {
+                $allowedRecurringNames = $appRecurringItems
+                    ->pluck('name')
+                    ->filter()
+                    ->map(fn($n) => $safeName($n))
+                    ->all();
+
+                $appRecurringAmountMap = [];
+                foreach ($appRecurringItems as $item) {
+                    $name = $safeName($item['name'] ?? '');
+                    if ($name && isset($item['amount'])) {
+                        $appRecurringAmountMap[$name] = (float) $item['amount'];
+                    }
                 }
+
+                $allParticulars = collect($allParticulars)->filter(function ($item) use ($allowedRecurringNames, $safeName) {
+                    $name = $safeName($item['name'] ?? '');
+                    return in_array($name, $allowedRecurringNames);
+                })->map(function ($item) use ($appRecurringAmountMap, $safeName) {
+                    $name = $safeName($item['name'] ?? '');
+                    if (isset($appRecurringAmountMap[$name])) {
+                        $item['amount'] = $appRecurringAmountMap[$name];
+                    }
+                    return $item;
+                })->values()->all();
+
+                // Re-calculate the expected net/gross values based on the filtered list of fees
+                $grossExpected = collect($allParticulars)->sum('amount');
+                $periodExpected = $grossExpected;
             }
 
-            $allParticulars = collect($allParticulars)->filter(function ($item) use ($allowedNames, $safeName) {
-                $name = $safeName($item['name'] ?? '');
-                return in_array($name, $allowedNames);
-            })->map(function ($item) use ($appAmountMap, $safeName) {
-                $name = $safeName($item['name'] ?? '');
-                if (isset($appAmountMap[$name])) {
-                    $item['amount'] = $appAmountMap[$name];
-                }
-                return $item;
-            })->values()->all();
+            // Only filter one-time charges if the admission application specified one-time charges
+            $appOneTimeItems = collect($admissionApp->fee_breakdown)
+                ->filter(fn($item) => in_array($item['category'] ?? '', ['one_time', 'inventory', 'refundable', 'mandatory', 'charge']))
+                ->values();
 
-            $oneTimeCharges = collect($oneTimeCharges)->filter(function ($item) use ($allowedNames, $safeName) {
-                $name = $safeName($item['name'] ?? '');
-                return in_array($name, $allowedNames);
-            })->map(function ($item) use ($appAmountMap, $safeName) {
-                $name = $safeName($item['name'] ?? '');
-                if (isset($appAmountMap[$name])) {
-                    $item['amount'] = $appAmountMap[$name];
-                }
-                return $item;
-            })->values()->all();
+            if ($appOneTimeItems->isNotEmpty() && !empty($oneTimeCharges)) {
+                $allowedOneTimeNames = $appOneTimeItems
+                    ->pluck('name')
+                    ->filter()
+                    ->map(fn($n) => $safeName($n))
+                    ->all();
 
-            // Re-calculate the expected net/gross values based on the filtered list of fees
-            $grossExpected = collect($allParticulars)->sum('amount');
-            $periodExpected = $grossExpected;
+                $appOneTimeAmountMap = [];
+                foreach ($appOneTimeItems as $item) {
+                    $name = $safeName($item['name'] ?? '');
+                    if ($name && isset($item['amount'])) {
+                        $appOneTimeAmountMap[$name] = (float) $item['amount'];
+                    }
+                }
+
+                $oneTimeCharges = collect($oneTimeCharges)->filter(function ($item) use ($allowedOneTimeNames, $safeName) {
+                    $name = $safeName($item['name'] ?? '');
+                    return in_array($name, $allowedOneTimeNames);
+                })->map(function ($item) use ($appOneTimeAmountMap, $safeName) {
+                    $name = $safeName($item['name'] ?? '');
+                    if (isset($appOneTimeAmountMap[$name])) {
+                        $item['amount'] = $appOneTimeAmountMap[$name];
+                    }
+                    return $item;
+                })->values()->all();
+            }
         }
 
 
@@ -1147,13 +1175,26 @@ class FeeCollectionService
             }
         }
 
-        // Also check by name and normalized mobile for any duplicate/original student user in the same institution
+        // Also check by name, soundex, father name and normalized mobile for any duplicate/original student user in the same institution
         $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?: $student->studentProfile?->mobile ?: ''));
         $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : '';
+        $studentName = strtolower(trim((string) $student->name));
+        $fatherName = strtolower(trim((string) ($student->studentProfile?->father_name ?? '')));
+
         if (!empty($last10)) {
             $otherUserIds = User::where('institution_id', $institutionId)
                 ->where('id', '!=', $studentId)
-                ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
+                ->where(function ($q) use ($studentName, $fatherName) {
+                    $q->where(function ($nq) use ($studentName) {
+                        $nq->whereRaw('LOWER(TRIM(name)) = ?', [$studentName])
+                           ->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$studentName]);
+                    });
+                    if (!empty($fatherName)) {
+                        $q->whereHas('studentProfile', function ($sp) use ($fatherName) {
+                            $sp->whereRaw('LOWER(TRIM(father_name)) = ?', [$fatherName]);
+                        });
+                    }
+                })
                 ->where(function ($q) use ($last10) {
                     $q->where('mobile', $last10)
                       ->orWhere('mobile', '+91' . $last10)
@@ -1181,6 +1222,27 @@ class FeeCollectionService
         $sessions = $sessions->merge($transitions->pluck('from_session_id'))
                              ->merge($transitions->pluck('to_session_id'));
 
+        // Include preceding session for re-admitted students if from_session_id was null
+        foreach ($transitions as $tr) {
+            if ($tr->type === 'readmission' && $tr->to_session_id) {
+                if ($tr->from_session_id) {
+                    $sessions->push($tr->from_session_id);
+                } else {
+                    $toSess = Session::withoutGlobalScope('institution_scope')->find($tr->to_session_id);
+                    if ($toSess) {
+                        $prevSessId = Session::withoutGlobalScope('institution_scope')
+                            ->where('institution_id', $institutionId)
+                            ->where('start_year', '<', $toSess->start_year)
+                            ->orderByDesc('start_year')
+                            ->value('id');
+                        if ($prevSessId) {
+                            $sessions->push($prevSessId);
+                        }
+                    }
+                }
+            }
+        }
+
         // 4. lms_class_enrollments
         $classSessions = \Illuminate\Support\Facades\DB::table('lms_class_enrollments')
             ->join('lms_classes', 'lms_class_enrollments.lms_class_id', '=', 'lms_classes.id')
@@ -1206,13 +1268,12 @@ class FeeCollectionService
             return $student;
         }
 
-        // 1. If this student user record itself was in this session (via transitions, enrollments, fee payments, etc.),
-        // then this user IS the student of that session.
-        $hasSessionRecords = \App\Models\StudentTransition::where('user_id', $student->id)
-            ->where(function ($q) use ($sessionId) {
-                $q->where('from_session_id', $sessionId)
-                  ->orWhere('to_session_id', $sessionId);
-            })->exists()
+        $targetSession = Session::withoutGlobalScope('institution_scope')->find($sessionId);
+
+        // 1. If this student user record itself had an active profile, class enrollment, or balance in that session
+        $hasSessionRecords = StudentProfile::where('user_id', $student->id)
+            ->where('session_id', $sessionId)
+            ->exists()
             || \Illuminate\Support\Facades\DB::table('lms_class_enrollments')
                 ->join('lms_classes', 'lms_class_enrollments.lms_class_id', '=', 'lms_classes.id')
                 ->where('lms_class_enrollments.user_id', $student->id)
@@ -1220,9 +1281,6 @@ class FeeCollectionService
                 ->exists()
             || \Illuminate\Support\Facades\DB::table('student_fee_period_balances')
                 ->where('user_id', $student->id)
-                ->where('session_id', $sessionId)
-                ->exists()
-            || \App\Models\FeePayment::where('user_id', $student->id)
                 ->where('session_id', $sessionId)
                 ->exists();
 
@@ -1248,14 +1306,26 @@ class FeeCollectionService
             }
         }
 
-        // 3. Fallback: match by name and verified 10-digit mobile number across users and student_profiles
+        // 3. Fallback: match by name, soundex, father name and verified 10-digit mobile number across users and student_profiles
         $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?: $student->studentProfile?->mobile ?: ''));
         $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : '';
+        $studentName = strtolower(trim((string) $student->name));
+        $fatherName = strtolower(trim((string) ($student->studentProfile?->father_name ?? '')));
 
         if (!empty($last10)) {
             $linkedUser = User::where('institution_id', $institutionId)
                 ->where('id', '!=', $student->id)
-                ->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($student->name))])
+                ->where(function ($q) use ($studentName, $fatherName) {
+                    $q->where(function ($nq) use ($studentName) {
+                        $nq->whereRaw('LOWER(TRIM(name)) = ?', [$studentName])
+                           ->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$studentName]);
+                    });
+                    if (!empty($fatherName)) {
+                        $q->whereHas('studentProfile', function ($sp) use ($fatherName) {
+                            $sp->whereRaw('LOWER(TRIM(father_name)) = ?', [$fatherName]);
+                        });
+                    }
+                })
                 ->where(function ($q) use ($last10) {
                     $q->where('mobile', $last10)
                       ->orWhere('mobile', '+91' . $last10)
@@ -1574,8 +1644,18 @@ class FeeCollectionService
                 $type = (string) ($item['type'] ?? '');
                 $category = (string) ($item['category'] ?? '');
 
+                $name = strtolower((string) ($item['name'] ?? ''));
+
                 if ($category === 'discount') {
                     $discount += $amount;
+                } elseif ($type === 'transport' || $category === 'transport' || preg_match('/\b(transport|bus|van)\b/i', $name)) {
+                    if ($transportFee <= 0) {
+                        $transportFee = $amount;
+                    }
+                } elseif ($type === 'hostel' || $category === 'hostel' || preg_match('/\b(hostel|mess)\b/i', $name)) {
+                    if ($hostelFee <= 0) {
+                        $hostelFee = $amount;
+                    }
                 } elseif ($type === 'inventory' || $category === 'inventory') {
                     $otherFees += $amount;
                 } elseif ($category === 'admission' || $category === 'mandatory' || $category === 'one_time' || $type === 'charge') {

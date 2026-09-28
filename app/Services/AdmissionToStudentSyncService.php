@@ -260,6 +260,16 @@ class AdmissionToStudentSyncService
         if ($this->isReadmission($app) && $context['sessionId']) {
             $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
             $resolvedFromSession = $fromSessionId ?: ($prefs['from_session_id'] ?? null);
+            if (!$resolvedFromSession) {
+                $currentSess = Session::withoutGlobalScope('institution_scope')->find($context['sessionId']);
+                if ($currentSess) {
+                    $resolvedFromSession = Session::withoutGlobalScope('institution_scope')
+                        ->where('institution_id', $app->institution_id)
+                        ->where('start_year', '<', $currentSess->start_year)
+                        ->orderByDesc('start_year')
+                        ->value('id');
+                }
+            }
 
             // Safely resolve from_class_id to ensure it references an existing LmsClass or null
             $fromClassCandidate = $fromClassId ?: ($prefs['from_class_id'] ?? null);

@@ -1441,7 +1441,13 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                     render={(pName) => {
                                                         const ep = (row.expected_particulars || []).find((ep: any) => ep.name === pName);
                                                         const isFallbackFees = pName === "Fees" && allParticulars.length === 1 && !ep;
-                                                        const pValue = ep?.amount ?? (isFallbackFees ? (row.monthly_total ?? row.total_payable ?? 0) : 0);
+                                                        const fallbackAcademicFee = Math.max(
+                                                            0,
+                                                            Number(row.monthly_total ?? 0) - 
+                                                            (row.admission_fee > 0 ? 0 : Number(row.transport_fee ?? 0)) - 
+                                                            (row.admission_fee > 0 ? 0 : Number(row.hostel_fee ?? 0))
+                                                        );
+                                                        const pValue = ep?.amount ?? (isFallbackFees ? fallbackAcademicFee : 0);
                                                         const isAdHoc = ep?.type === "ad_hoc";
                                                         const isMonthlyFee = pName.toLowerCase().includes("monthly") || pName.toLowerCase() === "fees" || pName.toLowerCase() === "tuition" || pName.toLowerCase() === "tuition fee";
 
