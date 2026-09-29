@@ -762,19 +762,14 @@ class FeeCollectionService
                     $monthExpected += $tAmount;
                     $monthGross += $tAmount;
                 }
-            } 
-            
-            if ($tAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0) {
-                // Fallback: if no active transport assignment record covers this period for this student,
-                // apply the admission recurring transport amount for the entire academic year
-                $hasActiveTransportInPeriod = $studentTransports->contains(function ($t) use ($monthStart, $monthEnd) {
-                    return $t->effective_from <= $monthEnd && (is_null($t->effective_until) || $t->effective_until->copy()->endOfDay() >= $monthStart);
-                });
-                if (!$hasActiveTransportInPeriod) {
-                    $tAmount = (float) $admissionSummary['transport_amount'] * $monthsInPeriod;
-                    $monthExpected += $tAmount;
-                    $monthGross += $tAmount;
-                }
+            }
+
+            if ($tAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['transport_amount'] ?? 0) > 0 && $studentTransports->isEmpty()) {
+                // Fallback: ONLY if no transport assignment record was ever created for this student,
+                // apply the admission recurring transport amount
+                $tAmount = (float) $admissionSummary['transport_amount'] * $monthsInPeriod;
+                $monthExpected += $tAmount;
+                $monthGross += $tAmount;
             }
 
             // Check Hostel Allocation
@@ -795,17 +790,12 @@ class FeeCollectionService
                 }
             }
             
-            if ($hAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0) {
-                // Fallback: if no active hostel allocation record covers this period for this student,
-                // apply the admission recurring hostel amount for the entire academic year
-                $hasActiveHostelInPeriod = $studentHostels->contains(function ($h) use ($monthStart, $monthEnd) {
-                    return $h->check_in_date <= $monthEnd && (is_null($h->check_out_date) || $h->check_out_date->copy()->endOfDay() >= $monthStart);
-                });
-                if (!$hasActiveHostelInPeriod) {
-                    $hAmount = (float) $admissionSummary['hostel_amount'] * $monthsInPeriod;
-                    $monthExpected += $hAmount;
-                    $monthGross += $hAmount;
-                }
+            if ($hAmount <= 0 && $i !== $admissionPeriodIndex && ($admissionSummary['hostel_amount'] ?? 0) > 0 && $studentHostels->isEmpty()) {
+                // Fallback: ONLY if no hostel allocation record was ever created for this student,
+                // apply the admission recurring hostel amount
+                $hAmount = (float) $admissionSummary['hostel_amount'] * $monthsInPeriod;
+                $monthExpected += $hAmount;
+                $monthGross += $hAmount;
             }
 
             // Check Ad-Hoc Charges for this period
