@@ -302,12 +302,22 @@ class FeeCollectionService
                 return strtolower(trim((string) $name));
             };
 
-            // Only filter recurring fee particulars if the admission application actually specified recurring items
-            $appRecurringItems = collect($admissionApp->fee_breakdown)
-                ->filter(fn($item) => ($item['category'] ?? '') === 'recurring')
-                ->values();
+            $isMonthlyTuition = function($name) use ($safeName) {
+                $clean = $safeName($name);
+                return in_array($clean, ['monthly fee', 'fees', 'tuition', 'tuition fee', 'monthly tuition', 'academic fee', 'course fee']);
+            };
 
-            if ($appRecurringItems->isNotEmpty() && !empty($allParticulars)) {
+            // 1. Recurring tuition particulars (e.g. "Monthly Fee")
+            $appRecurringItems = collect($admissionApp->fee_breakdown)->filter(function ($item) use ($isMonthlyTuition) {
+                $type = strtolower((string) ($item['type'] ?? ''));
+                $cat = strtolower((string) ($item['category'] ?? ''));
+                if (in_array($type, ['transport', 'hostel', 'discount']) || in_array($cat, ['transport', 'hostel', 'discount', 'inventory'])) {
+                    return false;
+                }
+                return $isMonthlyTuition($item['name'] ?? '');
+            })->values();
+
+            if ($appRecurringItems->isNotEmpty()) {
                 $allowedRecurringNames = $appRecurringItems
                     ->pluck('name')
                     ->filter()
@@ -322,120 +332,66 @@ class FeeCollectionService
                     }
                 }
 
-                $allParticulars = collect($allParticulars)->filter(function ($item) use ($allowedRecurringNames, $safeName) {
-                    $name = $safeName($item['name'] ?? '');
-                    return in_array($name, $allowedRecurringNames);
-                })->map(function ($item) use ($appRecurringAmountMap, $safeName) {
-                    $name = $safeName($item['name'] ?? '');
-                    if (isset($appRecurringAmountMap[$name])) {
-                        $item['amount'] = $appRecurringAmountMap[$name];
+                if (!empty($allParticulars)) {
+                    $allParticulars = collect($allParticulars)->filter(function ($item) use ($allowedRecurringNames, $safeName) {
+                        $name = $safeName($item['name'] ?? '');
+                        return in_array($name, $allowedRecurringNames);
+                    })->map(function ($item) use ($appRecurringAmountMap, $safeName) {
+                        $name = $safeName($item['name'] ?? '');
+                        if (isset($appRecurringAmountMap[$name])) {
+                            $item['amount'] = $appRecurringAmountMap[$name];
+                        }
+                        return $item;
+                    })->values()->all();
+                }
+
+                if (empty($allParticulars)) {
+                    foreach ($appRecurringItems as $item) {
+                        $allParticulars[] = [
+                            'fee_type_id' => $item['fee_type_id'] ?? null,
+                            'name'        => is_array($item['name'] ?? '') ? ($item['name']['en'] ?? $item['name']['name'] ?? reset($item['name']) ?? 'Fee') : ($item['name'] ?? 'Fee'),
+                            'amount'      => (float) ($item['amount'] ?? 0),
+                            'type'        => 'charge',
+                            'category'    => 'recurring',
+                        ];
                     }
-                    return $item;
-                })->values()->all();
+                }
 
                 // Re-calculate the expected net/gross values based on the filtered list of fees
                 $grossExpected = collect($allParticulars)->sum('amount');
                 $periodExpected = $grossExpected;
             }
 
-            // Only filter one-time charges if the admission application specified one-time charges
-            $appOneTimeItems = collect($admissionApp->fee_breakdown)
-                ->filter(fn($item) => in_array($item['category'] ?? '', ['one_time', 'inventory', 'refundable', 'mandatory', 'charge']))
-                ->values();
+            // 2. One-time admission items (Books, 3 in One Copy, Hindi Copy, Re-Registration Fee, Uniform, etc.)
+            $appOneTimeItems = collect($admissionApp->fee_breakdown)->filter(function ($item) use ($isMonthlyTuition, $safeName) {
+                $type = strtolower((string) ($item['type'] ?? ''));
+                $cat = strtolower((string) ($item['category'] ?? ''));
+                $name = $safeName($item['name'] ?? '');
 
-            if ($appOneTimeItems->isNotEmpty() && !empty($oneTimeCharges)) {
-                $allowedOneTimeNames = $appOneTimeItems
-                    ->pluck('name')
-                    ->filter()
-                    ->map(fn($n) => $safeName($n))
-                    ->all();
-
-                $appOneTimeAmountMap = [];
-                foreach ($appOneTimeItems as $item) {
-                    $name = $safeName($item['name'] ?? '');
-                    if ($name && isset($item['amount'])) {
-                        $appOneTimeAmountMap[$name] = (float) $item['amount'];
-                    }
-                }
-
-                $oneTimeCharges = collect($oneTimeCharges)->filter(function ($item) use ($allowedOneTimeNames, $safeName) {
-                    $name = $safeName($item['name'] ?? '');
-                    return in_array($name, $allowedOneTimeNames);
-                })->map(function ($item) use ($appOneTimeAmountMap, $safeName) {
-                    $name = $safeName($item['name'] ?? '');
-                    if (isset($appOneTimeAmountMap[$name])) {
-                        $item['amount'] = $appOneTimeAmountMap[$name];
-                    }
-                    return $item;
-                })->values()->all();
-            }
-        }
-
-
-        // If the engine returned no recurring fees (e.g. missing profile), fallback to the admission application's recurring items
-        // so they correctly appear in the matrix as separate columns (Tuition, Electricity, etc)
-        if ($admissionApp && empty($allParticulars) && is_array($admissionApp->fee_breakdown)) {
-            $fallbackGross = 0;
-            
-            foreach ($admissionApp->fee_breakdown as $item) {
-                $category = $item['category'] ?? '';
-                if ($category === 'recurring') {
-                    $amt = (float) ($item['amount'] ?? 0);
-                    $allParticulars[] = [
-                        'name'     => $item['name'] ?? 'Fee',
-                        'amount'   => $amt,
-                        'type'     => $item['type'] ?? 'charge',
-                        'category' => $category,
-                    ];
-                    
-                    $fallbackGross += $amt;
-                }
-            }
-
-            if (!empty($allParticulars)) {
-                $grossExpected = $fallbackGross;
-                $totalDiscount = 0; // Discounts from admission will be handled as one-time
-                $periodExpected = $fallbackGross; 
-            }
-        }
-
-        if ($admissionApp && is_array($admissionApp->fee_breakdown)) {
-            $safeName = function($name) {
-                if (is_array($name)) {
-                    $name = $name['en'] ?? $name['name'] ?? reset($name) ?? '';
-                }
-                return strtolower(trim((string) $name));
-            };
-
-            $appCharges = collect($admissionApp->fee_breakdown)
-                ->filter(function ($item) {
-                    $cat = $item['category'] ?? '';
-                    return in_array($cat, ['one_time', 'refundable', 'inventory']);
-                })
-                ->map(function ($item) {
-                    return [
-                        'fee_type_id' => $item['fee_type_id'] ?? null,
-                        'name'        => $item['name'] ?? 'Fee',
-                        'amount'      => (float) ($item['amount'] ?? 0),
-                        'category'    => $item['category'] ?? 'one_time',
-                    ];
-                })->values()->all();
-
-            $appFeeTypeIds = collect($appCharges)->pluck('fee_type_id')->filter()->all();
-            $appNames = collect($appCharges)->pluck('name')->filter()->map(fn($n) => $safeName($n))->all();
-
-            $oneTimeCharges = collect($oneTimeCharges)->filter(function ($item) use ($appFeeTypeIds, $appNames, $safeName) {
-                if (isset($item['fee_type_id']) && in_array($item['fee_type_id'], $appFeeTypeIds)) {
+                if (in_array($type, ['transport', 'hostel', 'discount']) || in_array($cat, ['transport', 'hostel', 'discount'])) {
                     return false;
                 }
-                $name = $safeName($item['name'] ?? '');
-                if ($name && in_array($name, $appNames)) {
+                if (preg_match('/\b(transport|bus|van|hostel|mess)\b/i', $name)) {
+                    return false;
+                }
+                if ($isMonthlyTuition($name)) {
                     return false;
                 }
                 return true;
+            })->map(function ($item) {
+                $cat = strtolower((string) ($item['category'] ?? ''));
+                $finalCat = in_array($cat, ['refundable', 'inventory']) ? $cat : 'one_time';
+                return [
+                    'fee_type_id' => $item['fee_type_id'] ?? null,
+                    'name'        => is_array($item['name'] ?? '') ? ($item['name']['en'] ?? $item['name']['name'] ?? reset($item['name']) ?? 'Fee') : ($item['name'] ?? 'Fee'),
+                    'amount'      => (float) ($item['amount'] ?? 0),
+                    'category'    => $finalCat,
+                ];
             })->values()->all();
 
-            $oneTimeCharges = array_merge($oneTimeCharges, $appCharges);
+            if (!empty($appOneTimeItems)) {
+                $oneTimeCharges = $appOneTimeItems;
+            }
         }
 
         // Apply per-student one-time fee overrides (by fee_type_id or charge_name)
@@ -506,7 +462,7 @@ class FeeCollectionService
                 'payment_mode'     => $admissionApp->payment_mode,
             ];
 
-            $admissionFeeDisplay = $this->resolveAdmissionFeeDisplay($admissionApp, $admissionSummary, $periodExpected);
+            $admissionFeeDisplay = $this->resolveAdmissionFeeDisplay($admissionApp, $admissionSummary, $periodExpected, $oneTimeCharges);
         }
 
         // 4. Fetch all payments (including admission payments so they show as "paid" in the ledger)
@@ -1619,47 +1575,75 @@ class FeeCollectionService
      *
      * @return array{admission_fee: float, transport_fee: float, hostel_fee: float, other_fees: float, discount: float}
      */
-    private function resolveAdmissionFeeDisplay(AdmissionApplication $admissionApp, array $admissionSummary, float $periodExpected = 0.0): array
+    private function resolveAdmissionFeeDisplay(AdmissionApplication $admissionApp, array $admissionSummary, float $periodExpected = 0.0, array $oneTimeCharges = []): array
     {
         $transportFee = (float) ($admissionSummary['transport_amount'] ?? 0);
         $hostelFee = (float) ($admissionSummary['hostel_amount'] ?? 0);
         $admissionFee = 0.0;
         $otherFees = 0.0;
-        $discount = 0.0;
+        $discount = (float) ($admissionSummary['discount_amount'] ?? 0);
 
-        $breakdown = is_array($admissionApp->fee_breakdown) ? $admissionApp->fee_breakdown : [];
-        if (! empty($breakdown)) {
-            foreach ($breakdown as $item) {
+        if (! empty($oneTimeCharges)) {
+            foreach ($oneTimeCharges as $item) {
                 $amount = (float) ($item['amount'] ?? 0);
-                $type = (string) ($item['type'] ?? '');
-                $category = (string) ($item['category'] ?? '');
+                $category = strtolower((string) ($item['category'] ?? ''));
+                if ($category === 'inventory') {
+                    $otherFees += $amount;
+                } else {
+                    $admissionFee += $amount;
+                }
+            }
 
-                $name = strtolower((string) ($item['name'] ?? ''));
+            if ($periodExpected <= 0 && is_array($admissionApp->fee_breakdown)) {
+                $isMonthlyTuition = function($name) {
+                    if (is_array($name)) {
+                        $name = $name['en'] ?? $name['name'] ?? reset($name) ?? '';
+                    }
+                    $clean = strtolower(trim((string) $name));
+                    return in_array($clean, ['monthly fee', 'fees', 'tuition', 'tuition fee', 'monthly tuition', 'academic fee', 'course fee']);
+                };
+                foreach ($admissionApp->fee_breakdown as $item) {
+                    $name = $item['name'] ?? '';
+                    if ($isMonthlyTuition($name)) {
+                        $otherFees += (float) ($item['amount'] ?? 0);
+                    }
+                }
+            }
+        } elseif (is_array($admissionApp->fee_breakdown) && ! empty($admissionApp->fee_breakdown)) {
+            $isMonthlyTuition = function($name) {
+                if (is_array($name)) {
+                    $name = $name['en'] ?? $name['name'] ?? reset($name) ?? '';
+                }
+                $clean = strtolower(trim((string) $name));
+                return in_array($clean, ['monthly fee', 'fees', 'tuition', 'tuition fee', 'monthly tuition', 'academic fee', 'course fee']);
+            };
 
-                if ($category === 'discount') {
+            foreach ($admissionApp->fee_breakdown as $item) {
+                $amount = (float) ($item['amount'] ?? 0);
+                $type = strtolower((string) ($item['type'] ?? ''));
+                $category = strtolower((string) ($item['category'] ?? ''));
+                $rawName = $item['name'] ?? '';
+                $name = is_array($rawName) ? ($rawName['en'] ?? $rawName['name'] ?? reset($rawName) ?? '') : (string) $rawName;
+                $lowerName = strtolower(trim($name));
+
+                if ($type === 'discount' || $category === 'discount') {
                     $discount += $amount;
-                } elseif ($type === 'transport' || $category === 'transport' || preg_match('/\b(transport|bus|van)\b/i', $name)) {
+                } elseif ($type === 'transport' || $category === 'transport' || preg_match('/\b(transport|bus|van)\b/i', $lowerName)) {
                     if ($transportFee <= 0) {
                         $transportFee = $amount;
                     }
-                } elseif ($type === 'hostel' || $category === 'hostel' || preg_match('/\b(hostel|mess)\b/i', $name)) {
+                } elseif ($type === 'hostel' || $category === 'hostel' || preg_match('/\b(hostel|mess)\b/i', $lowerName)) {
                     if ($hostelFee <= 0) {
                         $hostelFee = $amount;
                     }
                 } elseif ($type === 'inventory' || $category === 'inventory') {
                     $otherFees += $amount;
-                } elseif ($category === 'admission' || $category === 'mandatory' || $category === 'one_time' || $type === 'charge') {
-                    if ($category === 'recurring') {
-                        // If the engine did not generate recurring fees ($periodExpected <= 0),
-                        // we must include the ones charged during admission in other_fees to ensure Total Dues matches Paid.
-                        if ($periodExpected <= 0) {
-                            $otherFees += $amount;
-                        }
-                    } else {
-                        $admissionFee += $amount;
+                } elseif ($isMonthlyTuition($lowerName)) {
+                    if ($periodExpected <= 0) {
+                        $otherFees += $amount;
                     }
                 } else {
-                    $otherFees += $amount;
+                    $admissionFee += $amount;
                 }
             }
         } else {
