@@ -360,6 +360,12 @@ class FeeCollectionService
                 // Re-calculate the expected net/gross values based on the filtered list of fees
                 $grossExpected = collect($allParticulars)->sum('amount');
                 $periodExpected = $grossExpected;
+            } else {
+                // When admission application has a fee breakdown snapshot and recurring tuition was removed/excluded by staff,
+                // do not charge recurring tuition fee.
+                $allParticulars = [];
+                $grossExpected = 0.0;
+                $periodExpected = 0.0;
             }
 
             // 2. One-time admission items (Books, 3 in One Copy, Hindi Copy, Re-Registration Fee, Uniform, etc.)

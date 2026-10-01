@@ -433,38 +433,45 @@ class ApplicationController extends BaseController
             $cleanMobile = preg_replace('/\D/', '', (string) ($validated['mobile'] ?? ''));
             $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
 
-            // Step 0: For re-admission, explicitly check passed user_id or student_profile_id
+            $isReAdmission = ($validated['application_type'] ?? '') === 're-admission';
             $studentUser = null;
-            if (($validated['application_type'] ?? '') === 're-admission') {
+
+            // Step 0: For re-admission only, explicitly resolve the existing student user
+            if ($isReAdmission) {
                 if (!empty($validated['user_id'])) {
                     $studentUser = User::find($validated['user_id']);
                 } elseif (!empty($validated['student_profile_id'])) {
                     $studentUser = StudentProfile::find($validated['student_profile_id'])?->user;
                 }
+
+                // Fallback for re-admission if explicit IDs weren't passed: try exact contact + name match
+                if (!$studentUser) {
+                    $studentUser = User::query()
+                        ->where(function ($q) use ($validated, $last10) {
+                            if (!empty($validated['email'])) {
+                                $q->where('email', $validated['email']);
+                            }
+                            if (!empty($validated['mobile'])) {
+                                $q->orWhere('mobile', $validated['mobile']);
+                            }
+                            if (!empty($last10)) {
+                                $q->orWhere('mobile', $last10)
+                                  ->orWhere('mobile', '+91' . $last10)
+                                  ->orWhere('mobile', '91' . $last10);
+                            }
+                        })
+                        ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
+                        ->first();
+                }
             }
 
-            // Step 1: Try contact + name match (including normalized phone numbers)
-            if (!$studentUser) {
-                $studentUser = User::query()
-                    ->where(function ($q) use ($validated, $last10) {
-                        if (!empty($validated['email'])) {
-                            $q->where('email', $validated['email']);
-                        }
-                        if (!empty($validated['mobile'])) {
-                            $q->orWhere('mobile', $validated['mobile']);
-                        }
-                        if (!empty($last10)) {
-                            $q->orWhere('mobile', $last10)
-                              ->orWhere('mobile', '+91' . $last10)
-                              ->orWhere('mobile', '91' . $last10);
-                        }
-                    })
-                    ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
-                    ->first();
-            }
+            // NOTE: For 'new' admissions ($isReAdmission is false), $studentUser is ALWAYS null.
+            // A new admission represents a distinct new student and MUST create a dedicated User record.
+            // If the guardian/parent mobile/email is already taken, Step 2 below creates the student
+            // and links them to the existing user via GuardianService.
 
             if ($studentUser) {
-                Log::info('Admission desk: reusing existing user', [
+                Log::info('Admission desk: reusing existing student user for re-admission', [
                     'existing_user_id' => $studentUser->id,
                     'name' => $studentUser->name,
                     'mobile' => $validated['mobile'] ?? null,
