@@ -245,6 +245,7 @@ class HostelAllocationController extends BaseController
         }
 
         $validated = $request->validate([
+            'check_in_date' => 'sometimes|date',
             'check_out_date' => 'nullable|date|after_or_equal:check_in_date',
             'status' => 'sometimes|string|in:active,checked_out,cancelled',
             'hostel_mess_plan_id' => 'nullable|exists:hostel_mess_plans,id',

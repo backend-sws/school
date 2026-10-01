@@ -426,7 +426,7 @@ update.patch = (args: { hostel_allocation: number | { id: number } } | [hostel_a
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:293
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 export const destroy = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -441,7 +441,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:293
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 destroy.url = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -474,7 +474,7 @@ destroy.url = (args: { hostel_allocation: number | { id: number } } | [hostel_al
 
 /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:293
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
 destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -484,7 +484,7 @@ destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel
 
     /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:293
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
     const destroyForm = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -499,7 +499,7 @@ destroy.delete = (args: { hostel_allocation: number | { id: number } } | [hostel
 
             /**
 * @see \App\Http\Controllers\Api\V1\Hostel\HostelAllocationController::destroy
- * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:292
+ * @see app/Http/Controllers/Api/V1/Hostel/HostelAllocationController.php:293
  * @route '/api/v1/hostel/allocations/{hostel_allocation}'
  */
         destroyForm.delete = (args: { hostel_allocation: number | { id: number } } | [hostel_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

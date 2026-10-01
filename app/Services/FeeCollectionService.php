@@ -520,10 +520,14 @@ class FeeCollectionService
         $startDate = Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay();
 
         $chargeFromAdmMonth = $institutionSettings['charge_fees_from_admission_month'] ?? false;
-        $admissionDate = $admissionApp?->admission_date ?? $profile->admission_date ?? null;
+        $admissionDate = $admissionApp?->admission_date 
+            ?? $profile->admission_date 
+            ?? ($admissionApp?->submitted_at ? Carbon::parse($admissionApp->submitted_at) : null)
+            ?? ($admissionApp?->payment_date ? Carbon::parse($admissionApp->payment_date) : null)
+            ?? ($profile->created_at ? Carbon::parse($profile->created_at) : null);
         $admissionPeriodIndex = 0;
 
-        if ($chargeFromAdmMonth && $admissionDate) {
+        if ($admissionDate) {
             $admMonthKey = $admissionDate->format('Y-m');
             for ($k = 0; $k < $periodCount; $k++) {
                 $checkDate = $startDate->copy();

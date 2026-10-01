@@ -367,6 +367,8 @@ class ApplicationController extends BaseController
         $activeInstitutionId = AdmissionApplication::getActiveInstitutionId($request->user())
             ?? $request->user()->institution_id;
 
+        $validated['admission_date'] = $validated['admission_date'] ?? now()->toDateString();
+
         // Persist draft stream_id and re-admission transition context so it's never lost during editing
         if (!empty($validated['stream_id']) || !empty($validated['student_profile_id']) || !empty($validated['from_session_id'])) {
             $prefs = $validated['subject_preferences'] ?? [];
