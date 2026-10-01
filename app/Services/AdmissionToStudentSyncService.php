@@ -681,7 +681,10 @@ class AdmissionToStudentSyncService
             $session = $app->session ?? $app->admissionHead?->session ?? \App\Models\Session::find($context['sessionId'] ?? null);
             $academicStartMonth = app(\App\Services\AcademicCalendarService::class)->getStartMonth($app->institution_id);
             $sessionStartDate = $session ? \Carbon\Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay() : null;
-            $effectiveDate = $sessionStartDate ?? ($app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now());
+            
+            $effectiveDate = $app->admission_date 
+                ? \Carbon\Carbon::parse($app->admission_date)->startOfDay() 
+                : ($sessionStartDate ?? now()->startOfDay());
 
             if ($this->isReadmission($app)) {
                 $existingTransport = \App\Models\TransportAssignment::where('institution_id', $app->institution_id)
@@ -738,7 +741,13 @@ class AdmissionToStudentSyncService
                 $bedId = $bed?->id;
             }
 
-            $effectiveDate = $app->admission_date ? \Carbon\Carbon::parse($app->admission_date) : now();
+            $session = $app->session ?? $app->admissionHead?->session ?? \App\Models\Session::find($context['sessionId'] ?? null);
+            $academicStartMonth = app(\App\Services\AcademicCalendarService::class)->getStartMonth($app->institution_id);
+            $sessionStartDate = $session ? \Carbon\Carbon::createFromDate($session->start_year, $academicStartMonth, 1)->startOfDay() : null;
+
+            $effectiveDate = $app->admission_date 
+                ? \Carbon\Carbon::parse($app->admission_date)->startOfDay() 
+                : ($sessionStartDate ?? now()->startOfDay());
 
             if ($allocation) {
                 if ($this->isReadmission($app)) {

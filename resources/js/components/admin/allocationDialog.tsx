@@ -154,10 +154,13 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
   useEffect(() => {
     if (open) {
       if (data) {
+        const parsedCheckIn = data.check_in_date ? String(data.check_in_date).split('T')[0] : "";
+        const parsedCheckOut = data.check_out_date ? String(data.check_out_date).split('T')[0] : "";
         reset({
           hostel_mess_plan_id: data.hostel_mess_plan_id ? String(data.hostel_mess_plan_id) : "none",
           status: data.status || "active",
-          check_out_date: data.check_out_date || "",
+          check_in_date: parsedCheckIn,
+          check_out_date: parsedCheckOut,
           remarks: data.remarks || "",
         });
       } else {
@@ -204,6 +207,7 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
       if (isEditing) {
         return hostelApi.allocations.update(data!.id, {
           status: values.status,
+          check_in_date: values.check_in_date || undefined,
           check_out_date: values.check_out_date || null,
           hostel_mess_plan_id: messPlanId,
           remarks: values.remarks,
@@ -417,6 +421,15 @@ export function AllocationDialog({ open, onClose, data }: AllocationDialogProps)
 
         {isEditing && (
           <>
+            <ControlledFormComponent
+              control={control}
+              name="check_in_date"
+              type={FORM_TYPE.DATE}
+              label="Check-in Date"
+              required
+              tooltip="Date from which hostel and mess monthly fees are billed in the student ledger. You can backdate or update this date."
+            />
+
             <ControlledFormComponent
               control={control}
               name="hostel_mess_plan_id"

@@ -375,6 +375,7 @@ const ReadmissionsNew = () => {
       from_class_id: (values._from_class_id ?? values.from_class_id) ? Number(values._from_class_id ?? values.from_class_id) : undefined,
       application_type: "re-admission",
       process_status: isDraft ? "draft" : "pending",
+      admission_date: values.admission_date || undefined,
       stream_id: values.stream_id ? Number(values.stream_id) : undefined,
       class_id: values.class_id ? Number(values.class_id) : undefined,
       section_id: values.section_id ? Number(values.section_id) : undefined,

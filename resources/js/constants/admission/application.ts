@@ -22,6 +22,7 @@ export const APPLICATION_TYPE_OPTIONS = [
 export const APPLICATION_DESK_FORM_DEFAULT_VALUES = {
   application_type: "new" as ApplicationDeskType,
   student_id: "" as string | number,
+  admission_date: new Date().toISOString().split("T")[0],
   stream_id: "" as string | number,
   applicant_name: "",
   father_name: "",
@@ -109,6 +110,15 @@ export const APPLICATION_DESK_BASIC_FIELDS = [
     tooltip: "Select main class (e.g. Primary, Senior Secondary). Classes will load based on this.",
     required: true,
     permission: "field_application_stream_id",
+  },
+  {
+    name: "admission_date",
+    label: "Admission date",
+    type: FORM_TYPE.DATE,
+    placeholder: "Select admission date",
+    tooltip: "Date of admission. Fees, transport, and hostel in the fee ledger calculate starting from this date.",
+    required: true,
+    permission: "field_application_admission_date",
   },
   {
     section: "Applicant details",

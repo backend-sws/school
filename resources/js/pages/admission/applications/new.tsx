@@ -369,6 +369,7 @@ const ApplicationsNew = () => {
       student_id: values.student_id ? String(values.student_id).trim() : undefined,
       application_type: "new",
       process_status: isDraft ? "draft" : "pending",
+      admission_date: values.admission_date || undefined,
       stream_id: values.stream_id ? Number(values.stream_id) : undefined,
       class_id: values.class_id ? Number(values.class_id) : undefined,
       section_id: values.section_id ? Number(values.section_id) : undefined,

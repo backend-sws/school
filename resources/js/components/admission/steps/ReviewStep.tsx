@@ -83,9 +83,9 @@ const formatAddress = (addr?: Record<string, any>) => {
 
 // ── Section renderer map ──────────────────────────────────────────────
 const SECTION_RENDERERS: Record<ReviewSectionKey, (ctx: SectionRenderContext) => SectionOutput> = {
-  academic: ({ selectionLabels }) => ({
+  academic: ({ selectionLabels, data }) => ({
     children: (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
         <div className="space-y-1.5">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Stream / Program</p>
           <p className="text-sm font-bold text-foreground">{selectionLabels.stream || "—"}</p>
@@ -97,6 +97,12 @@ const SECTION_RENDERERS: Record<ReviewSectionKey, (ctx: SectionRenderContext) =>
         <div className="space-y-1.5 border-l sm:pl-6 border-border/40">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Section</p>
           <p className="text-sm font-bold text-foreground">{selectionLabels.section || "—"}</p>
+        </div>
+        <div className="space-y-1.5 border-l sm:pl-6 border-border/40">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Admission Date</p>
+          <p className="text-sm font-bold text-foreground">
+            {data.admission_date ? new Date(data.admission_date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+          </p>
         </div>
       </div>
     ),
