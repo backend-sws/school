@@ -113,12 +113,24 @@ class ReadmissionController extends BaseController
         $hostelAllocation = \App\Models\HostelAllocation::where('user_id', $studentProfile->user_id)
             ->latest('created_at')->first();
 
+        // Only prefill transport if assignment is currently active and has not expired in the past
+        $isTransportActive = $transportAssignment && (
+            is_null($transportAssignment->effective_until) || 
+            $transportAssignment->effective_until->endOfDay()->gte(now()->startOfDay())
+        );
+
         $latestFare = null;
-        if ($transportAssignment?->transport_route_id && $transportAssignment?->transport_stop_id) {
+        if ($isTransportActive && $transportAssignment?->transport_route_id && $transportAssignment?->transport_stop_id) {
             $latestFare = \App\Models\TransportRouteStop::where('transport_route_id', $transportAssignment->transport_route_id)
                 ->where('transport_stop_id', $transportAssignment->transport_stop_id)
                 ->value('fare');
         }
+
+        // Only prefill hostel if allocation is active and has not checked out
+        $isHostelActive = $hostelAllocation && $hostelAllocation->status === 'active' && (
+            is_null($hostelAllocation->check_out_date) || 
+            $hostelAllocation->check_out_date->endOfDay()->gte(now()->startOfDay())
+        );
 
         return $this->success([
             'student_profile_id' => $studentProfile->id,
@@ -205,16 +217,16 @@ class ReadmissionController extends BaseController
                 'has_tc'               => (bool)$studentProfile->has_tc,
                 'has_government_portal'=> (bool)$studentProfile->has_government_portal,
                 'government_portal_name'=> $studentProfile->government_portal_name,
-                // Transport
-                'transport_route_id' => $transportAssignment?->transport_route_id ?? '',
-                'transport_stop_id'  => $transportAssignment?->transport_stop_id ?? '',
-                'transport_amount'   => $latestFare ?? $transportAssignment?->monthly_amount ?? 0,
+                // Transport (Only prefilled if active in current/future period)
+                'transport_route_id' => $isTransportActive ? ($transportAssignment?->transport_route_id ?? '') : '',
+                'transport_stop_id'  => $isTransportActive ? ($transportAssignment?->transport_stop_id ?? '') : '',
+                'transport_amount'   => $isTransportActive ? ($latestFare ?? $transportAssignment?->monthly_amount ?? 0) : 0,
 
-                // Hostel
-                'hostel_required' => $hostelAllocation ? true : false,
-                'hostel_id'       => $hostelAllocation?->room?->hostel_id ?? '',
-                'hostel_room_id'  => $hostelAllocation?->hostel_room_id ?? '',
-                'hostel_amount'   => $hostelAllocation?->room?->monthly_fee ?? $hostelAllocation?->monthly_amount ?? 0,
+                // Hostel (Only prefilled if active in current/future period)
+                'hostel_required' => $isHostelActive,
+                'hostel_id'       => $isHostelActive ? ($hostelAllocation?->room?->hostel_id ?? '') : '',
+                'hostel_room_id'  => $isHostelActive ? ($hostelAllocation?->hostel_room_id ?? '') : '',
+                'hostel_amount'   => $isHostelActive ? ($hostelAllocation?->room?->monthly_fee ?? $hostelAllocation?->monthly_amount ?? 0) : 0,
             ],
         ], 'Pre-filled data retrieved.');
     }
