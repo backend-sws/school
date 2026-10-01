@@ -722,6 +722,7 @@ export const STUDENT_ANALYTICS_COLUMNS = [
 
 export const STUDENT_FORM_INITIAL_DATA = {
   name: "",
+  student_id: "",
   email: "",
   mobile: "",
   reg_no: "",
@@ -758,6 +759,15 @@ export const STUDENT_FORM_INITIAL_DATA = {
 };
 
 export const STUDENT_ADDITIONAL_FORM_LAYOUT = [
+  {
+    name: "student_id",
+    label: "Student ID",
+    type: FORM_TYPE.TEXT,
+    placeholder: "e.g. 101, S-2026-001",
+    maxLength: 100,
+    tooltip:
+      "Unique internal student ID assigned by the school for quick search and identification.",
+  },
   {
     name: "reg_no",
     label: "Registration No",

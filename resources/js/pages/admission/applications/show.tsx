@@ -274,6 +274,12 @@ const ApplicationsShow = () => {
       value: hasValue(sectionOrSemester) ? sectionOrSemester! : "—",
       isSemester: !isSchool && hasValue(sectionOrSemester),
     });
+    if (hasValue(application.student_id)) {
+      displayItems.push({
+        label: "Student ID",
+        value: String(application.student_id),
+      });
+    }
 
     return { academicDetails: details, academicDisplayItems: displayItems };
   }, [application, inertiaScope, isSchool]);

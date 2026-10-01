@@ -458,6 +458,7 @@ class StudentDashboardService
             // 1. User Update
             $user->update([
                 'name' => $data['name'] ?? $user->name,
+                'student_id' => $data['student_id'] ?? ($data['student_profile']['student_id'] ?? $user->student_id),
                 'email' => $data['email'] ?? $user->email,
                 'mobile' => $data['mobile'] ?? $user->mobile,
                 'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
@@ -467,6 +468,9 @@ class StudentDashboardService
 
             if (isset($data['student_profile'])) {
                 $profileData = $data['student_profile'];
+                if (isset($data['student_id']) && !isset($profileData['student_id'])) {
+                    $profileData['student_id'] = $data['student_id'];
+                }
 
                 // 2. Student Profile Update (Excluding addresses)
                 $profileFields = collect($profileData)
