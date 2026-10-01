@@ -12,12 +12,20 @@ import {
   TRANSPORT_MANIFEST_GUIDELINES,
 } from "@/constants/page/admin/transport";
 
+type StudentManifest = {
+  user_id: number;
+  name: string;
+  email?: string | null;
+  student_id?: string | null;
+  reg_no?: string | null;
+};
+
 type StopManifest = {
   sequence: number;
   stop: { id: number; name: string; code?: string };
   arrival_time?: string | null;
   departure_time?: string | null;
-  students: { user_id: number; name: string; email?: string | null }[];
+  students: StudentManifest[];
 };
 
 const TransportReportsManifest = () => {
@@ -96,9 +104,9 @@ const TransportReportsManifest = () => {
                 </p>
                 <Each
                   of={stops}
-                  keyExtractor={(s: StopManifest) => String(s.stop?.id ?? s.sequence)}
+                  keyExtractor={(s) => String(s.stop?.id ?? s.sequence)}
                   nodatafound={<p className="text-muted-foreground text-sm">No stops on this route.</p>}
-                  render={(s: StopManifest) => (
+                  render={(s) => (
                     <div key={s.stop?.id ?? s.sequence} className="rounded-lg border p-4 space-y-2">
                       <div className="font-medium">
                         {s.sequence}. {s.stop?.name ?? "—"}
@@ -109,9 +117,9 @@ const TransportReportsManifest = () => {
                       <ul className="list-disc list-inside text-sm text-muted-foreground">
                         <Each
                           of={s.students ?? []}
-                          keyExtractor={(st: { user_id: number }) => String(st.user_id)}
+                          keyExtractor={(st) => String(st.user_id)}
                           nodatafound={<li>No students</li>}
-                          render={(st: { user_id: number; name: string; email?: string | null; student_id?: string | null; reg_no?: string | null }) => {
+                          render={(st) => {
                             const tags = [
                               st.student_id ? `ID: ${st.student_id}` : "",
                               st.reg_no ? `Reg: ${st.reg_no}` : "",
