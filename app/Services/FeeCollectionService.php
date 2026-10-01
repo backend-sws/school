@@ -522,9 +522,7 @@ class FeeCollectionService
         $chargeFromAdmMonth = $institutionSettings['charge_fees_from_admission_month'] ?? false;
         $admissionDate = $admissionApp?->admission_date 
             ?? $profile->admission_date 
-            ?? ($admissionApp?->submitted_at ? Carbon::parse($admissionApp->submitted_at) : null)
-            ?? ($admissionApp?->payment_date ? Carbon::parse($admissionApp->payment_date) : null)
-            ?? ($profile->created_at ? Carbon::parse($profile->created_at) : null);
+            ?? $startDate;
         $admissionPeriodIndex = 0;
 
         if ($admissionDate) {

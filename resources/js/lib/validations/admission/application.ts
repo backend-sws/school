@@ -91,7 +91,7 @@ export const applicationDeskFormSchema = z
     application_id: safeOptionalString(50, "Application ID"),
     process_status: z.enum(["draft", "pending", "approved", "rejected"]).optional(),
     application_type: z.enum(["new", "re-admission"]),
-    student_id: z.union([z.string().refine(safeStringRefineOptional, SAFE_STRING_MESSAGE), z.number()]).optional().or(z.literal("")),
+    admission_date: safeOptionalString(50, "Admission Date").optional().or(z.literal("")),
 
     // Academic (required on academic step). Session is never from frontend; backend uses current session from model.
     stream_id: z.preprocess(
