@@ -56,6 +56,7 @@ class AdmissionToStudentSyncService
 
     /** Application columns that map 1:1 to StudentProfile columns. */
     private const PROFILE_DIRECT_MAP = [
+        'student_id'  => 'student_id',
         'father_name' => 'father_name',
         'mother_name' => 'mother_name',
         'dob'         => 'dob',
@@ -256,6 +257,10 @@ class AdmissionToStudentSyncService
             ['user_id' => $app->user_id],
             $profileData
         );
+
+        if (!empty($app->student_id)) {
+            $context['user']?->update(['student_id' => $app->student_id]);
+        }
 
         if ($this->isReadmission($app) && $context['sessionId']) {
             $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];

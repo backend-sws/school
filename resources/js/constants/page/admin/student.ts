@@ -626,8 +626,9 @@ export const INITIAL_STUDENT_FILTERS = {
   search: "",
 };
 
-// Filter-to-API param mapping configuration for student list
 export const STUDENT_FILTER_MAPPING: FilterParamMapping = {
+  student_id: { paramName: "student_id", skipValues: [""] },
+  roll_no: { paramName: "roll_no", skipValues: [""] },
   stream: { paramName: "stream_id", skipValues: ["all"] },
   session: { paramName: "academic_session_id", skipValues: ["all"] },
   status: { paramName: "status", skipValues: ["all"] },
@@ -641,6 +642,7 @@ export const STUDENT_FILTER_MAPPING: FilterParamMapping = {
 
 export const STUDENT_COLUMNS = [
   { key: "serial", label: "#" },
+  { key: "student_id", label: "Student ID" },
   { key: "reg_no", label: "Reg. No" },
   { key: "roll_no", label: "Roll No" },
   { key: "name", label: "Name" },
@@ -683,10 +685,12 @@ export const STUDENT_TRANSPORT_OPTIONS: FilterOption[] = [
 ];
 
 export const STUDENT_SEARCH_TYPES: FilterOption[] = [
-  { value: "email", label: "Email" },
-  { value: "mobile", label: "Phone" },
+  { value: "student_id", label: "Student ID" },
   { value: "name", label: "Name" },
   { value: "reg_no", label: "Registration No." },
+  { value: "roll_no", label: "Roll No." },
+  { value: "email", label: "Email" },
+  { value: "mobile", label: "Phone" },
 ];
 
 export const STUDENT_TOOLTIPS = {
@@ -882,6 +886,7 @@ export function getStudentEditFormLayoutGroups(scopeType?: string | null): Stude
 /** Top-level keys sent in student update payload. */
 export const STUDENT_EDIT_PAYLOAD_TOP_KEYS = [
   "name",
+  "student_id",
   "email",
   "mobile",
   "reg_no",
@@ -890,6 +895,7 @@ export const STUDENT_EDIT_PAYLOAD_TOP_KEYS = [
 
 /** Keys nested under student_profile in update payload. */
 export const STUDENT_EDIT_PAYLOAD_PROFILE_KEYS = [
+  "student_id",
   "stream_id",
   "session_id",
   "roll_no",

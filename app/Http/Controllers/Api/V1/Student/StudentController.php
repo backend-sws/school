@@ -84,6 +84,7 @@ class StudentController extends BaseController
             'user_id' => 'required|exists:users,id|unique:student_profiles',
             'stream_id' => 'required|exists:streams,id',
             'session_id' => 'required|exists:academic_sessions,id',
+            'student_id' => 'nullable|string|max:100',
             'reg_no' => 'nullable|string|max:50|unique:student_profiles',
             'roll_no' => 'nullable|string|max:50',
             'father_name' => 'nullable|string|max:150',
@@ -675,12 +676,14 @@ class StudentController extends BaseController
         $validator = Validator::make($request->all(), [
             // User Fields
             'name' => 'sometimes|required|string|max:255',
+            'student_id' => 'nullable|string|max:100',
             'email' => 'sometimes|required|email|unique:users,email,' . $id,
             'mobile' => 'nullable|string|max:20|unique:users,mobile,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
             'photo_url' => 'nullable|string|max:1000',
 
             // Profile Fields
+            'student_profile.student_id' => 'nullable|string|max:100',
             'student_profile.roll_no' => 'nullable|string',
             'student_profile.current_semester' => 'nullable|integer|between:1,12',
             'student_profile.father_name' => 'nullable|string|max:255',
@@ -814,7 +817,7 @@ class StudentController extends BaseController
     {
         $filters = $request->only([
             'academic_session_id', 'stream_id', 'status', 'name', 'email', 
-            'mobile', 'per_page', 'is_verified', 'reg_no', 'lms_class_id',
+            'mobile', 'per_page', 'is_verified', 'reg_no', 'student_id', 'roll_no', 'lms_class_id',
             'abc_status', 'hostel_status', 'transport_status', 'gender', 'category',
             'search', 'q'
         ]);
@@ -839,13 +842,25 @@ class StudentController extends BaseController
             $statsQuery->where(function ($q) use ($search, $collegeId) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
                   ->orWhere('mobile', 'like', $search)
+                  ->orWhere('student_id', 'like', $search)
                   ->orWhereHas('studentProfile', function ($sq) use ($search, $collegeId) {
                       $sq->where('student_profiles.institution_id', $collegeId)
                          ->where(function ($ssq) use ($search) {
                              $ssq->whereRaw('LOWER(reg_no) LIKE ?', [$search])
                                  ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search])
+                                 ->orWhereRaw('LOWER(student_id) LIKE ?', [$search])
                                  ->orWhereRaw('LOWER(father_name) LIKE ?', [$search]);
                          });
+                  });
+            });
+        }
+
+        if (!empty($filters['student_id']) && is_string($filters['student_id'])) {
+            $statsQuery->where(function ($q) use ($filters, $collegeId) {
+                $q->where('student_id', 'like', "%{$filters['student_id']}%")
+                  ->orWhereHas('studentProfile', function ($sq) use ($filters, $collegeId) {
+                      $sq->where('student_profiles.institution_id', $collegeId)
+                         ->where('student_id', 'like', "%{$filters['student_id']}%");
                   });
             });
         }

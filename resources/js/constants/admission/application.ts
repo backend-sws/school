@@ -112,6 +112,15 @@ export const APPLICATION_DESK_BASIC_FIELDS = [
   },
   {
     section: "Applicant details",
+    name: "student_id",
+    label: "Student ID",
+    type: FORM_TYPE.TEXT,
+    placeholder: "e.g. 101 or STU-2026-001 (Optional manual ID)",
+    tooltip: "Manual internal roll or admission ID assigned by school/institution. Can be used for searching.",
+    maxLength: 100,
+    permission: "field_application_student_id",
+  },
+  {
     name: "applicant_name",
     label: "Applicant name",
     type: FORM_TYPE.TEXT,

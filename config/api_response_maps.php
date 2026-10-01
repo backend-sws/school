@@ -21,6 +21,7 @@ return [
         'keys' => [
             'id',
             'application_id',
+            'student_id',
             'applicant_name',
             'submitted_at',
             'amount',
@@ -92,6 +93,7 @@ return [
             'id',
             'user_id',
             'application_id',
+            'student_id',
             'applicant_name',
             'father_name',
             'mother_name',
@@ -136,11 +138,13 @@ return [
         'keys' => [
             'id',
             'user_id',
+            'student_id',
             'stream_id',
             'session_id',
             'university_roll_no',
             'registration_no',
             'user.name',
+            'user.student_id',
             'user.email',
             'user.mobile',
             'stream.name',
@@ -152,6 +156,7 @@ return [
         'keys' => [
             'id',
             'name',
+            'student_id',
             'email',
             'mobile',
             'status',
@@ -179,6 +184,7 @@ return [
             'personal_info.photo_url',
             'personal_info.active_status',
             'personal_info.nationality',
+            'academic_record.student_id',
             'academic_record.university_roll_no',
             'academic_record.reg_no',
             'academic_record.roll_no',
@@ -254,6 +260,7 @@ return [
         'keys' => [
             'user_id',
             'student_name',
+            'student_id',
             'reg_no',
             'lms_class_id',
             'class_name',
@@ -270,6 +277,7 @@ return [
         'keys' => [
             'user_id',
             'student_name',
+            'student_id',
             'reg_no',
             'lms_class_id',
             'class_name',

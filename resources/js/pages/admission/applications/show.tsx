@@ -350,6 +350,11 @@ const ApplicationsShow = () => {
                     )}
                   </Button>
                 </div>
+                {application.student_id && (
+                  <Badge variant="outline" className="px-2.5 py-1 rounded-lg bg-background border-primary/40 text-primary font-mono text-xs font-bold">
+                    Student ID: {application.student_id}
+                  </Badge>
+                )}
                 <p className="text-muted-foreground text-xs flex items-center gap-1.5">
                   <Clock className="size-3" /> Submitted on{" "}
                   {application.submitted_at
@@ -540,6 +545,14 @@ const ApplicationsShow = () => {
                 </h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {application.student_id && (
+                  <InfoCard
+                    icon={User}
+                    label="Student ID"
+                    value={application.student_id}
+                    className="font-mono font-bold text-primary"
+                  />
+                )}
                 <InfoCard
                   icon={ShieldCheck}
                   label="Father's Name"

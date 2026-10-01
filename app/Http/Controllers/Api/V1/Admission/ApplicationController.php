@@ -126,10 +126,16 @@ class ApplicationController extends BaseController
             $query->where('submitted_at', '<=', $request->end_date . ' 23:59:59');
         }
 
-        // 5. Search by Field (Mobile, Application ID, Name, Email, University Roll No)
+        // 5. Search by Field (Mobile, Application ID, Name, Email, University Roll No, Student ID)
         $query->when($request->filled('search_text'), function ($q) use ($request) {
             $text = $request->search_text;
             switch ($request->search_by) {
+                case 'student_id':
+                    return $q->where(function ($sq) use ($text) {
+                        $sq->where('student_id', 'like', "%$text%")
+                           ->orWhereHas('user', fn($uq) => $uq->where('student_id', 'like', "%$text%"))
+                           ->orWhereHas('user.studentProfile', fn($psq) => $psq->where('student_id', 'like', "%$text%"));
+                    });
                 case 'mobile':
                     return $q->where('mobile', 'like', "%$text%");
                 case 'app_id':
@@ -141,6 +147,13 @@ class ApplicationController extends BaseController
                 case 'university_no':
                     // Search by University Roll No
                     return $q->whereHas('user.studentProfile', fn($sq) => $sq->where('university_roll_no', 'like', "%$text%"));
+                default:
+                    return $q->where(function ($sq) use ($text) {
+                        $sq->where('applicant_name', 'like', "%$text%")
+                           ->orWhere('application_id', 'like', "%$text%")
+                           ->orWhere('student_id', 'like', "%$text%")
+                           ->orWhere('mobile', 'like', "%$text%");
+                    });
             }
         });
 
@@ -246,6 +259,12 @@ class ApplicationController extends BaseController
         $query->when($request->filled('search_text'), function ($q) use ($request) {
             $text = $request->search_text;
             switch ($request->search_by) {
+                case 'student_id':
+                    return $q->where(function ($sq) use ($text) {
+                        $sq->where('student_id', 'like', "%$text%")
+                           ->orWhereHas('user', fn($uq) => $uq->where('student_id', 'like', "%$text%"))
+                           ->orWhereHas('user.studentProfile', fn($psq) => $psq->where('student_id', 'like', "%$text%"));
+                    });
                 case 'mobile':
                     return $q->where('mobile', 'like', "%$text%");
                 case 'app_id':
@@ -299,6 +318,7 @@ class ApplicationController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'student_id' => 'nullable|string|max:100',
             'admission_head_id' => 'nullable|exists:admission_heads,id',
             'stream_id' => 'required_without:admission_head_id|nullable|integer',
             'applicant_name' => 'required|string|max:150',
@@ -498,6 +518,7 @@ class ApplicationController extends BaseController
 
                 $studentUser = User::create([
                     'name' => $validated['applicant_name'],
+                    'student_id' => $validated['student_id'] ?? null,
                     'email' => $email,
                     'contact_email' => $validated['email'] ?? $email,
                     'institution_id' => $validated['institution_id'] ?? null,
@@ -813,6 +834,7 @@ class ApplicationController extends BaseController
 public function update(Request $request, $id): JsonResponse
     {
         $validated = $request->validate([
+            'student_id' => 'nullable|string|max:100',
             'admission_head_id' => 'nullable|exists:admission_heads,id',
             'stream_id' => 'required_without:admission_head_id|nullable|integer',
             'applicant_name' => 'required|string|max:150',
@@ -1141,6 +1163,11 @@ public function update(Request $request, $id): JsonResponse
                     throw new RuntimeException('Application cannot be edited in its current status.');
                 }
                 $application->update($validated);
+
+                if (isset($validated['student_id']) && !empty($application->user_id)) {
+                    \App\Models\User::where('id', $application->user_id)->update(['student_id' => $validated['student_id']]);
+                    \App\Models\StudentProfile::where('user_id', $application->user_id)->update(['student_id' => $validated['student_id']]);
+                }
 
                 // Guardian: one parent → many students
                 $guardianSnapshot = $validated['guardian_snapshot'] ?? [];

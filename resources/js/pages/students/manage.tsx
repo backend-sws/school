@@ -88,6 +88,7 @@ const ManageStudent = () => {
   const studentColumns = useMemo(
     () => [
       { key: "serial", label: "#" },
+      { key: "student_id", label: "Student ID" },
       { key: "reg_no", label: "Reg. No" },
       { key: "roll_no", label: "Roll No" },
       { key: "name", label: "Name" },
@@ -356,6 +357,9 @@ const ManageStudent = () => {
                           filter.perPage || 10,
                           index,
                         )}
+                      </TableCell>
+                      <TableCell className="text-foreground font-mono font-medium text-xs">
+                        {val?.student_profile?.student_id ?? val?.studentProfile?.student_id ?? val?.student_id ?? "-"}
                       </TableCell>
                       <TableCell className="text-muted-foreground font-mono text-xs">
                         {val?.student_profile?.reg_no ?? val?.studentProfile?.reg_no ?? val?.reg_no ?? val?.student_profile?.app_no ?? val?.studentProfile?.app_no ?? "-"}

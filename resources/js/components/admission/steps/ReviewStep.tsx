@@ -104,6 +104,7 @@ const SECTION_RENDERERS: Record<ReviewSectionKey, (ctx: SectionRenderContext) =>
 
   applicant: ({ data }) => ({
     items: [
+      ...(data.student_id ? [{ label: "Student ID", value: data.student_id }] : []),
       { label: "Full Name", value: data.applicant_name },
       { label: "Father's Name", value: data.father_name },
       { label: "Mother's Name", value: data.mother_name },

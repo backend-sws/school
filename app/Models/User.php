@@ -39,6 +39,7 @@ class User extends Authenticatable
         'contact_email', // real address for notifications when email is a placeholder (e.g. +student suffix)
         'password',
         'reg_no',
+        'student_id',
         'mobile',
         'photo_url',
         'avatar_url', // mapped to photo_url via setAvatarUrlAttribute for API/frontend

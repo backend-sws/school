@@ -143,10 +143,12 @@ class ReadmissionController extends BaseController
                 'process_status' => $existingDraft->process_status,
             ], $existingDraft->toArray(), [
                 // Overrides to ensure UI compatibility
+                'student_id'        => $existingDraft->student_id ?? $studentProfile->student_id ?? $studentProfile->user?->student_id,
                 'user_id'           => $studentProfile->user_id,
                 'student_profile_id'=> $studentProfile->id,
                 'mobile'            => $this->formatPhoneWithCode($existingDraft->mobile ?? $studentProfile->mobile ?? $studentProfile->user?->mobile ?? $studentProfile->user?->phone),
                 'father_mobile'     => $this->formatPhoneWithCode($existingDraft->father_mobile ?? $studentProfile->father_mobile),
+                '_from_student_id'  => $studentProfile->student_id,
                 '_from_stream_id'   => $studentProfile->stream_id,
                 '_from_stream_name' => $studentProfile->stream?->name,
                 '_from_session_id'  => $studentProfile->session_id,
@@ -159,6 +161,7 @@ class ReadmissionController extends BaseController
                 '_hostelAllocation' => $hostelAllocation,
             ]) : [
                 // Identity
+                'student_id'     => $studentProfile->student_id ?? $studentProfile->user?->student_id,
                 'user_id'        => $studentProfile->user_id,
                 'student_profile_id' => $studentProfile->id,
                 'applicant_name' => $studentProfile->user?->name,
@@ -202,6 +205,7 @@ class ReadmissionController extends BaseController
                                 ->latest('created_at')->first(),
 
                 // Display-only metadata for "From → To" transition
+                '_from_student_id'  => $studentProfile->student_id,
                 '_from_stream_id'   => $studentProfile->stream_id,
                 '_from_stream_name' => $studentProfile->stream?->name,
                 '_from_session_id'  => $studentProfile->session_id,

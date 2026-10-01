@@ -366,6 +366,7 @@ const ApplicationsNew = () => {
     return {
 
       id: values.id || undefined,
+      student_id: values.student_id ? String(values.student_id).trim() : undefined,
       application_type: "new",
       process_status: isDraft ? "draft" : "pending",
       stream_id: values.stream_id ? Number(values.stream_id) : undefined,

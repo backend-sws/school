@@ -36,6 +36,7 @@ import {
 
 const APPLICATION_COLUMNS = [
   { key: "serial", label: "#" },
+  { key: "student_id", label: "Student ID" },
   { key: "application_id", label: "Application ID" },
   { key: "applicant", label: "Applicant" },
   { key: "stream_session", label: "Class / Session" },
@@ -56,6 +57,7 @@ import { useFilterRegistry } from "@/hooks/useFilterRegistry";
 type ApplicationRow = {
   id: number;
   user_id?: number;
+  student_id?: string;
   application_id: string;
   applicant_name: string;
   father_name?: string;
@@ -329,6 +331,7 @@ const ApplicationsIndex = () => {
                           index,
                         )}
                       </TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-primary">{row.student_id ?? "—"}</TableCell>
                       <TableCell className="font-mono text-xs">{row.application_id ?? "—"}</TableCell>
                       {!isStudent && (
                         <TableCell>

@@ -133,7 +133,7 @@ export function useAdmissionFormStore(): UseFormReturn<ApplicationDeskFormValues
             // Map known fields from prefill
             const sanitizedData = sanitizeNulls(prefillData);
             const directFields = [
-                "id", "application_id", "process_status", "application_type",
+                "id", "application_id", "student_id", "process_status", "application_type",
                 "applicant_name", "father_name", "mother_name", "dob", "gender",
                 "category", "religion", "nationality", "mobile", "email",
                 "aadhaar_no", "blood_group", "address_snapshot", "guardian_snapshot",

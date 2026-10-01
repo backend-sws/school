@@ -76,7 +76,7 @@ class FeeDuesController extends BaseController
             'lms_class_id' => 'nullable|integer|exists:lms_classes,id',
             'status' => 'nullable|string|in:upcoming,due_soon,overdue,paid,partial',
             'search' => 'nullable|string|max:100',
-            'search_by' => 'nullable|string|in:name,reg_no',
+            'search_by' => 'nullable|string|in:name,reg_no,student_id',
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:200',
         ]);
@@ -137,9 +137,17 @@ class FeeDuesController extends BaseController
         $searchBy = $request->input('search_by', 'name');
 
         if ($search) {
-            $query->whereHas('user', fn($q) => $q
-                ->where($searchBy, 'LIKE', "%{$search}%")
-            );
+            $query->whereHas('user', function ($q) use ($searchBy, $search) {
+                if ($searchBy === 'student_id') {
+                    $q->where('student_id', 'LIKE', "%{$search}%")
+                      ->orWhereHas('studentProfile', fn($sq) => $sq->where('student_id', 'LIKE', "%{$search}%"));
+                } elseif ($searchBy === 'reg_no') {
+                    $q->where('reg_no', 'LIKE', "%{$search}%")
+                      ->orWhereHas('studentProfile', fn($sq) => $sq->where('reg_no', 'LIKE', "%{$search}%"));
+                } else {
+                    $q->where($searchBy, 'LIKE', "%{$search}%");
+                }
+            });
         }
 
         $enrollments = $query->with(['user', 'lmsClass'])->get();
@@ -190,6 +198,7 @@ class FeeDuesController extends BaseController
                 $dueItem = [
                     'user_id' => $student->id,
                     'student_name' => $student->name,
+                    'student_id' => $student->student_id ?? $student->studentProfile?->student_id,
                     'reg_no' => $student->reg_no,
                     'lms_class_id' => $enrollment->lms_class_id,
                     'class_name' => $enrollment->lmsClass?->name,
@@ -248,6 +257,7 @@ class FeeDuesController extends BaseController
                     $dueItem = [
                         'user_id' => $student->id,
                         'student_name' => $student->name,
+                        'student_id' => $student->student_id ?? $student->studentProfile?->student_id,
                         'reg_no' => $student->reg_no,
                         'lms_class_id' => $enrollment->lms_class_id,
                         'class_name' => $enrollment->lmsClass?->name,

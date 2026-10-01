@@ -161,20 +161,38 @@ class StudentDashboardService
                     'guardians' => fn($q) => $q->whereNotNull('email')->where('email', '!=', ''),
                 ]);
 
-        // 1. Basic Filters: Search, Name, Email, Mobile
+        // 1. Basic Filters: Search, Name, Email, Mobile, Student ID, Reg No, Roll No
         if (!empty($filters['search']) && is_string($filters['search'])) {
             $search = '%' . strtolower($filters['search']) . '%';
             $query->where(function ($q) use ($search, $collegeId) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
                   ->orWhere('mobile', 'like', $search)
+                  ->orWhere('student_id', 'like', $search)
                   ->orWhereHas('studentProfile', function ($sq) use ($search, $collegeId) {
                       $sq->where('student_profiles.institution_id', $collegeId)
                          ->where(function ($ssq) use ($search) {
                              $ssq->whereRaw('LOWER(reg_no) LIKE ?', [$search])
                                  ->orWhereRaw('LOWER(roll_no) LIKE ?', [$search])
+                                 ->orWhereRaw('LOWER(student_id) LIKE ?', [$search])
                                  ->orWhereRaw('LOWER(father_name) LIKE ?', [$search]);
                          });
                   });
+            });
+        }
+
+        if (!empty($filters['student_id']) && is_string($filters['student_id'])) {
+            $sId = $filters['student_id'];
+            $query->where(function ($q) use ($sId, $collegeId) {
+                $q->where('student_id', 'like', "%{$sId}%")
+                  ->orWhereHas('studentProfile', function ($sq) use ($sId, $collegeId) {
+                      $sq->where('student_profiles.institution_id', $collegeId)->where('student_id', 'like', "%{$sId}%");
+                  });
+            });
+        }
+
+        if (!empty($filters['roll_no']) && is_string($filters['roll_no'])) {
+            $query->whereHas('studentProfile', function ($q) use ($filters, $collegeId) {
+                $q->where('student_profiles.institution_id', $collegeId)->where('roll_no', 'like', "%{$filters['roll_no']}%");
             });
         }
 

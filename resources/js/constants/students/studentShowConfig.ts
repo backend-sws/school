@@ -102,6 +102,7 @@ export function getHeroInfoPills(
   displayConfig: ScopeTypeDisplayConfig
 ): HeroInfoPill[] {
   return [
+    { key: "student_id", label: "ID", path: "profile.student_id", mono: true, variant: "muted" },
     { key: "reg_no", label: "Reg", path: "profile.reg_no", mono: true, variant: "muted" },
     { key: "roll_no", label: "Roll", path: "profile.roll_no", mono: true, variant: "muted" },
     {
@@ -204,6 +205,7 @@ export const STUDENT_SHOW_ACTIONS: ActionConfig[] = [
 
 export function getContactFields(): FieldConfig[] {
   return [
+    { key: "student_id", label: "Student ID", icon: Hash, path: "profile.student_id", mono: true },
     { key: "email", label: "Email", icon: Mail, path: "student.email" },
     { key: "mobile", label: "Mobile", icon: Phone, path: "student.mobile" },
     { key: "reg_no", label: "Reg. No", icon: Hash, path: "profile.reg_no", mono: true },

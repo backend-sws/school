@@ -447,9 +447,11 @@ export default function DuesOverduePage() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="font-medium text-foreground">{row.student_name}</div>
-                                                {row.reg_no && (
+                                                {row.student_id ? (
+                                                    <div className="text-[10px] text-primary font-mono font-medium mt-0.5">ID: {row.student_id} {row.reg_no ? `• ${row.reg_no}` : ''}</div>
+                                                ) : row.reg_no ? (
                                                     <div className="text-[10px] text-muted-foreground font-mono mt-0.5">{row.reg_no}</div>
-                                                )}
+                                                ) : null}
                                             </TableCell>
                                             <TableCell className="text-sm">{row.class_name ?? "—"}</TableCell>
                                             <TableCell className="text-sm font-mono">{row.due_date ?? "—"}</TableCell>

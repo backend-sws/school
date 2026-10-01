@@ -368,6 +368,7 @@ const ReadmissionsNew = () => {
 
     return {
       id: values.id || undefined,
+      student_id: values.student_id ? String(values.student_id).trim() : undefined,
       user_id: values.user_id ? Number(values.user_id) : undefined,
       student_profile_id: values.student_profile_id ? Number(values.student_profile_id) : undefined,
       from_session_id: (values._from_session_id ?? values.from_session_id) ? Number(values._from_session_id ?? values.from_session_id) : undefined,

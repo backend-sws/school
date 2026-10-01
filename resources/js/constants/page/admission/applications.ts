@@ -23,6 +23,7 @@ export const APPLICATION_TYPE_OPTIONS: FilterOption[] = [
 ];
 
 export const APPLICATION_SEARCH_OPTIONS: FilterOption[] = [
+    { value: "student_id", label: "Student ID" },
     { value: "name", label: "Name" },
     { value: "app_id", label: "App ID" },
     { value: "mobile", label: "Mobile" },

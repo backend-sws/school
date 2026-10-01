@@ -19,6 +19,7 @@ class AdmissionApplication extends Model
     public $timestamps = false;
     protected $fillable = [
         'application_id',
+        'student_id',
         'application_type', // new, readmission
         'user_id',
         'institution_id',

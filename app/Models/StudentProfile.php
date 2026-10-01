@@ -28,6 +28,7 @@ class StudentProfile extends Model
         'is_differently_abled',
         'caste',
         'reg_no',
+        'student_id',
         'roll_no',
         'father_name',
         'father_mobile',
