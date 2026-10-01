@@ -85,6 +85,7 @@ const StudentEdit = () => {
     // Top-level user fields
     const userFields = {
       id: data.id,
+      student_id: data.student_id ?? profile?.student_id ?? "",
       name: data.name ?? "",
       email: data.email ?? "",
       mobile: data.mobile ?? "",

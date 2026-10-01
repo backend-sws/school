@@ -81,17 +81,18 @@ export function StudentEditDialog({
     if (!data) return undefined;
 
     const user = data;
-    const profile = user.student_profile;
+    const profile = user.student_profile ?? user.studentProfile;
 
     return {
       // Top level user fields
       id: user.id,
+      student_id: user.student_id ?? profile?.student_id ?? "",
       name: user.name,
       email: user.email,
       mobile: user.mobile || profile?.mobile,
 
       // Academic fields
-      reg_no: user.reg_no,
+      reg_no: user.reg_no ?? profile?.reg_no ?? "",
       main_stream_id: profile?.main_stream_id,
       stream_id: profile?.stream_id,
       session_id: profile?.session_id,

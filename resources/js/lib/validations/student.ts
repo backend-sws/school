@@ -22,6 +22,7 @@ export const studentAddressSchema = z.object({
  */
 export const studentEditSchema = z.object({
   // --- User-level fields ---
+  student_id: z.union([z.string(), z.number()]).optional().nullable(),
   name: z.string().min(1, "Student name is required").max(255),
   email: z.string().min(1, "Email address is required").email("Invalid email format"),
   mobile: z
