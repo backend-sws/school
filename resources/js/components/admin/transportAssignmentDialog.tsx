@@ -102,10 +102,11 @@ export function TransportAssignmentDialog({ open, onClose, data }: TransportAssi
     const students = (studentsData as any)?.data ?? studentsData ?? [];
     return (Array.isArray(students) ? students : []).map((s: any) => {
       const sp = s.student_profile || s.studentProfile;
+      const studentId = s.student_id || sp?.student_id ? `ID: ${s.student_id || sp?.student_id}` : "";
       const classInfo = sp?.stream?.name ? sp.stream.name : "";
-      const regNo = sp?.reg_no ? `Reg: ${sp.reg_no}` : "";
+      const regNo = (s.reg_no || sp?.reg_no) ? `Reg: ${s.reg_no || sp?.reg_no}` : "";
       const fatherName = sp?.father_name ? `Father: ${sp.father_name}` : "";
-      const extra = [classInfo, regNo, fatherName].filter(Boolean).join(" | ");
+      const extra = [studentId, classInfo, regNo, fatherName].filter(Boolean).join(" | ");
       const textLabel = extra ? `${s.name} (${extra})` : s.name;
       return {
         key: String(s.id),

@@ -71,6 +71,7 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
       return (
         s.name?.toLowerCase().includes(q) ||
         s.email?.toLowerCase().includes(q) ||
+        String(s.student_id || "").toLowerCase().includes(q) ||
         String(s.roll_no || "").toLowerCase().includes(q) ||
         String(s.reg_no || "").toLowerCase().includes(q)
       );
@@ -361,8 +362,13 @@ export function ClassStudentRosterHub({ classId, className }: ClassStudentRoster
                           Roll #{s.roll_no}
                         </Badge>
                       )}
+                      {s.student_id && (
+                        <span className="text-[11px] font-semibold text-primary font-mono">
+                          (ID: {s.student_id})
+                        </span>
+                      )}
                       {s.reg_no && (
-                        <span className="text-[11px] font-semibold text-muted-foreground">
+                        <span className="text-[11px] font-semibold text-muted-foreground font-mono">
                           (Reg: {s.reg_no})
                         </span>
                       )}

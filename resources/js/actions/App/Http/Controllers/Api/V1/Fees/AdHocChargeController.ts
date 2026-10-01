@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:272
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:276
  * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
  */
 export const bulkDestroy = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -227,7 +227,7 @@ bulkDestroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:272
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:276
  * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
  */
 bulkDestroy.url = (options?: RouteQueryOptions) => {
@@ -236,7 +236,7 @@ bulkDestroy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:272
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:276
  * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
  */
 bulkDestroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -246,7 +246,7 @@ bulkDestroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:272
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:276
  * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
  */
     const bulkDestroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -256,7 +256,7 @@ bulkDestroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::bulkDestroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:272
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:276
  * @route '/api/v1/fees/ad-hoc-charges/bulk-delete'
  */
         bulkDestroyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -267,7 +267,7 @@ bulkDestroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     bulkDestroy.form = bulkDestroyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::update
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:221
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:225
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -282,7 +282,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::update
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:221
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:225
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -310,7 +310,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::update
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:221
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:225
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -320,7 +320,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::update
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:221
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:225
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
     const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -335,7 +335,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::update
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:221
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:225
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
         updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -351,7 +351,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:250
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:254
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -366,7 +366,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:250
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:254
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -394,7 +394,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:250
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:254
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -404,7 +404,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:250
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:254
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
     const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -419,7 +419,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\AdHocChargeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:250
+ * @see app/Http/Controllers/Api/V1/Fees/AdHocChargeController.php:254
  * @route '/api/v1/fees/ad-hoc-charges/{id}'
  */
         destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

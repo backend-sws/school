@@ -254,7 +254,7 @@ getDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     getDaily.form = getDailyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::submitDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:249
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:253
  * @route '/api/v1/attendance/daily'
  */
 export const submitDaily = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -269,7 +269,7 @@ submitDaily.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::submitDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:249
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:253
  * @route '/api/v1/attendance/daily'
  */
 submitDaily.url = (options?: RouteQueryOptions) => {
@@ -278,7 +278,7 @@ submitDaily.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::submitDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:249
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:253
  * @route '/api/v1/attendance/daily'
  */
 submitDaily.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -288,7 +288,7 @@ submitDaily.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::submitDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:249
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:253
  * @route '/api/v1/attendance/daily'
  */
     const submitDailyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -298,7 +298,7 @@ submitDaily.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::submitDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:249
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:253
  * @route '/api/v1/attendance/daily'
  */
         submitDailyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -309,7 +309,7 @@ submitDaily.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     submitDaily.form = submitDailyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
 export const ledger = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -324,7 +324,7 @@ ledger.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
 ledger.url = (options?: RouteQueryOptions) => {
@@ -333,7 +333,7 @@ ledger.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
 ledger.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -342,7 +342,7 @@ ledger.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
 ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -352,7 +352,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
     const ledgerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -362,7 +362,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
         ledgerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -371,7 +371,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::ledger
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:435
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:439
  * @route '/api/v1/attendance/ledger'
  */
         ledgerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -387,7 +387,7 @@ ledger.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     ledger.form = ledgerForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -402,7 +402,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -411,7 +411,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -420,7 +420,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -430,7 +430,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
     const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -440,7 +440,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
         exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -449,7 +449,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::exportMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:472
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:476
  * @route '/api/v1/attendance/export'
  */
         exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -465,7 +465,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     exportMethod.form = exportMethodForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
 export const downloadTemplate = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -480,7 +480,7 @@ downloadTemplate.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
 downloadTemplate.url = (options?: RouteQueryOptions) => {
@@ -489,7 +489,7 @@ downloadTemplate.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
 downloadTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -498,7 +498,7 @@ downloadTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
 downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -508,7 +508,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
     const downloadTemplateForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -518,7 +518,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
         downloadTemplateForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -527,7 +527,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::downloadTemplate
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:510
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:514
  * @route '/api/v1/attendance/template'
  */
         downloadTemplateForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -543,7 +543,7 @@ downloadTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     downloadTemplate.form = downloadTemplateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:544
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:548
  * @route '/api/v1/attendance/import'
  */
 export const importMethod = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -558,7 +558,7 @@ importMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:544
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:548
  * @route '/api/v1/attendance/import'
  */
 importMethod.url = (options?: RouteQueryOptions) => {
@@ -567,7 +567,7 @@ importMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:544
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:548
  * @route '/api/v1/attendance/import'
  */
 importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -577,7 +577,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:544
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:548
  * @route '/api/v1/attendance/import'
  */
     const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -587,7 +587,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::importMethod
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:544
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:548
  * @route '/api/v1/attendance/import'
  */
         importMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -598,7 +598,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     importMethod.form = importMethodForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:337
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:341
  * @route '/api/v1/attendance/mark-cell'
  */
 export const markCell = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -613,7 +613,7 @@ markCell.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:337
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:341
  * @route '/api/v1/attendance/mark-cell'
  */
 markCell.url = (options?: RouteQueryOptions) => {
@@ -622,7 +622,7 @@ markCell.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:337
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:341
  * @route '/api/v1/attendance/mark-cell'
  */
 markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -632,7 +632,7 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:337
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:341
  * @route '/api/v1/attendance/mark-cell'
  */
     const markCellForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -642,7 +642,7 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::markCell
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:337
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:341
  * @route '/api/v1/attendance/mark-cell'
  */
         markCellForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -653,7 +653,7 @@ markCell.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     markCell.form = markCellForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::updateRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:733
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:741
  * @route '/api/v1/attendance/records/{id}'
  */
 export const updateRecord = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -668,7 +668,7 @@ updateRecord.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::updateRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:733
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:741
  * @route '/api/v1/attendance/records/{id}'
  */
 updateRecord.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -696,7 +696,7 @@ updateRecord.url = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::updateRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:733
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:741
  * @route '/api/v1/attendance/records/{id}'
  */
 updateRecord.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -706,7 +706,7 @@ updateRecord.put = (args: { id: string | number } | [id: string | number ] | str
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::updateRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:733
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:741
  * @route '/api/v1/attendance/records/{id}'
  */
     const updateRecordForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -721,7 +721,7 @@ updateRecord.put = (args: { id: string | number } | [id: string | number ] | str
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::updateRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:733
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:741
  * @route '/api/v1/attendance/records/{id}'
  */
         updateRecordForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -737,7 +737,7 @@ updateRecord.put = (args: { id: string | number } | [id: string | number ] | str
     updateRecord.form = updateRecordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::destroyRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:766
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:774
  * @route '/api/v1/attendance/records/{id}'
  */
 export const destroyRecord = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -752,7 +752,7 @@ destroyRecord.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::destroyRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:766
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:774
  * @route '/api/v1/attendance/records/{id}'
  */
 destroyRecord.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -780,7 +780,7 @@ destroyRecord.url = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::destroyRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:766
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:774
  * @route '/api/v1/attendance/records/{id}'
  */
 destroyRecord.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -790,7 +790,7 @@ destroyRecord.delete = (args: { id: string | number } | [id: string | number ] |
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::destroyRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:766
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:774
  * @route '/api/v1/attendance/records/{id}'
  */
     const destroyRecordForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -805,7 +805,7 @@ destroyRecord.delete = (args: { id: string | number } | [id: string | number ] |
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::destroyRecord
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:766
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:774
  * @route '/api/v1/attendance/records/{id}'
  */
         destroyRecordForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -821,7 +821,7 @@ destroyRecord.delete = (args: { id: string | number } | [id: string | number ] |
     destroyRecord.form = destroyRecordForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
 export const reportsDaily = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -836,7 +836,7 @@ reportsDaily.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
 reportsDaily.url = (options?: RouteQueryOptions) => {
@@ -845,7 +845,7 @@ reportsDaily.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
 reportsDaily.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -854,7 +854,7 @@ reportsDaily.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
 reportsDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -864,7 +864,7 @@ reportsDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
     const reportsDailyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -874,7 +874,7 @@ reportsDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
         reportsDailyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -883,7 +883,7 @@ reportsDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsDaily
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:786
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:794
  * @route '/api/v1/attendance/reports/daily'
  */
         reportsDailyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -899,7 +899,7 @@ reportsDaily.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     reportsDaily.form = reportsDailyForm
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
 export const reportsSummary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -914,7 +914,7 @@ reportsSummary.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
 reportsSummary.url = (options?: RouteQueryOptions) => {
@@ -923,7 +923,7 @@ reportsSummary.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
 reportsSummary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -932,7 +932,7 @@ reportsSummary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
 reportsSummary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -942,7 +942,7 @@ reportsSummary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
     const reportsSummaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -952,7 +952,7 @@ reportsSummary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
         reportsSummaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -961,7 +961,7 @@ reportsSummary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Attendance\AttendanceController::reportsSummary
- * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:817
+ * @see app/Http/Controllers/Api/V1/Attendance/AttendanceController.php:825
  * @route '/api/v1/attendance/reports/summary'
  */
         reportsSummaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -267,6 +267,9 @@ class ApplicationController extends BaseController
                     });
                 case 'mobile':
                     return $q->where('mobile', 'like', "%$text%");
+                case 'student_id':
+                    return $q->where('student_id', 'like', "%$text%")
+                        ->orWhereHas('user', fn($uq) => $uq->where('student_id', 'like', "%$text%")->orWhereHas('studentProfile', fn($sq) => $sq->where('student_id', 'like', "%$text%")));
                 case 'app_id':
                     return $q->where('application_id', 'like', "%$text%");
                 case 'name':
@@ -274,7 +277,8 @@ class ApplicationController extends BaseController
                 case 'email':
                     return $q->where('email', 'like', "%$text%");
                 case 'reg_no':
-                    return $q->whereHas('user.studentProfile', fn($sq) => $sq->where('reg_no', 'like', "%$text%"));
+                    return $q->where('reg_no', 'like', "%$text%")
+                        ->orWhereHas('user', fn($uq) => $uq->where('reg_no', 'like', "%$text%")->orWhereHas('studentProfile', fn($sq) => $sq->where('reg_no', 'like', "%$text%")));
                 case 'roll_no':
                     return $q->whereHas('user.studentProfile', fn($sq) => $sq->where('roll_no', 'like', "%$text%"));
                 case 'abc_no':

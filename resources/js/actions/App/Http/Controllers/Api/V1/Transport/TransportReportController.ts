@@ -79,7 +79,7 @@ manifest.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     manifest.form = manifestForm
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
 export const occupancy = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ occupancy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
 occupancy.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ occupancy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
 occupancy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ occupancy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
 occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
     const occupancyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
         occupancyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ occupancy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Transport\TransportReportController::occupancy
- * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:69
+ * @see app/Http/Controllers/Api/V1/Transport/TransportReportController.php:71
  * @route '/api/v1/transport/reports/occupancy'
  */
         occupancyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -35,7 +35,7 @@ class TransportReportController extends BaseController
             ->where(function ($q) use ($date) {
                 $q->whereNull('effective_until')->orWhere('effective_until', '>=', $date);
             })
-            ->with(['user:id,name,email', 'transportStop:id,name,code'])
+            ->with(['user:id,name,email,reg_no,student_id', 'user.studentProfile', 'transportStop:id,name,code'])
             ->get();
 
         $byStop = [];
@@ -52,6 +52,8 @@ class TransportReportController extends BaseController
             if (isset($byStop[$a->transport_stop_id])) {
                 $byStop[$a->transport_stop_id]['students'][] = [
                     'user_id' => $a->user_id,
+                    'student_id' => $a->user->student_id ?? $a->user->studentProfile?->student_id,
+                    'reg_no' => $a->user->reg_no ?? $a->user->studentProfile?->reg_no,
                     'name' => $a->user->name ?? '',
                     'email' => $a->user->email ?? null,
                 ];

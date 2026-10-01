@@ -62,6 +62,13 @@ export interface MatrixColumnConfig {
 
 export const LEDGER_HERO_PILLS: HeroPillConfig[] = [
     {
+        key: "student_id",
+        label: "ID",
+        valuePath: "student_id",
+        fallbackPaths: ["student_profile.student_id"],
+        variant: "default",
+    },
+    {
         key: "reg",
         label: "Reg",
         valuePath: "student_profile.reg_no",

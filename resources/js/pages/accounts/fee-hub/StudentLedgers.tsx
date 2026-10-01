@@ -110,7 +110,12 @@ export default function StudentLedgers() {
                                                         <div className="space-y-0.5">
                                                             <p className="font-bold tracking-tight">{student.name}</p>
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
-                                                                {student.student_profile?.reg_no || student.reg_no || "N/A"} • Roll: {student.roll_no || "N/A"} • {student.lms_class?.name || student.student_profile?.stream?.name || "No Class"}
+                                                                {[
+                                                                    (student.student_id || student.student_profile?.student_id) ? `ID: ${student.student_id || student.student_profile?.student_id}` : null,
+                                                                    (student.student_profile?.reg_no || student.reg_no) ? `Reg: ${student.student_profile?.reg_no || student.reg_no}` : null,
+                                                                    student.roll_no ? `Roll: ${student.roll_no}` : null,
+                                                                    student.lms_class?.name || student.student_profile?.stream?.name || "No Class"
+                                                                ].filter(Boolean).join(" • ")}
                                                             </p>
                                                         </div>
                                                     </div>

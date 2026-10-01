@@ -79,6 +79,8 @@ export function AttendanceRegisterMatrix({
         return ledger.matrix.filter(
             (s) =>
                 s.name.toLowerCase().includes(q) ||
+                (s.student_id && s.student_id.toLowerCase().includes(q)) ||
+                (s.reg_no && s.reg_no.toLowerCase().includes(q)) ||
                 (s.roll_no && s.roll_no.toLowerCase().includes(q)) ||
                 s.user_id.toString().includes(q)
         );
@@ -536,7 +538,11 @@ export function AttendanceRegisterMatrix({
                                                         {row.name}
                                                     </p>
                                                     <p className="text-[10px] text-muted-foreground/70 font-mono truncate">
-                                                        {row.roll_no}
+                                                        {[
+                                                            row.student_id ? `ID: ${row.student_id}` : null,
+                                                            row.reg_no ? `Reg: ${row.reg_no}` : null,
+                                                            row.roll_no ? `Roll: ${row.roll_no}` : null,
+                                                        ].filter(Boolean).join(" • ") || row.roll_no || `ID: ${row.user_id}`}
                                                     </p>
                                                 </div>
                                             </div>

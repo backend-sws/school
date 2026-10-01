@@ -24,8 +24,16 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         $studentSection = $student?->studentProfile?->section?->name ?? $student?->studentProfile?->section ?? null;
         $classSec = trim(($studentClass ?? '') . ($studentSection ? ' - ' . $studentSection : ''));
 
+        $studentId = $student?->studentProfile?->student_id ?? $student?->student_id;
+        $regNo = $student?->studentProfile?->reg_no ?? $student?->reg_no;
+        $idParts = array_filter([
+            $studentId ? "ID: {$studentId}" : null,
+            $regNo ? "Reg: {$regNo}" : null,
+        ]);
+        $idDisplay = count($idParts) > 0 ? implode(' • ', $idParts) : '—';
+
         $metaRows = [
-            ['Student Name:', $student?->name ?? '—', 'Registration No:', $student?->studentProfile?->reg_no ?? $student?->reg_no ?? '—'],
+            ['Student Name:', $student?->name ?? '—', 'Student ID / Reg No:', $idDisplay],
             ['Class / Section:', $classSec ?: '—', 'Payment Period:', $payment->for_month ?: '—'],
         ];
 

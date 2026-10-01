@@ -165,8 +165,8 @@ class AdHocChargeController extends Controller
         }
         
         $query = StudentAdHocCharge::with([
-            'user:id,name,email',
-            'user.studentProfile:id,user_id,reg_no,roll_no,stream_id',
+            'user:id,name,email,reg_no,student_id',
+            'user.studentProfile:id,user_id,reg_no,roll_no,student_id,stream_id',
             'user.studentProfile.stream:id,name',
             'creator:id,name'
         ])->where('institution_id', $institutionId);
@@ -176,10 +176,14 @@ class AdHocChargeController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
                   ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->whereRaw('LOWER(name) LIKE ?', [$search]);
+                      $uq->whereRaw('LOWER(name) LIKE ?', [$search])
+                         ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                         ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search]);
                   })
                   ->orWhereHas('user.studentProfile', function ($sq) use ($search) {
-                      $sq->whereRaw('LOWER(reg_no) LIKE ?', [$search]);
+                      $sq->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                         ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                         ->orWhereRaw('LOWER(COALESCE(roll_no, "")) LIKE ?', [$search]);
                   });
             });
         }

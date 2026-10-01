@@ -227,8 +227,10 @@ const TransportAssignmentsIndex = () => {
       searchName: "search",
       options: [
         { value: "student", label: "Student Name" },
+        { value: "student_id", label: "Student ID" },
+        { value: "reg_no", label: "Registration No" },
       ],
-      placeholder: "Search student...",
+      placeholder: "Search student, ID, or Reg No...",
     },
   }), [classes, routes, stops, vehicles, sessionFilterOptions]);
 
@@ -494,9 +496,17 @@ const TransportAssignmentsIndex = () => {
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
                           <span className="font-semibold text-foreground tracking-tight">{row.user?.name ?? row.user_id}</span>
-                          {row.user?.student_profile?.reg_no && (
-                            <span className="text-[11px] text-muted-foreground font-mono">Reg: {row.user.student_profile.reg_no}</span>
-                          )}
+                          <div className="flex items-center gap-1.5 flex-wrap text-[11px] text-muted-foreground font-mono">
+                            {(row.user?.student_id || row.user?.student_profile?.student_id) && (
+                              <span className="text-primary font-medium">ID: {row.user?.student_id || row.user?.student_profile?.student_id}</span>
+                            )}
+                            {(row.user?.student_id || row.user?.student_profile?.student_id) && (row.user?.reg_no || row.user?.student_profile?.reg_no) && (
+                              <span>•</span>
+                            )}
+                            {(row.user?.reg_no || row.user?.student_profile?.reg_no) && (
+                              <span>Reg: {row.user?.reg_no || row.user?.student_profile?.reg_no}</span>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">

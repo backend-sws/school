@@ -144,10 +144,11 @@ export default function AdHocCharges({ auth }: any) {
     const q = studentSearch.toLowerCase().trim();
     return students.filter((s: any) => {
       const name = (s.name || "").toLowerCase();
-      const regNo = (s.student_profile?.reg_no || "").toLowerCase();
+      const studentId = (s.student_id || s.student_profile?.student_id || "").toLowerCase();
+      const regNo = (s.student_profile?.reg_no || s.reg_no || "").toLowerCase();
       const rollNo = (s.student_profile?.roll_no || "").toLowerCase();
       const streamName = (s.student_profile?.stream?.name || "").toLowerCase();
-      return name.includes(q) || regNo.includes(q) || rollNo.includes(q) || streamName.includes(q);
+      return name.includes(q) || studentId.includes(q) || regNo.includes(q) || rollNo.includes(q) || streamName.includes(q);
     });
   }, [students, studentSearch]);
 
@@ -755,7 +756,7 @@ export default function AdHocCharges({ auth }: any) {
                             </TableHead>
                             <TableHead>Student Name</TableHead>
                             <TableHead>Class / Stream</TableHead>
-                            <TableHead>Registration No.</TableHead>
+                            <TableHead>Student ID / Reg No.</TableHead>
                             <TableHead>Roll No.</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -780,8 +781,18 @@ export default function AdHocCharges({ auth }: any) {
                                   {student.student_profile?.stream?.name || "—"}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-xs text-muted-foreground">
-                                {student.student_profile?.reg_no || "—"}
+                              <TableCell className="text-xs text-muted-foreground font-mono">
+                                {(() => {
+                                  const sid = student.student_id || student.student_profile?.student_id;
+                                  const reg = student.student_profile?.reg_no || student.reg_no;
+                                  return (
+                                    <div className="flex flex-col gap-0.5">
+                                      {sid && <span className="text-primary font-medium">ID: {sid}</span>}
+                                      {reg && <span>Reg: {reg}</span>}
+                                      {!sid && !reg && <span>—</span>}
+                                    </div>
+                                  );
+                                })()}
                               </TableCell>
                               <TableCell className="text-xs text-muted-foreground font-mono">
                                 {student.student_profile?.roll_no || "—"}
@@ -1295,11 +1306,14 @@ export default function AdHocCharges({ auth }: any) {
                               </TableCell>
                               <TableCell>
                                 <div className="font-medium text-sm">{log.user?.name}</div>
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                                <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground mt-0.5 font-mono">
                                   {log.user?.student_profile?.stream?.name && (
-                                    <span className="font-medium text-foreground/80">{log.user.student_profile.stream.name} •</span>
+                                    <span className="font-sans font-medium text-foreground/80">{log.user.student_profile.stream.name} •</span>
                                   )}
-                                  <span>{log.user?.student_profile?.reg_no || "—"}</span>
+                                  {(log.user?.student_id || log.user?.student_profile?.student_id) && (
+                                    <span className="text-primary font-medium">ID: {log.user?.student_id || log.user?.student_profile?.student_id} •</span>
+                                  )}
+                                  <span>{log.user?.student_profile?.reg_no ? `Reg: ${log.user.student_profile.reg_no}` : (log.user?.reg_no ? `Reg: ${log.user.reg_no}` : "—")}</span>
                                 </div>
                               </TableCell>
                               <TableCell>

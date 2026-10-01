@@ -415,6 +415,13 @@ export function resolveFieldValue(
   student: Record<string, any>,
   profile: Record<string, any> | null | undefined
 ): any {
+  if (path === "profile.student_id" || path === "student_id") {
+    return profile?.student_id || student?.student_id || student?.user?.student_id;
+  }
+  if (path === "profile.reg_no" || path === "reg_no") {
+    return profile?.reg_no || student?.reg_no || student?.user?.reg_no;
+  }
+
   const parts = path.split(".");
   let source: any;
 

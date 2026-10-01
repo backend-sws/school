@@ -247,8 +247,10 @@ const HostelAllocationsIndex = () => {
                       searchName: "search",
                       options: [
                         { value: "user_name", label: "Resident Name" },
+                        { value: "student_id", label: "Student ID" },
+                        { value: "reg_no", label: "Registration No" },
                       ],
-                      placeholder: "Search residents...",
+                      placeholder: "Search residents, ID, or Reg No...",
                     },
                   }} />
                 </FilterBar>
@@ -283,14 +285,23 @@ const HostelAllocationsIndex = () => {
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground tracking-tight">{row.user?.name ?? 'Unknown'}</span>
-                            {row.user?.student_profile && (
-                              <span className="text-xs text-muted-foreground font-medium">
-                                {[
-                                  row.user.student_profile.stream?.name,
-                                  row.user.student_profile.reg_no ? `Reg: ${row.user.student_profile.reg_no}` : null
-                                ].filter(Boolean).join(" | ")}
-                              </span>
-                            )}
+                            <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground font-medium">
+                              {row.user?.student_profile?.stream?.name && (
+                                <span>{row.user.student_profile.stream.name}</span>
+                              )}
+                              {(row.user?.student_id || row.user?.student_profile?.student_id) && (
+                                <>
+                                  {row.user?.student_profile?.stream?.name && <span>•</span>}
+                                  <span className="text-primary font-mono font-medium">ID: {row.user?.student_id || row.user?.student_profile?.student_id}</span>
+                                </>
+                              )}
+                              {(row.user?.reg_no || row.user?.student_profile?.reg_no) && (
+                                <>
+                                  {(row.user?.student_profile?.stream?.name || row.user?.student_id || row.user?.student_profile?.student_id) && <span>•</span>}
+                                  <span className="font-mono">Reg: {row.user?.reg_no || row.user?.student_profile?.reg_no}</span>
+                                </>
+                              )}
+                            </div>
                             <span className="text-[10px] text-muted-foreground/60">{row.user?.email}</span>
                           </div>
                         </TableCell>

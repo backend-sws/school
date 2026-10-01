@@ -111,9 +111,19 @@ const TransportReportsManifest = () => {
                           of={s.students ?? []}
                           keyExtractor={(st: { user_id: number }) => String(st.user_id)}
                           nodatafound={<li>No students</li>}
-                          render={(st: { user_id: number; name: string; email?: string | null }) => (
-                            <li key={st.user_id}>{st.name}{st.email ? ` (${st.email})` : ""}</li>
-                          )}
+                          render={(st: { user_id: number; name: string; email?: string | null; student_id?: string | null; reg_no?: string | null }) => {
+                            const tags = [
+                              st.student_id ? `ID: ${st.student_id}` : "",
+                              st.reg_no ? `Reg: ${st.reg_no}` : "",
+                              st.email ? st.email : "",
+                            ].filter(Boolean).join(" • ");
+                            return (
+                              <li key={st.user_id}>
+                                <span className="font-medium text-foreground">{st.name}</span>
+                                {tags ? <span className="text-xs text-muted-foreground ml-1.5 font-mono">({tags})</span> : null}
+                              </li>
+                            );
+                          }}
                         />
                       </ul>
                     </div>

@@ -151,6 +151,7 @@ export function ClassStudentTransferDialog({
     return enrolledStudents.filter(
       (s: any) =>
         s.name?.toLowerCase().includes(q) ||
+        String(s.student_id || "").toLowerCase().includes(q) ||
         String(s.roll_no || "").toLowerCase().includes(q) ||
         String(s.reg_no || "").toLowerCase().includes(q)
     );
@@ -497,7 +498,7 @@ export function ClassStudentTransferDialog({
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                       <Input
-                        placeholder="Search student by name, roll no, reg no..."
+                        placeholder="Search student by name, ID, roll no, reg no..."
                         value={studentSearch}
                         onChange={(e) => setStudentSearch(e.target.value)}
                         className="pl-8.5 rounded-xl h-9 text-xs bg-background"
@@ -549,8 +550,9 @@ export function ClassStudentTransferDialog({
                                 <p className="font-bold text-xs text-foreground truncate">
                                   {s.name}
                                 </p>
-                                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                                  {s.roll_no && <span>Roll #{s.roll_no}</span>}
+                                <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-mono">
+                                  {s.roll_no && <span className="font-sans font-medium">Roll #{s.roll_no}</span>}
+                                  {(s.student_id || s.user?.student_id) && <span className="text-primary font-medium">(ID: {s.student_id || s.user?.student_id})</span>}
                                   {s.reg_no && <span>(Reg: {s.reg_no})</span>}
                                 </div>
                               </div>

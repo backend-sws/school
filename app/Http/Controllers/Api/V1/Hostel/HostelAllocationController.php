@@ -26,7 +26,7 @@ class HostelAllocationController extends BaseController
         $query = HostelAllocation::query()
             ->where('institution_id', $institutionId)
             ->with([
-                'user:id,name,email',
+                'user:id,name,email,reg_no,student_id',
                 'user.studentProfile',
                 'user.studentProfile.stream:id,name,code',
                 'user.studentProfile.currentEnrollments.lmsClass:id,name,code',
@@ -52,13 +52,32 @@ class HostelAllocationController extends BaseController
 
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('user', function ($q2) use ($search) {
-                    $q2->whereRaw('LOWER(name) LIKE ?', [$search])
-                        ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
-                })->orWhereHas('room', function ($q3) use ($search) {
-                    $q3->whereRaw('LOWER(room_number) LIKE ?', [$search]);
-                });
+            $searchBy = $request->input('search_by', 'user_name');
+            $query->where(function ($q) use ($search, $searchBy) {
+                if ($searchBy === 'student_id') {
+                    $q->whereHas('user', function ($q2) use ($search) {
+                        $q2->whereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                           ->orWhereHas('studentProfile', fn($sp) => $sp->whereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search]));
+                    });
+                } elseif ($searchBy === 'reg_no') {
+                    $q->whereHas('user', function ($q2) use ($search) {
+                        $q2->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                           ->orWhereHas('studentProfile', fn($sp) => $sp->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search]));
+                    });
+                } else {
+                    $q->whereHas('user', function ($q2) use ($search) {
+                        $q2->whereRaw('LOWER(name) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(email) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                            ->orWhereHas('studentProfile', function ($sp) use ($search) {
+                                $sp->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                                   ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search]);
+                            });
+                    })->orWhereHas('room', function ($q3) use ($search) {
+                        $q3->whereRaw('LOWER(room_number) LIKE ?', [$search]);
+                    });
+                }
             });
         }
 

@@ -8,6 +8,8 @@ export type AttendanceRecordRow = {
   id?: number;
   user_id: number;
   user_name: string;
+  student_id?: string | null;
+  reg_no?: string | null;
   roll_no?: string;
   status: string;
   has_record?: boolean;
@@ -38,6 +40,8 @@ export type DayMeta = {
 
 export type LedgerStudentRow = {
   user_id: number;
+  student_id?: string | null;
+  reg_no?: string | null;
   roll_no: string;
   name: string;
   summary: {

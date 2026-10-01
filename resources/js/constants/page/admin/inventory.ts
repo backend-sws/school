@@ -389,12 +389,14 @@ export const STUDENT_BUYER_ASYNC_CONFIG = {
     const raw = (res as any)?.data?.data || (res as any)?.data || [];
     const data = (Array.isArray(raw) ? raw : []).map((s: any) => {
       const sp = s.student_profile || s.studentProfile;
+      const sid = s.student_id || sp?.student_id;
       const reg = s.reg_no || sp?.reg_no;
       const streamName = sp?.stream?.name;
       const fatherName = sp?.father_name;
+      const sidText = sid ? `ID: ${sid}` : "";
       const regText = reg ? `Reg: ${reg}` : "";
       const fatherText = fatherName ? `Father: ${fatherName}` : "";
-      const details = [streamName, regText, fatherText].filter(Boolean).join(" | ");
+      const details = [sidText, streamName, regText, fatherText].filter(Boolean).join(" | ");
       return {
         ...s,
         displayName: details ? `${s.name} (${details})` : s.name,

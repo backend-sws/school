@@ -191,7 +191,7 @@ class AttendanceController extends BaseController
             ->where('lms_class_id', $lmsClassId)
             ->where('role', 'student')
             ->where('status', 'active')
-            ->with(['user:id,name,email', 'user.studentProfile:id,user_id,roll_no,reg_no'])
+            ->with(['user:id,name,email,reg_no,student_id', 'user.studentProfile:id,user_id,roll_no,reg_no,student_id'])
             ->get();
 
         $existing = AttendanceRecord::query()
@@ -207,12 +207,16 @@ class AttendanceController extends BaseController
         $records = $students->map(function ($enrollment) use ($existing, $date, $defaultStatus) {
             $rec = $existing->get($enrollment->user_id);
             $profile = $enrollment->user?->studentProfile;
-            $rollNo = $profile?->roll_no ?: ($profile?->reg_no ?: "ID: {$enrollment->user_id}");
+            $studentId = $profile?->student_id ?? $enrollment->user?->student_id;
+            $regNo = $profile?->reg_no ?? $enrollment->user?->reg_no;
+            $rollNo = $profile?->roll_no;
 
             return [
                 'id' => $rec?->id,
                 'user_id' => $enrollment->user_id,
                 'user_name' => $enrollment->user?->name ?? '',
+                'student_id' => $studentId,
+                'reg_no' => $regNo,
                 'roll_no' => $rollNo,
                 'status' => $rec ? $rec->status : $defaultStatus,
                 'has_record' => (bool) $rec,
@@ -645,7 +649,7 @@ class AttendanceController extends BaseController
             ->where('lms_class_id', $class->id)
             ->where('role', 'student')
             ->where('status', 'active')
-            ->with(['user:id,name,email', 'user.studentProfile:id,user_id,roll_no,reg_no'])
+            ->with(['user:id,name,email,reg_no,student_id', 'user.studentProfile:id,user_id,roll_no,reg_no,student_id'])
             ->get();
 
         // Get attendance records in date range
@@ -674,10 +678,14 @@ class AttendanceController extends BaseController
             if (!$user) continue;
 
             $profile = $user->studentProfile;
-            $rollNo = $profile?->roll_no ?: ($profile?->reg_no ?: "ID: {$user->id}");
+            $studentId = $profile?->student_id ?? $user->student_id;
+            $regNo = $profile?->reg_no ?? $user->reg_no;
+            $rollNo = $profile?->roll_no ?: ($profile?->reg_no ?: ($studentId ? "ID: {$studentId}" : "ID: {$user->id}"));
 
             $row = [
                 'user_id'     => $user->id,
+                'student_id'  => $studentId,
+                'reg_no'      => $regNo,
                 'roll_no'     => $rollNo,
                 'name'        => $user->name,
                 'summary'     => [

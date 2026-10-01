@@ -353,6 +353,11 @@ export function StudentClassProfileDrawer({
                         Roll #{student.roll_no}
                       </Badge>
                     )}
+                    {(student?.student_id || (student as any)?.user?.student_id) && (
+                      <Badge variant="outline" className="font-semibold text-xs border-primary/30 text-primary">
+                        ID: {student?.student_id || (student as any)?.user?.student_id}
+                      </Badge>
+                    )}
                     {student?.reg_no && (
                       <Badge variant="outline" className="font-semibold text-xs border-border/80">
                         Reg: {student.reg_no}

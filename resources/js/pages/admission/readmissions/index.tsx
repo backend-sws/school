@@ -151,7 +151,10 @@ const ReadmissionsIndex = () => {
         const search = filter.search_text.toLowerCase();
         return eligibleStudents.filter((s: any) =>
             s.user?.name?.toLowerCase().includes(search) ||
-            s.admission_no?.toLowerCase().includes(search)
+            s.student_id?.toLowerCase().includes(search) ||
+            s.user?.student_id?.toLowerCase().includes(search) ||
+            s.admission_no?.toLowerCase().includes(search) ||
+            s.reg_no?.toLowerCase().includes(search)
         );
     }, [eligibleStudents, filter.search_text]);
 
@@ -160,7 +163,10 @@ const ReadmissionsIndex = () => {
         const search = filter.search_text.toLowerCase();
         return sessionEligibleStudents.filter((s: any) =>
             s.user?.name?.toLowerCase().includes(search) ||
-            s.reg_no?.toLowerCase().includes(search)
+            s.student_id?.toLowerCase().includes(search) ||
+            s.user?.student_id?.toLowerCase().includes(search) ||
+            s.reg_no?.toLowerCase().includes(search) ||
+            s.admission_no?.toLowerCase().includes(search)
         );
     }, [sessionEligibleStudents, filter.search_text]);
 
@@ -255,7 +261,17 @@ const ReadmissionsIndex = () => {
             <TableCell>
                 <div>
                     <p className="font-medium">{student.user?.name || "N/A"}</p>
-                    <p className="text-xs text-muted-foreground font-mono">{student.reg_no || student.admission_no}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground font-mono">
+                        {(student.student_id || student.user?.student_id) && (
+                            <span className="text-primary font-medium">ID: {student.student_id || student.user?.student_id}</span>
+                        )}
+                        {(student.student_id || student.user?.student_id) && (student.reg_no || student.admission_no) && (
+                            <span>•</span>
+                        )}
+                        {(student.reg_no || student.admission_no) && (
+                            <span>Reg: {student.reg_no || student.admission_no}</span>
+                        )}
+                    </div>
                 </div>
             </TableCell>
             <TableCell>
@@ -310,7 +326,7 @@ const ReadmissionsIndex = () => {
                         <CardHeader className="pb-4">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <FilterBar values={filter} onChange={(u) => handleFilter({ ...u, page: 1 })}>
-                                    <FilterBar.Renderer config={{ filters: [], search: { name: "search_text", placeholder: "Search by name or reg no..." } }} />
+                                    <FilterBar.Renderer config={{ filters: [], search: { name: "search_text", placeholder: "Search by name, ID, or reg no..." } }} />
                                 </FilterBar>
 
                                 <div className="flex gap-2 shrink-0">
@@ -371,6 +387,17 @@ const ReadmissionsIndex = () => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <p className="font-medium">{history.student?.user?.name || "—"}</p>
+                                                    <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground font-mono">
+                                                        {(history.student?.student_id || history.student?.user?.student_id) && (
+                                                            <span className="text-primary font-medium">ID: {history.student?.student_id || history.student?.user?.student_id}</span>
+                                                        )}
+                                                        {(history.student?.student_id || history.student?.user?.student_id) && (history.student?.reg_no || history.student?.admission_no) && (
+                                                            <span>•</span>
+                                                        )}
+                                                        {(history.student?.reg_no || history.student?.admission_no) && (
+                                                            <span>Reg: {history.student?.reg_no || history.student?.admission_no}</span>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="text-xs">

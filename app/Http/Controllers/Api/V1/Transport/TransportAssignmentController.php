@@ -83,7 +83,7 @@ class TransportAssignmentController extends BaseController
 
         $query = TransportAssignment::query()
             ->with([
-                'user:id,name,email',
+                'user:id,name,email,reg_no,student_id',
                 'user.studentProfile',
                 'user.studentProfile.currentEnrollments.lmsClass:id,name,code',
                 'transportRoute:id,name,code',
@@ -126,8 +126,24 @@ class TransportAssignmentController extends BaseController
 
         if ($request->filled('search')) {
             $search = '%' . strtolower($request->search) . '%';
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->whereRaw('LOWER(name) LIKE ?', [$search]);
+            $searchBy = $request->input('search_by', 'student');
+            $query->whereHas('user', function ($q) use ($search, $searchBy) {
+                if ($searchBy === 'student_id') {
+                    $q->whereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                      ->orWhereHas('studentProfile', fn($sp) => $sp->whereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search]));
+                } elseif ($searchBy === 'reg_no') {
+                    $q->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                      ->orWhereHas('studentProfile', fn($sp) => $sp->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search]));
+                } else {
+                    $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                      ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                      ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                      ->orWhereHas('studentProfile', function ($sp) use ($search) {
+                          $sp->whereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                             ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                             ->orWhereRaw('LOWER(COALESCE(roll_no, "")) LIKE ?', [$search]);
+                      });
+                }
             });
         }
 

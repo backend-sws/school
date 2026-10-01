@@ -23,7 +23,7 @@ class HostelComplaintController extends BaseController
         $query = HostelComplaint::query()
             ->where('institution_id', $institutionId)
             ->with([
-                'user:id,name,email',
+                'user:id,name,email,reg_no,student_id',
                 'user.studentProfile',
                 'user.studentProfile.stream:id,name,code',
                 'room:id,room_number,hostel_id',
@@ -53,7 +53,13 @@ class HostelComplaintController extends BaseController
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(subject) LIKE ?', [$search])
                     ->orWhereHas('user', function ($uq) use ($search) {
-                        $uq->whereRaw('LOWER(name) LIKE ?', [$search]);
+                        $uq->whereRaw('LOWER(name) LIKE ?', [$search])
+                           ->orWhereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                           ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search])
+                           ->orWhereHas('studentProfile', function ($sp) use ($search) {
+                               $sp->whereRaw('LOWER(COALESCE(student_id, "")) LIKE ?', [$search])
+                                  ->orWhereRaw('LOWER(COALESCE(reg_no, "")) LIKE ?', [$search]);
+                           });
                     });
             });
         }

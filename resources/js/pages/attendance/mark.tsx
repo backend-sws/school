@@ -140,6 +140,8 @@ export default function AttendanceMark() {
     const q = searchQuery.toLowerCase();
     return records.filter(r =>
       r.user_name.toLowerCase().includes(q) ||
+      (r.student_id && r.student_id.toLowerCase().includes(q)) ||
+      (r.reg_no && r.reg_no.toLowerCase().includes(q)) ||
       (r.roll_no && r.roll_no.toLowerCase().includes(q))
     );
   }, [records, searchQuery]);
@@ -585,7 +587,11 @@ export default function AttendanceMark() {
                                         {r.user_name}
                                       </p>
                                       <p className="text-[11px] font-mono text-muted-foreground">
-                                        {r.roll_no || `ID: ${r.user_id}`}
+                                        {[
+                                          r.student_id ? `ID: ${r.student_id}` : null,
+                                          r.reg_no ? `Reg: ${r.reg_no}` : null,
+                                          r.roll_no ? `Roll: ${r.roll_no}` : null,
+                                        ].filter(Boolean).join(" • ") || `ID: ${r.user_id}`}
                                       </p>
                                     </div>
                                   </div>
