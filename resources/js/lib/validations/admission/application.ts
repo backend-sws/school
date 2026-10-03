@@ -88,6 +88,10 @@ const guardianSnapshotSchema = z.preprocess(
 export const applicationDeskFormSchema = z
   .object({
     id: z.number().optional(),
+    user_id: z.union([z.string(), z.number()]).optional(),
+    student_profile_id: z.union([z.string(), z.number()]).optional(),
+    from_session_id: z.union([z.string(), z.number()]).optional(),
+    from_class_id: z.union([z.string(), z.number()]).optional(),
     application_id: safeOptionalString(50, "Application ID"),
     process_status: z.enum(["draft", "pending", "approved", "rejected"]).optional(),
     application_type: z.enum(["new", "re-admission"]),
@@ -258,8 +262,11 @@ export const applicationDeskFormSchema = z
     ),
 
     // Re-Admission Metadata (Read-only UI context)
+    _from_stream_id: z.union([z.string(), z.number()]).optional(),
     _from_stream_name: z.string().optional(),
+    _from_session_id: z.union([z.string(), z.number()]).optional(),
     _from_session_name: z.string().optional(),
+    _from_class_id: z.union([z.string(), z.number()]).optional(),
     _from_reg_no: z.string().optional(),
     _from_student_id: z.union([z.string(), z.number()]).optional(),
 

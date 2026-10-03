@@ -366,12 +366,17 @@ const ReadmissionsNew = () => {
     const { grandTotal, discountTotal } = computeFeeBreakdown(values);
     const { dueAmount } = computePaymentSummary(values, grandTotal);
 
+    const userId = values.user_id ?? getValues("user_id" as any);
+    const studentProfileId = values.student_profile_id ?? getValues("student_profile_id" as any);
+    const fromSessionId = values._from_session_id ?? values.from_session_id ?? getValues("_from_session_id" as any) ?? getValues("from_session_id" as any);
+    const fromClassId = values._from_class_id ?? values.from_class_id ?? getValues("_from_class_id" as any) ?? getValues("from_class_id" as any);
+
     return {
       id: values.id || undefined,
-      user_id: values.user_id ? Number(values.user_id) : undefined,
-      student_profile_id: values.student_profile_id ? Number(values.student_profile_id) : undefined,
-      from_session_id: (values._from_session_id ?? values.from_session_id) ? Number(values._from_session_id ?? values.from_session_id) : undefined,
-      from_class_id: (values._from_class_id ?? values.from_class_id) ? Number(values._from_class_id ?? values.from_class_id) : undefined,
+      user_id: userId ? Number(userId) : undefined,
+      student_profile_id: studentProfileId ? Number(studentProfileId) : undefined,
+      from_session_id: fromSessionId ? Number(fromSessionId) : undefined,
+      from_class_id: fromClassId ? Number(fromClassId) : undefined,
       application_type: "re-admission",
       process_status: isDraft ? "draft" : "pending",
       admission_date: values.admission_date || undefined,

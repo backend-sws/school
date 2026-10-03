@@ -160,7 +160,8 @@ class AdmissionToStudentSyncService
     {
         $app = $context['application'];
         $snapshot = $app->guardian_snapshot ?? [];
-        $guardianName = data_get($snapshot, 'name', $app->father_name);
+        $rawGuardianName = data_get($snapshot, 'name');
+        $guardianName = (!empty($rawGuardianName) ? $rawGuardianName : null) ?: $app->father_name;
         $relation = data_get($snapshot, 'relation', 'guardian');
 
         $result = app(GuardianService::class)->resolveOrCreateAndLinkToStudent(
@@ -214,10 +215,12 @@ class AdmissionToStudentSyncService
     {
         $app = $context['application'];
 
-        // Extract snapshots
         $address = self::extractPrimaryAddressBlock($app->address_snapshot ?? []);
         $guardian = $app->guardian_snapshot ?? [];
-        $fatherName = data_get($guardian, 'name', $app->father_name);
+        $guardianName = data_get($guardian, 'name');
+        $fatherName = (!empty($guardianName) ? $guardianName : null) ?: $app->father_name;
+        $guardianOcc = data_get($guardian, 'occupation');
+        $fatherOccupation = (!empty($guardianOcc) ? $guardianOcc : null) ?: $app->father_occupation;
 
         // Direct-mapped fields from application → profile
         $profileData = [];
@@ -235,7 +238,7 @@ class AdmissionToStudentSyncService
         $profileData['reg_no']               = $this->resolveRegNumber($app, $identifierService);
         $profileData['roll_no']              = $identifierService->generateRollNumber($app->institution_id, $context['sessionId'], $context['streamId']);
         $profileData['father_name']          = $fatherName;
-        $profileData['father_occupation']    = data_get($guardian, 'occupation') ?? $app->father_occupation;
+        $profileData['father_occupation']    = $fatherOccupation;
         $profileData['address']              = $address['line'] ?: null;
         $profileData['city']                 = $address['city'];
         $profileData['state']                = $address['state'];
@@ -256,6 +259,28 @@ class AdmissionToStudentSyncService
             ['user_id' => $app->user_id],
             $profileData
         );
+
+        // Keep User contact details in sync with approved application
+        $user = $context['user'] ?? null;
+        if ($user) {
+            $userUpdates = [];
+            if (!empty($app->mobile) && $user->mobile !== $app->mobile) {
+                $exists = User::where('id', '!=', $user->id)->where('mobile', $app->mobile)->exists();
+                if (!$exists) {
+                    $userUpdates['mobile'] = $app->mobile;
+                }
+            }
+            if (!empty($app->email) && $user->email !== $app->email) {
+                $exists = User::where('id', '!=', $user->id)->where('email', $app->email)->exists();
+                if (!$exists) {
+                    $userUpdates['email'] = $app->email;
+                    $userUpdates['contact_email'] = $app->email;
+                }
+            }
+            if (!empty($userUpdates)) {
+                $user->update($userUpdates);
+            }
+        }
 
         if ($this->isReadmission($app) && $context['sessionId']) {
             $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
@@ -515,15 +540,62 @@ class AdmissionToStudentSyncService
      * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
     /**
-     * Re-admissions preserve existing reg_no; new admissions generate one.
+     * Re-admissions ALWAYS preserve the student's existing reg_no so it carries
+     * forward for their entire academic lifetime — even if mobile/email changed
+     * and a new User account was created.
+     *
+     * Resolution priority (re-admission only):
+     *  1. StudentProfile linked to the application's own user_id
+     *  2. StudentProfile referenced by subject_preferences.student_profile_id
+     *     (set when staff selects the student from the desk UI)
+     *  3. StudentProfile referenced by application-level student_profile_id field
+     *
+     * If none found, falls through to generate a fresh reg_no (new admission path).
      */
     protected function resolveRegNumber(AdmissionApplication $app, StudentIdentifierService $service): string
     {
         if ($this->isReadmission($app)) {
+            // 1. Primary: profile linked to this application's user
             $existing = StudentProfile::where('user_id', $app->user_id)->value('reg_no');
             if ($existing) {
                 return $existing;
             }
+
+            // 2. Fallback: student_profile_id stored in subject_preferences
+            //    (populated by the admission desk UI when staff picks a student)
+            $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
+            $profileIdFromPrefs = $prefs['student_profile_id'] ?? null;
+            if ($profileIdFromPrefs) {
+                $existing = StudentProfile::where('id', $profileIdFromPrefs)->value('reg_no');
+                if ($existing) {
+                    Log::info('AdmissionSync: reg_no carried forward via subject_preferences.student_profile_id', [
+                        'application_id'   => $app->id,
+                        'student_profile_id' => $profileIdFromPrefs,
+                        'reg_no'           => $existing,
+                    ]);
+                    return $existing;
+                }
+            }
+
+            // 3. Last resort: student_profile_id at application root
+            //    (direct field, less common but supported)
+            $profileIdDirect = data_get($app->toArray(), 'student_profile_id');
+            if ($profileIdDirect) {
+                $existing = StudentProfile::where('id', $profileIdDirect)->value('reg_no');
+                if ($existing) {
+                    Log::info('AdmissionSync: reg_no carried forward via application.student_profile_id', [
+                        'application_id'   => $app->id,
+                        'student_profile_id' => $profileIdDirect,
+                        'reg_no'           => $existing,
+                    ]);
+                    return $existing;
+                }
+            }
+
+            Log::warning('AdmissionSync: re-admission could not resolve existing reg_no — generating new one', [
+                'application_id' => $app->id,
+                'user_id'        => $app->user_id,
+            ]);
         }
 
         return $service->generateRegNumber($app->institution_id, (int)$app->session_id);
