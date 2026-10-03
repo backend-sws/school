@@ -6,6 +6,9 @@ import { Drawer } from "vaul";
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 
@@ -46,17 +49,8 @@ export function ModalDialog({
 }: ModalDialogProps) {
   const isMobile = useIsMobile();
 
-  const content = (
+  const bodyAndFooter = (
     <>
-      <div className={cn("p-4 sm:p-6 flex-shrink-0 text-left flex flex-col gap-1.5 bg-card/30", headerClassName)}>
-        <h3 className="text-xl font-semibold tracking-tight leading-none">{title}</h3>
-        {description && (
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {description}
-          </p>
-        )}
-      </div>
-
       <Separator className="bg-border/50" />
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 min-h-0 bg-background/50">
@@ -111,8 +105,18 @@ export function ModalDialog({
           <Drawer.Overlay className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-md" />
           <Drawer.Content className="fixed inset-x-0 bottom-0 z-[110] flex flex-col rounded-t-3xl bg-background border-t border-border/50 shadow-2xl outline-none max-h-[96%] overflow-hidden">
             <div className="mx-auto mt-4 h-1.5 w-12 shrink-0 rounded-full bg-muted-foreground/30 mb-2" />
+            <div className={cn("p-4 sm:p-6 flex-shrink-0 text-left flex flex-col gap-1.5 bg-card/30", headerClassName)}>
+              <Drawer.Title className="text-xl font-semibold tracking-tight leading-none">{title}</Drawer.Title>
+              {description ? (
+                <Drawer.Description className="text-sm text-muted-foreground leading-relaxed">
+                  {description}
+                </Drawer.Description>
+              ) : (
+                <Drawer.Description className="sr-only">{title}</Drawer.Description>
+              )}
+            </div>
             <div className="flex flex-col flex-1 overflow-hidden min-h-0">
-              {content}
+              {bodyAndFooter}
             </div>
           </Drawer.Content>
         </Drawer.Portal>
@@ -148,7 +152,17 @@ export function ModalDialog({
           className,
         )}
       >
-        {content}
+        <DialogHeader className={cn("p-4 sm:p-6 flex-shrink-0 text-left flex flex-col gap-1.5 bg-card/30 space-y-0", headerClassName)}>
+          <DialogTitle className="text-xl font-semibold tracking-tight leading-none">{title}</DialogTitle>
+          {description ? (
+            <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              {description}
+            </DialogDescription>
+          ) : (
+            <DialogDescription className="sr-only">{title}</DialogDescription>
+          )}
+        </DialogHeader>
+        {bodyAndFooter}
       </DialogContent>
     </Dialog>
   );

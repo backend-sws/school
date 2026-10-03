@@ -129,16 +129,16 @@ class SessionController extends BaseController
             'start_year' => [
                 'required',
                 'integer',
-                'min:2000',
+                'min:1900',
                 'max:2100',
                 // Multi-column unique check: College + Start + End
                 Rule::unique('academic_sessions')->where(function ($query) use ($request) {
                     return $query->where('end_year', $request->end_year);
                 }),
             ],
-            'end_year' => 'required|integer|min:2000|max:2100|gt:start_year',
+            'end_year' => 'required|integer|min:1900|max:2100|gte:start_year',
         ], [
-            'end_year.gt' => 'End year must be greater than start year.',
+            'end_year.gte' => 'End year must be greater than or equal to start year.',
             'start_year.unique' => "The session {$request->start_year}-{$request->end_year} already exists for this college.",
         ]);
 
@@ -201,7 +201,7 @@ class SessionController extends BaseController
             'start_year' => [
                 'sometimes',
                 'integer',
-                'min:2000',
+                'min:1900',
                 'max:2100',
                 // Unique check: College + Start + End excluding current
                 Rule::unique('academic_sessions')->where(function ($query) use ($request, $session) {
@@ -211,7 +211,7 @@ class SessionController extends BaseController
                         ->where('end_year', $end);
                 })->ignore($session->id),
             ],
-            'end_year' => 'sometimes|integer|min:2000|max:2100|gt:start_year',
+            'end_year' => 'sometimes|integer|min:1900|max:2100|gte:start_year',
         ], [
             'start_year.unique' => 'This session combination already exists.',
         ]);

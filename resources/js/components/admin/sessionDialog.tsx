@@ -43,10 +43,10 @@ export function SessionDialog({ open, onClose, data }: SessionProps) {
     queryFn: () => SessionApi.getSuggestedYears(1),
     enabled: open && !isEditMode,
   });
-  
+
   // Watch start_year to auto-update end_year
   const startYear = watch("start_year");
-  
+
   useEffect(() => {
     // Auto-set end_year to start_year + 1 when start_year changes (only in create mode)
     if (!isEditMode && startYear) {
@@ -83,10 +83,15 @@ export function SessionDialog({ open, onClose, data }: SessionProps) {
   }, [isEditMode, SessionDetail, suggestedYears, reset]);
 
   const { mutate: handleMutation, isPending: isSaving } = useMutation({
-    mutationFn: (submitData: any) =>
-      isEditMode
-        ? SessionApi.updateSession(dataId, submitData)
-        : SessionApi.createSession(submitData),
+    mutationFn: (submitData: any) => {
+      const payload = {
+        start_year: Number(submitData.start_year),
+        end_year: Number(submitData.end_year),
+      };
+      return isEditMode
+        ? SessionApi.updateSession(dataId, payload)
+        : SessionApi.createSession(payload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["sessions"],
@@ -106,6 +111,7 @@ export function SessionDialog({ open, onClose, data }: SessionProps) {
   return (
     <ModalDialog
       title={isEditMode ? "Edit Session" : "Add Session"}
+      description="Configure time-based enrollment cycle and academic duration."
       open={open}
       onClose={onClose}
       handleSubmit={handleSubmit(onSubmit)}
