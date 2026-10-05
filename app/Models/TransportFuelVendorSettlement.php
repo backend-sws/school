@@ -24,7 +24,7 @@ class TransportFuelVendorSettlement extends Model
     ];
 
     protected $casts = [
-        'settlement_date' => 'date',
+        'settlement_date' => 'date:Y-m-d',
         'amount'          => 'decimal:2',
     ];
 

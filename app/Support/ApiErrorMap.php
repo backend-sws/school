@@ -87,7 +87,8 @@ class ApiErrorMap
      */
     private static function resolve(string $key): array
     {
-        $entry = config("api_error_maps.{$key}");
+        $all = config('api_error_maps', []);
+        $entry = $all[$key] ?? config("api_error_maps.{$key}");
 
         if (!$entry) {
             return [

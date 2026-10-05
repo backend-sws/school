@@ -22,6 +22,7 @@ import {
 import transportApi from "@/lib/api/transportApi";
 import { toast } from "sonner";
 import { Calculator, Navigation } from "lucide-react";
+import { formatDateOnly, getLocalTodayDate } from "@/lib/utils";
 
 export type TripLogData = {
   id?: number;
@@ -48,7 +49,7 @@ interface TransportTripLogDialogProps {
   onSuccess?: () => void;
 }
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+const defaultDate = () => getLocalTodayDate();
 
 export function TransportTripLogDialog({
   open,
@@ -147,7 +148,7 @@ export function TransportTripLogDialog({
           transport_vehicle_id: data.transport_vehicle_id,
           transport_driver_id: data.transport_driver_id ? String(data.transport_driver_id) : "",
           transport_route_id: data.transport_route_id ? String(data.transport_route_id) : "",
-          log_date: typeof data.log_date === "string" ? data.log_date.slice(0, 10) : defaultDate(),
+          log_date: data.log_date ? formatDateOnly(data.log_date) : defaultDate(),
           trip_type: data.trip_type || "regular",
           purpose: data.purpose || "",
           start_odometer: data.start_odometer,

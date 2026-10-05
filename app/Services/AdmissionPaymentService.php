@@ -49,7 +49,11 @@ class AdmissionPaymentService
         $cumulativePaid = $cumulativeCash + $cumulativeOnline;
 
         $discountAmount = (float) ($data['discount_amount'] ?? $application->discount_amount ?? 0);
-        $txnId = $data['online_transaction_id'] ?? $data['transaction_id'] ?? ('TXN' . strtoupper(uniqid()));
+        $rawTxnId = $data['online_transaction_id'] ?? $data['transaction_id'] ?? null;
+        $txnId = $rawTxnId;
+        if (empty($txnId) || Transaction::where('transaction_id', $txnId)->exists()) {
+            $txnId = 'TXN' . strtoupper(uniqid());
+        }
         $netPayable = max(0, round((float) $application->amount - $discountAmount, 2));
         $remainingAllowed = max(0, round($netPayable - ((float) ($application->cash_amount ?? 0) + (float) ($application->online_amount ?? 0)), 2));
 

@@ -163,6 +163,7 @@ const ReadmissionsNew = () => {
   const sectionId = watch("section_id");
   const prevStreamIdRef = useRef<string | number | undefined>(streamId);
   const isMountedRef = useRef(false);
+  const isSubmittingRef = useRef(false);
 
   useEffect(() => {
     if (!isMountedRef.current) {
@@ -235,6 +236,9 @@ const ReadmissionsNew = () => {
         toast.error(msg);
       }
     },
+    onSettled: () => {
+      isSubmittingRef.current = false;
+    },
   });
 
   /* ── Update Mutation */
@@ -261,6 +265,9 @@ const ReadmissionsNew = () => {
       } else {
         toast.error(msg);
       }
+    },
+    onSettled: () => {
+      isSubmittingRef.current = false;
     },
   });
 
@@ -435,6 +442,8 @@ const ReadmissionsNew = () => {
 
 
   const onSaveDraft = () => {
+    if (createMutation.isPending || updateMutation.isPending || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     const values = getValues();
     const payload = generatePayload(values, true);
     if (payload.id) {
@@ -446,6 +455,8 @@ const ReadmissionsNew = () => {
 
   const onSubmit = handleSubmit(
     (values) => {
+      if (createMutation.isPending || updateMutation.isPending || isSubmittingRef.current) return;
+      isSubmittingRef.current = true;
       const payload = generatePayload(values, false);
       if (payload.id) {
         updateMutation.mutate(payload);

@@ -30,7 +30,7 @@ class TransportVehicleLog extends Model
     ];
 
     protected $casts = [
-        'log_date' => 'date',
+        'log_date' => 'date:Y-m-d',
         'start_odometer' => 'decimal:2',
         'end_odometer' => 'decimal:2',
         'total_km' => 'decimal:2',
