@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/print-summary-Br5WMPAR.js
 import{c as T,r as v,j as t,H as w}from"./app-CaC5PfT8.js";import{a as k,e as l,T as R,d as a,c as E,b as P}from"./table-CDYZ6jkC.js";import"./app-CcLIgfOg.js";import"./index--DjD275u.js";import"./proxy-DUnrKpRY.js";import"./resolve-elements-BeIloL1I.js";function H(s){const e=T.c(28),{exam:h,results:n}=s;let f;e[0]===Symbol.for("react.memo_cache_sentinel")?(f=[],e[0]=f):f=e[0],v.useEffect(A,f);const g=`Result Summary: ${h.name}`;let c;e[1]!==g?(c=t.jsx(w,{title:g}),e[1]=g,e[2]=c):c=e[2];let j;e[3]===Symbol.for("react.memo_cache_sentinel")?(j=t.jsx("style",{dangerouslySetInnerHTML:{__html:`
+========
+import{c as T,r as v,j as t,H as w}from"./app-J5bG5MOW.js";import{a as k,e as l,T as R,d as a,c as E,b as P}from"./table-DEbvmjNf.js";import"./app-CcLIgfOg.js";import"./index-D04Pp6SM.js";import"./proxy-D10rX62g.js";import"./resolve-elements-BeIloL1I.js";function H(s){const e=T.c(28),{exam:h,results:n}=s;let f;e[0]===Symbol.for("react.memo_cache_sentinel")?(f=[],e[0]=f):f=e[0],v.useEffect(A,f);const g=`Result Summary: ${h.name}`;let c;e[1]!==g?(c=t.jsx(w,{title:g}),e[1]=g,e[2]=c):c=e[2];let j;e[3]===Symbol.for("react.memo_cache_sentinel")?(j=t.jsx("style",{dangerouslySetInnerHTML:{__html:`
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/print-summary-D_Mk9rrc.js
         @media print {
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
           #theme-root > div:last-child { display: none !important; }

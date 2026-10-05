@@ -470,6 +470,11 @@ class ApplicationController extends BaseController
                     $studentUser = StudentProfile::find($validated['student_profile_id'])?->user;
                 }
 
+                // Check subject_preferences fallback
+                if (!$studentUser && !empty($validated['subject_preferences']['student_profile_id'])) {
+                    $studentUser = StudentProfile::find($validated['subject_preferences']['student_profile_id'])?->user;
+                }
+
                 // Fallback for re-admission if explicit IDs weren't passed: try exact contact + name match
                 if (!$studentUser) {
                     $studentUser = User::query()
@@ -503,6 +508,25 @@ class ApplicationController extends BaseController
                     'mobile' => $validated['mobile'] ?? null,
                     'submitted_by' => $user->id,
                 ]);
+
+                // Update existing student user contact info if modified during re-admission
+                $userUpdates = [];
+                if (!empty($validated['mobile']) && $studentUser->mobile !== $validated['mobile']) {
+                    $existingPhoneUser = User::where('id', '!=', $studentUser->id)->where('mobile', $validated['mobile'])->exists();
+                    if (!$existingPhoneUser) {
+                        $userUpdates['mobile'] = $validated['mobile'];
+                    }
+                }
+                if (!empty($validated['email']) && $studentUser->email !== $validated['email']) {
+                    $existingEmailUser = User::where('id', '!=', $studentUser->id)->where('email', $validated['email'])->exists();
+                    if (!$existingEmailUser) {
+                        $userUpdates['email'] = $validated['email'];
+                        $userUpdates['contact_email'] = $validated['email'];
+                    }
+                }
+                if (!empty($userUpdates)) {
+                    $studentUser->update($userUpdates);
+                }
             } else {
                 // Step 2: Check if mobile/email already belongs to a different user (guardian's phone)
                 $existingMobileUser = !empty($validated['mobile'])

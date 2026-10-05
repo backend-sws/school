@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/guardianApi-BZ9oCvaA.js
 import{a as t}from"./api-CmYH3cs1.js";const e="/guardians",s={sameEmailAccounts:()=>t.get(`${e}/same-email-accounts`),myStudents:()=>t.get(`${e}/my-students`),linkAccount:c=>t.post(`${e}/link-account`,c),verifyLinkAccount:c=>t.post(`${e}/verify-link-account`,{token:c}),setActiveStudent:c=>t.post(`${e}/active-student`,{user_id:c}),clearActiveStudent:()=>t.post(`${e}/clear-active-student`),me:()=>t.get(`${e}/me`)};export{s as G};
+========
+import{a as t}from"./api-w-WR6HpR.js";const e="/guardians",s={sameEmailAccounts:()=>t.get(`${e}/same-email-accounts`),myStudents:()=>t.get(`${e}/my-students`),linkAccount:c=>t.post(`${e}/link-account`,c),verifyLinkAccount:c=>t.post(`${e}/verify-link-account`,{token:c}),setActiveStudent:c=>t.post(`${e}/active-student`,{user_id:c}),clearActiveStudent:()=>t.post(`${e}/clear-active-student`),me:()=>t.get(`${e}/me`)};export{s as G};
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/guardianApi-C3k6XqnF.js

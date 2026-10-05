@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/square-split-horizontal-BGj8L5Qp.js
 import{b as o}from"./app-CaC5PfT8.js";const t=[["path",{d:"M8 19H5c-1 0-2-1-2-2V7c0-1 1-2 2-2h3",key:"lubmu8"}],["path",{d:"M16 5h3c1 0 2 1 2 2v10c0 1-1 2-2 2h-3",key:"1ag34g"}],["line",{x1:"12",x2:"12",y1:"4",y2:"20",key:"1tx1rr"}]],a=o("SquareSplitHorizontal",t);export{a as S};
+========
+import{b as o}from"./app-J5bG5MOW.js";const t=[["path",{d:"M8 19H5c-1 0-2-1-2-2V7c0-1 1-2 2-2h3",key:"lubmu8"}],["path",{d:"M16 5h3c1 0 2 1 2 2v10c0 1-1 2-2 2h-3",key:"1ag34g"}],["line",{x1:"12",x2:"12",y1:"4",y2:"20",key:"1tx1rr"}]],a=o("SquareSplitHorizontal",t);export{a as S};
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/square-split-horizontal-B3Y-7KI6.js

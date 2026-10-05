@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/subjectApi-BQG5J3bJ.js
 import{a as t}from"./api-CmYH3cs1.js";const s="/subjects",o={index:e=>t.get(s,{params:e}),show:e=>t.get(`${s}/${e}`),store:e=>t.post(s,e),update:(e,p)=>t.put(`${s}/${e}`,p),destroy:e=>t.delete(`${s}/${e}`),getSubjects:e=>t.get(s,{params:e}),getSubjectById:e=>t.get(`${s}/${e}`),createSubject:e=>t.post(s,e),updateSubject:(e,p)=>t.put(`${s}/${e}`,p),deleteSubject:e=>t.delete(`${s}/${e}`),getMappedCategories:e=>t.get(`${s}/${e}/mapped-categories`)};export{o as s};
+========
+import{a as t}from"./api-w-WR6HpR.js";const s="/subjects",o={index:e=>t.get(s,{params:e}),show:e=>t.get(`${s}/${e}`),store:e=>t.post(s,e),update:(e,p)=>t.put(`${s}/${e}`,p),destroy:e=>t.delete(`${s}/${e}`),getSubjects:e=>t.get(s,{params:e}),getSubjectById:e=>t.get(`${s}/${e}`),createSubject:e=>t.post(s,e),updateSubject:(e,p)=>t.put(`${s}/${e}`,p),deleteSubject:e=>t.delete(`${s}/${e}`),getMappedCategories:e=>t.get(`${s}/${e}/mapped-categories`)};export{o as s};
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/subjectApi-Drlyl4zr.js

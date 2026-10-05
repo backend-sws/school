@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/print-DV0snleH.js
 import{c as f,r as h,j as e,H as g}from"./app-CaC5PfT8.js";import{G as k}from"./GurukulAdmitCard-DLEmTODu.js";import"./app-CcLIgfOg.js";function j(s){const t=f.c(14),{exam:a,lmsClass:x,admitCards:c}=s;let o;t[0]===Symbol.for("react.memo_cache_sentinel")?(o=[],t[0]=o):o=t[0],h.useEffect(w,o);const u=`Admit Cards - ${x?.name} (${a?.name})`;let n;t[1]!==u?(n=e.jsx(g,{title:u}),t[1]=u,t[2]=n):n=t[2];let m;t[3]===Symbol.for("react.memo_cache_sentinel")?(m=e.jsx("style",{dangerouslySetInnerHTML:{__html:`
+========
+import{c as f,r as h,j as e,H as g}from"./app-J5bG5MOW.js";import{G as k}from"./GurukulAdmitCard-BRYkkjsS.js";import"./app-CcLIgfOg.js";function j(s){const t=f.c(14),{exam:a,lmsClass:x,admitCards:c}=s;let o;t[0]===Symbol.for("react.memo_cache_sentinel")?(o=[],t[0]=o):o=t[0],h.useEffect(w,o);const u=`Admit Cards - ${x?.name} (${a?.name})`;let n;t[1]!==u?(n=e.jsx(g,{title:u}),t[1]=u,t[2]=n):n=t[2];let m;t[3]===Symbol.for("react.memo_cache_sentinel")?(m=e.jsx("style",{dangerouslySetInnerHTML:{__html:`
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/print-BEBpospe.js
         @page {
           size: A4 portrait;
           margin: 4mm 6mm;

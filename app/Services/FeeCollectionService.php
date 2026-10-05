@@ -1261,24 +1261,49 @@ class FeeCollectionService
         }
 
         // 3. Fallback: match by name, soundex, father name and verified 10-digit mobile number across users and student_profiles
+        $fatherName = strtolower(trim((string) ($student->studentProfile?->father_name ?? '')));
+        if (empty($fatherName)) {
+            $appFather = AdmissionApplication::where('user_id', $student->id)->whereNotNull('father_name')->value('father_name');
+            $fatherName = strtolower(trim((string) $appFather));
+        }
+
+        // Without a known father name, cross-session fuzzy matching by common name (e.g. "Ayush Kumar") is dangerous and must be skipped
+        if (empty($fatherName)) {
+            return $student;
+        }
+
         $cleanMobile = preg_replace('/\D/', '', (string) ($student->mobile ?: $student->studentProfile?->mobile ?: ''));
         $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : '';
-        $studentName = strtolower(trim((string) $student->name));
-        $fatherName = strtolower(trim((string) ($student->studentProfile?->father_name ?? '')));
+
+        // If mobile is shared across multiple students (e.g. school placeholder number like 9122214400),
+        // fallback to father_mobile if available, otherwise do not match on a shared placeholder number!
+        if (!empty($last10)) {
+            $sharedCount = \App\Models\StudentProfile::where('institution_id', $institutionId)
+                ->where(function ($q) use ($last10) {
+                    $q->where('mobile', 'like', "%{$last10}")
+                      ->orWhere('father_mobile', 'like', "%{$last10}");
+                })->count();
+
+            if ($sharedCount > 1) {
+                $cleanFatherMobile = preg_replace('/\D/', '', (string) ($student->studentProfile?->father_mobile ?? ''));
+                if (strlen($cleanFatherMobile) >= 10) {
+                    $last10 = substr($cleanFatherMobile, -10);
+                } else {
+                    $last10 = '';
+                }
+            }
+        }
 
         if (!empty($last10)) {
+            $studentName = strtolower(trim((string) $student->name));
             $linkedUser = User::where('institution_id', $institutionId)
                 ->where('id', '!=', $student->id)
-                ->where(function ($q) use ($studentName, $fatherName) {
-                    $q->where(function ($nq) use ($studentName) {
-                        $nq->whereRaw('LOWER(TRIM(name)) = ?', [$studentName])
-                           ->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$studentName]);
-                    });
-                    if (!empty($fatherName)) {
-                        $q->whereHas('studentProfile', function ($sp) use ($fatherName) {
-                            $sp->whereRaw('LOWER(TRIM(father_name)) = ?', [$fatherName]);
-                        });
-                    }
+                ->where(function ($q) use ($studentName) {
+                    $q->whereRaw('LOWER(TRIM(name)) = ?', [$studentName])
+                       ->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$studentName]);
+                })
+                ->whereHas('studentProfile', function ($sp) use ($fatherName) {
+                    $sp->whereRaw('LOWER(TRIM(father_name)) = ?', [$fatherName]);
                 })
                 ->where(function ($q) use ($last10) {
                     $q->where('mobile', $last10)
@@ -1287,7 +1312,10 @@ class FeeCollectionService
                       ->orWhereHas('studentProfile', function ($sp) use ($last10) {
                           $sp->where('mobile', $last10)
                              ->orWhere('mobile', '+91' . $last10)
-                             ->orWhere('mobile', '91' . $last10);
+                             ->orWhere('mobile', '91' . $last10)
+                             ->orWhere('father_mobile', $last10)
+                             ->orWhere('father_mobile', '+91' . $last10)
+                             ->orWhere('father_mobile', '91' . $last10);
                       });
                 })
                 ->whereHas('studentProfile', function ($q) use ($sessionId) {

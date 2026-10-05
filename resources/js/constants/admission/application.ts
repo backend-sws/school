@@ -22,6 +22,10 @@ export const APPLICATION_TYPE_OPTIONS = [
 export const APPLICATION_DESK_FORM_DEFAULT_VALUES = {
   application_type: "new" as ApplicationDeskType,
   student_id: "" as string | number,
+  user_id: "" as string | number,
+  student_profile_id: "" as string | number,
+  from_session_id: "" as string | number,
+  from_class_id: "" as string | number,
   admission_date: new Date().toISOString().split("T")[0],
   stream_id: "" as string | number,
   applicant_name: "",

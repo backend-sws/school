@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/print-broadsheet-BQ4xWQQn.js
 import{c as q,r as I,j as t,H as J}from"./app-CaC5PfT8.js";import{a as G,e as r,d as n,T as K,b as Q,c as V}from"./table-CDYZ6jkC.js";import"./app-CcLIgfOg.js";import"./index--DjD275u.js";import"./proxy-DUnrKpRY.js";import"./resolve-elements-BeIloL1I.js";function W(l){const e=q.c(53),{exam:_,subjects:s,marksheets:o}=l;let w;e[0]===Symbol.for("react.memo_cache_sentinel")?(w=[],e[0]=w):w=e[0],I.useEffect(Z,w);const L=`Broadsheet: ${_.name}`;let c;e[1]!==L?(c=t.jsx(J,{title:L}),e[1]=L,e[2]=c):c=e[2];let v;e[3]===Symbol.for("react.memo_cache_sentinel")?(v=t.jsx("style",{dangerouslySetInnerHTML:{__html:`
+========
+import{c as q,r as I,j as t,H as J}from"./app-J5bG5MOW.js";import{a as G,e as r,d as n,T as K,b as Q,c as V}from"./table-DEbvmjNf.js";import"./app-CcLIgfOg.js";import"./index-D04Pp6SM.js";import"./proxy-D10rX62g.js";import"./resolve-elements-BeIloL1I.js";function W(l){const e=q.c(53),{exam:_,subjects:s,marksheets:o}=l;let w;e[0]===Symbol.for("react.memo_cache_sentinel")?(w=[],e[0]=w):w=e[0],I.useEffect(Z,w);const L=`Broadsheet: ${_.name}`;let c;e[1]!==L?(c=t.jsx(J,{title:L}),e[1]=L,e[2]=c):c=e[2];let v;e[3]===Symbol.for("react.memo_cache_sentinel")?(v=t.jsx("style",{dangerouslySetInnerHTML:{__html:`
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/print-broadsheet-Bu6fxt6w.js
         @media print {
           @page { size: landscape; margin: 10mm; }
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }

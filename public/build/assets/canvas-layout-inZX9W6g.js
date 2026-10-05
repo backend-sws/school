@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/canvas-layout-inZX9W6g.js
 import{c as n,j as c}from"./app-CaC5PfT8.js";import"./app-CcLIgfOg.js";function f(i){const s=n.c(5),{children:a,className:o}=i,l=`h-full w-full overflow-y-auto bg-background print:bg-white ${o===void 0?"":o}`;let t;s[0]!==a?(t=c.jsx("main",{className:"w-full",children:a}),s[0]=a,s[1]=t):t=s[1];let e;return s[2]!==l||s[3]!==t?(e=c.jsx("div",{className:l,children:t}),s[2]=l,s[3]=t,s[4]=e):e=s[4],e}export{f as default};
+========
+import{c as n,j as c}from"./app-J5bG5MOW.js";import"./app-CcLIgfOg.js";function f(i){const s=n.c(5),{children:a,className:o}=i,l=`h-full w-full overflow-y-auto bg-background print:bg-white ${o===void 0?"":o}`;let t;s[0]!==a?(t=c.jsx("main",{className:"w-full",children:a}),s[0]=a,s[1]=t):t=s[1];let e;return s[2]!==l||s[3]!==t?(e=c.jsx("div",{className:l,children:t}),s[2]=l,s[3]=t,s[4]=e):e=s[4],e}export{f as default};
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/canvas-layout-C6dP06QD.js

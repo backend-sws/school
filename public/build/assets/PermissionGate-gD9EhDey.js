@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/PermissionGate-gD9EhDey.js
 import{j as o}from"./app-CaC5PfT8.js";import{u as h}from"./use-can-BVljxnuG.js";function g({can:s,permission:a,feature:u,canAny:r,canAll:i,fallback:f=null,children:m}){const n=h(),e=s??a;if(!e&&!u&&!r&&!i)return o.jsx(o.Fragment,{children:m});let t=!0;return e&&(t&&=n.can(e)),u&&(t&&=n.hasFeature(u)),r&&r.length>0&&(t&&=n.canAny(r)),i&&i.length>0&&(t&&=n.canAll(i)),o.jsx(o.Fragment,{children:t?m:f})}export{g as P};
+========
+import{j as o}from"./app-J5bG5MOW.js";import{u as h}from"./use-can-2qSXEHLb.js";function g({can:s,permission:a,feature:u,canAny:r,canAll:i,fallback:f=null,children:m}){const n=h(),e=s??a;if(!e&&!u&&!r&&!i)return o.jsx(o.Fragment,{children:m});let t=!0;return e&&(t&&=n.can(e)),u&&(t&&=n.hasFeature(u)),r&&r.length>0&&(t&&=n.canAny(r)),i&&i.length>0&&(t&&=n.canAll(i)),o.jsx(o.Fragment,{children:t?m:f})}export{g as P};
+>>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/PermissionGate-C-SwkdkB.js
