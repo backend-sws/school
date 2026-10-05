@@ -241,13 +241,13 @@ interface StudentLedgerDetailProps {
 
 export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStudentPortal }: StudentLedgerDetailProps) {
     const { can } = useAuth();
-    const canEditFeeLedger = can('edit_fee_ledger');
-    const canRevertFeeOverrides = can('revert_fee_overrides');
-    const canViewAdHoc = can('view_adhoc_charges');
-    const canCreateAdHoc = can('create_adhoc_charges');
-    const canRevertAdHoc = can('revert_adhoc_charges');
-    const canRevertPayment = can('revert_fee_payments');
-    const canDownloadReceipt = can('download_fee_receipt');
+    const canEditFeeLedger = can('edit_fee_ledger') || can('collect_fees');
+    const canRevertFeeOverrides = can('revert_fee_overrides') || can('collect_fees') || can('edit_fee_ledger');
+    const canViewAdHoc = can('view_adhoc_charges') || can('view_student_ledger') || can('view_fee_dues') || can('collect_fees');
+    const canCreateAdHoc = can('create_adhoc_charges') || can('collect_fees') || can('edit_fee_ledger');
+    const canRevertAdHoc = can('revert_adhoc_charges') || can('revert_fee_payments') || can('collect_fees') || can('edit_fee_ledger');
+    const canRevertPayment = can('revert_fee_payments') || can('collect_fees') || can('edit_fee_ledger');
+    const canDownloadReceipt = can('download_fee_receipt') || can('collect_fees') || can('view_fee_payments') || can('view_student_ledger');
 
     const scopeType = (usePage().props as { institution?: { type?: string } }).institution?.type ?? null;
     const labels = getInstitutionLabels(scopeType);
@@ -1172,6 +1172,17 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                         Revert Advance ({activeAdvanceMonthsCount} Mo)
                                     </Button>
                                 )}
+                                {canCreateAdHoc && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider gap-1.5 border-violet-300 text-violet-700 bg-violet-50/50 hover:bg-violet-100 hover:text-violet-800 shadow-xs transition-all"
+                                        onClick={() => openAdHocModal(matrix?.[0] || null)}
+                                    >
+                                        <Zap className="size-3.5 fill-violet-500/20 text-violet-600" />
+                                        Add Ad-Hoc
+                                    </Button>
+                                )}
                                 <Button
                                     variant="outline"
                                     size="sm"
@@ -1677,6 +1688,20 @@ export default function StudentLedgerDetail({ studentId, onBack, onLoaded, isStu
                                                                                             </Button>
                                                                                         </TooltipTrigger>
                                                                                         <TooltipContent>Undo Payment (With Reason)</TooltipContent>
+                                                                                    </Tooltip>
+                                                                                )}
+                                                                                {canCreateAdHoc && !isStudentPortal && (
+                                                                                    <Tooltip>
+                                                                                        <TooltipTrigger asChild>
+                                                                                            <Button
+                                                                                                size="icon" variant="ghost"
+                                                                                                className="size-7 rounded-lg hover:bg-violet-50 text-violet-500 border border-transparent hover:border-violet-100"
+                                                                                                onClick={() => openAdHocModal(row)}
+                                                                                            >
+                                                                                                <Zap className="size-3.5" />
+                                                                                            </Button>
+                                                                                        </TooltipTrigger>
+                                                                                        <TooltipContent>Add Ad-Hoc Charge for {row.month_name}</TooltipContent>
                                                                                     </Tooltip>
                                                                                 )}
                                                                             </div>

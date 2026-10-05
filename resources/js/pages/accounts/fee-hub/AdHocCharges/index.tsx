@@ -45,8 +45,8 @@ const YEARS = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - 2
 
 export default function AdHocCharges({ auth }: any) {
   const { can } = useAuth();
-  const canCreateAdHoc = can('create_adhoc_charges');
-  const canRevertAdHoc = can('revert_adhoc_charges');
+  const canCreateAdHoc = can('create_adhoc_charges') || can('collect_fees') || can('edit_fee_ledger');
+  const canRevertAdHoc = can('revert_adhoc_charges') || can('revert_fee_payments') || can('collect_fees') || can('edit_fee_ledger');
 
   const institutionId = auth.current_institution_id || auth.user?.institution_id;
   const queryClient = useQueryClient();

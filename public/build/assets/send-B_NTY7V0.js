@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/send-B_NTY7V0.js
-import{b as a}from"./app-CaC5PfT8.js";const e=[["path",{d:"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",key:"1ffxy3"}],["path",{d:"m21.854 2.147-10.94 10.939",key:"12cjpa"}]],c=a("Send",e);export{c as S};
-========
-import{b as a}from"./app-J5bG5MOW.js";const e=[["path",{d:"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",key:"1ffxy3"}],["path",{d:"m21.854 2.147-10.94 10.939",key:"12cjpa"}]],c=a("Send",e);export{c as S};
->>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/send-CgDgCLGF.js

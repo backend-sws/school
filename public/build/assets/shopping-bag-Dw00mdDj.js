@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/shopping-bag-Dw00mdDj.js
-import{b as a}from"./app-CaC5PfT8.js";const o=[["path",{d:"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z",key:"hou9p0"}],["path",{d:"M3 6h18",key:"d0wm0j"}],["path",{d:"M16 10a4 4 0 0 1-8 0",key:"1ltviw"}]],t=a("ShoppingBag",o);export{t as S};
-========
-import{b as a}from"./app-J5bG5MOW.js";const o=[["path",{d:"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z",key:"hou9p0"}],["path",{d:"M3 6h18",key:"d0wm0j"}],["path",{d:"M16 10a4 4 0 0 1-8 0",key:"1ltviw"}]],t=a("ShoppingBag",o);export{t as S};
->>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/shopping-bag-D170rcUO.js

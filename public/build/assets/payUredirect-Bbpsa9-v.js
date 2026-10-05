@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/payUredirect-Bbpsa9-v.js
-import{a as i}from"./api-CmYH3cs1.js";const r="/student",p={dopayment:e=>i.post(`${r}/payment/initiate`,e)},c=e=>{const t=document.createElement("form");t.method="POST",t.action=e.payment_url,Object.entries(e.params).forEach(([a,o])=>{if(o===null)return;const n=document.createElement("input");n.type="hidden",n.name=a,n.value=String(o),t.appendChild(n)}),document.body.appendChild(t),t.submit()};export{p as P,c as r};
-========
-import{a as i}from"./api-w-WR6HpR.js";const r="/student",p={dopayment:e=>i.post(`${r}/payment/initiate`,e)},c=e=>{const t=document.createElement("form");t.method="POST",t.action=e.payment_url,Object.entries(e.params).forEach(([a,o])=>{if(o===null)return;const n=document.createElement("input");n.type="hidden",n.name=a,n.value=String(o),t.appendChild(n)}),document.body.appendChild(t),t.submit()};export{p as P,c as r};
->>>>>>>> b70cf2feb58b57d3010817f9fb9527c61b4dc6d5:public/build/assets/payUredirect-4uqMVH45.js

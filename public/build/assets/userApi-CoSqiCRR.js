@@ -1,1 +1,0 @@
-import{a as t}from"./api-w-WR6HpR.js";const s="/users",p={getUser:e=>t.get(s,{params:e}),getUserById:e=>t.get(`${s}/${e}`),createUser:e=>t.post(s,e),updateUser:(e,r)=>t.put(`${s}/${e}`,r),deleteUser:e=>t.delete(`${s}/${e}`)};export{p as U};

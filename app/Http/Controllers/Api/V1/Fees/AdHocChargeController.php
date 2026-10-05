@@ -15,7 +15,7 @@ class AdHocChargeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('create_adhoc_charges')) {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['create_adhoc_charges', 'collect_fees', 'edit_fee_ledger'])) {
             return response()->json(['message' => 'You do not have permission to create ad-hoc charges.'], 403);
         }
 
@@ -253,7 +253,7 @@ class AdHocChargeController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_adhoc_charges')) {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['revert_adhoc_charges', 'revert_fee_payments', 'edit_fee_ledger', 'collect_fees'])) {
             return response()->json(['message' => 'You do not have permission to revert ad-hoc charges.'], 403);
         }
 
@@ -275,7 +275,7 @@ class AdHocChargeController extends Controller
      */
     public function bulkDestroy(Request $request)
     {
-        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAbility('revert_adhoc_charges')) {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasAnyAbility(['revert_adhoc_charges', 'revert_fee_payments', 'edit_fee_ledger', 'collect_fees'])) {
             return response()->json(['message' => 'You do not have permission to revert ad-hoc charges.'], 403);
         }
 

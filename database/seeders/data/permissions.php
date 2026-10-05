@@ -237,6 +237,13 @@ return [
     ['key' => 'view_fee_dues', 'name' => 'View Fee Dues & Overdue', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'view_student_ledger', 'name' => 'View Student Digital Ledger (Matrix)', 'module' => 'accounts_room', 'scope_types' => $ALL],
     ['key' => 'send_fee_reminders', 'name' => 'Send Fee Due/Overdue Reminders', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'edit_fee_ledger', 'name' => 'Edit Student Fee Ledger', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'revert_fee_overrides', 'name' => 'Revert Fee Overrides', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'view_adhoc_charges', 'name' => 'View Ad-Hoc Charges', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'create_adhoc_charges', 'name' => 'Create Ad-Hoc Charges', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'revert_adhoc_charges', 'name' => 'Revert Ad-Hoc Charges', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'revert_fee_payments', 'name' => 'Revert Fee Payments', 'module' => 'accounts_room', 'scope_types' => $ALL],
+    ['key' => 'download_fee_receipt', 'name' => 'Download Fee Receipt', 'module' => 'accounts_room', 'scope_types' => $ALL],
 
     // ── Field-Level: Fee Types ────────────────────────────────────
     ['key' => 'field_fee_type_name', 'name' => 'Fee Type – Name Field', 'module' => 'accounts_room', 'scope_types' => $ALL],
