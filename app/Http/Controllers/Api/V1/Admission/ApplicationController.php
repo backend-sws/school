@@ -358,7 +358,7 @@ class ApplicationController extends BaseController
             'process_status' => 'nullable|in:draft,pending',
             'user_id' => 'nullable|integer|exists:users,id',
             'student_profile_id' => 'nullable|integer|exists:student_profiles,id',
-            'from_session_id' => 'nullable|integer|exists:sessions,id',
+            'from_session_id' => 'nullable|integer|exists:academic_sessions,id',
             'from_class_id' => 'nullable|integer',
         ]);
 
@@ -905,6 +905,10 @@ public function update(Request $request, $id): JsonResponse
             'due_amount' => 'nullable|numeric|min:0',
             'application_type' => 'nullable|in:new,re-admission',
             'process_status' => 'nullable|in:draft,pending',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'student_profile_id' => 'nullable|integer|exists:student_profiles,id',
+            'from_session_id' => 'nullable|integer|exists:academic_sessions,id',
+            'from_class_id' => 'nullable|integer',
         ]);
 
         // Use the same institution resolution as the model's global scope (BelongsToDefaultInstitution)
@@ -1162,10 +1166,22 @@ public function update(Request $request, $id): JsonResponse
         $this->assertNoAdmissionOverpayment((float) $total, (float) $discountAmount, (float) $totalPaid);
         $validated['due_amount'] = $this->engine->calculateDue($total, $discountAmount, $totalPaid);
 
-        // Persist draft stream_id so it's never lost during editing
-        if (!empty($validated['stream_id'])) {
+        // Persist draft stream_id and re-admission transition context so it's never lost during editing
+        if (!empty($validated['stream_id']) || !empty($validated['student_profile_id']) || !empty($validated['from_session_id'])) {
             $prefs = $validated['subject_preferences'] ?? [];
-            $prefs['_draft_stream_id'] = $validated['stream_id'];
+            if (!empty($validated['stream_id'])) {
+                $prefs['stream_id'] = $validated['stream_id'];
+                $prefs['_draft_stream_id'] = $validated['stream_id'];
+            }
+            if (!empty($validated['student_profile_id'])) {
+                $prefs['student_profile_id'] = $validated['student_profile_id'];
+            }
+            if (!empty($validated['from_session_id'])) {
+                $prefs['from_session_id'] = $validated['from_session_id'];
+            }
+            if (!empty($validated['from_class_id'])) {
+                $prefs['from_class_id'] = $validated['from_class_id'];
+            }
             $validated['subject_preferences'] = $prefs;
         }
 
