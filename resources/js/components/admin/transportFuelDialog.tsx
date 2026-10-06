@@ -35,6 +35,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import fuelVendorApi, { type FuelVendor } from "@/lib/api/fuelVendorApi";
+import { formatDateOnly, getLocalTodayDate, getLocalCurrentTime } from "@/lib/utils";
 
 export type FuelLogData = {
   id?: number;
@@ -65,8 +66,8 @@ interface TransportFuelDialogProps {
   onSuccess?: () => void;
 }
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
-const defaultTime = () => new Date().toTimeString().slice(0, 5);
+const defaultDate = () => getLocalTodayDate();
+const defaultTime = () => getLocalCurrentTime();
 
 export function TransportFuelDialog({
   open,
@@ -186,7 +187,7 @@ export function TransportFuelDialog({
         reset({
           transport_vehicle_id: data.transport_vehicle_id,
           transport_driver_id: data.transport_driver_id ? String(data.transport_driver_id) : "",
-          fuel_date: typeof data.fuel_date === "string" ? data.fuel_date.slice(0, 10) : defaultDate(),
+          fuel_date: data.fuel_date ? formatDateOnly(data.fuel_date) : defaultDate(),
           fuel_time: data.fuel_time ?? defaultTime(),
           fuel_type: data.fuel_type || "diesel",
           odometer_reading: data.odometer_reading,

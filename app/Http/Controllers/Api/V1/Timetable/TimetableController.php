@@ -41,7 +41,7 @@ class TimetableController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'session_id' => 'required|exists:sessions,id',
+            'session_id' => 'required|exists:academic_sessions,id',
             'timetable_template_id' => 'required|exists:timetable_templates,id',
             'scheduleable_type' => 'nullable|string',
             'scheduleable_id' => 'nullable|integer',

@@ -732,6 +732,48 @@ export function formatHumanDate(dateStr: string | null | undefined, locale = "en
     return d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
 }
 
+/**
+ * Safely extracts/formats a pure date (YYYY-MM-DD) from either a YYYY-MM-DD string
+ * or an ISO timestamp, respecting local timezone without shifting across days.
+ */
+export function formatDateOnly(dateVal?: string | null): string {
+    if (!dateVal) return "—";
+    const str = String(dateVal).trim();
+    if (!str) return "—";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        return str;
+    }
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+    return str.slice(0, 10);
+}
+
+/**
+ * Returns today's date in local YYYY-MM-DD format (avoids UTC offset shifts).
+ */
+export function getLocalTodayDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * Returns current local time in HH:MM format (24-hour).
+ */
+export function getLocalCurrentTime(): string {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const mins = String(now.getMinutes()).padStart(2, "0");
+    return `${hours}:${mins}`;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 //  INVENTORY SALE HELPERS
 // ═══════════════════════════════════════════════════════════════════

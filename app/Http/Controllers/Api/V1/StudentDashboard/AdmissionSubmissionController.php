@@ -432,9 +432,14 @@ class AdmissionSubmissionController extends BaseController
 
             // Create Transaction record if payment was made
             if ($totalPaid > 0) {
+                $txnId = $application->transaction_id;
+                if (empty($txnId) || Transaction::where('transaction_id', $txnId)->exists()) {
+                    $txnId = 'TXN' . strtoupper(uniqid());
+                }
+
                 Transaction::create([
                     'user_id' => $user->id,
-                    'transaction_id' => $application->transaction_id,
+                    'transaction_id' => $txnId,
                     'type' => 'admission_payment',
                     'payable_type' => get_class($application),
                     'payable_id' => $application->id,
@@ -591,13 +596,17 @@ class AdmissionSubmissionController extends BaseController
                 ], "Form submitted successfully.");        
             });
         } catch (RuntimeException $e) {
-            Log::warning('Student dashboard admission: blocked overpayment attempt', [
+            Log::warning('Student dashboard admission: runtime exception during submission', [
                 'user_id' => $user->id ?? null,
                 'admission_head_id' => $request->admission_head_id,
                 'error' => $e->getMessage(),
             ]);
 
-            return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            if (str_contains(strtolower($e->getMessage()), 'overpayment') || str_contains(strtolower($e->getMessage()), 'payable amount')) {
+                return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            }
+
+            return $this->error($e->getMessage(), 422);
         }
         
     }

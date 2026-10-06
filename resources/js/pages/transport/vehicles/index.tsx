@@ -67,6 +67,7 @@ import {
 import { useRegisterGuide } from "@/components/GuideProvider";
 import { TRANSPORT_VEHICLES_GUIDE } from "@/constants/guides/transport";
 import { toast } from "sonner";
+import { formatDateOnly } from "@/lib/utils";
 
 const VEHICLE_COLUMNS = [
   { key: "serial", label: "#" },
@@ -1020,7 +1021,7 @@ const TransportVehiclesIndex = () => {
                           {trips.map((t: any) => (
                             <TableRow key={t.id} className="hover:bg-muted/30">
                               <TableCell className="font-medium text-xs font-mono">
-                                {t.log_date ? String(t.log_date).slice(0, 10) : "—"}
+                                {formatDateOnly(t.log_date)}
                               </TableCell>
                               <TableCell>
                                 <Link
@@ -1080,7 +1081,7 @@ const TransportVehiclesIndex = () => {
                                           open: true,
                                           type: "trip",
                                           id: t.id,
-                                          title: `Trip on ${String(t.log_date).slice(0, 10)} (${t.total_km || 0} km)`,
+                                          title: `Trip on ${formatDateOnly(t.log_date)} (${t.total_km || 0} km)`,
                                         })
                                       }
                                     >
@@ -1262,7 +1263,7 @@ const TransportVehiclesIndex = () => {
                           {fuels.map((f: any) => (
                             <TableRow key={f.id} className="hover:bg-muted/30">
                               <TableCell className="font-medium text-xs font-mono">
-                                {f.fuel_date ? String(f.fuel_date).slice(0, 10) : "—"}
+                                {formatDateOnly(f.fuel_date)}
                               </TableCell>
                               <TableCell>
                                 <Link
@@ -1367,7 +1368,7 @@ const TransportVehiclesIndex = () => {
                                           open: true,
                                           type: "fuel",
                                           id: f.id,
-                                          title: `Refuel on ${String(f.fuel_date).slice(0, 10)} (₹${Number(f.total_amount).toLocaleString()})`,
+                                          title: `Refuel on ${formatDateOnly(f.fuel_date)} (₹${Number(f.total_amount).toLocaleString()})`,
                                         })
                                       }
                                     >
@@ -1540,7 +1541,7 @@ const TransportVehiclesIndex = () => {
                           {expenses.map((e: any) => (
                             <TableRow key={e.id} className="hover:bg-muted/30">
                               <TableCell className="font-medium text-xs font-mono">
-                                {e.expense_date ? String(e.expense_date).slice(0, 10) : "—"}
+                                {formatDateOnly(e.expense_date)}
                               </TableCell>
                               <TableCell>
                                 <Link
@@ -1563,7 +1564,7 @@ const TransportVehiclesIndex = () => {
                                 ₹{Number(e.amount).toLocaleString()}
                               </TableCell>
                               <TableCell className="text-xs">
-                                {e.next_service_date ? String(e.next_service_date).slice(0, 10) : "—"}
+                                {formatDateOnly(e.next_service_date)}
                               </TableCell>
                               <TableCell className="text-center">
                                 {e.bill_url ? (

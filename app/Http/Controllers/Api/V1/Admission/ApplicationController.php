@@ -382,7 +382,7 @@ class ApplicationController extends BaseController
             'process_status' => 'nullable|in:draft,pending',
             'user_id' => 'nullable|integer|exists:users,id',
             'student_profile_id' => 'nullable|integer|exists:student_profiles,id',
-            'from_session_id' => 'nullable|integer|exists:sessions,id',
+            'from_session_id' => 'nullable|integer|exists:academic_sessions,id',
             'from_class_id' => 'nullable|integer',
         ]);
 
@@ -762,9 +762,14 @@ class ApplicationController extends BaseController
 
                 // Create transaction record if payment was made
                 if ($hasSplitPayment) {
+                    $txnId = $application->transaction_id;
+                    if (empty($txnId) || \App\Models\Transaction::where('transaction_id', $txnId)->exists()) {
+                        $txnId = 'TXN-ADM-' . strtoupper(uniqid());
+                    }
+
                     \App\Models\Transaction::create([
                         'user_id' => $application->user_id,
-                        'transaction_id' => $application->transaction_id,
+                        'transaction_id' => $txnId,
                         'type' => 'admission_payment',
                         'payable_type' => get_class($application),
                         'payable_id' => $application->id,
@@ -830,7 +835,7 @@ class ApplicationController extends BaseController
                 return $this->created($application->fresh(), 'Application submitted');
             });
         } catch (RuntimeException $e) {
-            Log::warning('Admission application: blocked overpayment attempt', [
+            Log::warning('Admission application: runtime exception during submission', [
                 'error' => $e->getMessage(),
                 'mobile' => $validated['mobile'] ?? null,
                 'email' => $validated['email'] ?? null,
@@ -838,7 +843,11 @@ class ApplicationController extends BaseController
                 'submitted_by' => $request->user()->id,
             ]);
 
-            return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            if (str_contains(strtolower($e->getMessage()), 'overpayment') || str_contains(strtolower($e->getMessage()), 'payable amount')) {
+                return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            }
+
+            return $this->error($e->getMessage(), 422);
         } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
             Log::error('Admission application: unique constraint violation during submission', [
                 'error' => $e->getMessage(),
@@ -922,6 +931,10 @@ public function update(Request $request, $id): JsonResponse
             'due_amount' => 'nullable|numeric|min:0',
             'application_type' => 'nullable|in:new,re-admission',
             'process_status' => 'nullable|in:draft,pending',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'student_profile_id' => 'nullable|integer|exists:student_profiles,id',
+            'from_session_id' => 'nullable|integer|exists:academic_sessions,id',
+            'from_class_id' => 'nullable|integer',
         ]);
 
         // Use the same institution resolution as the model's global scope (BelongsToDefaultInstitution)
@@ -1179,10 +1192,22 @@ public function update(Request $request, $id): JsonResponse
         $this->assertNoAdmissionOverpayment((float) $total, (float) $discountAmount, (float) $totalPaid);
         $validated['due_amount'] = $this->engine->calculateDue($total, $discountAmount, $totalPaid);
 
-        // Persist draft stream_id so it's never lost during editing
-        if (!empty($validated['stream_id'])) {
+        // Persist draft stream_id and re-admission transition context so it's never lost during editing
+        if (!empty($validated['stream_id']) || !empty($validated['student_profile_id']) || !empty($validated['from_session_id'])) {
             $prefs = $validated['subject_preferences'] ?? [];
-            $prefs['_draft_stream_id'] = $validated['stream_id'];
+            if (!empty($validated['stream_id'])) {
+                $prefs['stream_id'] = $validated['stream_id'];
+                $prefs['_draft_stream_id'] = $validated['stream_id'];
+            }
+            if (!empty($validated['student_profile_id'])) {
+                $prefs['student_profile_id'] = $validated['student_profile_id'];
+            }
+            if (!empty($validated['from_session_id'])) {
+                $prefs['from_session_id'] = $validated['from_session_id'];
+            }
+            if (!empty($validated['from_class_id'])) {
+                $prefs['from_class_id'] = $validated['from_class_id'];
+            }
             $validated['subject_preferences'] = $prefs;
         }
 
@@ -1236,25 +1261,44 @@ public function update(Request $request, $id): JsonResponse
                     }
                 }
 
-                // Create transaction record if payment was made
+                // Create or update transaction record if payment was made
                 if ($hasSplitPayment) {
-                    \App\Models\Transaction::create([
-                        'user_id' => $application->user_id,
-                        'transaction_id' => $application->transaction_id,
-                        'type' => 'admission_payment',
-                        'payable_type' => get_class($application),
-                        'payable_id' => $application->id,
-                        'amount' => $application->amount,
-                        'payment_mode' => $application->payment_mode,
-                        'status' => 'success',
-                        'meta' => [
-                            'cash_amount' => $application->cash_amount,
-                            'online_amount' => $application->online_amount,
-                            'online_transaction_id' => $application->online_transaction_id,
-                            'recorded_by' => $request->user()->id,
-                            'recorded_at' => now()->toDateTimeString(),
-                        ],
-                    ]);
+                    $existingTxn = \App\Models\Transaction::where('payable_type', get_class($application))
+                        ->where('payable_id', $application->id)
+                        ->first();
+
+                    $txnMeta = [
+                        'cash_amount' => $application->cash_amount,
+                        'online_amount' => $application->online_amount,
+                        'online_transaction_id' => $application->online_transaction_id,
+                        'recorded_by' => $request->user()->id,
+                        'recorded_at' => now()->toDateTimeString(),
+                    ];
+
+                    if ($existingTxn) {
+                        $existingTxn->update([
+                            'amount' => $application->amount,
+                            'payment_mode' => $application->payment_mode,
+                            'meta' => array_merge($existingTxn->meta ?? [], $txnMeta),
+                        ]);
+                    } else {
+                        $txnId = $application->transaction_id;
+                        if (empty($txnId) || \App\Models\Transaction::where('transaction_id', $txnId)->exists()) {
+                            $txnId = 'TXN-ADM-' . strtoupper(uniqid());
+                        }
+
+                        \App\Models\Transaction::create([
+                            'user_id' => $application->user_id,
+                            'transaction_id' => $txnId,
+                            'type' => 'admission_payment',
+                            'payable_type' => get_class($application),
+                            'payable_id' => $application->id,
+                            'amount' => $application->amount,
+                            'payment_mode' => $application->payment_mode,
+                            'status' => 'success',
+                            'meta' => $txnMeta,
+                        ]);
+                    }
 
                     // Dual-write: create FeePayment so admission payment appears in student ledger
                     $totalPaid = ($validated['cash_amount'] ?? 0) + ($validated['online_amount'] ?? 0);
@@ -1301,7 +1345,7 @@ public function update(Request $request, $id): JsonResponse
                 return $this->success($application->fresh(), 'Application updated successfully');
             });
         } catch (RuntimeException $e) {
-            Log::warning('Admission application: blocked overpayment attempt', [
+            Log::warning('Admission application: runtime exception during update', [
                 'error' => $e->getMessage(),
                 'mobile' => $validated['mobile'] ?? null,
                 'email' => $validated['email'] ?? null,
@@ -1309,7 +1353,11 @@ public function update(Request $request, $id): JsonResponse
                 'submitted_by' => $request->user()->id,
             ]);
 
-            return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            if (str_contains(strtolower($e->getMessage()), 'overpayment') || str_contains(strtolower($e->getMessage()), 'payable amount')) {
+                return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            }
+
+            return $this->error($e->getMessage(), 422);
         } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
             Log::error('Admission application: unique constraint violation during submission', [
                 'error' => $e->getMessage(),
@@ -1523,13 +1571,17 @@ public function update(Request $request, $id): JsonResponse
                 );
             });
         } catch (RuntimeException $e) {
-            Log::warning('Admission payment: blocked overpayment attempt', [
+            Log::warning('Admission payment: runtime exception during record payment', [
                 'application_id' => $application->id,
                 'error' => $e->getMessage(),
                 'recorded_by' => $request->user()->id,
             ]);
 
-            return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            if (str_contains(strtolower($e->getMessage()), 'overpayment') || str_contains(strtolower($e->getMessage()), 'payable amount')) {
+                return ApiErrorMap::respond('admission.overpayment_not_allowed');
+            }
+
+            return $this->error($e->getMessage(), 422);
         }
     }
 

@@ -61,6 +61,7 @@ import { TransportFuelDialog } from "@/components/admin/transportFuelDialog";
 import { TransportExpenseDialog } from "@/components/admin/transportExpenseDialog";
 import { TransportVehicleDialog } from "@/components/admin/transportVehicleDialog";
 import { toast } from "sonner";
+import { formatDateOnly } from "@/lib/utils";
 
 interface PageProps {
   id: number;
@@ -695,7 +696,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                         {trips.map((t: any) => (
                           <TableRow key={t.id} className="hover:bg-muted/30">
                             <TableCell className="font-medium text-xs font-mono">
-                              {t.log_date ? String(t.log_date).slice(0, 10) : "—"}
+                              {formatDateOnly(t.log_date)}
                             </TableCell>
                             <TableCell>
                               <div className="font-medium text-xs">{t.purpose || "Regular Run"}</div>
@@ -746,7 +747,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                                         open: true,
                                         type: "trip",
                                         id: t.id,
-                                        title: `${t.log_date} (${t.purpose || "Trip"})`,
+                                        title: `${formatDateOnly(t.log_date)} (${t.purpose || "Trip"})`,
                                       })
                                     }
                                   >
@@ -899,7 +900,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                         {fuels.map((f: any) => (
                           <TableRow key={f.id} className="hover:bg-muted/30">
                             <TableCell className="font-medium text-xs font-mono">
-                              <div>{f.fuel_date ? String(f.fuel_date).slice(0, 10) : "—"}</div>
+                              <div>{formatDateOnly(f.fuel_date)}</div>
                               {f.fuel_time && <span className="text-[10px] text-muted-foreground">{f.fuel_time.slice(0, 5)}</span>}
                             </TableCell>
                             <TableCell className="text-right font-mono text-xs font-semibold">
@@ -1004,7 +1005,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                                         open: true,
                                         type: "fuel",
                                         id: f.id,
-                                        title: `Refill ${f.fuel_date} (₹${f.total_amount})`,
+                                        title: `Refill ${formatDateOnly(f.fuel_date)} (₹${f.total_amount})`,
                                       })
                                     }
                                   >
@@ -1161,7 +1162,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                         {expenses.map((e: any) => (
                           <TableRow key={e.id} className="hover:bg-muted/30">
                             <TableCell className="font-medium text-xs font-mono">
-                              {e.expense_date ? String(e.expense_date).slice(0, 10) : "—"}
+                              {formatDateOnly(e.expense_date)}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" className="capitalize text-[10px] px-2 py-0.5">
@@ -1189,7 +1190,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                                 <div className="space-y-0.5">
                                   {e.next_service_date && (
                                     <div className="font-medium text-xs text-primary">
-                                      {String(e.next_service_date).slice(0, 10)}
+                                      {formatDateOnly(e.next_service_date)}
                                     </div>
                                   )}
                                   {e.next_service_odometer && (
@@ -1494,7 +1495,7 @@ const TransportVehicleShow = ({ id }: PageProps) => {
                     </div>
                   ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={[...fuelHistory].reverse()}>
+                      <LineChart data={[...fuelHistory].map((f: any) => ({ ...f, fuel_date: formatDateOnly(f.fuel_date) })).reverse()}>
                         <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                         <XAxis dataKey="fuel_date" tick={{ fontSize: 11 }} />
                         <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} />

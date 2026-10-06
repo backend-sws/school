@@ -30,10 +30,10 @@ class TransportVehicleExpense extends Model
     ];
 
     protected $casts = [
-        'expense_date' => 'date',
+        'expense_date' => 'date:Y-m-d',
         'amount' => 'decimal:2',
         'odometer_reading' => 'decimal:2',
-        'next_service_date' => 'date',
+        'next_service_date' => 'date:Y-m-d',
         'next_service_odometer' => 'decimal:2',
     ];
 

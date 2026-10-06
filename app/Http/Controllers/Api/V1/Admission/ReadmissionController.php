@@ -264,7 +264,7 @@ class ReadmissionController extends BaseController
     {
         $data = $request->validate([
             'student_profile_id' => 'required|exists:student_profiles,id',
-            'to_session_id' => 'required|exists:sessions,id',
+            'to_session_id' => 'required|exists:academic_sessions,id',
             'to_semester' => 'nullable|integer|min:1',
             'to_class_id' => 'nullable|exists:lms_classes,id',
             'to_stream_id' => 'nullable|exists:streams,id',
@@ -294,10 +294,10 @@ class ReadmissionController extends BaseController
     public function bulk(Request $request): JsonResponse
     {
         $request->validate([
-            'to_session_id' => 'required|integer|exists:sessions,id',
+            'to_session_id' => 'required|integer|exists:academic_sessions,id',
             'to_semester' => 'nullable|integer',
             'to_class_id' => 'nullable|integer|exists:lms_classes,id',
-            'from_session_id' => 'nullable|integer|exists:sessions,id',
+            'from_session_id' => 'nullable|integer|exists:academic_sessions,id',
             'stream_id' => 'nullable|integer|exists:streams,id',
             'exclude_ids' => 'nullable|array',
             'exclude_ids.*' => 'integer',

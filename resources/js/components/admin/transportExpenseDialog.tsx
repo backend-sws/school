@@ -22,6 +22,7 @@ import {
 import transportApi from "@/lib/api/transportApi";
 import { toast } from "sonner";
 import { Wrench, UploadCloud, FileText, CalendarClock } from "lucide-react";
+import { formatDateOnly, getLocalTodayDate } from "@/lib/utils";
 
 export type ExpenseLogData = {
   id?: number;
@@ -48,7 +49,7 @@ interface TransportExpenseDialogProps {
   onSuccess?: () => void;
 }
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+const defaultDate = () => getLocalTodayDate();
 
 const EXPENSE_CATEGORIES = [
   { value: "maintenance", label: "Periodic Service / Maintenance" },
@@ -127,7 +128,7 @@ export function TransportExpenseDialog({
       if (data?.id) {
         reset({
           transport_vehicle_id: data.transport_vehicle_id,
-          expense_date: typeof data.expense_date === "string" ? data.expense_date.slice(0, 10) : defaultDate(),
+          expense_date: data.expense_date ? formatDateOnly(data.expense_date) : defaultDate(),
           category: data.category || "maintenance",
           title: data.title || "",
           amount: data.amount,
@@ -135,7 +136,7 @@ export function TransportExpenseDialog({
           vendor_name: data.vendor_name || "",
           invoice_number: data.invoice_number || "",
           bill_url: data.bill_url || "",
-          next_service_date: data.next_service_date ? String(data.next_service_date).slice(0, 10) : "",
+          next_service_date: data.next_service_date ? formatDateOnly(data.next_service_date) : "",
           next_service_odometer: data.next_service_odometer ?? "",
           payment_mode: data.payment_mode || "cash",
           notes: data.notes || "",

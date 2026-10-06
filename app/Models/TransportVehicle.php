@@ -41,11 +41,11 @@ class TransportVehicle extends Model
         'capacity' => 'integer',
         'make_year' => 'integer',
         'current_odometer' => 'decimal:2',
-        'insurance_expiry_date' => 'date',
-        'puc_expiry_date' => 'date',
-        'fitness_expiry_date' => 'date',
-        'road_tax_expiry_date' => 'date',
-        'permit_expiry_date' => 'date',
+        'insurance_expiry_date' => 'date:Y-m-d',
+        'puc_expiry_date' => 'date:Y-m-d',
+        'fitness_expiry_date' => 'date:Y-m-d',
+        'road_tax_expiry_date' => 'date:Y-m-d',
+        'permit_expiry_date' => 'date:Y-m-d',
         'documents' => 'array',
     ];
 

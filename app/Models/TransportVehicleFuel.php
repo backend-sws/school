@@ -37,7 +37,7 @@ class TransportVehicleFuel extends Model
     ];
 
     protected $casts = [
-        'fuel_date'          => 'date',
+        'fuel_date'          => 'date:Y-m-d',
         'odometer_reading'   => 'decimal:2',
         'liters'             => 'decimal:2',
         'rate_per_liter'     => 'decimal:2',

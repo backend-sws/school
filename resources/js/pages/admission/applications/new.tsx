@@ -430,6 +430,8 @@ const ApplicationsNew = () => {
 
 
   const onSaveDraft = () => {
+    if (createMutation.isPending || updateMutation.isPending || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     const values = getValues();
     const payload = generatePayload(values, true);
     if (payload.id) {
@@ -441,6 +443,8 @@ const ApplicationsNew = () => {
 
   const onSubmit = handleSubmit(
     (values) => {
+      if (createMutation.isPending || updateMutation.isPending || isSubmittingRef.current) return;
+      isSubmittingRef.current = true;
       const payload = generatePayload(values, false);
       if (payload.id) {
         updateMutation.mutate(payload);

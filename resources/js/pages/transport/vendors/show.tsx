@@ -42,8 +42,9 @@ import {
 
 import fuelVendorApi, { type VendorLedgerResponse } from "@/lib/api/fuelVendorApi";
 import transportApi from "@/lib/api/transportApi";
+import { formatDateOnly, getLocalTodayDate } from "@/lib/utils";
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+const defaultDate = () => getLocalTodayDate();
 
 interface VendorShowProps {
   id: number;
@@ -362,7 +363,7 @@ export default function FuelVendorShow({ id }: VendorShowProps) {
                             {/* Date */}
                             <TableCell className="text-xs whitespace-nowrap">
                               <span className="font-medium">
-                                {typeof log.fuel_date === "string" ? log.fuel_date.slice(0, 10) : "—"}
+                                {formatDateOnly(log.fuel_date)}
                               </span>
                               {log.fuel_time && (
                                 <span className="text-muted-foreground ml-1.5 text-[11px]">
@@ -501,7 +502,7 @@ export default function FuelVendorShow({ id }: VendorShowProps) {
 
                           {/* Settlement Date */}
                           <TableCell className="text-xs font-semibold">
-                            {typeof s.settlement_date === "string" ? s.settlement_date.slice(0, 10) : "—"}
+                            {formatDateOnly(s.settlement_date)}
                           </TableCell>
 
                           {/* Amount */}

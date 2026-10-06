@@ -48,8 +48,9 @@ import { Textarea } from "@/components/ui/textarea";
 
 import fuelVendorApi, { type FuelVendor } from "@/lib/api/fuelVendorApi";
 import transportApi from "@/lib/api/transportApi";
+import { getLocalTodayDate } from "@/lib/utils";
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+const defaultDate = () => getLocalTodayDate();
 
 export default function FuelVendorsIndex() {
   const queryClient = useQueryClient();

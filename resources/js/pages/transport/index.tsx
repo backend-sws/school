@@ -10,6 +10,7 @@ import transportApi from "@/lib/api/transportApi";
 import { useRegisterGuide } from '@/components/GuideProvider';
 import { TRANSPORT_OVERVIEW_GUIDE } from "@/constants/guides/transport";
 import React, { useEffect, useMemo, useState } from "react";
+import { getLocalTodayDate } from "@/lib/utils";
 
 type TransportLink = {
   title: string;
@@ -35,7 +36,7 @@ type VehicleOccupancy = {
   occupancy_pct: number;
 };
 
-const defaultDate = () => new Date().toISOString().slice(0, 10);
+const defaultDate = () => getLocalTodayDate();
 
 const setupLinks: TransportLink[] = [
   { title: "Stops", href: "/transport/stops", icon: MapPin, description: "Define pickup and drop points. Create these first, then add them to routes." },
