@@ -53,6 +53,8 @@ class ReportController extends BaseController
 
             $format = $request->input('format', 'excel');
             $filters = $request->all();
+            $filters['is_export'] = true;
+            $filters['per_page'] = 100000;
             $report = $this->reportService->generateReport($type, $filters);
 
             if ($format === 'pdf') {

@@ -12,6 +12,7 @@ use App\Models\LmsClass;
 use App\Models\LmsClassEnrollment;
 use App\Models\MainStream;
 use App\Models\Notice;
+use App\Models\Session;
 use App\Models\StaffProfile;
 use App\Models\StudentProfile;
 use App\Models\Stream;
@@ -24,27 +25,33 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardAnalyticsController extends BaseController
 {
-
     /**
      * @OA\Get(
      * path="/dashboard-stats",
      * summary="Get comprehensive dashboard analytics",
-     * description="Returns aggregated statistics for widgets and charts, including fee collection from all modules and admission type breakdown.",
+     * description="Returns aggregated statistics for widgets and charts, including fee collection, transport, hostel, and admission type breakdown by academic session.",
      * tags={"Admin: Dashboard Analytics"},
      * security={{"cookieAuth":{}}},
      * @OA\Parameter(
+     * name="academic_session_id",
+     * in="query",
+     * description="Academic session ID or 'all'. Default is the current active session.",
+     * required=false,
+     * @OA\Schema(type="string", example="2")
+     * ),
+     * @OA\Parameter(
      * name="start_date",
      * in="query",
-     * description="Filter data from this date (YYYY-MM-DD). Default is start of current year.",
+     * description="Filter data from this date (YYYY-MM-DD).",
      * required=false,
-     * @OA\Schema(type="string", format="date", example="2026-01-01")
+     * @OA\Schema(type="string", format="date", example="2026-04-01")
      * ),
      * @OA\Parameter(
      * name="end_date",
      * in="query",
-     * description="Filter data up to this date (YYYY-MM-DD). Default is today.",
+     * description="Filter data up to this date (YYYY-MM-DD).",
      * required=false,
-     * @OA\Schema(type="string", format="date", example="2026-12-31")
+     * @OA\Schema(type="string", format="date", example="2027-03-31")
      * ),
      * @OA\Response(
      * response=200,
@@ -58,46 +65,164 @@ class DashboardAnalyticsController extends BaseController
     {
         $institutionId = InstitutionContext::getActiveInstitutionId();
 
-        // Date filters (Default: 2025-01-01 to Today, covering active academic session)
-        $startDate = $request->input('start_date', '2025-01-01');
-        $endDate = $request->input('end_date', now()->toDateString());
+        // ─── 1. Academic Sessions Resolution ──────────────────────────────────
+        $allSessions = Session::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->orderByDesc('start_year')
+            ->get(['id', 'name', 'start_year', 'end_year', 'is_current', 'status']);
+
+        $reqSessionId = $request->input('academic_session_id');
+        $isAllSessions = ($reqSessionId === 'all');
+
+        $selectedSession = null;
+        if (!$isAllSessions) {
+            if ($reqSessionId && is_numeric($reqSessionId)) {
+                $selectedSession = $allSessions->firstWhere('id', (int) $reqSessionId);
+            }
+            if (!$selectedSession) {
+                $selectedSession = $allSessions->firstWhere('is_current', true) ?? $allSessions->first();
+            }
+        }
+
+        $sessionId = $selectedSession?->id;
+
+        // Default date range based on session
+        if ($selectedSession) {
+            $defaultStartDate = "{$selectedSession->start_year}-04-01";
+            $defaultEndDate = $selectedSession->is_current
+                ? now()->toDateString()
+                : "{$selectedSession->end_year}-03-31";
+        } else {
+            $defaultStartDate = '2024-01-01';
+            $defaultEndDate = now()->toDateString();
+        }
+
+        $startDate = $request->input('start_date', $defaultStartDate);
+        $endDate = $request->input('end_date', $defaultEndDate);
         $startDateTime = Carbon::parse($startDate)->startOfDay();
         $endDateTime = Carbon::parse($endDate)->endOfDay();
+        $startMonth = Carbon::parse($startDate)->format('Y-m');
+        $endMonth = Carbon::parse($endDate)->format('Y-m');
 
-        $totalStudents = User::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->whereHas('roles', function ($q) {
-                $q->where('key', 'student');
-            })->count();
+        // ─── 2. Students & Classes Count (Session-aware) ──────────────────────
+        $totalStudents = StudentProfile::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
+            ->count();
 
-        // ─── Total Staff (all profiles for this institution) ──────────────────
+        // Fallback if no profiles have session_id
+        if ($totalStudents === 0 && !$sessionId) {
+            $totalStudents = User::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->whereHas('roles', fn($q) => $q->where('key', 'student'))
+                ->count();
+        }
+
+        $totalClasses = LmsClass::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
+            ->where('status', 1)
+            ->count();
+
         $totalStaff = StaffProfile::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->count();
 
-        // ─── Total Active Classes ────────────────────────────────────────────
-        $totalClasses = LmsClass::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->where('status', 1)->count();
+        // ─── 3. Admissions Analytics ──────────────────────────────────────────
+        $admissionsQuery = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
+            ->where(function ($q) use ($startDateTime, $endDateTime) {
+                $q->whereBetween(DB::raw('COALESCE(submitted_at, payment_date, admission_date, created_at)'), [$startDateTime, $endDateTime])
+                  ->orWhereNull('submitted_at');
+            });
 
-        // ─── Admission Stats ─────────────────────────────────────────────────
-        $admissionTotal = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
-        $admissionNew = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->where('application_type', 'new')->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
-        $admissionRe = AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->where('application_type', 're-admission')->whereBetween('created_at', [$startDateTime, $endDateTime])->count();
+        $admissionTotal = (clone $admissionsQuery)->count();
+        $admissionNew = (clone $admissionsQuery)->where('application_type', 'new')->count();
+        $admissionRe = (clone $admissionsQuery)->where('application_type', 're-admission')->count();
+        $admissionPaid = (float) (clone $admissionsQuery)->whereIn('payment_status', ['paid', 'success'])->sum('amount');
+        $admissionDues = (float) (clone $admissionsQuery)->sum('due_amount');
+        $admissionTransportRev = (float) (clone $admissionsQuery)->whereIn('payment_status', ['paid', 'success'])->sum('transport_amount');
+        $admissionHostelRev = (float) (clone $admissionsQuery)->whereIn('payment_status', ['paid', 'success'])->sum('hostel_amount');
 
-        // ─── Fee Collection Stats ────────────────────────────────────────────
-        $totalFeeCollection = $this->calculateTotalRevenue($startDateTime, $endDateTime, $institutionId);
+        // ─── 4. Fee Payments & Breakdown (No Double Counting) ─────────────────
+        $feePaymentsQuery = FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereIn('payment_status', ['paid', 'success'])
+            ->where(function ($q) use ($startMonth, $endMonth, $sessionId, $startDateTime, $endDateTime) {
+                // By period (for_month)
+                $q->whereBetween('for_month', [$startMonth, $endMonth])
+                  // Or admission payment linked to this session
+                  ->orWhere(function ($sub) use ($sessionId) {
+                      $sub->where('payable_entity_type', 'admission_application')
+                          ->whereIn('payable_entity_id', function ($admq) use ($sessionId) {
+                              $admq->select('id')->from('admission_applications')->when($sessionId, fn($sq) => $sq->where('session_id', $sessionId));
+                          });
+                  })
+                  // Or for_month is null and payment date in range
+                  ->orWhere(function ($sub) use ($startDateTime, $endDateTime) {
+                      $sub->whereNull('for_month')
+                          ->whereNull('payable_entity_type')
+                          ->where(function ($dt) use ($startDateTime, $endDateTime) {
+                              $dt->whereBetween('payment_date', [$startDateTime, $endDateTime])
+                                 ->orWhereBetween('created_at', [$startDateTime, $endDateTime]);
+                          });
+                  });
+            });
 
-        // Pending fees from student period balances
-        $pendingFee = (float) DB::table('student_fee_period_balances')
+        // Exclude admission desk payments from general fee to prevent double counting
+        $generalNonAdmFeeRevenue = (float) (clone $feePaymentsQuery)
+            ->where(function ($q) {
+                $q->whereNull('payable_entity_type')->orWhere('payable_entity_type', '!=', 'admission_application');
+            })
+            ->sum('total_amount');
+
+        // Certificates revenue
+        $certificateRevenue = (float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->whereIn('payment_status', ['paid', 'success'])
+            ->whereBetween('submitted_at', [$startDateTime, $endDateTime])
+            ->sum('amount');
+
+        // Extract transport & hostel monthly components from fee payments ledger_snapshots
+        $feeRows = (clone $feePaymentsQuery)
+            ->where(function ($q) {
+                $q->whereNull('payable_entity_type')->orWhere('payable_entity_type', '!=', 'admission_application');
+            })
+            ->whereNotNull('ledger_snapshot')
+            ->get(['ledger_snapshot', 'total_amount']);
+
+        $monthlyTransportCollected = 0.0;
+        $monthlyHostelCollected = 0.0;
+
+        foreach ($feeRows as $row) {
+            $snap = is_array($row->ledger_snapshot) ? $row->ledger_snapshot : json_decode($row->ledger_snapshot ?? '', true);
+            if (isset($snap['fees']) && is_array($snap['fees'])) {
+                foreach ($snap['fees'] as $f) {
+                    $name = strtolower($f['name'] ?? '');
+                    $amt = (float) ($f['amount'] ?? 0);
+                    if (str_contains($name, 'transport')) {
+                        $monthlyTransportCollected += $amt;
+                    } elseif (str_contains($name, 'hostel')) {
+                        $monthlyHostelCollected += $amt;
+                    }
+                }
+            }
+        }
+
+        // Consolidated Module Collections
+        $totalTransportRevenue = round($admissionTransportRev + $monthlyTransportCollected, 2);
+        $totalHostelRevenue = round($admissionHostelRev + $monthlyHostelCollected, 2);
+        $totalAdmissionRevenue = round($admissionPaid, 2);
+        $totalCertificateRevenue = round($certificateRevenue, 2);
+        $pureTuitionRevenue = max(0, round($generalNonAdmFeeRevenue - $monthlyTransportCollected - $monthlyHostelCollected, 2));
+
+        // Total Net Revenue Collected
+        $totalFeeCollection = round($generalNonAdmFeeRevenue + $admissionPaid + $certificateRevenue, 2);
+
+        // ─── 5. Pending Fees & Collection Rate ────────────────────────────────
+        $pendingBalances = (float) DB::table('student_fee_period_balances')
             ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
             ->where('closing_balance', '>', 0)
             ->sum('closing_balance');
-        
-        // Fee collection rate based on collections vs total receivable
+
+        $pendingFee = round($pendingBalances + $admissionDues, 2);
         $totalReceivable = $totalFeeCollection + $pendingFee;
         $feeCollectionRate = $totalReceivable > 0 ? round(($totalFeeCollection / $totalReceivable) * 100, 1) : 0;
 
-        // ─── Attendance Rate (Last 30 Days) ──────────────────────────────────
+        // ─── 6. Attendance Rate ───────────────────────────────────────────────
         $attendanceFrom = now()->subDays(30)->startOfDay();
         $totalAttendance = AttendanceRecord::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
             ->whereBetween('date', [$attendanceFrom->toDateString(), $endDateTime->toDateString()])->count();
@@ -106,18 +231,161 @@ class DashboardAnalyticsController extends BaseController
             ->where('status', 'present')->count();
         $attendanceRate = $totalAttendance > 0 ? round(($presentAttendance / $totalAttendance) * 100, 1) : 0;
 
-        // ─── Expenses ────────────────────────────────────────────────────────
+        // ─── 7. Expenses & Net Profit ─────────────────────────────────────────
         $totalExpenses = (float) Expense::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
             ->where('status', 'approved')
             ->whereBetween('date', [$startDateTime->toDateString(), $endDateTime->toDateString()])
             ->sum('amount');
-        $netRevenue = $totalFeeCollection - $totalExpenses;
+        $netRevenue = round($totalFeeCollection - $totalExpenses, 2);
 
-        // ─── Pending Tasks ───────────────────────────────────────────────────
-        $pendingTasks = $this->calculatePendingTasks();
+        // ─── 8. Transport Analytics ───────────────────────────────────────────
+        $activeTransportSubs = DB::table('transport_assignments')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where(function ($q) {
+                $q->whereNull('effective_until')->orWhere('effective_until', '>=', now()->toDateString());
+            })
+            ->count();
 
-        // 1. TOP WIDGETS
-        $stats = [
+        $monthlyTransportRunRate = (float) DB::table('transport_assignments')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where(function ($q) {
+                $q->whereNull('effective_until')->orWhere('effective_until', '>=', now()->toDateString());
+            })
+            ->sum('monthly_amount');
+
+        $totalTransportRoutes = DB::table('transport_routes')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->count();
+
+        $totalTransportVehicles = DB::table('transport_vehicles')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->count();
+
+        $topRoutes = DB::table('transport_routes')
+            ->when($institutionId, fn($q) => $q->where('transport_routes.institution_id', $institutionId))
+            ->leftJoin('transport_assignments', 'transport_routes.id', '=', 'transport_assignments.transport_route_id')
+            ->select(
+                'transport_routes.id',
+                'transport_routes.name',
+                DB::raw('count(transport_assignments.id) as assigned_students'),
+                DB::raw('coalesce(sum(transport_assignments.monthly_amount), 0) as monthly_revenue')
+            )
+            ->groupBy('transport_routes.id', 'transport_routes.name')
+            ->orderByDesc('assigned_students')
+            ->limit(6)
+            ->get()
+            ->map(fn($r) => [
+                'id' => $r->id,
+                'name' => $r->name,
+                'assigned_students' => (int) $r->assigned_students,
+                'monthly_revenue' => round((float) $r->monthly_revenue, 2),
+            ]);
+
+        $transportAnalytics = [
+            'total_revenue' => $totalTransportRevenue,
+            'active_subscriptions' => $activeTransportSubs,
+            'monthly_run_rate' => round($monthlyTransportRunRate, 2),
+            'total_routes' => $totalTransportRoutes,
+            'total_vehicles' => $totalTransportVehicles,
+            'top_routes' => $topRoutes,
+        ];
+
+        // ─── 9. Hostel Analytics ──────────────────────────────────────────────
+        $totalHostels = DB::table('hostels')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->count();
+
+        $totalHostelRooms = DB::table('hostel_rooms')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->count();
+
+        $totalBeds = DB::table('hostel_beds')
+            ->when($institutionId, fn($q) => $q->whereExists(function ($sub) use ($institutionId) {
+                $sub->select(DB::raw(1))->from('hostel_rooms')
+                    ->whereColumn('hostel_rooms.id', 'hostel_beds.hostel_room_id')
+                    ->where('hostel_rooms.institution_id', $institutionId);
+            }))
+            ->count();
+
+        $occupiedBeds = DB::table('hostel_beds')
+            ->when($institutionId, fn($q) => $q->whereExists(function ($sub) use ($institutionId) {
+                $sub->select(DB::raw(1))->from('hostel_rooms')
+                    ->whereColumn('hostel_rooms.id', 'hostel_beds.hostel_room_id')
+                    ->where('hostel_rooms.institution_id', $institutionId);
+            }))
+            ->where('status', 'occupied')
+            ->count();
+
+        $vacantBeds = max(0, $totalBeds - $occupiedBeds);
+        $hostelOccupancyRate = $totalBeds > 0 ? round(($occupiedBeds / $totalBeds) * 100, 1) : 0;
+
+        $activeHostelResidents = DB::table('hostel_allocations')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('status', 'active')
+            ->count();
+
+        $monthlyHostelRunRate = (float) DB::table('hostel_allocations')
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->where('status', 'active')
+            ->sum('monthly_amount');
+
+        $hostelAnalytics = [
+            'total_revenue' => $totalHostelRevenue,
+            'total_beds' => $totalBeds,
+            'occupied_beds' => $occupiedBeds,
+            'vacant_beds' => $vacantBeds,
+            'occupancy_rate' => $hostelOccupancyRate,
+            'active_residents' => $activeHostelResidents,
+            'monthly_run_rate' => round($monthlyHostelRunRate, 2),
+            'total_hostels' => $totalHostels,
+            'total_rooms' => $totalHostelRooms,
+        ];
+
+        // ─── 10. Revenue Streams Breakdown (For Visualizer & Donut) ───────────
+        $revenueStreams = [
+            [
+                'key' => 'tuition',
+                'name' => 'Tuition & Academic Fees',
+                'value' => $pureTuitionRevenue,
+                'fill' => 'hsl(221, 83%, 53%)',
+                'percentage' => $totalFeeCollection > 0 ? round(($pureTuitionRevenue / $totalFeeCollection) * 100, 1) : 0,
+            ],
+            [
+                'key' => 'admission',
+                'name' => 'Admission Fees',
+                'value' => round(max(0, $totalAdmissionRevenue - $admissionTransportRev - $admissionHostelRev), 2),
+                'fill' => 'hsl(262, 83%, 58%)',
+                'percentage' => $totalFeeCollection > 0 ? round((max(0, $totalAdmissionRevenue - $admissionTransportRev - $admissionHostelRev) / $totalFeeCollection) * 100, 1) : 0,
+            ],
+            [
+                'key' => 'transport',
+                'name' => 'Transport Fees',
+                'value' => $totalTransportRevenue,
+                'fill' => 'hsl(38, 92%, 50%)',
+                'percentage' => $totalFeeCollection > 0 ? round(($totalTransportRevenue / $totalFeeCollection) * 100, 1) : 0,
+            ],
+            [
+                'key' => 'hostel',
+                'name' => 'Hostel Fees',
+                'value' => $totalHostelRevenue,
+                'fill' => 'hsl(142, 71%, 45%)',
+                'percentage' => $totalFeeCollection > 0 ? round(($totalHostelRevenue / $totalFeeCollection) * 100, 1) : 0,
+            ],
+            [
+                'key' => 'certificate',
+                'name' => 'Certificates & Others',
+                'value' => $totalCertificateRevenue,
+                'fill' => 'hsl(199, 89%, 48%)',
+                'percentage' => $totalFeeCollection > 0 ? round(($totalCertificateRevenue / $totalFeeCollection) * 100, 1) : 0,
+            ],
+        ];
+
+        $feeByCategory = collect($revenueStreams)
+            ->filter(fn($c) => $c['value'] > 0)
+            ->values();
+
+        // ─── 11. Top Widgets Payload ──────────────────────────────────────────
+        $widgets = [
             'total_students' => $totalStudents,
             'total_staff' => $totalStaff,
             'total_classes' => $totalClasses,
@@ -125,42 +393,54 @@ class DashboardAnalyticsController extends BaseController
                 'total' => $admissionTotal,
                 'new_admission' => $admissionNew,
                 're_admission' => $admissionRe,
+                'paid_revenue' => $totalAdmissionRevenue,
+                'due_amount' => $admissionDues,
             ],
             'total_fee_collection' => $totalFeeCollection,
+            'tuition_revenue' => $pureTuitionRevenue,
+            'transport_revenue' => $totalTransportRevenue,
+            'hostel_revenue' => $totalHostelRevenue,
             'pending_fee' => $pendingFee,
             'fee_collection_rate' => $feeCollectionRate,
             'attendance_rate' => $attendanceRate,
-            'total_expenses' => $totalExpenses,
+            'total_expenses' => round($totalExpenses, 2),
             'net_revenue' => $netRevenue,
-            'pending_tasks' => $pendingTasks,
+            'pending_tasks' => $this->calculatePendingTasks(),
         ];
 
-        // 2. GENDER DISTRIBUTION
+        // ─── 12. Gender Distribution ──────────────────────────────────────────
         $genderDistribution = StudentProfile::select('gender', DB::raw('count(*) as count'))
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
             ->whereNotNull('gender')
             ->where('gender', '!=', '')
             ->groupBy('gender')
             ->get()
             ->map(function ($item) {
-                $label = match (strtolower($item->gender)) {
+                $label = match (strtolower(trim($item->gender))) {
                     'male', 'm' => 'Male',
                     'female', 'f' => 'Female',
                     default => 'Other',
                 };
-                return ['name' => $label, 'value' => (int) $item->count, 'fill' => match ($label) {
-                    'Male' => 'hsl(221, 83%, 53%)',
-                    'Female' => 'hsl(330, 81%, 60%)',
-                    default => 'hsl(45, 93%, 47%)',
-                }];
+                return [
+                    'name' => $label,
+                    'value' => (int) $item->count,
+                    'fill' => match ($label) {
+                        'Male' => 'hsl(221, 83%, 53%)',
+                        'Female' => 'hsl(330, 81%, 60%)',
+                        default => 'hsl(45, 93%, 47%)',
+                    },
+                ];
             })
             ->values();
 
-        // 3. FEE COLLECTION BY MODE
+        // ─── 13. Fee Collection by Mode ───────────────────────────────────────
         $feeByMode = FeePayment::select('payment_mode', DB::raw('SUM(total_amount) as total'))
             ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
             ->whereIn('payment_status', ['paid', 'success'])
-            ->where(function ($q) use ($startDateTime, $endDateTime) {
-                $q->whereBetween('payment_date', [$startDateTime, $endDateTime])
+            ->where(function ($q) use ($startDateTime, $endDateTime, $startMonth, $endMonth) {
+                $q->whereBetween('for_month', [$startMonth, $endMonth])
+                  ->orWhereBetween('payment_date', [$startDateTime, $endDateTime])
                   ->orWhereBetween('created_at', [$startDateTime, $endDateTime]);
             })
             ->whereNotNull('payment_mode')
@@ -183,36 +463,23 @@ class DashboardAnalyticsController extends BaseController
             })
             ->values();
 
-        // 4. FEE COLLECTION BY CATEGORY
-        $feeByCategory = [
-            ['name' => 'Admission Fees', 'value' => round((float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['paid', 'success'])->whereBetween('updated_at', [$startDateTime, $endDateTime])->sum('amount'), 2), 'fill' => 'hsl(221, 83%, 53%)'],
-            ['name' => 'Certificate Fees', 'value' => round((float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['paid', 'success'])->whereBetween('submitted_at', [$startDateTime, $endDateTime])->sum('amount'), 2), 'fill' => 'hsl(142, 71%, 45%)'],
-            ['name' => 'General Fees', 'value' => round((float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))->whereIn('payment_status', ['success', 'paid'])->where(function ($q) use ($startDateTime, $endDateTime) {
-                $q->whereBetween('payment_date', [$startDateTime, $endDateTime])
-                  ->orWhereBetween('created_at', [$startDateTime, $endDateTime]);
-            })->sum('total_amount'), 2), 'fill' => 'hsl(45, 93%, 47%)'],
-        ];
-        // Filter out zero-value categories
-        $feeByCategory = collect($feeByCategory)->filter(fn($c) => $c['value'] > 0)->values();
-
-        // 5. STUDENTS PER CLASS (Top 12)
-        $studentsPerClass = LmsClassEnrollment::select('lms_class_id', DB::raw('count(*) as student_count'))
-            ->where('status', 'active')
-            ->groupBy('lms_class_id')
-            ->orderByDesc('student_count')
+        // ─── 14. Students per Class ───────────────────────────────────────────
+        $studentsPerClass = LmsClass::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
+            ->withCount(['enrollments' => fn($q) => $q->where('status', 'active')])
+            ->orderByDesc('enrollments_count')
             ->limit(12)
             ->get()
-            ->map(function ($item) {
-                $class = LmsClass::withoutGlobalScopes()->find($item->lms_class_id);
-                return [
-                    'name' => $class ? $class->name : "Class #{$item->lms_class_id}",
-                    'students' => (int) $item->student_count,
-                ];
-            })
+            ->map(fn($c) => [
+                'name' => $c->name,
+                'students' => (int) $c->enrollments_count,
+            ])
             ->values();
 
-        // 6. ADMISSION BY STREAM / MAIN STREAM
+        // ─── 15. Admission by Stream ──────────────────────────────────────────
         $admissionByStream = StudentProfile::select('stream_id', DB::raw('count(*) as count'))
+            ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+            ->when($sessionId, fn($q) => $q->where('session_id', $sessionId))
             ->whereNotNull('stream_id')
             ->groupBy('stream_id')
             ->get()
@@ -231,33 +498,47 @@ class DashboardAnalyticsController extends BaseController
             })
             ->values();
 
-        // Aggregate by main stream for chart
         $admissionByMainStream = $admissionByStream->groupBy('main_stream')->map(function ($items, $key) {
             return ['name' => $key, 'students' => $items->sum('count')];
         })->values();
 
-        // 7. MONTHLY REVENUE VS EXPENSES (Last 6 months)
-        $revenueVsExpenses = $this->getRevenueVsExpenses();
+        // ─── 16. Monthly Revenue vs Expenses (Session Aware) ─────────────────
+        $revenueVsExpenses = $this->getRevenueVsExpensesForSession($selectedSession, $startDate, $endDate, $institutionId);
 
-        // 8. ATTENDANCE TREND (Last 7 days)
+        // ─── 17. Attendance Trend (Last 7 days) ──────────────────────────────
         $attendanceTrend = $this->getAttendanceTrend();
 
-        // 9. RECENT NOTICES (Last 5)
+        // ─── 18. Fee Trend Chart ─────────────────────────────────────────────
+        $feeTrendChart = $this->getAggregatedFeeTrends($startDate, $endDate, $sessionId, $institutionId);
+
+        // ─── 19. Recent Activity & Notices ────────────────────────────────────
+        $recentActivity = $this->getRecentActivity();
         $recentNotices = Notice::select('id', 'title', 'created_at', 'is_published')
             ->where('is_published', true)
             ->orderByDesc('created_at')
             ->limit(5)
             ->get()
-            ->map(function ($notice) {
-                return [
-                    'id' => $notice->id,
-                    'title' => $notice->title,
-                    'time' => \Carbon\Carbon::parse($notice->created_at)->diffForHumans(),
-                ];
-            });
+            ->map(fn($n) => [
+                'id' => $n->id,
+                'title' => $n->title,
+                'time' => Carbon::parse($n->created_at)->diffForHumans(),
+            ]);
 
         return $this->success([
-            'widgets' => $stats,
+            'academic_sessions' => $allSessions,
+            'active_session' => $selectedSession ? [
+                'id' => $selectedSession->id,
+                'name' => $selectedSession->name,
+                'start_year' => $selectedSession->start_year,
+                'end_year' => $selectedSession->end_year,
+                'is_current' => (bool) $selectedSession->is_current,
+                'start_date' => "{$selectedSession->start_year}-04-01",
+                'end_date' => "{$selectedSession->end_year}-03-31",
+            ] : null,
+            'widgets' => $widgets,
+            'revenue_streams' => $revenueStreams,
+            'transport_analytics' => $transportAnalytics,
+            'hostel_analytics' => $hostelAnalytics,
             'gender_distribution' => $genderDistribution,
             'fee_by_mode' => $feeByMode,
             'fee_by_category' => $feeByCategory,
@@ -266,77 +547,78 @@ class DashboardAnalyticsController extends BaseController
             'admission_by_main_stream' => $admissionByMainStream,
             'revenue_vs_expenses' => $revenueVsExpenses,
             'attendance_trend' => $attendanceTrend,
-            'fee_trend_chart' => $this->getAggregatedFeeTrends($startDate, $endDate),
-            'recent_activity' => $this->getRecentActivity(),
+            'fee_trend_chart' => $feeTrendChart,
+            'recent_activity' => $recentActivity,
             'recent_notices' => $recentNotices,
             'date_range' => ['from' => $startDate, 'to' => $endDate],
         ]);
     }
 
-    private function calculateTotalRevenue($start, $end, $institutionId = null)
-    {
-        $admissionRev = (float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->whereIn('payment_status', ['paid', 'success'])
-            ->whereBetween('updated_at', [$start, $end])
-            ->sum('amount');
-        $certRev = (float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->whereIn('payment_status', ['paid', 'success'])
-            ->whereBetween('submitted_at', [$start, $end])
-            ->sum('amount');
-        $generalRev = (float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-            ->whereIn('payment_status', ['success', 'paid'])
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('payment_date', [$start, $end])
-                  ->orWhereBetween('created_at', [$start, $end]);
-            })
-            ->sum('total_amount');
-
-        return $admissionRev + $certRev + $generalRev;
-    }
-
-    private function calculatePendingTasks()
+    private function calculatePendingTasks(): int
     {
         return AdmissionApplication::where('process_status', 'pending')->count() +
             CertificateApplication::where('process_status', 'pending')->count();
     }
 
-    private function getRevenueVsExpenses()
+    /**
+     * Generate monthly comparison of revenue vs expenses for the selected academic session.
+     */
+    private function getRevenueVsExpensesForSession($selectedSession, $startDate, $endDate, $institutionId)
     {
-        $institutionId = InstitutionContext::getActiveInstitutionId();
         $months = collect();
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $monthStart = $date->copy()->startOfMonth()->startOfDay();
-            $monthEnd = $date->copy()->endOfMonth()->endOfDay();
-            $monthLabel = $date->format('M');
 
-            // Revenue from all sources
-            $admissionRev = (float) AdmissionApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-                ->whereIn('payment_status', ['paid', 'success'])
-                ->whereBetween('updated_at', [$monthStart, $monthEnd])->sum('amount');
-            $certRev = (float) CertificateApplication::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-                ->whereIn('payment_status', ['paid', 'success'])
-                ->whereBetween('submitted_at', [$monthStart, $monthEnd])->sum('amount');
-            $generalRev = (float) FeePayment::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
-                ->whereIn('payment_status', ['success', 'paid'])
-                ->where(function ($q) use ($monthStart, $monthEnd) {
-                    $q->whereBetween('payment_date', [$monthStart, $monthEnd])
-                      ->orWhereBetween('created_at', [$monthStart, $monthEnd]);
-                })->sum('total_amount');
-            $totalRev = $admissionRev + $certRev + $generalRev;
+        if ($selectedSession) {
+            $currentMonth = Carbon::parse("{$selectedSession->start_year}-04-01");
+            $endMonthDate = Carbon::parse("{$selectedSession->end_year}-03-01");
+        } else {
+            $currentMonth = Carbon::parse($startDate)->startOfMonth();
+            $endMonthDate = Carbon::parse($endDate)->startOfMonth();
+        }
 
-            // Expenses
-            $totalExp = (float) Expense::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+        while ($currentMonth->lte($endMonthDate)) {
+            $mKey = $currentMonth->format('Y-m');
+            $mLabel = $currentMonth->format('M');
+            $mStart = $currentMonth->copy()->startOfMonth()->startOfDay();
+            $mEnd = $currentMonth->copy()->endOfMonth()->endOfDay();
+
+            // General Fee collection in this month
+            $genRev = (float) DB::table('fee_payments')
+                ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->whereIn('payment_status', ['paid', 'success'])
+                ->where(function ($q) use ($mKey) {
+                    $q->where('for_month', $mKey);
+                })
+                ->where(function ($q) {
+                    $q->whereNull('payable_entity_type')->orWhere('payable_entity_type', '!=', 'admission_application');
+                })
+                ->sum('total_amount');
+
+            // Admission revenue in this month
+            $admRev = (float) DB::table('admission_applications')
+                ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->when($selectedSession, fn($q) => $q->where('session_id', $selectedSession->id))
+                ->whereIn('payment_status', ['paid', 'success'])
+                ->whereBetween(DB::raw('COALESCE(submitted_at, payment_date, admission_date, created_at)'), [$mStart, $mEnd])
+                ->sum('amount');
+
+            // Approved Expenses in this month
+            $expRev = (float) DB::table('expenses')
+                ->when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
                 ->where('status', 'approved')
-                ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])->sum('amount');
+                ->whereBetween('date', [$mStart->toDateString(), $mEnd->toDateString()])
+                ->sum('amount');
 
             $months->push([
-                'month' => $monthLabel,
-                'revenue' => round($totalRev, 2),
-                'expenses' => round($totalExp, 2),
+                'month' => $mLabel,
+                'period' => $mKey,
+                'revenue' => round($genRev + $admRev, 2),
+                'expenses' => round($expRev, 2),
             ]);
+
+            $currentMonth->addMonth();
         }
-        return $months;
+
+        return $months->values();
     }
 
     private function getAttendanceTrend()
@@ -362,21 +644,21 @@ class DashboardAnalyticsController extends BaseController
         return $trend;
     }
 
-    private function getAggregatedFeeTrends($start, $end)
+    private function getAggregatedFeeTrends($start, $end, $sessionId = null, $institutionId = null)
     {
-        $institutionId = InstitutionContext::getActiveInstitutionId();
         $instFilter = $institutionId ? " AND institution_id = {$institutionId}" : '';
+        $sessionFilter = $sessionId ? " AND session_id = {$sessionId}" : '';
 
         $isPgsql = DB::connection()->getDriverName() === 'pgsql';
         $monthExpr = $isPgsql ? "to_char(created_at, 'Mon')" : "DATE_FORMAT(created_at, '%b')";
         $monthNumExpr = $isPgsql ? "extract(month from created_at)" : "MONTH(created_at)";
 
         return DB::table(DB::raw("(
-            SELECT amount, created_at FROM admission_applications WHERE payment_status IN ('paid', 'success'){$instFilter}
+            SELECT amount, COALESCE(submitted_at, payment_date, admission_date, created_at) as created_at FROM admission_applications WHERE payment_status IN ('paid', 'success'){$instFilter}{$sessionFilter}
             UNION ALL
             SELECT amount, submitted_at as created_at FROM certificate_applications WHERE payment_status IN ('paid', 'success'){$instFilter}
             UNION ALL
-            SELECT total_amount as amount, COALESCE(payment_date, created_at) as created_at FROM fee_payments WHERE payment_status IN ('success', 'paid'){$instFilter}
+            SELECT total_amount as amount, COALESCE(payment_date, created_at) as created_at FROM fee_payments WHERE payment_status IN ('success', 'paid'){$instFilter} AND (payable_entity_type IS NULL OR payable_entity_type != 'admission_application')
         ) as combined_fees"))
             ->select(
                 DB::raw("{$monthExpr} as month"),
@@ -391,37 +673,44 @@ class DashboardAnalyticsController extends BaseController
 
     private function getRecentActivity()
     {
-        $admissions = AdmissionApplication::select('applicant_name as user', 'created_at')
+        $admissions = AdmissionApplication::select(
+            'applicant_name as user',
+            'amount',
+            DB::raw('COALESCE(submitted_at, payment_date, admission_date, created_at) as created_at')
+        )
             ->selectRaw("'Admission' as type")
-            ->latest()->take(5)->get();
-            
-        $fees = FeePayment::with('student:id,name')->select('user_id', 'created_at')
+            ->latest('id')->take(5)->get()->map(fn($item) => [
+                'type' => 'Admission',
+                'user' => $item->user,
+                'amount' => $item->amount,
+                'created_at' => $item->created_at,
+            ]);
+
+        $fees = FeePayment::with('student:id,name')->select('user_id', 'total_amount as amount', 'created_at')
             ->selectRaw("'Fee Payment' as type")
-            ->latest()->take(5)->get()->map(function($fee) {
-                return [
-                    'user' => $fee->student ? $fee->student->name : 'Unknown',
-                    'created_at' => $fee->created_at,
-                    'type' => $fee->type,
-                ];
-            });
+            ->latest()->take(5)->get()->map(fn($fee) => [
+                'type' => 'Fee Payment',
+                'user' => $fee->student ? $fee->student->name : 'Unknown Student',
+                'amount' => $fee->amount,
+                'created_at' => $fee->created_at,
+            ]);
 
         $activities = collect($admissions)->concat($fees)
-            ->sortByDesc(function($item) {
-                return \Carbon\Carbon::parse($item['created_at'] ?? $item->created_at);
-            })
-            ->take(5)
+            ->sortByDesc(fn($item) => Carbon::parse($item['created_at']))
+            ->take(6)
             ->values()
-            ->map(function($activity) {
-                $type = $activity['type'] ?? $activity->type;
+            ->map(function ($activity) {
+                $type = $activity['type'];
                 return [
                     'type' => $type,
-                    'user' => $activity['user'] ?? ($activity->user ?? 'Unknown'),
-                    'time' => \Carbon\Carbon::parse($activity['created_at'] ?? $activity->created_at)->diffForHumans(),
+                    'user' => $activity['user'],
+                    'amount' => (float) ($activity['amount'] ?? 0),
+                    'time' => Carbon::parse($activity['created_at'])->diffForHumans(),
                     'icon' => $type === 'Admission' ? 'GraduationCap' : 'IndianRupee',
                     'color' => $type === 'Admission' ? 'text-indigo-500' : 'text-emerald-500',
                 ];
             });
-            
+
         return $activities;
     }
 }

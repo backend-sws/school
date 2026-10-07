@@ -10,7 +10,10 @@ interface AnalyticsFilterBarProps {
     icon?: React.ElementType;
     children: React.ReactNode;
     className?: string;
+    gridClassName?: string;
     guide?: GuideDefinition;
+    actions?: React.ReactNode;
+    footer?: React.ReactNode;
 }
 
 export const AnalyticsFilterBar = ({
@@ -18,7 +21,10 @@ export const AnalyticsFilterBar = ({
     icon: Icon = Filter,
     children,
     className,
-    guide
+    gridClassName,
+    guide,
+    actions,
+    footer,
 }: AnalyticsFilterBarProps) => {
     const { registerGuide } = useGuide();
 
@@ -29,17 +35,19 @@ export const AnalyticsFilterBar = ({
     }, [guide, registerGuide]);
 
     return (
-        <Card className={cn("rounded-2xl border border-border/50 shadow-sm overflow-hidden bg-muted/10", className)}>
-            <CardHeader className="border-b bg-card/50 backdrop-blur-md px-6 py-4 flex flex-row items-center justify-between space-y-0">
-                <div className="flex items-center gap-2 text-primary/70">
-                    <Icon className="size-4" />
-                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em]">{title}</CardTitle>
+        <Card className={cn("rounded-2xl border border-border/70 shadow-xs overflow-hidden bg-card", className)}>
+            <CardHeader className="border-b border-border/60 bg-muted/30 px-6 py-3.5 flex flex-row items-center justify-between space-y-0">
+                <div className="flex items-center gap-2 text-foreground font-semibold">
+                    <Icon className="size-4 text-primary" />
+                    <CardTitle className="text-xs font-bold uppercase tracking-wider">{title}</CardTitle>
                 </div>
+                {actions && <div className="flex items-center gap-2">{actions}</div>}
             </CardHeader>
-            <CardContent className="p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+            <CardContent className="p-6 space-y-4">
+                <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-end", gridClassName)}>
                     {children}
                 </div>
+                {footer}
             </CardContent>
         </Card>
     );

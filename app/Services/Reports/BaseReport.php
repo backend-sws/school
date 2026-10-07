@@ -27,10 +27,17 @@ abstract class BaseReport implements ReportContract
     protected bool $useCache = true;
 
     /**
+     * Report filters for the current execution.
+     */
+    protected array $filters = [];
+
+    /**
      * Get cached or fresh data for the report.
      */
     public function getData(array $filters): array
     {
+        $this->filters = $filters;
+
         if (!$this->useCache) {
             return $this->generate($filters);
         }
