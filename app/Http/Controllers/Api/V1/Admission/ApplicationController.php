@@ -592,6 +592,23 @@ class ApplicationController extends BaseController
             $targetUserId = $studentUser->id;
         }
 
+        if ($isReAdmission && $studentUser) {
+            $targetSessionId = $validated['session_id'] ?? null;
+            if (!$targetSessionId && !empty($validated['admission_head_id'])) {
+                $targetSessionId = \App\Models\AdmissionHead::find($validated['admission_head_id'])?->session_id;
+            }
+            if (!$targetSessionId) {
+                $targetSessionId = \App\Models\Session::where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)->where('status', 'active')->value('id');
+            }
+
+            if ($targetSessionId) {
+                $duplicateError = $this->validateNoDuplicateReadmission($studentUser->id, (int) $targetSessionId);
+                if ($duplicateError) {
+                    return $this->error($duplicateError, 422);
+                }
+            }
+        }
+
         $validated['user_id'] = $targetUserId;
         $validated['submitted_at'] = now();
         $validated['process_status'] = $validated['process_status'] ?? 'pending';
@@ -1107,6 +1124,23 @@ public function update(Request $request, $id): JsonResponse
             $targetUserId = $studentUser->id;
         }
 
+        if ($isReAdmission && $studentUser) {
+            $targetSessionId = $validated['session_id'] ?? $application->session_id;
+            if (!$targetSessionId && !empty($validated['admission_head_id'])) {
+                $targetSessionId = \App\Models\AdmissionHead::find($validated['admission_head_id'])?->session_id;
+            }
+            if (!$targetSessionId) {
+                $targetSessionId = \App\Models\Session::where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)->where('status', 'active')->value('id');
+            }
+
+            if ($targetSessionId) {
+                $duplicateError = $this->validateNoDuplicateReadmission($studentUser->id, (int) $targetSessionId, $application->id);
+                if ($duplicateError) {
+                    return $this->error($duplicateError, 422);
+                }
+            }
+        }
+
         $validated['user_id'] = $targetUserId;
         $validated['submitted_at'] = now();
         $validated['process_status'] = $validated['process_status'] ?? 'pending';
@@ -1501,6 +1535,13 @@ public function update(Request $request, $id): JsonResponse
             );
         }
 
+        if ($status === ProcessStatus::APPROVED && ($application->application_type ?? 'new') === 're-admission' && $application->user_id && $application->session_id) {
+            $duplicateError = $this->validateNoDuplicateReadmission($application->user_id, (int) $application->session_id, $application->id);
+            if ($duplicateError) {
+                return $this->error("Cannot approve: {$duplicateError}", 422);
+            }
+        }
+
         try {
             return DB::transaction(function () use ($request, $application, $validated, $status) {
                 $updateData = [
@@ -1669,5 +1710,38 @@ public function update(Request $request, $id): JsonResponse
         );
 
         return $this->success($breakdown, 'Fee preview generated');
+    }
+
+    /**
+     * Prevent multiple re-admissions / enrollments for the same student in the same academic session.
+     */
+    private function validateNoDuplicateReadmission(int $studentUserId, int $targetSessionId, ?int $ignoreApplicationId = null): ?string
+    {
+        // 1. Check if student already has an approved admission/re-admission in this session
+        $existingApproved = AdmissionApplication::where('user_id', $studentUserId)
+            ->where('session_id', $targetSessionId)
+            ->when($ignoreApplicationId, fn($q) => $q->where('id', '!=', $ignoreApplicationId))
+            ->whereIn('process_status', ['approved', 'admitted', 'completed'])
+            ->first();
+
+        if ($existingApproved) {
+            $sessionName = $existingApproved->session?->name ?? (string) $targetSessionId;
+            return "Student is already re-admitted / enrolled in this academic session ({$sessionName}) via application #{$existingApproved->application_id}. A student cannot have multiple admissions/re-admissions in the same session.";
+        }
+
+        // 2. Check if student already has an active class enrollment in this session
+        $existingEnrollment = \App\Models\LmsClassEnrollment::where('user_id', $studentUserId)
+            ->where('role', 'student')
+            ->where('status', 'active')
+            ->whereHas('lmsClass', fn($q) => $q->where('session_id', $targetSessionId))
+            ->with('lmsClass')
+            ->first();
+
+        if ($existingEnrollment) {
+            $className = $existingEnrollment->lmsClass?->name ?? 'active class';
+            return "Student already has an active class enrollment in this academic session ({$className}). A student cannot be re-admitted again in the same session.";
+        }
+
+        return null;
     }
 }

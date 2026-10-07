@@ -368,25 +368,26 @@ class AdmissionToStudentSyncService
                 'previous_enrollment_status' => $existingProfile?->enrollment_status ?? 'active',
             ]);
 
-            \App\Models\StudentTransition::firstOrCreate(
-                [
-                    'user_id' => $app->user_id,
-                    'to_session_id' => $context['sessionId'],
-                    'type' => 'readmission',
-                ],
-                [
-                    'institution_id' => $app->institution_id,
-                    'student_profile_id' => $context['profile']->id,
-                    'transitionable_type' => \App\Models\ReadmissionDetail::class,
-                    'transitionable_id' => $readmissionDetail->id,
-                    'from_session_id' => $resolvedFromSession,
-                    'from_class_id' => $resolvedFromClass,
-                    'to_class_id' => $resolvedToClass,
-                    'status' => 'approved',
-                    'processed_at' => now(),
-                    'remarks' => 'Re-admission via application ' . $app->application_id,
-                ]
-            );
+            $transition = \App\Models\StudentTransition::firstOrNew([
+                'user_id' => $app->user_id,
+                'to_session_id' => $context['sessionId'],
+                'type' => 'readmission',
+            ]);
+            $transition->institution_id = $app->institution_id;
+            $transition->student_profile_id = $context['profile']->id;
+            $transition->transitionable_type = \App\Models\ReadmissionDetail::class;
+            $transition->transitionable_id = $readmissionDetail->id;
+            $transition->from_session_id = $resolvedFromSession;
+            if ($resolvedFromClass) {
+                $transition->from_class_id = $resolvedFromClass;
+            }
+            if ($resolvedToClass) {
+                $transition->to_class_id = $resolvedToClass;
+            }
+            $transition->status = 'approved';
+            $transition->processed_at = now();
+            $transition->remarks = 'Re-admission via application ' . $app->application_id;
+            $transition->save();
 
             // Deactivate previous active class enrollment
             if ($resolvedFromClass) {
@@ -500,18 +501,32 @@ class AdmissionToStudentSyncService
         }
 
         foreach ($resolvedLmsClassIds as $classId) {
-            LmsClassEnrollment::firstOrCreate(
-                ['lms_class_id' => $classId, 'user_id' => $app->user_id],
-                ['enrolled_at' => now(), 'role' => 'student', 'status' => 'active']
-            );
+            $enrollment = LmsClassEnrollment::firstOrNew([
+                'lms_class_id' => $classId,
+                'user_id' => $app->user_id,
+            ]);
+            $enrollment->role = 'student';
+            $enrollment->status = 'active';
+            if (!$enrollment->exists) {
+                $enrollment->enrolled_at = now();
+            }
+            $enrollment->save();
         }
 
         if ($this->isReadmission($app) && !empty($resolvedLmsClassIds)) {
+            // Deactivate any previous active student enrollments for this user in other classes
+            LmsClassEnrollment::where('user_id', $app->user_id)
+                ->where('role', 'student')
+                ->whereNotIn('lms_class_id', $resolvedLmsClassIds)
+                ->where('status', 'active')
+                ->update(['status' => 'readmitted']);
+
             \App\Models\StudentTransition::where('user_id', $app->user_id)
                 ->where('to_session_id', $sessionId)
                 ->where('type', 'readmission')
-                ->whereNull('to_class_id')
-                ->update(['to_class_id' => $resolvedLmsClassIds[0]]);
+                ->latest('id')
+                ->first()
+                ?->update(['to_class_id' => $resolvedLmsClassIds[0]]);
         }
     }
 

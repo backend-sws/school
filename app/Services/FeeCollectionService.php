@@ -1052,23 +1052,50 @@ class FeeCollectionService
 
     public function resolveStudentClass(User $student, int $institutionId, ?int $streamId = null, ?int $sessionId = null): ?LmsClass
     {
-        $cacheKey = $student->id . '_' . ($sessionId ?? 'current');
+        $cacheKey = $student->id . '_' . ($streamId ?? 'none') . '_' . ($sessionId ?? 'current');
         if (isset(self::$resolvedClassCache[$cacheKey])) {
             return self::$resolvedClassCache[$cacheKey];
         }
 
         $query = LmsClassEnrollment::where('user_id', $student->id)
             ->where('role', 'student')
-            ->with('lmsClass');
+            ->with(['lmsClass.stream']);
 
         if ($sessionId) {
             $query->whereHas('lmsClass', fn($q) => $q->where('session_id', $sessionId));
-        } else {
-            $query->where('status', 'active');
         }
 
-        $enrollment = $query->first();
-        $class = $enrollment?->lmsClass;
+        $enrollments = $query->get();
+
+        $class = null;
+
+        if ($enrollments->isNotEmpty()) {
+            // 1. Highest priority: Active enrollment matching the requested stream (e.g. from student profile/app)
+            if ($streamId) {
+                $class = $enrollments->filter(fn($e) => $e->status === 'active' && (int) $e->lmsClass?->stream_id === (int) $streamId)
+                    ->sortByDesc('id')
+                    ->first()?->lmsClass;
+            }
+
+            // 2. Second priority: Any active enrollment for this session (latest first)
+            if (!$class) {
+                $class = $enrollments->filter(fn($e) => $e->status === 'active')
+                    ->sortByDesc('id')
+                    ->first()?->lmsClass;
+            }
+
+            // 3. Third priority: Any enrollment matching the requested stream (latest first)
+            if (!$class && $streamId) {
+                $class = $enrollments->filter(fn($e) => (int) $e->lmsClass?->stream_id === (int) $streamId)
+                    ->sortByDesc('id')
+                    ->first()?->lmsClass;
+            }
+
+            // 4. Fourth priority: Latest enrollment in this session
+            if (!$class) {
+                $class = $enrollments->sortByDesc('id')->first()?->lmsClass;
+            }
+        }
 
         if (!$class && $sessionId) {
             // Check student_transitions for class in that session
@@ -1076,11 +1103,13 @@ class FeeCollectionService
                 ->where(function($q) use ($sessionId) {
                     $q->where('from_session_id', $sessionId)
                       ->orWhere('to_session_id', $sessionId);
-                })->first();
+                })
+                ->latest('id')
+                ->first();
             if ($transition) {
-                $classId = ($transition->from_session_id == $sessionId) ? $transition->from_class_id : $transition->to_class_id;
+                $classId = ((int) $transition->from_session_id === (int) $sessionId) ? $transition->from_class_id : $transition->to_class_id;
                 if ($classId) {
-                    $class = LmsClass::find($classId);
+                    $class = LmsClass::with('stream')->find($classId);
                 }
             }
         }
