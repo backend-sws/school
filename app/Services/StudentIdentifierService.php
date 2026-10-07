@@ -42,7 +42,8 @@ class StudentIdentifierService
             $prefix = $code;
         }
 
-        $lastRegNo = StudentProfile::where('institution_id', $institutionId)
+        $lastRegNo = StudentProfile::withoutGlobalScopes()
+            ->where('institution_id', $institutionId)
             ->where('reg_no', 'like', $prefix . '%')
             ->orderByRaw('LENGTH(reg_no) DESC')
             ->orderBy('reg_no', 'desc')
@@ -55,7 +56,16 @@ class StudentIdentifierService
             $nextSequence = 1;
         }
 
-        return $prefix . str_pad($nextSequence, $padding, '0', STR_PAD_LEFT);
+        // Collision-safe retry loop: ensure candidate reg_no is unique across entire student_profiles table
+        do {
+            $candidate = $prefix . str_pad($nextSequence, $padding, '0', STR_PAD_LEFT);
+            $exists = StudentProfile::withoutGlobalScopes()->where('reg_no', $candidate)->exists();
+            if ($exists) {
+                $nextSequence++;
+            }
+        } while ($exists);
+
+        return $candidate;
     }
 
     /**

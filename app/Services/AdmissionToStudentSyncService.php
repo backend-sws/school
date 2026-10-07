@@ -100,6 +100,11 @@ class AdmissionToStudentSyncService
     {
         $application->load(['admissionHead', 'admissionHead.stream', 'user']);
 
+        // In re-admissions, ensure application is linked to the student's true existing User & StudentProfile
+        if ($this->isReadmission($application)) {
+            $this->ensureApplicationLinkedToExistingStudentUser($application);
+        }
+
         $user = User::find((int) $application->user_id);
         if (!$user) {
             return;
@@ -244,7 +249,18 @@ class AdmissionToStudentSyncService
         $profileData['state']                = $address['state'];
         $profileData['pincode']              = $address['pincode'];
         $profileData['is_differently_abled'] = !empty($app->disability);
-        $existingProfile = StudentProfile::where('user_id', $app->user_id)->first();
+        $existingProfile = StudentProfile::withoutGlobalScopes()->where('user_id', $app->user_id)->first();
+        if (!$existingProfile) {
+            $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
+            $profileId = $prefs['student_profile_id'] ?? data_get($app->toArray(), 'student_profile_id');
+            if ($profileId) {
+                $existingProfile = StudentProfile::withoutGlobalScopes()->find($profileId);
+            }
+        }
+        if (!$existingProfile && !empty($profileData['reg_no'])) {
+            $existingProfile = StudentProfile::withoutGlobalScopes()->where('reg_no', $profileData['reg_no'])->first();
+        }
+
         $fromSessionId = $existingProfile?->session_id;
         $fromClassId = $existingProfile?->class_id;
         if (!$fromClassId && $fromSessionId) {
@@ -255,10 +271,18 @@ class AdmissionToStudentSyncService
                 ->value('lms_classes.id');
         }
 
-        $context['profile'] = StudentProfile::updateOrCreate(
-            ['user_id' => $app->user_id],
-            $profileData
-        );
+        if ($existingProfile) {
+            // Keep original reg_no untouched for existing student
+            if (!empty($existingProfile->reg_no)) {
+                $profileData['reg_no'] = $existingProfile->reg_no;
+            }
+            $profileData['user_id'] = $existingProfile->user_id;
+
+            $existingProfile->update($profileData);
+            $context['profile'] = $existingProfile;
+        } else {
+            $context['profile'] = StudentProfile::create($profileData);
+        }
 
         // Keep User contact details in sync with approved application
         $user = $context['user'] ?? null;
@@ -556,7 +580,7 @@ class AdmissionToStudentSyncService
     {
         if ($this->isReadmission($app)) {
             // 1. Primary: profile linked to this application's user
-            $existing = StudentProfile::where('user_id', $app->user_id)->value('reg_no');
+            $existing = StudentProfile::withoutGlobalScopes()->where('user_id', $app->user_id)->value('reg_no');
             if ($existing) {
                 return $existing;
             }
@@ -566,7 +590,7 @@ class AdmissionToStudentSyncService
             $prefs = is_array($app->subject_preferences) ? $app->subject_preferences : [];
             $profileIdFromPrefs = $prefs['student_profile_id'] ?? null;
             if ($profileIdFromPrefs) {
-                $existing = StudentProfile::where('id', $profileIdFromPrefs)->value('reg_no');
+                $existing = StudentProfile::withoutGlobalScopes()->where('id', $profileIdFromPrefs)->value('reg_no');
                 if ($existing) {
                     Log::info('AdmissionSync: reg_no carried forward via subject_preferences.student_profile_id', [
                         'application_id'   => $app->id,
@@ -581,12 +605,28 @@ class AdmissionToStudentSyncService
             //    (direct field, less common but supported)
             $profileIdDirect = data_get($app->toArray(), 'student_profile_id');
             if ($profileIdDirect) {
-                $existing = StudentProfile::where('id', $profileIdDirect)->value('reg_no');
+                $existing = StudentProfile::withoutGlobalScopes()->where('id', $profileIdDirect)->value('reg_no');
                 if ($existing) {
                     Log::info('AdmissionSync: reg_no carried forward via application.student_profile_id', [
                         'application_id'   => $app->id,
                         'student_profile_id' => $profileIdDirect,
                         'reg_no'           => $existing,
+                    ]);
+                    return $existing;
+                }
+            }
+
+            // 4. Fallback: match by student's name and father_name in this institution
+            if (!empty($app->applicant_name) && !empty($app->father_name)) {
+                $existing = StudentProfile::withoutGlobalScopes()
+                    ->where('institution_id', $app->institution_id)
+                    ->whereHas('user', fn($q) => $q->whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($app->applicant_name))]))
+                    ->whereRaw('LOWER(TRIM(father_name)) = ?', [strtolower(trim($app->father_name))])
+                    ->value('reg_no');
+                if ($existing) {
+                    Log::info('AdmissionSync: reg_no carried forward via name & father_name match', [
+                        'application_id' => $app->id,
+                        'reg_no'         => $existing,
                     ]);
                     return $existing;
                 }
@@ -599,6 +639,83 @@ class AdmissionToStudentSyncService
         }
 
         return $service->generateRegNumber($app->institution_id, (int)$app->session_id);
+    }
+
+    /**
+     * In re-admissions, ensure the application is linked to the student's true existing User
+     * and not an accidental/orphaned user created during form submission.
+     */
+    protected function ensureApplicationLinkedToExistingStudentUser(AdmissionApplication $application): void
+    {
+        // 1. If application->user_id already has a StudentProfile, it is already linked properly
+        $hasProfile = StudentProfile::withoutGlobalScopes()->where('user_id', $application->user_id)->exists();
+        if ($hasProfile) {
+            return;
+        }
+
+        // 2. Resolve existing student profile
+        $prefs = is_array($application->subject_preferences) ? $application->subject_preferences : [];
+        $profileId = $prefs['student_profile_id'] ?? data_get($application->toArray(), 'student_profile_id');
+        $existingProfile = null;
+
+        if ($profileId) {
+            $existingProfile = StudentProfile::withoutGlobalScopes()->find($profileId);
+        }
+
+        // 3. Fallback: match by student's name and father_name in this institution
+        if (!$existingProfile && !empty($application->applicant_name)) {
+            $nameNormalized = strtolower(trim($application->applicant_name));
+            $existingProfile = StudentProfile::withoutGlobalScopes()
+                ->where('institution_id', $application->institution_id)
+                ->whereHas('user', fn($q) => $q->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized]))
+                ->when(!empty($application->father_name), fn($q) => $q->whereRaw('LOWER(TRIM(father_name)) = ?', [strtolower(trim($application->father_name))]))
+                ->first();
+        }
+
+        // 4. Fallback: match by mobile
+        if (!$existingProfile && !empty($application->mobile)) {
+            $cleanMobile = preg_replace('/\D/', '', (string) $application->mobile);
+            $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+            if (!empty($last10)) {
+                $existingProfile = StudentProfile::withoutGlobalScopes()
+                    ->where('institution_id', $application->institution_id)
+                    ->where(function ($q) use ($last10) {
+                        $q->where('mobile', 'like', "%{$last10}")
+                          ->orWhere('father_mobile', 'like', "%{$last10}");
+                    })
+                    ->first();
+            }
+        }
+
+        if ($existingProfile && $existingProfile->user_id) {
+            $realUserId = (int) $existingProfile->user_id;
+            $oldUserId = (int) $application->user_id;
+
+            if ($realUserId !== $oldUserId) {
+                Log::info('AdmissionSync: re-linked application to existing student user', [
+                    'application_id' => $application->id,
+                    'old_user_id' => $oldUserId,
+                    'real_user_id' => $realUserId,
+                    'student_profile_id' => $existingProfile->id,
+                    'reg_no' => $existingProfile->reg_no,
+                ]);
+
+                $application->updateQuietly(['user_id' => $realUserId]);
+                $application->user_id = $realUserId;
+                $application->setRelation('user', User::find($realUserId));
+
+                // Clean up orphaned dummy internal student user if it has no other data
+                $dummyUser = User::find($oldUserId);
+                if ($dummyUser && str_contains($dummyUser->email, '@internal.local')) {
+                    $hasOtherApps = AdmissionApplication::where('user_id', $oldUserId)->where('id', '!=', $application->id)->exists();
+                    $hasOtherProfiles = StudentProfile::withoutGlobalScopes()->where('user_id', $oldUserId)->exists();
+                    if (!$hasOtherApps && !$hasOtherProfiles) {
+                        $dummyUser->roles()->detach();
+                        $dummyUser->delete();
+                    }
+                }
+            }
+        }
     }
 
     protected function isReadmission(AdmissionApplication $app): bool
