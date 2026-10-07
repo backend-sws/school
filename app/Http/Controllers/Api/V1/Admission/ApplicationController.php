@@ -467,12 +467,12 @@ class ApplicationController extends BaseController
                 if (!empty($validated['user_id'])) {
                     $studentUser = User::find($validated['user_id']);
                 } elseif (!empty($validated['student_profile_id'])) {
-                    $studentUser = StudentProfile::find($validated['student_profile_id'])?->user;
+                    $studentUser = StudentProfile::withoutGlobalScopes()->find($validated['student_profile_id'])?->user;
                 }
 
                 // Check subject_preferences fallback
                 if (!$studentUser && !empty($validated['subject_preferences']['student_profile_id'])) {
-                    $studentUser = StudentProfile::find($validated['subject_preferences']['student_profile_id'])?->user;
+                    $studentUser = StudentProfile::withoutGlobalScopes()->find($validated['subject_preferences']['student_profile_id'])?->user;
                 }
 
                 // Fallback for re-admission if explicit IDs weren't passed: try exact contact + name match
@@ -493,6 +493,18 @@ class ApplicationController extends BaseController
                         })
                         ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
                         ->first();
+                }
+
+                // Fallback for re-admission: match by existing student profile in this institution
+                if (!$studentUser && !empty($validated['applicant_name'])) {
+                    $matchedProfile = StudentProfile::withoutGlobalScopes()
+                        ->where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)
+                        ->whereHas('user', fn($q) => $q->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized]))
+                        ->when(!empty($validated['father_name']), fn($q) => $q->whereRaw('LOWER(TRIM(father_name)) = ?', [strtolower(trim($validated['father_name']))]))
+                        ->first();
+                    if ($matchedProfile) {
+                        $studentUser = $matchedProfile->user;
+                    }
                 }
             }
 
@@ -603,6 +615,23 @@ class ApplicationController extends BaseController
                 }
             }
             $targetUserId = $studentUser->id;
+        }
+
+        if ($isReAdmission && $studentUser) {
+            $targetSessionId = $validated['session_id'] ?? null;
+            if (!$targetSessionId && !empty($validated['admission_head_id'])) {
+                $targetSessionId = \App\Models\AdmissionHead::find($validated['admission_head_id'])?->session_id;
+            }
+            if (!$targetSessionId) {
+                $targetSessionId = \App\Models\Session::where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)->where('status', 'active')->value('id');
+            }
+
+            if ($targetSessionId) {
+                $duplicateError = $this->validateNoDuplicateReadmission($studentUser->id, (int) $targetSessionId);
+                if ($duplicateError) {
+                    return $this->error($duplicateError, 422);
+                }
+            }
         }
 
         $validated['user_id'] = $targetUserId;
@@ -985,21 +1014,64 @@ public function update(Request $request, $id): JsonResponse
         //      The GuardianService call below will link them.
         $isDeskSubmitter = $user->hasRole('staff') || $user->hasRole('admin') || $user->hasRole('institution_admin')
             || $user->hasRole('college_admin') || $user->hasRole('principal') || $user->hasRole('super_admin');
-        if ($isDeskSubmitter && (!empty($validated['email']) || !empty($validated['mobile']))) {
+        if ($isDeskSubmitter && (!empty($validated['email']) || !empty($validated['mobile']) || !empty($validated['user_id']) || !empty($validated['student_profile_id']))) {
             $nameNormalized = strtolower(trim((string) ($validated['applicant_name'] ?? '')));
+            $cleanMobile = preg_replace('/\D/', '', (string) ($validated['mobile'] ?? ''));
+            $last10 = strlen($cleanMobile) >= 10 ? substr($cleanMobile, -10) : $cleanMobile;
+
+            $isReAdmission = ($validated['application_type'] ?? $application->application_type ?? '') === 're-admission';
+            $studentUser = null;
+
+            // Step 0: For re-admission or existing application with linked student, resolve/preserve student user
+            if ($isReAdmission) {
+                if (!empty($validated['user_id'])) {
+                    $studentUser = User::find($validated['user_id']);
+                } elseif (!empty($validated['student_profile_id'])) {
+                    $studentUser = StudentProfile::withoutGlobalScopes()->find($validated['student_profile_id'])?->user;
+                }
+
+                if (!$studentUser && !empty($validated['subject_preferences']['student_profile_id'])) {
+                    $studentUser = StudentProfile::withoutGlobalScopes()->find($validated['subject_preferences']['student_profile_id'])?->user;
+                }
+
+                if (!$studentUser && !empty($application->user_id) && (int) $application->user_id !== (int) $user->id) {
+                    $studentUser = User::find($application->user_id);
+                }
+
+                if (!$studentUser && !empty($validated['applicant_name'])) {
+                    $matchedProfile = StudentProfile::withoutGlobalScopes()
+                        ->where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)
+                        ->whereHas('user', fn($q) => $q->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized]))
+                        ->when(!empty($validated['father_name']), fn($q) => $q->whereRaw('LOWER(TRIM(father_name)) = ?', [strtolower(trim($validated['father_name']))]))
+                        ->first();
+                    if ($matchedProfile) {
+                        $studentUser = $matchedProfile->user;
+                    }
+                }
+            } elseif (!empty($application->user_id) && (int) $application->user_id !== (int) $user->id) {
+                // For existing applications being updated, preserve the already-associated student user
+                $studentUser = User::find($application->user_id);
+            }
 
             // Step 1: Try exact match (contact + name) — same student re-applying
-            $studentUser = User::query()
-                ->where(function ($q) use ($validated) {
-                    if (!empty($validated['email'])) {
-                        $q->where('email', $validated['email']);
-                    }
-                    if (!empty($validated['mobile'])) {
-                        $q->orWhere('mobile', $validated['mobile']);
-                    }
-                })
-                ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
-                ->first();
+            if (!$studentUser) {
+                $studentUser = User::query()
+                    ->where(function ($q) use ($validated, $last10) {
+                        if (!empty($validated['email'])) {
+                            $q->where('email', $validated['email']);
+                        }
+                        if (!empty($validated['mobile'])) {
+                            $q->orWhere('mobile', $validated['mobile']);
+                        }
+                        if (!empty($last10)) {
+                            $q->orWhere('mobile', $last10)
+                              ->orWhere('mobile', '+91' . $last10)
+                              ->orWhere('mobile', '91' . $last10);
+                        }
+                    })
+                    ->whereRaw('LOWER(TRIM(name)) = ?', [$nameNormalized])
+                    ->first();
+            }
 
             if ($studentUser) {
                 Log::info('Admission desk: reusing existing user', [
@@ -1076,6 +1148,23 @@ public function update(Request $request, $id): JsonResponse
                 }
             }
             $targetUserId = $studentUser->id;
+        }
+
+        if ($isReAdmission && $studentUser) {
+            $targetSessionId = $validated['session_id'] ?? $application->session_id;
+            if (!$targetSessionId && !empty($validated['admission_head_id'])) {
+                $targetSessionId = \App\Models\AdmissionHead::find($validated['admission_head_id'])?->session_id;
+            }
+            if (!$targetSessionId) {
+                $targetSessionId = \App\Models\Session::where('institution_id', $validated['institution_id'] ?? $activeInstitutionId)->where('status', 'active')->value('id');
+            }
+
+            if ($targetSessionId) {
+                $duplicateError = $this->validateNoDuplicateReadmission($studentUser->id, (int) $targetSessionId, $application->id);
+                if ($duplicateError) {
+                    return $this->error($duplicateError, 422);
+                }
+            }
         }
 
         $validated['user_id'] = $targetUserId;
@@ -1477,6 +1566,13 @@ public function update(Request $request, $id): JsonResponse
             );
         }
 
+        if ($status === ProcessStatus::APPROVED && ($application->application_type ?? 'new') === 're-admission' && $application->user_id && $application->session_id) {
+            $duplicateError = $this->validateNoDuplicateReadmission($application->user_id, (int) $application->session_id, $application->id);
+            if ($duplicateError) {
+                return $this->error("Cannot approve: {$duplicateError}", 422);
+            }
+        }
+
         try {
             return DB::transaction(function () use ($request, $application, $validated, $status) {
                 $updateData = [
@@ -1645,5 +1741,38 @@ public function update(Request $request, $id): JsonResponse
         );
 
         return $this->success($breakdown, 'Fee preview generated');
+    }
+
+    /**
+     * Prevent multiple re-admissions / enrollments for the same student in the same academic session.
+     */
+    private function validateNoDuplicateReadmission(int $studentUserId, int $targetSessionId, ?int $ignoreApplicationId = null): ?string
+    {
+        // 1. Check if student already has an approved admission/re-admission in this session
+        $existingApproved = AdmissionApplication::where('user_id', $studentUserId)
+            ->where('session_id', $targetSessionId)
+            ->when($ignoreApplicationId, fn($q) => $q->where('id', '!=', $ignoreApplicationId))
+            ->whereIn('process_status', ['approved', 'admitted', 'completed'])
+            ->first();
+
+        if ($existingApproved) {
+            $sessionName = $existingApproved->session?->name ?? (string) $targetSessionId;
+            return "Student is already re-admitted / enrolled in this academic session ({$sessionName}) via application #{$existingApproved->application_id}. A student cannot have multiple admissions/re-admissions in the same session.";
+        }
+
+        // 2. Check if student already has an active class enrollment in this session
+        $existingEnrollment = \App\Models\LmsClassEnrollment::where('user_id', $studentUserId)
+            ->where('role', 'student')
+            ->where('status', 'active')
+            ->whereHas('lmsClass', fn($q) => $q->where('session_id', $targetSessionId))
+            ->with('lmsClass')
+            ->first();
+
+        if ($existingEnrollment) {
+            $className = $existingEnrollment->lmsClass?->name ?? 'active class';
+            return "Student already has an active class enrollment in this academic session ({$className}). A student cannot be re-admitted again in the same session.";
+        }
+
+        return null;
     }
 }

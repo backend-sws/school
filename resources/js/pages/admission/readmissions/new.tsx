@@ -90,6 +90,7 @@ const ReadmissionsNew = () => {
   const queryClient = useQueryClient();
   const content = useInstitutionContent();
   const [prefilled, setPrefilled] = useState(false);
+  const [prefillError, setPrefillError] = useState<string | null>(null);
 
   const previousSessionDues = Number(watch("_previous_session_dues" as any) || 0);
   const previousSessionName = watch("_from_session_name" as any);
@@ -127,14 +128,20 @@ const ReadmissionsNew = () => {
         if (data?.prefill) {
           prefillFromStudent(data.prefill);
           setPrefilled(true);
+          setPrefillError(null);
           // Clean student_id from URL
           const url = new URL(window.location.href);
           url.searchParams.delete("student_id");
           url.searchParams.delete("fresh");
           window.history.replaceState({}, "", url.toString());
         }
-      }).catch(() => {
-        toast.error("Failed to load student data for re-admission.");
+      }).catch((err: any) => {
+        const errorMsg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load student data for re-admission.";
+        setPrefillError(errorMsg);
+        toast.error(errorMsg, { duration: 6000 });
       });
     }
   }, [prefilled, prefillFromStudent]);
@@ -606,6 +613,25 @@ const ReadmissionsNew = () => {
       <Head title="Re-Admission — Application Desk" />
       <FormProvider {...form}>
         <div className="max-w-4xl mx-auto space-y-6">
+          {prefillError && (
+            <Alert variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 shadow-sm rounded-xl">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle className="font-bold tracking-wide">Re-Admission Not Allowed</AlertTitle>
+              <AlertDescription className="font-medium mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <span>{prefillError}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.visit("/admission/readmissions")}
+                  className="bg-white hover:bg-muted font-semibold shrink-0"
+                >
+                  Back to Re-Admissions
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {previousSessionDues > 0 && (
             <Alert variant="default" className="bg-destructive/10 text-destructive border-destructive/20 shadow-sm rounded-xl">
               <AlertCircle className="h-4 w-4" />

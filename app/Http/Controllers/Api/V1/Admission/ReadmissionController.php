@@ -51,6 +51,25 @@ class ReadmissionController extends BaseController
 
         $feeService = app(\App\Services\FeeCollectionService::class);
         $institutionId = InstitutionContext::getActiveInstitutionId($request->user());
+
+        // Check if student is already admitted / enrolled in their current session via an approved application
+        $alreadyApprovedInSession = \App\Models\AdmissionApplication::where('user_id', $studentProfile->user_id)
+            ->where('session_id', $studentProfile->session_id)
+            ->whereIn('process_status', ['approved', 'admitted', 'completed'])
+            ->first();
+
+        $hasFutureSession = \App\Models\Session::where('institution_id', $institutionId)
+            ->where('id', '>', $studentProfile->session_id)
+            ->exists();
+
+        if ($alreadyApprovedInSession && !$hasFutureSession) {
+            $sessName = $alreadyApprovedInSession->session?->name ?? (string) $studentProfile->session_id;
+            return $this->error(
+                "Student {$studentProfile->user?->name} is already re-admitted / enrolled in session {$sessName} via application #{$alreadyApprovedInSession->application_id}. Multiple re-admissions in the same session are not allowed.",
+                422
+            );
+        }
+
         $ledger = $feeService->getStudentLedgerMatrix($studentProfile->user, $institutionId, $studentProfile->session_id);
         $previousSessionDues = $ledger['total_pending'] ?? 0;
 
@@ -274,6 +293,19 @@ class ReadmissionController extends BaseController
             'remarks' => 'nullable|string|max:500',
             'create_application' => 'nullable|boolean',
         ]);
+
+        $student = StudentProfile::findOrFail($data['student_profile_id']);
+        $alreadyApproved = \App\Models\AdmissionApplication::where('user_id', $student->user_id)
+            ->where('session_id', $data['to_session_id'])
+            ->whereIn('process_status', ['approved', 'admitted', 'completed'])
+            ->first();
+
+        if ($alreadyApproved) {
+            return $this->error(
+                "Student {$student->user?->name} is already re-admitted / enrolled in this session via application #{$alreadyApproved->application_id}. Multiple re-admissions in the same session are not allowed.",
+                422
+            );
+        }
 
         try {
             $result = $this->reAdmissionService->process(
