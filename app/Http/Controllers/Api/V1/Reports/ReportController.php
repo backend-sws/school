@@ -61,6 +61,16 @@ class ReportController extends BaseController
                 $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId($request->user());
                 $branding = $this->brandingService->resolve($institutionId);
 
+                $items = $report['data']['items'] ?? [];
+                $totalCount = count($items);
+                $maxPdfItems = 250;
+                if ($totalCount > $maxPdfItems) {
+                    $report['data']['items'] = array_slice($items, 0, $maxPdfItems);
+                    $existingDesc = $report['metadata']['description'] ?? '';
+                    $report['metadata']['description'] = ($existingDesc ? $existingDesc . ' — ' : '')
+                        . "Note: PDF export displays the first {$maxPdfItems} of {$totalCount} records to ensure PDF fidelity. For the full dataset, please use Excel export.";
+                }
+
                 $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.generic', array_merge($report, [
                     'branding' => $branding,
                     'metadata' => array_merge($report['metadata'] ?? [], [
@@ -70,6 +80,7 @@ class ReportController extends BaseController
                 $pdf->setOptions([
                     'isRemoteEnabled' => true,
                     'defaultFont' => 'DejaVu Sans',
+                    'isHtml5ParserEnabled' => true,
                 ]);
                 return $pdf->download("report_{$type}.pdf");
             }
