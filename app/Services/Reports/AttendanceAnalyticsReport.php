@@ -13,16 +13,35 @@ class AttendanceAnalyticsReport extends BaseReport
 
     protected function generate(array $filters): array
     {
-        $startDate = $filters['start_date'] ?? now()->startOfMonth()->toDateString();
-        $endDate = $filters['end_date'] ?? now()->toDateString();
-        $classId = $filters['class_id'] ?? null;
         $institutionId = $this->getInstitutionId();
+        $sessionId = $filters['academic_session_id'] ?? ($filters['session_id'] ?? null);
+
+        $selectedSession = null;
+        if ($sessionId && $sessionId !== 'all') {
+            $selectedSession = \App\Models\Session::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->where('id', (int) $sessionId)
+                ->first();
+        }
+
+        if ($selectedSession && empty($filters['start_date'])) {
+            $startDate = "{$selectedSession->start_year}-04-01";
+            $endDate = $selectedSession->is_current ? now()->toDateString() : "{$selectedSession->end_year}-03-31";
+        } else {
+            $startDate = $filters['start_date'] ?? now()->startOfMonth()->toDateString();
+            $endDate = $filters['end_date'] ?? now()->toDateString();
+        }
+
+        $classId = $filters['class_id'] ?? null;
 
         $query = AttendanceRecord::query()
             ->whereBetween('date', [$startDate, $endDate]);
 
         if ($institutionId) {
             $query->where('institution_id', $institutionId);
+        }
+
+        if ($selectedSession) {
+            $query->whereHas('user.studentProfile', fn($sq) => $sq->where('session_id', $selectedSession->id));
         }
 
         if ($classId) {

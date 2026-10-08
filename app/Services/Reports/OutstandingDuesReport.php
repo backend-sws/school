@@ -20,18 +20,31 @@ class OutstandingDuesReport extends BaseReport
         @set_time_limit(300);
 
         $institutionId = \App\Support\InstitutionContext::getActiveInstitutionId() ?? (int) ($filters['institution_id'] ?? config('ems.default_institution_id'));
+        $sessionId = $filters['academic_session_id'] ?? ($filters['session_id'] ?? null);
         $classId = $filters['class_id'] ?? null;
+
+        $selectedSession = null;
+        if ($sessionId && $sessionId !== 'all') {
+            $selectedSession = \App\Models\Session::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->where('id', (int) $sessionId)
+                ->first();
+        }
 
         $today = now()->startOfDay();
 
         // Convert start_date/end_date filter parameters to Y-m strings
-        $from = isset($filters['start_date'])
-            ? Carbon::parse($filters['start_date'])->format('Y-m')
-            : ($filters['from'] ?? now()->startOfYear()->format('Y-m'));
+        if ($selectedSession && empty($filters['start_date'])) {
+            $from = "{$selectedSession->start_year}-04";
+            $to = $selectedSession->is_current ? now()->format('Y-m') : "{$selectedSession->end_year}-03";
+        } else {
+            $from = isset($filters['start_date'])
+                ? Carbon::parse($filters['start_date'])->format('Y-m')
+                : ($filters['from'] ?? now()->startOfYear()->format('Y-m'));
 
-        $to = isset($filters['end_date'])
-            ? Carbon::parse($filters['end_date'])->format('Y-m')
-            : ($filters['to'] ?? now()->format('Y-m'));
+            $to = isset($filters['end_date'])
+                ? Carbon::parse($filters['end_date'])->format('Y-m')
+                : ($filters['to'] ?? now()->format('Y-m'));
+        }
 
         $periodKeys = $this->getPeriodKeysInRange($institutionId, $from, $to);
 
@@ -39,6 +52,10 @@ class OutstandingDuesReport extends BaseReport
             ->where('role', 'student')
             ->where('status', 'active')
             ->whereHas('lmsClass', fn($q) => $q->where('institution_id', $institutionId));
+
+        if ($selectedSession) {
+            $query->whereHas('user.studentProfile', fn($sq) => $sq->where('session_id', $selectedSession->id));
+        }
 
         if ($classId) {
             $query->where('lms_class_id', $classId);

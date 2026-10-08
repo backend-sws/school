@@ -13,14 +13,30 @@ class PromotionReport implements ReportContract
 {
     public function getData(array $filters): array
     {
-        $startDate = $filters['start_date'] ?? now()->startOfYear()->toDateString();
-        $endDate = $filters['end_date'] ?? now()->toDateString();
         $institutionId = InstitutionContext::getActiveInstitutionId();
+        $sessionId = $filters['academic_session_id'] ?? ($filters['session_id'] ?? null);
+
+        $selectedSession = null;
+        if ($sessionId && $sessionId !== 'all') {
+            $selectedSession = \App\Models\Session::when($institutionId, fn($q) => $q->where('institution_id', $institutionId))
+                ->where('id', (int) $sessionId)
+                ->first();
+        }
+
+        if ($selectedSession && empty($filters['start_date'])) {
+            $startDate = "{$selectedSession->start_year}-04-01";
+            $endDate = $selectedSession->is_current ? now()->toDateString() : "{$selectedSession->end_year}-03-31";
+        } else {
+            $startDate = $filters['start_date'] ?? now()->startOfYear()->toDateString();
+            $endDate = $filters['end_date'] ?? now()->toDateString();
+        }
+
         $classId = $filters['class_id'] ?? null;
 
         // Statistics
         $eligibleCount = StudentProfile::where('institution_id', $institutionId)
             ->where('enrollment_status', 'active')
+            ->when($selectedSession, fn($q) => $q->where('session_id', $selectedSession->id))
             ->when($classId, function ($q, $classId) {
                 $q->whereHas('user.academicInfo', fn($ai) => $ai->where('lms_class_id', $classId));
             })
@@ -28,23 +44,57 @@ class PromotionReport implements ReportContract
 
         $promotedCount = StudentTransition::where('institution_id', $institutionId)
             ->where('type', 'promotion')
+            ->when($selectedSession, fn($q) => $q->where('from_session_id', $selectedSession->id))
             ->whereBetween('processed_at', [$startDate, $endDate])
             ->when($classId, function ($q, $classId) {
                 $q->where('from_class_id', $classId);
             })
             ->count();
 
-        // Pagination for table items
+        // Pagination / Export for table items
+        $isExport = !empty($filters['is_export']) || request()->routeIs('*export*') || request('is_export') || ($filters['per_page'] ?? null) >= 10000;
         $perPage = $filters['per_page'] ?? 15;
-        $transitions = StudentTransition::where('institution_id', $institutionId)
+
+        $tQuery = StudentTransition::where('institution_id', $institutionId)
             ->where('type', 'promotion')
+            ->when($selectedSession, fn($q) => $q->where('from_session_id', $selectedSession->id))
             ->whereBetween('processed_at', [$startDate, $endDate])
             ->when($classId, function ($q, $classId) {
                 $q->where('from_class_id', $classId);
             })
             ->with(['studentProfile.user', 'fromSession', 'toSession'])
-            ->orderByDesc('processed_at')
-            ->paginate($perPage);
+            ->orderByDesc('processed_at');
+
+        if ($isExport) {
+            $records = $tQuery->get();
+            $items = $records->map(function ($t, $index) {
+                return [
+                    'sl_no' => $index + 1,
+                    'student' => $t->studentProfile->user->name ?? 'N/A',
+                    'transition' => ($t->fromSession->name ?? 'N/A') . ' → ' . ($t->toSession->name ?? 'N/A'),
+                    'status' => ucfirst($t->status ?? 'Completed'),
+                    'date' => Carbon::parse($t->processed_at)->toDateString(),
+                ];
+            })->toArray();
+            $paginationData = null;
+        } else {
+            $transitions = $tQuery->paginate($perPage);
+            $items = collect($transitions->items())->map(function ($t, $index) use ($transitions) {
+                return [
+                    'sl_no' => (($transitions->currentPage() - 1) * $transitions->perPage()) + $index + 1,
+                    'student' => $t->studentProfile->user->name ?? 'N/A',
+                    'transition' => ($t->fromSession->name ?? 'N/A') . ' → ' . ($t->toSession->name ?? 'N/A'),
+                    'status' => ucfirst($t->status ?? 'Completed'),
+                    'date' => Carbon::parse($t->processed_at)->toDateString(),
+                ];
+            })->toArray();
+            $paginationData = [
+                'current_page' => $transitions->currentPage(),
+                'last_page' => $transitions->lastPage(),
+                'per_page' => $transitions->perPage(),
+                'total' => $transitions->total(),
+            ];
+        }
 
         return [
             'summary' => [
@@ -57,21 +107,8 @@ class PromotionReport implements ReportContract
                 ['name' => 'Eligible', 'value' => $eligibleCount],
                 ['name' => 'Promoted', 'value' => $promotedCount],
             ],
-            'items' => collect($transitions->items())->map(function ($t, $index) use ($transitions) {
-                return [
-                    'sl_no' => (($transitions->currentPage() - 1) * $transitions->perPage()) + $index + 1,
-                    'student' => $t->studentProfile->user->name ?? 'N/A',
-                    'transition' => ($t->fromSession->name ?? 'N/A') . ' → ' . ($t->toSession->name ?? 'N/A'),
-                    'status' => ucfirst($t->status ?? 'Completed'),
-                    'date' => Carbon::parse($t->processed_at)->toDateString(),
-                ];
-            })->toArray(),
-            'pagination' => [
-                'current_page' => $transitions->currentPage(),
-                'last_page' => $transitions->lastPage(),
-                'per_page' => $transitions->perPage(),
-                'total' => $transitions->total(),
-            ],
+            'items' => $items,
+            'pagination' => $paginationData,
         ];
     }
 
