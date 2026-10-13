@@ -276,11 +276,12 @@ class AdmissionToStudentSyncService
             if (!empty($existingProfile->reg_no)) {
                 $profileData['reg_no'] = $existingProfile->reg_no;
             }
-            $profileData['user_id'] = $existingProfile->user_id;
+            $profileData['user_id'] = (int) $existingProfile->user_id;
 
             $existingProfile->update($profileData);
             $context['profile'] = $existingProfile;
         } else {
+            $profileData['user_id'] = (int) $app->user_id;
             $context['profile'] = StudentProfile::create($profileData);
         }
 
