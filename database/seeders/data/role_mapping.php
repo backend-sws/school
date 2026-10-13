@@ -80,19 +80,38 @@ return [
             'admission_cell',
             'office_registry',
             'accounts_room',
+            'expense_tracker',
             'academic_setup',
             'service_branch',
             'question_bank',
         ],
     ],
 
-    // ── Staff (teacher, clerk, etc.) ────────────────────────────────
-    'staff' => [
+    // ── Teacher ─────────────────────────────────────────────────────
+    'teacher' => [
         'permissions' => [],
         'workflows' => [
             'account',
             'attendance',
             'lms',
+            'timetable',
+            'examination',
+            'question_bank',
+            'info_pr_hub',
+            'library',
+            'redressal_cell',
+        ],
+    ],
+
+    // ── Accountant ──────────────────────────────────────────────────
+    'accountant' => [
+        'permissions' => [],
+        'workflows' => [
+            'account',
+            'accounts_room',
+            'expense_tracker',
+            'admin_desk',
+            'info_pr_hub',
         ],
     ],
 
@@ -102,6 +121,46 @@ return [
         'workflows' => [
             'account',
             'library',
+            'info_pr_hub',
+        ],
+    ],
+
+    // ── Store Manager (Inventory) ───────────────────────────────────
+    'store_manager' => [
+        'permissions' => [],
+        'workflows' => [
+            'account',
+            'inventory',
+            'info_pr_hub',
+        ],
+    ],
+
+    // ── Driver (Transport) ──────────────────────────────────────────
+    'driver' => [
+        'permissions' => [],
+        'workflows' => [
+            'account',
+            'transport',
+        ],
+    ],
+
+    // ── Security Guard (Gate Security) ──────────────────────────────
+    'guard' => [
+        'permissions' => [],
+        'workflows' => [
+            'account',
+            'gate_security',
+        ],
+    ],
+
+    // ── Staff (General) ─────────────────────────────────────────────
+    'staff' => [
+        'permissions' => [],
+        'workflows' => [
+            'account',
+            'attendance',
+            'info_pr_hub',
+            'redressal_cell',
         ],
     ],
 
