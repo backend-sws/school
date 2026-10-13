@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Loader2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useFeeTypes } from "@/hooks/useFeeTypes";
 
 const BACK_HREF = "/accounts/fee-hub/profiles";
 
@@ -41,6 +42,31 @@ export default function FeeProfileForm() {
 
     const contentMap = useInstitutionContent();
     const CONTENT = useMemo(() => getFeeProfileContent(contentMap), [contentMap]);
+
+    // ─── Fetch fee types once for all rows (cached & unpaginated) ───
+    const { feeTypes } = useFeeTypes();
+
+    const repeaterFields = useMemo(() => [
+        {
+            name: "fee_type_id",
+            label: "Fee Type",
+            type: FORM_TYPE.SELECT,
+            searchable: true,
+            placeholder: "Search and select fee type...",
+            required: true,
+            tooltip: "Choose the specific fee head to include in this profile",
+            options: feeTypes,
+        },
+        {
+            name: "amount",
+            label: "Amount",
+            type: FORM_TYPE.NUMBER,
+            placeholder: "Enter amount (e.g. 5000)",
+            required: true,
+            defaultValue: "",
+            tooltip: "Specify the exact amount for this fee type",
+        },
+    ], [feeTypes]);
 
     // ─── Fetch existing profile when editing ─────────────
     const { data: editData, isLoading: editLoading } = useQuery({
@@ -215,7 +241,7 @@ export default function FeeProfileForm() {
                                     control={control}
                                     name={FEE_PROFILE_ITEMS_REPEATER.name}
                                     type={FORM_TYPE.REPEATER}
-                                    fields={FEE_PROFILE_ITEMS_REPEATER.fields}
+                                    fields={repeaterFields}
                                     addLabel={FEE_PROFILE_ITEMS_REPEATER.addLabel}
                                     disabled={isPending}
                                 />

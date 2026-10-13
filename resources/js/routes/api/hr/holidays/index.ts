@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-export const update = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -152,7 +152,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-update.url = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { holiday: args }
     }
@@ -185,7 +185,7 @@ update.url = (args: { holiday: number | { id: number } } | [holiday: number | { 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-update.put = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -194,7 +194,7 @@ update.put = (args: { holiday: number | { id: number } } | [holiday: number | { 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-update.patch = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -204,7 +204,7 @@ update.patch = (args: { holiday: number | { id: number } } | [holiday: number | 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-    const updateForm = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -219,7 +219,7 @@ update.patch = (args: { holiday: number | { id: number } } | [holiday: number | 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-        updateForm.put = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -233,7 +233,7 @@ update.patch = (args: { holiday: number | { id: number } } | [holiday: number | 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:74
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-        updateForm.patch = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -249,7 +249,7 @@ update.patch = (args: { holiday: number | { id: number } } | [holiday: number | 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:109
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-export const destroy = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -264,7 +264,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:109
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-destroy.url = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { holiday: args }
     }
@@ -297,7 +297,7 @@ destroy.url = (args: { holiday: number | { id: number } } | [holiday: number | {
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:109
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-destroy.delete = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -307,7 +307,7 @@ destroy.delete = (args: { holiday: number | { id: number } } | [holiday: number 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:109
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-    const destroyForm = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -322,7 +322,7 @@ destroy.delete = (args: { holiday: number | { id: number } } | [holiday: number 
  * @see app/Http/Controllers/Api/V1/HR/HolidayController.php:109
  * @route '/api/v1/hr/holidays/{holiday}'
  */
-        destroyForm.delete = (args: { holiday: number | { id: number } } | [holiday: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { holiday: string | number | { id: string | number } } | [holiday: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

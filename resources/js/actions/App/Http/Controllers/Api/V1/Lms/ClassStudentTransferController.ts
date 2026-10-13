@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-export const options = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const options = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: options.url(args, routeOptions),
     method: 'get',
 })
@@ -19,7 +19,7 @@ options.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-options.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions) => {
+options.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -53,7 +53,7 @@ options.url = (args: { lms_class: number | { id: number } } | [lms_class: number
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-options.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteDefinition<'get'> => ({
+options.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: options.url(args, routeOptions),
     method: 'get',
 })
@@ -62,7 +62,7 @@ options.get = (args: { lms_class: number | { id: number } } | [lms_class: number
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-options.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteDefinition<'head'> => ({
+options.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: options.url(args, routeOptions),
     method: 'head',
 })
@@ -72,7 +72,7 @@ options.head = (args: { lms_class: number | { id: number } } | [lms_class: numbe
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-    const optionsForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const optionsForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: options.url(
             args, 
                             routeOptions
@@ -85,7 +85,7 @@ options.head = (args: { lms_class: number | { id: number } } | [lms_class: numbe
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-        optionsForm.get = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        optionsForm.get = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: options.url(
                 args, 
                                 routeOptions
@@ -97,7 +97,7 @@ options.head = (args: { lms_class: number | { id: number } } | [lms_class: numbe
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:29
  * @route '/api/v1/lms/classes/{lms_class}/transfer-options'
  */
-        optionsForm.head = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        optionsForm.head = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, routeOptions?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: options.url(args, {
                         [routeOptions?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -113,7 +113,7 @@ options.head = (args: { lms_class: number | { id: number } } | [lms_class: numbe
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
-export const transfer = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const transfer = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: transfer.url(args, options),
     method: 'post',
 })
@@ -128,7 +128,7 @@ transfer.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
-transfer.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+transfer.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -161,7 +161,7 @@ transfer.url = (args: { lms_class: number | { id: number } } | [lms_class: numbe
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
-transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+transfer.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: transfer.url(args, options),
     method: 'post',
 })
@@ -171,7 +171,7 @@ transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: numb
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
-    const transferForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const transferForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: transfer.url(args, options),
         method: 'post',
     })
@@ -181,7 +181,7 @@ transfer.post = (args: { lms_class: number | { id: number } } | [lms_class: numb
  * @see app/Http/Controllers/Api/V1/Lms/ClassStudentTransferController.php:116
  * @route '/api/v1/lms/classes/{lms_class}/transfer-students'
  */
-        transferForm.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        transferForm.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: transfer.url(args, options),
             method: 'post',
         })

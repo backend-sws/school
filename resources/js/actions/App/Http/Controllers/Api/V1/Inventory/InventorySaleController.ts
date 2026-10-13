@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-export const show = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-show.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale:
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-show.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale:
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-show.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-    const showForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-        showForm.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:166
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-        showForm.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:256
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-export const update = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:256
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-update.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { inventory_sale: number | { id: number } } | [inventory_sal
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:256
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-update.put = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -297,7 +297,7 @@ update.put = (args: { inventory_sale: number | { id: number } } | [inventory_sal
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:256
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-    const updateForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -312,7 +312,7 @@ update.put = (args: { inventory_sale: number | { id: number } } | [inventory_sal
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:256
  * @route '/api/v1/inventory/sales/{inventory_sale}'
  */
-        updateForm.put = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -328,7 +328,7 @@ update.put = (args: { inventory_sale: number | { id: number } } | [inventory_sal
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:296
  * @route '/api/v1/inventory/sales/{inventory_sale}/return'
  */
-export const recordReturn = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const recordReturn = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordReturn.url(args, options),
     method: 'post',
 })
@@ -343,7 +343,7 @@ recordReturn.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:296
  * @route '/api/v1/inventory/sales/{inventory_sale}/return'
  */
-recordReturn.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+recordReturn.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -376,7 +376,7 @@ recordReturn.url = (args: { inventory_sale: number | { id: number } } | [invento
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:296
  * @route '/api/v1/inventory/sales/{inventory_sale}/return'
  */
-recordReturn.post = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+recordReturn.post = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordReturn.url(args, options),
     method: 'post',
 })
@@ -386,7 +386,7 @@ recordReturn.post = (args: { inventory_sale: number | { id: number } } | [invent
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:296
  * @route '/api/v1/inventory/sales/{inventory_sale}/return'
  */
-    const recordReturnForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const recordReturnForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: recordReturn.url(args, options),
         method: 'post',
     })
@@ -396,7 +396,7 @@ recordReturn.post = (args: { inventory_sale: number | { id: number } } | [invent
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:296
  * @route '/api/v1/inventory/sales/{inventory_sale}/return'
  */
-        recordReturnForm.post = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        recordReturnForm.post = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: recordReturn.url(args, options),
             method: 'post',
         })
@@ -407,7 +407,7 @@ recordReturn.post = (args: { inventory_sale: number | { id: number } } | [invent
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-export const receipt = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const receipt = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: receipt.url(args, options),
     method: 'get',
 })
@@ -422,7 +422,7 @@ receipt.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+receipt.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -455,7 +455,7 @@ receipt.url = (args: { inventory_sale: number | { id: number } } | [inventory_sa
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+receipt.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: receipt.url(args, options),
     method: 'get',
 })
@@ -464,7 +464,7 @@ receipt.get = (args: { inventory_sale: number | { id: number } } | [inventory_sa
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+receipt.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: receipt.url(args, options),
     method: 'head',
 })
@@ -474,7 +474,7 @@ receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-    const receiptForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const receiptForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: receipt.url(args, options),
         method: 'get',
     })
@@ -484,7 +484,7 @@ receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-        receiptForm.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        receiptForm.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: receipt.url(args, options),
             method: 'get',
         })
@@ -493,7 +493,7 @@ receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-        receiptForm.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        receiptForm.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: receipt.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -509,7 +509,7 @@ receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:177
  * @route '/api/v1/inventory/sales/{inventory_sale}/confirm'
  */
-export const confirm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const confirm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: confirm.url(args, options),
     method: 'post',
 })
@@ -524,7 +524,7 @@ confirm.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:177
  * @route '/api/v1/inventory/sales/{inventory_sale}/confirm'
  */
-confirm.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+confirm.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -557,7 +557,7 @@ confirm.url = (args: { inventory_sale: number | { id: number } } | [inventory_sa
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:177
  * @route '/api/v1/inventory/sales/{inventory_sale}/confirm'
  */
-confirm.post = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+confirm.post = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: confirm.url(args, options),
     method: 'post',
 })
@@ -567,7 +567,7 @@ confirm.post = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:177
  * @route '/api/v1/inventory/sales/{inventory_sale}/confirm'
  */
-    const confirmForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const confirmForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: confirm.url(args, options),
         method: 'post',
     })
@@ -577,7 +577,7 @@ confirm.post = (args: { inventory_sale: number | { id: number } } | [inventory_s
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:177
  * @route '/api/v1/inventory/sales/{inventory_sale}/confirm'
  */
-        confirmForm.post = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        confirmForm.post = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: confirm.url(args, options),
             method: 'post',
         })

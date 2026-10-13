@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-export const show = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-show.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { vehicle_fuel: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: num
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-show.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: num
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-    const showForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-        showForm.get = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:158
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-        showForm.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: nu
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-export const update = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-update.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { vehicle_fuel: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: n
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-update.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: n
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-    const updateForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-        updateForm.put = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:169
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-        updateForm.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel:
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-export const destroy = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-destroy.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { vehicle_fuel: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: 
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fue
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-    const destroyForm = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fue
  * @see app/Http/Controllers/Api/V1/Transport/TransportVehicleFuelController.php:233
  * @route '/api/v1/transport/vehicle-fuels/{vehicle_fuel}'
  */
-        destroyForm.delete = (args: { vehicle_fuel: number | { id: number } } | [vehicle_fuel: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { vehicle_fuel: string | number | { id: string | number } } | [vehicle_fuel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

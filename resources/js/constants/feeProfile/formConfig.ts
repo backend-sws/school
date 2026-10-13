@@ -112,10 +112,12 @@ export const FEE_PROFILE_ITEMS_REPEATER = {
             required: true,
             tooltip: "Choose the specific fee head to include in this profile",
             asyncConfig: {
-                queryFn: (params: Record<string, any>) => feeTypesApi.index(params),
+                queryFn: (params: Record<string, any>) => feeTypesApi.index({ all: true, per_page: 100, ...params }),
                 queryKey: FeeTypeQueryKeys.all,
                 labelKey: "name",
                 valueKey: "id",
+                perPage: 100,
+                extraParams: { all: true, per_page: 100 },
             } as AsyncSelectConfig,
         },
         {

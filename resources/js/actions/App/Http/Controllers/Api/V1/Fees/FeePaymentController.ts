@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-export const show = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-show.url = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { fee_payment: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { fee_payment: number | { id: number } } | [fee_payment: numbe
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-show.get = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { fee_payment: number | { id: number } } | [fee_payment: numbe
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-show.head = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { fee_payment: number | { id: number } } | [fee_payment: numb
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-    const showForm = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { fee_payment: number | { id: number } } | [fee_payment: numb
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-        showForm.get = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { fee_payment: number | { id: number } } | [fee_payment: numb
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:111
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-        showForm.head = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -346,7 +346,7 @@ update.patch = (args: { fee_payment: string | number } | [fee_payment: string | 
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:174
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-export const destroy = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -361,7 +361,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:174
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-destroy.url = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { fee_payment: args }
     }
@@ -394,7 +394,7 @@ destroy.url = (args: { fee_payment: number | { id: number } } | [fee_payment: nu
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:174
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-destroy.delete = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -404,7 +404,7 @@ destroy.delete = (args: { fee_payment: number | { id: number } } | [fee_payment:
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:174
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-    const destroyForm = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -419,7 +419,7 @@ destroy.delete = (args: { fee_payment: number | { id: number } } | [fee_payment:
  * @see app/Http/Controllers/Api/V1/Fees/FeePaymentController.php:174
  * @route '/api/v1/fee-payments/{fee_payment}'
  */
-        destroyForm.delete = (args: { fee_payment: number | { id: number } } | [fee_payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { fee_payment: string | number | { id: string | number } } | [fee_payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

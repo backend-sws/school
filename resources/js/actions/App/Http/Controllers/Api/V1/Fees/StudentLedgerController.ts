@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-export const downloadReceipt = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const downloadReceipt = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadReceipt.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ downloadReceipt.definition = {
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+downloadReceipt.url = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { payment: args }
     }
@@ -52,7 +52,7 @@ downloadReceipt.url = (args: { payment: number | { id: number } } | [payment: nu
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+downloadReceipt.get = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadReceipt.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ downloadReceipt.get = (args: { payment: number | { id: number } } | [payment: nu
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+downloadReceipt.head = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: downloadReceipt.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-    const downloadReceiptForm = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const downloadReceiptForm = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: downloadReceipt.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-        downloadReceiptForm.get = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        downloadReceiptForm.get = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadReceipt.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ downloadReceipt.head = (args: { payment: number | { id: number } } | [payment: n
  * @see app/Http/Controllers/Api/V1/Fees/StudentLedgerController.php:609
  * @route '/api/v1/fees/ledger/download-receipt/{payment}'
  */
-        downloadReceiptForm.head = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        downloadReceiptForm.head = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadReceipt.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
