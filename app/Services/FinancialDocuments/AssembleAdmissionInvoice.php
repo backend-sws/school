@@ -14,7 +14,7 @@ final class AssembleAdmissionInvoice implements FinancialDocumentAssemblerInterf
 
     public function assemble(AdmissionApplication $app): FinancialDocument
     {
-        $app->loadMissing(['admissionHead', 'admissionHead.stream', 'lmsClass']);
+        $app->loadMissing(['admissionHead', 'admissionHead.stream', 'lmsClass', 'lmsSection', 'stream']);
 
         $calc = AdmissionAmountCalculator::fromApplication($app);
         $isReadmission = $calc->isReadmission;
@@ -25,14 +25,20 @@ final class AssembleAdmissionInvoice implements FinancialDocumentAssemblerInterf
             ? Carbon::parse($app->submitted_at)->format('d M Y')
             : '—';
 
-        $lmsClass = $app->lmsClass ?? ($app->class_id ? \App\Models\LmsClass::find($app->class_id) : null);
-        $className = $lmsClass?->name ?? optional($app->admissionHead)->title ?? '—';
+        $invoiceDate = $app->payment_date ?? $app->submitted_at ?? $app->created_at;
+        $dateStr = $invoiceDate ? Carbon::parse($invoiceDate)->format('d M Y') : now()->format('d M Y');
+
+        $lmsSection = $app->lmsSection ?? (!empty($app->section_id) ? \App\Models\LmsClass::withoutGlobalScopes()->find($app->section_id) : null);
+        $lmsClass = $app->lmsClass ?? (!empty($app->class_id) ? \App\Models\LmsClass::withoutGlobalScopes()->find($app->class_id) : null);
+        $stream = $app->stream ?? (!empty($app->class_id) ? \App\Models\Stream::withoutGlobalScopes()->find($app->class_id) : null);
+
+        $className = $lmsClass?->name ?? $lmsSection?->name ?? $stream?->name ?? optional($app->admissionHead)->title ?? '—';
         $programText = (string) $className;
         if ($app->session_name) {
             $programText .= ' ('.$app->session_name.')';
         }
         
-        $sectionName = $lmsClass?->section ?? optional(optional($app->admissionHead)->stream)->name ?? '—';
+        $sectionName = $lmsSection?->section ?? $lmsClass?->section ?? optional(optional($app->admissionHead)->stream)->name ?? '—';
 
         $includedParts = collect($calc->invoiceComponentRows($app))
             ->map(fn (array $component) => $component['label'].' ('.Money::inr((float) $component['amount']).')')
@@ -80,6 +86,7 @@ final class AssembleAdmissionInvoice implements FinancialDocumentAssemblerInterf
             metadata: [
                 'id' => $app->application_id,
                 'title' => $isReadmission ? 'Re-Admission Receipt' : 'Admission Invoice',
+                'date' => $dateStr,
             ],
             sections: $sections,
             showSignatory: false,

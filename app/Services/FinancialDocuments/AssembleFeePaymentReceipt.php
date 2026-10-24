@@ -2,8 +2,15 @@
 
 namespace App\Services\FinancialDocuments;
 
+use App\Models\AdmissionApplication;
 use App\Models\FeePayment;
+use App\Models\FeeType;
+use App\Models\LmsClass;
+use App\Models\LmsClassEnrollment;
+use App\Models\Stream;
 use App\Models\User;
+use App\Services\FeeCollectionService;
+use Carbon\Carbon;
 
 final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInterface
 {
@@ -18,15 +25,99 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         $student = $student ?? $payment->user;
 
         $receiptNo = $payment->receipt_no ?? $payment->payment_id;
-        $dateStr = $payment->payment_date ? $payment->payment_date->format('d M Y') : now()->format('d M Y');
 
-        $studentClass = $student?->studentProfile?->academicClass?->name ?? $student?->studentProfile?->class ?? null;
-        $studentSection = $student?->studentProfile?->section?->name ?? $student?->studentProfile?->section ?? null;
-        $classSec = trim(($studentClass ?? '') . ($studentSection ? ' - ' . $studentSection : ''));
+        // 1. Resolve payment date
+        $paymentDate = $payment->payment_date ?? $payment->created_at ?? $payment->processed_at;
+        $dateStr = $paymentDate ? Carbon::parse($paymentDate)->format('d M Y') : now()->format('d M Y');
+
+        // 2. Resolve linked application if any (e.g. for admission fees or desk collections)
+        $app = null;
+        if ($payment->payable_entity_type === 'admission_application' && $payment->payable_entity_id) {
+            $app = AdmissionApplication::with(['lmsClass', 'lmsSection', 'admissionHead.stream', 'stream'])->find($payment->payable_entity_id);
+        }
+        if (!$app && $student) {
+            $app = AdmissionApplication::with(['lmsClass', 'lmsSection', 'admissionHead.stream', 'stream'])
+                ->where('user_id', $student->id)
+                ->latest('id')
+                ->first();
+        }
+
+        // 3. Resolve Class and Section
+        $studentClass = null;
+        $studentSection = null;
+
+        // A. From student active / latest enrollments
+        $enrollment = $student?->studentProfile?->currentEnrollments()->with('lmsClass')->latest('id')->first()
+            ?? ($student ? LmsClassEnrollment::where('user_id', $student->id)->where('status', 'active')->with('lmsClass')->latest('id')->first() : null)
+            ?? ($student ? LmsClassEnrollment::where('user_id', $student->id)->with('lmsClass')->latest('id')->first() : null);
+
+        if ($enrollment?->lmsClass) {
+            $studentClass = $enrollment->lmsClass->name;
+            $studentSection = $enrollment->lmsClass->section;
+        }
+
+        // B. From FeeCollectionService
+        if (!$studentClass && $student) {
+            $resolvedClass = app(FeeCollectionService::class)->resolveStudentClass(
+                $student,
+                (int) ($payment->institution_id ?? $student->institution_id ?? 0),
+                $student->studentProfile?->stream_id,
+                $student->studentProfile?->session_id
+            );
+            if ($resolvedClass) {
+                $studentClass = $resolvedClass->name;
+                $studentSection = $resolvedClass->section;
+            }
+        }
+
+        // C. From linked or latest AdmissionApplication
+        if ($app) {
+            $appSection = $app->lmsSection ?? (!empty($app->section_id) ? LmsClass::withoutGlobalScopes()->find($app->section_id) : null);
+            $appClass = $app->lmsClass ?? (!empty($app->class_id) ? LmsClass::withoutGlobalScopes()->find($app->class_id) : null);
+            $appStream = $app->stream ?? (!empty($app->class_id) ? Stream::withoutGlobalScopes()->find($app->class_id) : null);
+
+            $studentClass = $studentClass ?? $appSection?->name ?? $appClass?->name ?? $appStream?->name ?? optional($app->admissionHead)->title;
+            $studentSection = $studentSection ?? $appSection?->section ?? $appClass?->section ?? optional(optional($app->admissionHead)->stream)->name;
+        }
+
+        // D. From studentProfile stream fallback
+        if (!$studentClass && $student?->studentProfile?->stream_id) {
+            $stream = $student->studentProfile->stream ?? Stream::withoutGlobalScopes()->find($student->studentProfile->stream_id);
+            if ($stream) {
+                $studentClass = $stream->name;
+            }
+        }
+
+        // Format Class / Section string nicely
+        $classSec = '';
+        if ($studentClass && $studentSection) {
+            $alreadyHasSection = preg_match('/\b' . preg_quote((string) $studentSection, '/') . '\b/i', (string) $studentClass);
+            $classSec = $alreadyHasSection ? (string) $studentClass : "{$studentClass} - {$studentSection}";
+        } elseif ($studentClass) {
+            $classSec = (string) $studentClass;
+        } elseif ($studentSection) {
+            $classSec = (string) $studentSection;
+        }
+
+        // 4. Resolve Payment Period
+        $period = $payment->for_month;
+        if ($period && preg_match('/^\d{4}-\d{2}$/', $period)) {
+            $period = Carbon::parse($period . '-01')->format('M Y');
+        } elseif (!$period) {
+            if ($app?->session_name) {
+                $period = 'Admission (' . $app->session_name . ')';
+            } elseif ($student?->studentProfile?->session?->name) {
+                $period = 'Admission (' . $student->studentProfile->session->name . ')';
+            } elseif ($payment->payable_entity_type === 'admission_application' || str_starts_with((string) $receiptNo, 'RCP-ADM')) {
+                $period = 'Admission';
+            }
+        }
+
+        $regNo = $student?->studentProfile?->reg_no ?? $student?->reg_no ?? $app?->application_id ?? '—';
 
         $metaRows = [
-            ['Student Name:', $student?->name ?? '—', 'Registration No:', $student?->studentProfile?->reg_no ?? $student?->reg_no ?? '—'],
-            ['Class / Section:', $classSec ?: '—', 'Payment Period:', $payment->for_month ?: '—'],
+            ['Student Name:', $student?->name ?? $app?->applicant_name ?? '—', 'Registration No:', $regNo],
+            ['Class / Section:', $classSec ?: '—', 'Payment Period:', $period ?: '—'],
         ];
 
         $sections = [
@@ -53,10 +144,30 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
         }
 
         // 2. Current period fee components
+        $feeBreakdownMap = [];
+        if ($app && is_array($app->fee_breakdown)) {
+            foreach ($app->fee_breakdown as $item) {
+                $key = $item['fee_type_id'] ?? $item['fee_particular_id'] ?? null;
+                if ($key && !empty($item['name'])) {
+                    $feeBreakdownMap[$key] = $item['name'];
+                }
+            }
+        }
+
         if (count($feesList) > 0) {
             foreach ($feesList as $fee) {
+                $feeDesc = $fee['name'] ?? $fee['title'] ?? $fee['label'] ?? null;
+                if (!$feeDesc) {
+                    $feeId = $fee['fee_particular_id'] ?? $fee['fee_type_id'] ?? $fee['id'] ?? null;
+                    if ($feeId && isset($feeBreakdownMap[$feeId])) {
+                        $feeDesc = $feeBreakdownMap[$feeId];
+                    } elseif ($feeId) {
+                        $feeDesc = FeeType::withoutGlobalScopes()->find($feeId)?->name;
+                    }
+                }
+
                 $lineRows[] = [
-                    'description' => (string) ($fee['name'] ?? 'Fee Component'),
+                    'description' => (string) ($feeDesc ?: 'Fee Component'),
                     'amount' => Money::inr((float) ($fee['amount'] ?? 0)),
                 ];
             }
@@ -167,6 +278,7 @@ final class AssembleFeePaymentReceipt implements FinancialDocumentAssemblerInter
             metadata: [
                 'id' => $receiptNo,
                 'title' => 'Fee Receipt',
+                'date' => $dateStr,
             ],
             sections: $sections,
             showSignatory: true,
