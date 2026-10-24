@@ -54,7 +54,7 @@
                     @yield('document_title', 'RECEIPT')
                 </td>
                 <td style="text-align: right; width: 33%;">
-                    <strong>Date:</strong> <span class="dotted-value" style="min-width: 100px;">{{ now()->format('d M Y') }}</span>
+                    <strong>Date:</strong> <span class="dotted-value" style="min-width: 100px;">{{ $metadata['date'] ?? now()->format('d M Y') }}</span>
                 </td>
             </tr>
         </table>

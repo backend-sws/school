@@ -386,9 +386,18 @@ export function AsyncSelectField({
     return !optionPool.find((o) => String(o.value) === String(value));
   }, [value, multiple, optionPool]);
 
+  // ── Track attempted resolutions to prevent infinite fetch loop ──
+  const resolveAttemptsRef = useRef<Set<string>>(new Set());
+
   // Fetch to resolve unresolved values (e.g., page reload with value from sessionStorage)
   useEffect(() => {
     if (!hasUnresolvedValue || !enabled) return;
+    const key = Array.isArray(value) ? value.join(",") : String(value);
+    if (resolveAttemptsRef.current.has(key)) {
+      return;
+    }
+    resolveAttemptsRef.current.add(key);
+
     fetchItems("").then((opts) => {
       mergeIntoPool(opts);
       setDefaultOptions((prev) => {
@@ -397,7 +406,7 @@ export function AsyncSelectField({
         return Array.from(map.values());
       });
     });
-  }, [hasUnresolvedValue, enabled, fetchItems, mergeIntoPool]);
+  }, [hasUnresolvedValue, enabled, fetchItems, mergeIntoPool, value]);
 
   // ── Change handler ─────────────────────────────────
   const handleChange = useCallback(

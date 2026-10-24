@@ -60,6 +60,7 @@ final class AssembleInventoryReceipt implements FinancialDocumentAssemblerInterf
             metadata: [
                 'id' => $payment?->receipt_no ?? $sale->id,
                 'title' => 'Sale Receipt',
+                'date' => $dateDisplay,
             ],
             sections: [],
             showSignatory: false,

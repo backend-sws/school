@@ -13,7 +13,16 @@ use Illuminate\Support\Facades\Hash;
 class StaffDirectorySeeder extends Seeder
 {
     /** Role keys that are allowed for staff directory (non-protected). */
-    private const STAFF_ROLE_KEYS = ['staff', 'principal'];
+    private const STAFF_ROLE_KEYS = [
+        'staff',
+        'principal',
+        'teacher',
+        'accountant',
+        'librarian',
+        'store_manager',
+        'driver',
+        'guard',
+    ];
 
     /** No global staff data; use seedForInstitution() from institutional seeders (e.g. GdcInstitutionSeeder). */
     public function run(): void

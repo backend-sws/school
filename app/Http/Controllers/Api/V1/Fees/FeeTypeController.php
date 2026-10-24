@@ -47,9 +47,15 @@ class FeeTypeController extends BaseController
             }
         }
 
+        if ($request->boolean('all') || $request->input('per_page') === 'all' || (int) $request->input('per_page') >= 250) {
+            $items = $query->orderBy('name')->get();
+            return $this->successWithMap($items, 'fee_type_index');
+        }
+
+        $perPage = (int) $request->input('per_page', 15);
         $paginator = $query
             ->orderBy('name')
-            ->paginate($request->input('per_page', 15));
+            ->paginate($perPage);
 
         return $this->paginatedWithMap($paginator, 'fee_type_index');
     }

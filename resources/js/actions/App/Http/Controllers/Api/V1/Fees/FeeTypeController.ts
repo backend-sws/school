@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::restoreDefaults
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:140
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:146
  * @route '/api/v1/fee-types/restore-defaults'
  */
 export const restoreDefaults = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ restoreDefaults.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::restoreDefaults
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:140
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:146
  * @route '/api/v1/fee-types/restore-defaults'
  */
 restoreDefaults.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ restoreDefaults.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::restoreDefaults
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:140
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:146
  * @route '/api/v1/fee-types/restore-defaults'
  */
 restoreDefaults.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ restoreDefaults.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::restoreDefaults
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:140
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:146
  * @route '/api/v1/fee-types/restore-defaults'
  */
     const restoreDefaultsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ restoreDefaults.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::restoreDefaults
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:140
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:146
  * @route '/api/v1/fee-types/restore-defaults'
  */
         restoreDefaultsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:60
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:66
  * @route '/api/v1/fee-types'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -149,7 +149,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:60
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:66
  * @route '/api/v1/fee-types'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:60
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:66
  * @route '/api/v1/fee-types'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -168,7 +168,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:60
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:66
  * @route '/api/v1/fee-types'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -178,7 +178,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::store
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:60
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:66
  * @route '/api/v1/fee-types'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -189,7 +189,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
 export const show = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -204,7 +204,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
 show.url = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -237,7 +237,7 @@ show.url = (args: { fee_type: number | { id: number } } | [fee_type: number | { 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
 show.get = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -246,7 +246,7 @@ show.get = (args: { fee_type: number | { id: number } } | [fee_type: number | { 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
 show.head = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -256,7 +256,7 @@ show.head = (args: { fee_type: number | { id: number } } | [fee_type: number | {
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
     const showForm = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -266,7 +266,7 @@ show.head = (args: { fee_type: number | { id: number } } | [fee_type: number | {
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
         showForm.get = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -275,7 +275,7 @@ show.head = (args: { fee_type: number | { id: number } } | [fee_type: number | {
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::show
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:87
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:93
  * @route '/api/v1/fee-types/{fee_type}'
  */
         showForm.head = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -291,7 +291,7 @@ show.head = (args: { fee_type: number | { id: number } } | [fee_type: number | {
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
 export const update = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -306,7 +306,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
 update.url = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -339,7 +339,7 @@ update.url = (args: { fee_type: number | { id: number } } | [fee_type: number | 
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
 update.put = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -348,7 +348,7 @@ update.put = (args: { fee_type: number | { id: number } } | [fee_type: number | 
 })
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
 update.patch = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -358,7 +358,7 @@ update.patch = (args: { fee_type: number | { id: number } } | [fee_type: number 
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
     const updateForm = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -373,7 +373,7 @@ update.patch = (args: { fee_type: number | { id: number } } | [fee_type: number 
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
         updateForm.put = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -387,7 +387,7 @@ update.patch = (args: { fee_type: number | { id: number } } | [fee_type: number 
         })
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::update
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:100
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:106
  * @route '/api/v1/fee-types/{fee_type}'
  */
         updateForm.patch = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -403,7 +403,7 @@ update.patch = (args: { fee_type: number | { id: number } } | [fee_type: number 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:124
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:130
  * @route '/api/v1/fee-types/{fee_type}'
  */
 export const destroy = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -418,7 +418,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:124
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:130
  * @route '/api/v1/fee-types/{fee_type}'
  */
 destroy.url = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -451,7 +451,7 @@ destroy.url = (args: { fee_type: number | { id: number } } | [fee_type: number |
 
 /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:124
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:130
  * @route '/api/v1/fee-types/{fee_type}'
  */
 destroy.delete = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -461,7 +461,7 @@ destroy.delete = (args: { fee_type: number | { id: number } } | [fee_type: numbe
 
     /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:124
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:130
  * @route '/api/v1/fee-types/{fee_type}'
  */
     const destroyForm = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -476,7 +476,7 @@ destroy.delete = (args: { fee_type: number | { id: number } } | [fee_type: numbe
 
             /**
 * @see \App\Http\Controllers\Api\V1\Fees\FeeTypeController::destroy
- * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:124
+ * @see app/Http/Controllers/Api/V1/Fees/FeeTypeController.php:130
  * @route '/api/v1/fee-types/{fee_type}'
  */
         destroyForm.delete = (args: { fee_type: number | { id: number } } | [fee_type: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

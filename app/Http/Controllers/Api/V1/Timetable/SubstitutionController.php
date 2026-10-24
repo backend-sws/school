@@ -69,7 +69,8 @@ class SubstitutionController extends BaseController
 
         // Get all staff who are NOT in the busy list
         $candidates = \App\Models\User::whereHas('roles', function ($q) {
-            $q->whereIn('name', ['staff', 'principal', 'college_admin']);
+            $q->whereIn('key', ['teacher', 'staff', 'principal'])
+              ->orWhereIn('name', ['Teacher', 'staff', 'principal', 'college_admin']);
         })
             ->whereNotIn('id', $busyTeacherIds)
             ->get(['id', 'name']);

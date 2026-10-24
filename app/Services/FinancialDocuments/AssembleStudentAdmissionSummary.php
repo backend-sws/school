@@ -27,12 +27,16 @@ final class AssembleStudentAdmissionSummary implements FinancialDocumentAssemble
             'fee_rows' => $feeRows,
         ]);
 
+        $appDate = $app->submitted_at ?? $app->admission_date ?? $app->created_at;
+        $dateStr = $appDate ? \Carbon\Carbon::parse($appDate)->format('d M Y') : now()->format('d M Y');
+
         return new FinancialDocument(
             kind: 'student_admission_summary',
             documentTitle: 'Admission Application',
             metadata: [
                 'id' => $app->application_id,
                 'title' => 'Admission Application',
+                'date' => $dateStr,
             ],
             sections: [],
             showSignatory: false,
