@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:70
  * @route '/api/v1/timetable/timetables/{timetable}/entries'
  */
-export const saveEntries = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const saveEntries = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveEntries.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ saveEntries.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:70
  * @route '/api/v1/timetable/timetables/{timetable}/entries'
  */
-saveEntries.url = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+saveEntries.url = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { timetable: args }
     }
@@ -52,7 +52,7 @@ saveEntries.url = (args: { timetable: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:70
  * @route '/api/v1/timetable/timetables/{timetable}/entries'
  */
-saveEntries.post = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+saveEntries.post = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveEntries.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ saveEntries.post = (args: { timetable: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:70
  * @route '/api/v1/timetable/timetables/{timetable}/entries'
  */
-    const saveEntriesForm = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const saveEntriesForm = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: saveEntries.url(args, options),
         method: 'post',
     })
@@ -72,7 +72,7 @@ saveEntries.post = (args: { timetable: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:70
  * @route '/api/v1/timetable/timetables/{timetable}/entries'
  */
-        saveEntriesForm.post = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        saveEntriesForm.post = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: saveEntries.url(args, options),
             method: 'post',
         })
@@ -83,7 +83,7 @@ saveEntries.post = (args: { timetable: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:87
  * @route '/api/v1/timetable/timetables/{timetable}/publish'
  */
-export const publish = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const publish = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: publish.url(args, options),
     method: 'post',
 })
@@ -98,7 +98,7 @@ publish.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:87
  * @route '/api/v1/timetable/timetables/{timetable}/publish'
  */
-publish.url = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+publish.url = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { timetable: args }
     }
@@ -131,7 +131,7 @@ publish.url = (args: { timetable: string | number | { id: string | number } } | 
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:87
  * @route '/api/v1/timetable/timetables/{timetable}/publish'
  */
-publish.post = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+publish.post = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: publish.url(args, options),
     method: 'post',
 })
@@ -141,7 +141,7 @@ publish.post = (args: { timetable: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:87
  * @route '/api/v1/timetable/timetables/{timetable}/publish'
  */
-    const publishForm = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const publishForm = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: publish.url(args, options),
         method: 'post',
     })
@@ -151,7 +151,7 @@ publish.post = (args: { timetable: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:87
  * @route '/api/v1/timetable/timetables/{timetable}/publish'
  */
-        publishForm.post = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        publishForm.post = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: publish.url(args, options),
             method: 'post',
         })
@@ -295,7 +295,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-export const show = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -310,7 +310,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-show.url = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { timetable: args }
     }
@@ -343,7 +343,7 @@ show.url = (args: { timetable: string | number | { id: string | number } } | [ti
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-show.get = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -352,7 +352,7 @@ show.get = (args: { timetable: string | number | { id: string | number } } | [ti
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-show.head = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -362,7 +362,7 @@ show.head = (args: { timetable: string | number | { id: string | number } } | [t
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-    const showForm = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -372,7 +372,7 @@ show.head = (args: { timetable: string | number | { id: string | number } } | [t
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-        showForm.get = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -381,7 +381,7 @@ show.head = (args: { timetable: string | number | { id: string | number } } | [t
  * @see app/Http/Controllers/Api/V1/Timetable/TimetableController.php:56
  * @route '/api/v1/timetable/timetables/{timetable}'
  */
-        showForm.head = (args: { timetable: string | number | { id: string | number } } | [timetable: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { timetable: number | { id: number } } | [timetable: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

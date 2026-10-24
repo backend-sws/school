@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-export const show = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-show.url = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_vendor: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { inventory_vendor: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-show.get = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { inventory_vendor: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-show.head = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { inventory_vendor: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-    const showForm = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { inventory_vendor: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-        showForm.get = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { inventory_vendor: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:103
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-        showForm.head = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { inventory_vendor: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-export const update = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -254,7 +254,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-update.url = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_vendor: args }
     }
@@ -287,7 +287,7 @@ update.url = (args: { inventory_vendor: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-update.put = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -296,7 +296,7 @@ update.put = (args: { inventory_vendor: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-update.patch = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -306,7 +306,7 @@ update.patch = (args: { inventory_vendor: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-    const updateForm = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -321,7 +321,7 @@ update.patch = (args: { inventory_vendor: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-        updateForm.put = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -335,7 +335,7 @@ update.patch = (args: { inventory_vendor: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:118
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-        updateForm.patch = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -351,7 +351,7 @@ update.patch = (args: { inventory_vendor: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:150
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-export const destroy = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -366,7 +366,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:150
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-destroy.url = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_vendor: args }
     }
@@ -399,7 +399,7 @@ destroy.url = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:150
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-destroy.delete = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -409,7 +409,7 @@ destroy.delete = (args: { inventory_vendor: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:150
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-    const destroyForm = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -424,7 +424,7 @@ destroy.delete = (args: { inventory_vendor: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:150
  * @route '/api/v1/inventory/vendors/{inventory_vendor}'
  */
-        destroyForm.delete = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -440,7 +440,7 @@ destroy.delete = (args: { inventory_vendor: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-export const ledger = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const ledger = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ledger.url(args, options),
     method: 'get',
 })
@@ -455,7 +455,7 @@ ledger.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-ledger.url = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+ledger.url = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_vendor: args }
     }
@@ -488,7 +488,7 @@ ledger.url = (args: { inventory_vendor: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-ledger.get = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+ledger.get = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ledger.url(args, options),
     method: 'get',
 })
@@ -497,7 +497,7 @@ ledger.get = (args: { inventory_vendor: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-ledger.head = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+ledger.head = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ledger.url(args, options),
     method: 'head',
 })
@@ -507,7 +507,7 @@ ledger.head = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-    const ledgerForm = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const ledgerForm = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: ledger.url(args, options),
         method: 'get',
     })
@@ -517,7 +517,7 @@ ledger.head = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-        ledgerForm.get = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        ledgerForm.get = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: ledger.url(args, options),
             method: 'get',
         })
@@ -526,7 +526,7 @@ ledger.head = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:166
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/ledger'
  */
-        ledgerForm.head = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        ledgerForm.head = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: ledger.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -542,7 +542,7 @@ ledger.head = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:215
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/settle'
  */
-export const settle = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const settle = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: settle.url(args, options),
     method: 'post',
 })
@@ -557,7 +557,7 @@ settle.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:215
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/settle'
  */
-settle.url = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+settle.url = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_vendor: args }
     }
@@ -590,7 +590,7 @@ settle.url = (args: { inventory_vendor: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:215
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/settle'
  */
-settle.post = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+settle.post = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: settle.url(args, options),
     method: 'post',
 })
@@ -600,7 +600,7 @@ settle.post = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:215
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/settle'
  */
-    const settleForm = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const settleForm = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: settle.url(args, options),
         method: 'post',
     })
@@ -610,7 +610,7 @@ settle.post = (args: { inventory_vendor: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryVendorController.php:215
  * @route '/api/v1/inventory/vendors/{inventory_vendor}/settle'
  */
-        settleForm.post = (args: { inventory_vendor: string | number | { id: string | number } } | [inventory_vendor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        settleForm.post = (args: { inventory_vendor: number | { id: number } } | [inventory_vendor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: settle.url(args, options),
             method: 'post',
         })

@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-export const show = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-show.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -52,7 +52,7 @@ show.url = (args: { user: string | number | { id: string | number } } | [user: s
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-show.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ show.get = (args: { user: string | number | { id: string | number } } | [user: s
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-show.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ show.head = (args: { user: string | number | { id: string | number } } | [user: 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-    const showForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ show.head = (args: { user: string | number | { id: string | number } } | [user: 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-        showForm.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ show.head = (args: { user: string | number | { id: string | number } } | [user: 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:24
  * @route '/api/v1/staff/{user}/permissions'
  */
-        showForm.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -106,7 +106,7 @@ show.head = (args: { user: string | number | { id: string | number } } | [user: 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:52
  * @route '/api/v1/staff/{user}/workflows'
  */
-export const syncWorkflows = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const syncWorkflows = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncWorkflows.url(args, options),
     method: 'post',
 })
@@ -121,7 +121,7 @@ syncWorkflows.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:52
  * @route '/api/v1/staff/{user}/workflows'
  */
-syncWorkflows.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+syncWorkflows.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -154,7 +154,7 @@ syncWorkflows.url = (args: { user: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:52
  * @route '/api/v1/staff/{user}/workflows'
  */
-syncWorkflows.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+syncWorkflows.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncWorkflows.url(args, options),
     method: 'post',
 })
@@ -164,7 +164,7 @@ syncWorkflows.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:52
  * @route '/api/v1/staff/{user}/workflows'
  */
-    const syncWorkflowsForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const syncWorkflowsForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: syncWorkflows.url(args, options),
         method: 'post',
     })
@@ -174,7 +174,7 @@ syncWorkflows.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:52
  * @route '/api/v1/staff/{user}/workflows'
  */
-        syncWorkflowsForm.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        syncWorkflowsForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: syncWorkflows.url(args, options),
             method: 'post',
         })
@@ -185,7 +185,7 @@ syncWorkflows.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:74
  * @route '/api/v1/staff/{user}/overrides'
  */
-export const syncOverrides = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const syncOverrides = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncOverrides.url(args, options),
     method: 'post',
 })
@@ -200,7 +200,7 @@ syncOverrides.definition = {
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:74
  * @route '/api/v1/staff/{user}/overrides'
  */
-syncOverrides.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+syncOverrides.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -233,7 +233,7 @@ syncOverrides.url = (args: { user: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:74
  * @route '/api/v1/staff/{user}/overrides'
  */
-syncOverrides.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+syncOverrides.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: syncOverrides.url(args, options),
     method: 'post',
 })
@@ -243,7 +243,7 @@ syncOverrides.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:74
  * @route '/api/v1/staff/{user}/overrides'
  */
-    const syncOverridesForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const syncOverridesForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: syncOverrides.url(args, options),
         method: 'post',
     })
@@ -253,7 +253,7 @@ syncOverrides.post = (args: { user: string | number | { id: string | number } } 
  * @see app/Http/Controllers/Api/V1/Auth/StaffPermissionController.php:74
  * @route '/api/v1/staff/{user}/overrides'
  */
-        syncOverridesForm.post = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        syncOverridesForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: syncOverrides.url(args, options),
             method: 'post',
         })

@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-export const storeForClass = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const storeForClass = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeForClass.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ storeForClass.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-storeForClass.url = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+storeForClass.url = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { lms_class: args }
     }
@@ -52,7 +52,7 @@ storeForClass.url = (args: { lms_class: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-storeForClass.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+storeForClass.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeForClass.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ storeForClass.post = (args: { lms_class: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-    const storeForClassForm = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForClassForm = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: storeForClass.url(args, options),
         method: 'post',
     })
@@ -72,7 +72,7 @@ storeForClass.post = (args: { lms_class: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:17
  * @route '/api/v1/lms/classes/{lms_class}/allocations'
  */
-        storeForClassForm.post = (args: { lms_class: string | number | { id: string | number } } | [lms_class: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForClassForm.post = (args: { lms_class: number | { id: number } } | [lms_class: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: storeForClass.url(args, options),
             method: 'post',
         })
@@ -83,7 +83,7 @@ storeForClass.post = (args: { lms_class: string | number | { id: string | number
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:55
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-export const update = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -98,7 +98,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:55
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-update.url = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { class_subject_allocation: args }
     }
@@ -131,7 +131,7 @@ update.url = (args: { class_subject_allocation: string | number | { id: string |
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:55
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-update.put = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -141,7 +141,7 @@ update.put = (args: { class_subject_allocation: string | number | { id: string |
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:55
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-    const updateForm = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -156,7 +156,7 @@ update.put = (args: { class_subject_allocation: string | number | { id: string |
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:55
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-        updateForm.put = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -172,7 +172,7 @@ update.put = (args: { class_subject_allocation: string | number | { id: string |
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:79
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-export const destroy = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -187,7 +187,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:79
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-destroy.url = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { class_subject_allocation: args }
     }
@@ -220,7 +220,7 @@ destroy.url = (args: { class_subject_allocation: string | number | { id: string 
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:79
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-destroy.delete = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -230,7 +230,7 @@ destroy.delete = (args: { class_subject_allocation: string | number | { id: stri
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:79
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-    const destroyForm = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -245,7 +245,7 @@ destroy.delete = (args: { class_subject_allocation: string | number | { id: stri
  * @see app/Http/Controllers/Api/V1/Lms/ClassSubjectAllocationController.php:79
  * @route '/api/v1/lms/allocations/{class_subject_allocation}'
  */
-        destroyForm.delete = (args: { class_subject_allocation: string | number | { id: string | number } } | [class_subject_allocation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { class_subject_allocation: number | { id: number } } | [class_subject_allocation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

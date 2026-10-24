@@ -455,7 +455,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-export const show = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -470,7 +470,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-show.url = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { session: args }
     }
@@ -503,7 +503,7 @@ show.url = (args: { session: string | number | { id: string | number } } | [sess
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-show.get = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -512,7 +512,7 @@ show.get = (args: { session: string | number | { id: string | number } } | [sess
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-show.head = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -522,7 +522,7 @@ show.head = (args: { session: string | number | { id: string | number } } | [ses
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-    const showForm = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -532,7 +532,7 @@ show.head = (args: { session: string | number | { id: string | number } } | [ses
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-        showForm.get = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -541,7 +541,7 @@ show.head = (args: { session: string | number | { id: string | number } } | [ses
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:174
  * @route '/api/v1/sessions/{session}'
  */
-        showForm.head = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -557,7 +557,7 @@ show.head = (args: { session: string | number | { id: string | number } } | [ses
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-export const update = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -572,7 +572,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-update.url = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { session: args }
     }
@@ -605,7 +605,7 @@ update.url = (args: { session: string | number | { id: string | number } } | [se
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-update.put = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -614,7 +614,7 @@ update.put = (args: { session: string | number | { id: string | number } } | [se
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-update.patch = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -624,7 +624,7 @@ update.patch = (args: { session: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-    const updateForm = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -639,7 +639,7 @@ update.patch = (args: { session: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-        updateForm.put = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -653,7 +653,7 @@ update.patch = (args: { session: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:197
  * @route '/api/v1/sessions/{session}'
  */
-        updateForm.patch = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -669,7 +669,7 @@ update.patch = (args: { session: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:251
  * @route '/api/v1/sessions/{session}'
  */
-export const destroy = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -684,7 +684,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:251
  * @route '/api/v1/sessions/{session}'
  */
-destroy.url = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { session: args }
     }
@@ -717,7 +717,7 @@ destroy.url = (args: { session: string | number | { id: string | number } } | [s
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:251
  * @route '/api/v1/sessions/{session}'
  */
-destroy.delete = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -727,7 +727,7 @@ destroy.delete = (args: { session: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:251
  * @route '/api/v1/sessions/{session}'
  */
-    const destroyForm = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -742,7 +742,7 @@ destroy.delete = (args: { session: string | number | { id: string | number } } |
  * @see app/Http/Controllers/Api/V1/Organization/SessionController.php:251
  * @route '/api/v1/sessions/{session}'
  */
-        destroyForm.delete = (args: { session: string | number | { id: string | number } } | [session: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { session: number | { id: number } } | [session: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

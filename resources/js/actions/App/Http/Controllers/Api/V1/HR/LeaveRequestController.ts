@@ -244,7 +244,7 @@ update.patch = (args: { leave_request: string | number } | [leave_request: strin
  * @see app/Http/Controllers/Api/V1/HR/LeaveRequestController.php:39
  * @route '/api/v1/hr/leave-requests/{leaveRequest}/status'
  */
-export const updateStatus = (args: { leaveRequest: string | number | { id: string | number } } | [leaveRequest: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const updateStatus = (args: { leaveRequest: number | { id: number } } | [leaveRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateStatus.url(args, options),
     method: 'patch',
 })
@@ -259,7 +259,7 @@ updateStatus.definition = {
  * @see app/Http/Controllers/Api/V1/HR/LeaveRequestController.php:39
  * @route '/api/v1/hr/leave-requests/{leaveRequest}/status'
  */
-updateStatus.url = (args: { leaveRequest: string | number | { id: string | number } } | [leaveRequest: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+updateStatus.url = (args: { leaveRequest: number | { id: number } } | [leaveRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { leaveRequest: args }
     }
@@ -292,7 +292,7 @@ updateStatus.url = (args: { leaveRequest: string | number | { id: string | numbe
  * @see app/Http/Controllers/Api/V1/HR/LeaveRequestController.php:39
  * @route '/api/v1/hr/leave-requests/{leaveRequest}/status'
  */
-updateStatus.patch = (args: { leaveRequest: string | number | { id: string | number } } | [leaveRequest: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+updateStatus.patch = (args: { leaveRequest: number | { id: number } } | [leaveRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateStatus.url(args, options),
     method: 'patch',
 })
@@ -302,7 +302,7 @@ updateStatus.patch = (args: { leaveRequest: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/HR/LeaveRequestController.php:39
  * @route '/api/v1/hr/leave-requests/{leaveRequest}/status'
  */
-    const updateStatusForm = (args: { leaveRequest: string | number | { id: string | number } } | [leaveRequest: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateStatusForm = (args: { leaveRequest: number | { id: number } } | [leaveRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: updateStatus.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PATCH',
@@ -317,7 +317,7 @@ updateStatus.patch = (args: { leaveRequest: string | number | { id: string | num
  * @see app/Http/Controllers/Api/V1/HR/LeaveRequestController.php:39
  * @route '/api/v1/hr/leave-requests/{leaveRequest}/status'
  */
-        updateStatusForm.patch = (args: { leaveRequest: string | number | { id: string | number } } | [leaveRequest: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateStatusForm.patch = (args: { leaveRequest: number | { id: number } } | [leaveRequest: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: updateStatus.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',

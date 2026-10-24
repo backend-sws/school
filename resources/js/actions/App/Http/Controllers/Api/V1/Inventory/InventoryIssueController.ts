@@ -137,7 +137,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-export const show = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -152,7 +152,7 @@ show.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-show.url = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_issue: args }
     }
@@ -185,7 +185,7 @@ show.url = (args: { inventory_issue: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-show.get = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ show.get = (args: { inventory_issue: string | number | { id: string | number } }
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-show.head = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -204,7 +204,7 @@ show.head = (args: { inventory_issue: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-    const showForm = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -214,7 +214,7 @@ show.head = (args: { inventory_issue: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-        showForm.get = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -223,7 +223,7 @@ show.head = (args: { inventory_issue: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:224
  * @route '/api/v1/inventory/issues/{inventory_issue}'
  */
-        showForm.head = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -239,7 +239,7 @@ show.head = (args: { inventory_issue: string | number | { id: string | number } 
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
-export const recordReturn = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const recordReturn = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordReturn.url(args, options),
     method: 'post',
 })
@@ -254,7 +254,7 @@ recordReturn.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
-recordReturn.url = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+recordReturn.url = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_issue: args }
     }
@@ -287,7 +287,7 @@ recordReturn.url = (args: { inventory_issue: string | number | { id: string | nu
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
-recordReturn.post = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+recordReturn.post = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: recordReturn.url(args, options),
     method: 'post',
 })
@@ -297,7 +297,7 @@ recordReturn.post = (args: { inventory_issue: string | number | { id: string | n
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
-    const recordReturnForm = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const recordReturnForm = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: recordReturn.url(args, options),
         method: 'post',
     })
@@ -307,7 +307,7 @@ recordReturn.post = (args: { inventory_issue: string | number | { id: string | n
  * @see app/Http/Controllers/Api/V1/Inventory/InventoryIssueController.php:239
  * @route '/api/v1/inventory/issues/{inventory_issue}/return'
  */
-        recordReturnForm.post = (args: { inventory_issue: string | number | { id: string | number } } | [inventory_issue: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        recordReturnForm.post = (args: { inventory_issue: number | { id: number } } | [inventory_issue: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: recordReturn.url(args, options),
             method: 'post',
         })

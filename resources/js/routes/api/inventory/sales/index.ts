@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-export const receipt = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const receipt = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: receipt.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ receipt.definition = {
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.url = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+receipt.url = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { inventory_sale: args }
     }
@@ -52,7 +52,7 @@ receipt.url = (args: { inventory_sale: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+receipt.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: receipt.url(args, options),
     method: 'get',
 })
@@ -61,7 +61,7 @@ receipt.get = (args: { inventory_sale: string | number | { id: string | number }
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-receipt.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+receipt.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: receipt.url(args, options),
     method: 'head',
 })
@@ -71,7 +71,7 @@ receipt.head = (args: { inventory_sale: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-    const receiptForm = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const receiptForm = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: receipt.url(args, options),
         method: 'get',
     })
@@ -81,7 +81,7 @@ receipt.head = (args: { inventory_sale: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-        receiptForm.get = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        receiptForm.get = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: receipt.url(args, options),
             method: 'get',
         })
@@ -90,7 +90,7 @@ receipt.head = (args: { inventory_sale: string | number | { id: string | number 
  * @see app/Http/Controllers/Api/V1/Inventory/InventorySaleController.php:226
  * @route '/api/v1/inventory/sales/{inventory_sale}/receipt'
  */
-        receiptForm.head = (args: { inventory_sale: string | number | { id: string | number } } | [inventory_sale: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        receiptForm.head = (args: { inventory_sale: number | { id: number } } | [inventory_sale: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: receipt.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',

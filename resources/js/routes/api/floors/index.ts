@@ -101,7 +101,7 @@ show.head = (args: { floor: string | number } | [floor: string | number ] | stri
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-export const update = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -116,7 +116,7 @@ update.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-update.url = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { floor: args }
     }
@@ -149,7 +149,7 @@ update.url = (args: { floor: string | number | { id: string | number } } | [floo
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-update.put = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -158,7 +158,7 @@ update.put = (args: { floor: string | number | { id: string | number } } | [floo
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-update.patch = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -168,7 +168,7 @@ update.patch = (args: { floor: string | number | { id: string | number } } | [fl
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-    const updateForm = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -183,7 +183,7 @@ update.patch = (args: { floor: string | number | { id: string | number } } | [fl
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-        updateForm.put = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -197,7 +197,7 @@ update.patch = (args: { floor: string | number | { id: string | number } } | [fl
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:43
  * @route '/api/v1/hostel/floors/{floor}'
  */
-        updateForm.patch = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -213,7 +213,7 @@ update.patch = (args: { floor: string | number | { id: string | number } } | [fl
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:60
  * @route '/api/v1/hostel/floors/{floor}'
  */
-export const destroy = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -228,7 +228,7 @@ destroy.definition = {
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:60
  * @route '/api/v1/hostel/floors/{floor}'
  */
-destroy.url = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { floor: args }
     }
@@ -261,7 +261,7 @@ destroy.url = (args: { floor: string | number | { id: string | number } } | [flo
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:60
  * @route '/api/v1/hostel/floors/{floor}'
  */
-destroy.delete = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -271,7 +271,7 @@ destroy.delete = (args: { floor: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:60
  * @route '/api/v1/hostel/floors/{floor}'
  */
-    const destroyForm = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -286,7 +286,7 @@ destroy.delete = (args: { floor: string | number | { id: string | number } } | [
  * @see app/Http/Controllers/Api/V1/Hostel/HostelFloorController.php:60
  * @route '/api/v1/hostel/floors/{floor}'
  */
-        destroyForm.delete = (args: { floor: string | number | { id: string | number } } | [floor: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { floor: number | { id: number } } | [floor: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
