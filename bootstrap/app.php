@@ -34,7 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             ShareSeoSettings::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+            // AddLinkHeadersForPreloadedAssets::class, // Disabled: LiteSpeed 500 header buffer overflow fix
         ]);
         $middleware->validateCsrfTokens(except: [
             'api/v1/payments/payu/callback',
